@@ -1,0 +1,55 @@
+ == Cahier des charges ==
+Les Vaisseaux
+Types de vaisseaux
+
+-Escape pod: Propulsé une fois au lancement, de la place pour ??? joueurs
+-Fighter: Très maniable, très rapide, 1 poste
+-Corvette: Très maniable, rapide, 2 postes (Pilote/Tir, Tourelle)
+
+Pilotage
+-Possibilité de diriger les tourelles avec des IA
+-Possibilité de controler absolument tout les vaisseaux à tout les poste
+-Réaliste => forte prise en compte de l’inertie, gravité à l’approche des astéroïdes
+Structure des vaisseaux
+
+-Un poste de pilotage
+-Plusieurs tourelles
+-Présence réel de réacteurs (réacteurs de poussée + réacteurs de manoeuvre)
+-Présence d’un intérieur
+L’espace
+Apparence
+-Pour rendre les environnements jolis assez facilement, on devrait les faire à proximité d’une planète.
+Physique
+Structure
+
+
+-Présence d’obstacles (Astéroïdes, débris)
+-Génération aléatoire (on peut quand meme proposer plusieurs patterns, genre ceinture d’astéroides, nuage gazeux, etc.)
+Le joueur
+Apparence
+Contrôles
+
+
+-Toujours en FPS
+Capacités
+-Classes de joueurs (pilote, mécano, etc.)?
+HUD
+
+	
+-Définition du HUD (Minimaliste, complexe?)
+Modes de jeu
+
+Mode survival, l’équipe doit affronter des vagues d'ennemis, avec des pauses entre les vagues pour se réorganiser/réparer le vaisseau, ça nécessite moins de joueur qu’un mode versus, et ça peut être bien fun.
+Mode à la battlefield, 2 flottes les chasseurs respawnent et on se fritte jusqu’à defaite complete ou épuisement des tickets. +1
+
+
+
+================ Annexe1:Fiches Vaisseau ==================
+
+Nom: Escape pod
+Dimensions:  2m x 2m x 3m 
+Nombre de postes: ???
+Liste des postes (* si occupable par l’IA): 
+passager
+
+Description: La dernière chance de survie pour tout équipage d’un vaisseau. Ne dispose d’aucun système de propulsion. Cependant, à sa libération un petit réservoir de carburant est consumé afin de donner une impulsion au véhicule.
