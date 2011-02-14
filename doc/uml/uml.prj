@@ -1,6 +1,6 @@
 format 75
 "uml"
-  revision 1
+  revision 2
   modified_by 15 "smatcher"
 
 
@@ -38,4 +38,18 @@ format 75
 
   mark_for_import
   
+  componentview 128143 "Components"
+    //component diagram settings
+    package_name_in_tab default show_context default auto_label_position default draw_all_relations default shadow default
+    draw_component_as_icon default show_component_req_prov default show_component_rea default show_stereotype_properties default
+    componentdiagram 128143 "Components"
+      package_name_in_tab default show_context default auto_label_position default draw_all_relations default shadow default
+      draw_component_as_icon default show_component_req_prov default show_component_rea default show_stereotype_properties default
+      size A4
+    end
+  end
+
+  package_ref 128143 // Core
+
+  package_ref 128271 // Entities
 end

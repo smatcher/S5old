@@ -1,0 +1,11 @@
+format 75
+
+packagecanvas 128015 
+  package_ref 128143 // Core
+    xyzwh 400 79 2000 361 345
+end
+packagecanvas 128143 
+  package_ref 128271 // Entities
+    xyzwh 39 77 2000 277 351
+end
+end
