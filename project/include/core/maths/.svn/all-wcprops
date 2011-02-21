@@ -1,0 +1,119 @@
+K 25
+svn:wc:ra_dav:version-url
+V 54
+/vertex_team/!svn/ver/336/iap_engine/include/iap/maths
+END
+BoundingVolume.h
+K 25
+svn:wc:ra_dav:version-url
+V 71
+/vertex_team/!svn/ver/336/iap_engine/include/iap/maths/BoundingVolume.h
+END
+Plane.h
+K 25
+svn:wc:ra_dav:version-url
+V 62
+/vertex_team/!svn/ver/329/iap_engine/include/iap/maths/Plane.h
+END
+Frustum.h
+K 25
+svn:wc:ra_dav:version-url
+V 64
+/vertex_team/!svn/ver/329/iap_engine/include/iap/maths/Frustum.h
+END
+Transform.hpp
+K 25
+svn:wc:ra_dav:version-url
+V 68
+/vertex_team/!svn/ver/319/iap_engine/include/iap/maths/Transform.hpp
+END
+Transform.h
+K 25
+svn:wc:ra_dav:version-url
+V 66
+/vertex_team/!svn/ver/329/iap_engine/include/iap/maths/Transform.h
+END
+Constants.h
+K 25
+svn:wc:ra_dav:version-url
+V 66
+/vertex_team/!svn/ver/329/iap_engine/include/iap/maths/Constants.h
+END
+BoundingSphere.h
+K 25
+svn:wc:ra_dav:version-url
+V 71
+/vertex_team/!svn/ver/336/iap_engine/include/iap/maths/BoundingSphere.h
+END
+Vector2.hpp
+K 25
+svn:wc:ra_dav:version-url
+V 66
+/vertex_team/!svn/ver/283/iap_engine/include/iap/maths/Vector2.hpp
+END
+Vector2.h
+K 25
+svn:wc:ra_dav:version-url
+V 64
+/vertex_team/!svn/ver/283/iap_engine/include/iap/maths/Vector2.h
+END
+Trigo.h
+K 25
+svn:wc:ra_dav:version-url
+V 62
+/vertex_team/!svn/ver/262/iap_engine/include/iap/maths/Trigo.h
+END
+Vector3.h
+K 25
+svn:wc:ra_dav:version-url
+V 64
+/vertex_team/!svn/ver/283/iap_engine/include/iap/maths/Vector3.h
+END
+AABB.h
+K 25
+svn:wc:ra_dav:version-url
+V 61
+/vertex_team/!svn/ver/336/iap_engine/include/iap/maths/AABB.h
+END
+Vector3.hpp
+K 25
+svn:wc:ra_dav:version-url
+V 66
+/vertex_team/!svn/ver/283/iap_engine/include/iap/maths/Vector3.hpp
+END
+Vector4.h
+K 25
+svn:wc:ra_dav:version-url
+V 64
+/vertex_team/!svn/ver/283/iap_engine/include/iap/maths/Vector4.h
+END
+Vector4.hpp
+K 25
+svn:wc:ra_dav:version-url
+V 66
+/vertex_team/!svn/ver/283/iap_engine/include/iap/maths/Vector4.hpp
+END
+Matrix3.hpp
+K 25
+svn:wc:ra_dav:version-url
+V 66
+/vertex_team/!svn/ver/262/iap_engine/include/iap/maths/Matrix3.hpp
+END
+Matrix3.h
+K 25
+svn:wc:ra_dav:version-url
+V 64
+/vertex_team/!svn/ver/262/iap_engine/include/iap/maths/Matrix3.h
+END
+Matrix4.hpp
+K 25
+svn:wc:ra_dav:version-url
+V 66
+/vertex_team/!svn/ver/262/iap_engine/include/iap/maths/Matrix4.hpp
+END
+Matrix4.h
+K 25
+svn:wc:ra_dav:version-url
+V 64
+/vertex_team/!svn/ver/262/iap_engine/include/iap/maths/Matrix4.h
+END

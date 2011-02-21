@@ -1,0 +1,29 @@
+K 25
+svn:wc:ra_dav:version-url
+V 46
+/vertex_team/!svn/ver/336/iap_engine/src/maths
+END
+Trigo.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 56
+/vertex_team/!svn/ver/273/iap_engine/src/maths/Trigo.cpp
+END
+AABB.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 55
+/vertex_team/!svn/ver/336/iap_engine/src/maths/AABB.cpp
+END
+Frustum.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 58
+/vertex_team/!svn/ver/329/iap_engine/src/maths/Frustum.cpp
+END
+BoundingSphere.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 65
+/vertex_team/!svn/ver/336/iap_engine/src/maths/BoundingSphere.cpp
+END
