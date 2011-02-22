@@ -4,6 +4,7 @@
 #include "include/window.h"
 #include "include/core/scenegraph/scenegraph.h"
 #include "include/core/scenegraph/node.h"
+#include "include/core/maths/trigo.h"
 
 int main(int argc, char *argv[])
 {
@@ -32,6 +33,13 @@ int main(int argc, char *argv[])
 	n4.link(&s41);
 	s41.link(&nn);
 	s41.link(&pro);
+
+	initTrigo();
+
+	n1.moveTo(Vector3d(2,2,2));
+	n1.rotate(Vector3d(0,1,0),75);
+	s11.moveTo(Vector3d(0.5,0,0.5));
+	s12.moveTo(Vector3d(-0.5,0,-0.5));
 
 	Window window(sg);
 	window.resize(window.sizeHint());

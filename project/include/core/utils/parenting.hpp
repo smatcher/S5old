@@ -27,13 +27,13 @@ ParentOf<Child>::~ParentOf()
 }
 
 template<class Child>
-Child* ParentOf<Child>::child(const QString& childName)
+Child* ParentOf<Child>::child(const QString& childName) const
 {
 	return m_sons.value(childName,NULL);
 }
 
 template<class Child>
-Child* ParentOf<Child>::child(int nb)
+Child* ParentOf<Child>::child(int nb) const
 {
 	QList<QString> keys = m_sons.keys();
 
@@ -41,7 +41,7 @@ Child* ParentOf<Child>::child(int nb)
 }
 
 template<class Child>
-int ParentOf<Child>::childCount()
+int ParentOf<Child>::childCount() const
 {
 	return m_sons.count();
 }

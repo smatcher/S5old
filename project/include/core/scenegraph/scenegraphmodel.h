@@ -2,9 +2,11 @@
 #define SCENEGRAPHMODEL_H
 
 #include "include/core/scenegraph/scenegraph.h"
+#include "include/core/scenegraph/node.h"
 #include "QAbstractItemModel"
 
 class SceneGraph;
+class Node;
 
 class SceneGraphModel : public QAbstractItemModel
 {

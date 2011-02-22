@@ -6,6 +6,7 @@
 #include "include/core/scenegraph/scenegraph.h"
 
 class QtLogo;
+class SceneGraph;
 
 class GLWidget : public QGLWidget
 {
@@ -37,6 +38,7 @@ protected:
 
 private:
 	QtLogo *logo;
+	const SceneGraph& m_sg;
 	int xRot;
 	int yRot;
 	int zRot;

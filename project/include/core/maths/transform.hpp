@@ -1,5 +1,9 @@
 // Transform.hpp
+#ifndef TRANSFORM_HPP_
+#define TRANSFORM_HPP_
+
 #include "include/core/maths/plane.h"
+#include "include/core/maths/transform.h"
 
 // Constructeur
 template <class T>
@@ -249,3 +253,5 @@ void Transform<T>::moveTo(const Vector3<T_scalar>& target)
 {
 	position=target;
 }
+
+#endif //TRANSFORM_HPP_

@@ -13,6 +13,7 @@ SOURCES += \
     src/main.cpp\
     src/window.cpp \
     src/glwidget.cpp \
+	src/qtlogo.cpp \
     src/core/scenegraph/node.cpp \
     src/core/scenegraph/scenegraph.cpp \
     src/core/properties/propertyset.cpp \

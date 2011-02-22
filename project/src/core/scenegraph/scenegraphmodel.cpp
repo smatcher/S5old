@@ -12,7 +12,6 @@ SceneGraphModel::~SceneGraphModel()
 
 Node* SceneGraphModel::getNode(const QModelIndex &index) const
 {
-	void* dbg = index.internalPointer();
 	if (index.isValid() && index.internalPointer() != m_item)
 	{
 		Node *item = static_cast<Node*>(index.internalPointer());
@@ -26,7 +25,6 @@ QModelIndex SceneGraphModel::index(int row, int column, const QModelIndex& paren
 	if (parent.isValid() && parent.column() != 0)
 		return QModelIndex();
 
-	void* dbg = parent.internalPointer();
 	Node *parentItem = getNode(parent);
 
 	if(parentItem != NULL)
@@ -52,7 +50,6 @@ QModelIndex SceneGraphModel::parent(const QModelIndex& index) const
 	if (!index.isValid())
 		return QModelIndex();
 
-	void* dbg = index.internalPointer();
 	Node *childItem = getNode(index);
 	ParentOf<Node> *parentItem = childItem->parent();
 

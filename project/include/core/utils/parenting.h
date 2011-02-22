@@ -83,11 +83,11 @@ public :
 	~ParentOf();
 
 	/// Get child based on his name
-	Child* child(const QString& childName);
+	Child* child(const QString& childName) const;
 	/// Get the n'th child
-	Child* child(int nb);
+	Child* child(int nb) const;
 	/// Get the number of chidren
-	int childCount();
+	int childCount() const;
 	/// Link
 	void link(Child* son);
 	void link(ChildOf< ParentOf<Child> >* son);

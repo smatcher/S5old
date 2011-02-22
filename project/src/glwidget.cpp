@@ -11,8 +11,8 @@
  #define GL_MULTISAMPLE  0x809D
  #endif
 
- GLWidget::GLWidget(const SceneGraph&, QWidget *parent)
-	 : QGLWidget(QGLFormat(QGL::SampleBuffers), parent)
+ GLWidget::GLWidget(const SceneGraph& sg, QWidget *parent)
+	 : QGLWidget(QGLFormat(QGL::SampleBuffers), parent), m_sg(sg)
  {
 	 logo = 0;
 	 xRot = 0;
@@ -77,7 +77,7 @@
 
  void GLWidget::initializeGL()
  {
-	 qglClearColor(qtPurple.dark());
+	 qglClearColor(Qt::black);
 
 	 logo = new QtLogo(this, 64);
 	 logo->setColor(qtGreen.dark());
@@ -100,7 +100,13 @@
 	 glRotatef(xRot / 16.0, 1.0, 0.0, 0.0);
 	 glRotatef(yRot / 16.0, 0.0, 1.0, 0.0);
 	 glRotatef(zRot / 16.0, 0.0, 0.0, 1.0);
+
 	 logo->draw();
+	 glDisable(GL_LIGHTING);
+	 for(int i=0 ; i<m_sg.childCount() ; i++) {
+		 m_sg.child(i)->drawTransform(this,true);
+	 }
+	 glEnable(GL_LIGHTING);
  }
 
  void GLWidget::resizeGL(int width, int height)
@@ -111,9 +117,9 @@
 	 glMatrixMode(GL_PROJECTION);
 	 glLoadIdentity();
  #ifdef QT_OPENGL_ES_1
-	 glOrthof(-0.5, +0.5, -0.5, +0.5, 4.0, 15.0);
+	 glOrthof(-5, +5, -5, +5, 1.0, 50.0);
  #else
-	 glOrtho(-0.5, +0.5, -0.5, +0.5, 4.0, 15.0);
+	 glOrtho(-5, +5, -5, +5, 1.0, 50.0);
  #endif
 	 glMatrixMode(GL_MODELVIEW);
  }
