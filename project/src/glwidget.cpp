@@ -1,4 +1,5 @@
 #include <QtGui>
+#include <GL/glew.h>
  #include <QtOpenGL>
 
  #include <math.h>

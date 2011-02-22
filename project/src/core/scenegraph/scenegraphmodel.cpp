@@ -10,14 +10,15 @@ SceneGraphModel::~SceneGraphModel()
 	m_item->clearDebug();
 }
 
-ParentOf<Node>* SceneGraphModel::getItem(const QModelIndex &index) const
+Node* SceneGraphModel::getNode(const QModelIndex &index) const
 {
-	if (index.isValid())
+	void* dbg = index.internalPointer();
+	if (index.isValid() && index.internalPointer() != m_item)
 	{
-		ParentOf<Node> *item = static_cast<ParentOf<Node>*>(index.internalPointer());
+		Node *item = static_cast<Node*>(index.internalPointer());
 		if (item) return item;
 	}
-	return m_item;
+	return NULL;
 }
 
 QModelIndex SceneGraphModel::index(int row, int column, const QModelIndex& parent) const
@@ -25,13 +26,25 @@ QModelIndex SceneGraphModel::index(int row, int column, const QModelIndex& paren
 	if (parent.isValid() && parent.column() != 0)
 		return QModelIndex();
 
-	ParentOf<Node> *parentItem = getItem(parent);
+	void* dbg = parent.internalPointer();
+	Node *parentItem = getNode(parent);
 
-	Node *childItem = parentItem->child(row);
-	if (childItem)
-		return createIndex(row, column, childItem);
+	if(parentItem != NULL)
+	{
+		Node *childItem = parentItem->child(row);
+		if (childItem)
+			return createIndex(row, column, childItem);
+		else
+			return QModelIndex();
+	}
 	else
-		return QModelIndex();
+	{
+		Node *childItem = m_item->child(row);
+		if (childItem)
+			return createIndex(row, column, childItem);
+		else
+			return QModelIndex();
+	}
 }
 
 QModelIndex SceneGraphModel::parent(const QModelIndex& index) const
@@ -39,20 +52,26 @@ QModelIndex SceneGraphModel::parent(const QModelIndex& index) const
 	if (!index.isValid())
 		return QModelIndex();
 
-	Node *childItem = static_cast<Node*>(getItem(index));
+	void* dbg = index.internalPointer();
+	Node *childItem = getNode(index);
 	ParentOf<Node> *parentItem = childItem->parent();
 
-	if (parentItem == m_item)
+	if (parentItem == static_cast<ParentOf<Node>* >(m_item))
 		return QModelIndex();
 
-	return createIndex(((Node*)parentItem)->childNumber(), 0, parentItem);
+	Node* parentNode = static_cast<Node*>(parentItem);
+
+	return createIndex(((Node*)parentItem)->childNumber(), 0, parentNode);
 }
 
 int SceneGraphModel::rowCount(const QModelIndex& parent) const
 {
-	ParentOf<Node> *parentItem = getItem(parent);
+	Node *parentItem = getNode(parent);
 
-	return parentItem->childCount();
+	if(parentItem != NULL)
+		return parentItem->childCount();
+	else
+		return m_item->childCount();
 }
 
 int SceneGraphModel::columnCount(const QModelIndex&) const
@@ -64,8 +83,8 @@ QVariant SceneGraphModel::data(const QModelIndex& parent, int role) const
 {
 	if(role == Qt::DisplayRole)
 	{
-		ParentOf<Node>* n = getItem(parent);
-		if(n != m_item) return QVariant(static_cast<Node*>(n)->getName());
+		Node* n = getNode(parent);
+		if(n != NULL) return QVariant(n->getName());
 	}
 	return QVariant();
 }

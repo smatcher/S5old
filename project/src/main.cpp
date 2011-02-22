@@ -13,7 +13,7 @@ int main(int argc, char *argv[])
 	Node s11("Son 1 of 1");
 	Node s12("Son 2 of 1");
 	Node n2("Node 2");
-	Node s21("Node 2");
+	Node s21("Son 1 of 2");
 	Node s211("Son 1 of son 1 of 2 (yeah right)");
 	Node n3("Node 3");
 	Node n4("Node 4");

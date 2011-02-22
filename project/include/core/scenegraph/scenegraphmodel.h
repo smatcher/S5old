@@ -13,7 +13,7 @@ class SceneGraphModel : public QAbstractItemModel
 private :
 	SceneGraph* m_item;
 
-	ParentOf<Node>* getItem(const QModelIndex &index) const;
+	Node* getNode(const QModelIndex &index) const;
 public :
 	SceneGraphModel(SceneGraph* item);
 	~SceneGraphModel();
