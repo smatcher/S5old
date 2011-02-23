@@ -24,6 +24,9 @@ int main(int argc, char *argv[])
 	Node s41("Son 1 of 4");
 	Node nn("????");
 	Node pro("Profit");
+	IProperty prop;
+
+	n1.properties().link(&prop);
 
 	sg.link(&n1);
 	sg.link(&n2);

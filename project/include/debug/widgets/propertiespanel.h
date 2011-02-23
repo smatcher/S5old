@@ -19,6 +19,8 @@ public :
 
 	void setWidget(NodeWidget* widget);
 
+	QSize sizeHint() const;
+
 public slots :
 	void selectionChanged(const QItemSelection& selected, const QItemSelection& deselected);
 };

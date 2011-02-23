@@ -15,30 +15,35 @@ TransformWidget::TransformWidget(Transformd &transform) : QGroupBox(tr("Transfor
 
 	Vector3d pos = m_transform.getPosition();
 	/*
-	QLabel* x = new QLabel(QString().setNum(pos.x));
-	QLabel* y = new QLabel(QString().setNum(pos.y));
-	QLabel* z = new QLabel(QString().setNum(pos.z));
+	QLabel* x = new QLabel(QString().setNum(pos.x,'g',2));
+	QLabel* y = new QLabel(QString().setNum(pos.y,'g',2));
+	QLabel* z = new QLabel(QString().setNum(pos.z,'g',2));
 	*/
-	QLineEdit* x = new QLineEdit(QString().setNum(pos.x));
-	x->setValidator(new QDoubleValidator(x));
-	QLineEdit* y = new QLineEdit(QString().setNum(pos.y));
-	y->setValidator(new QDoubleValidator(y));
-	QLineEdit* z = new QLineEdit(QString().setNum(pos.z));
-	z->setValidator(new QDoubleValidator(z));
+
+	QLineEdit* x = new QLineEdit(QString().setNum(pos.x,'g',2));
+	x->setDisabled(true);
+	QLineEdit* y = new QLineEdit(QString().setNum(pos.y,'g',2));
+	y->setDisabled(true);
+	QLineEdit* z = new QLineEdit(QString().setNum(pos.z,'g',2));
+	z->setDisabled(true);
+
 
 	Matrix3d rot = m_transform.getRotation();
+	QLineEdit* rx = new QLineEdit(QString().setNum(rot[0],'g',2));
+	rx->setDisabled(true);
+	QLineEdit* ry = new QLineEdit(QString().setNum(rot[4],'g',2));
+	ry->setDisabled(true);
+	QLineEdit* rz = new QLineEdit(QString().setNum(rot[8],'g',2));
+	rz->setDisabled(true);
+
 	/*
-	QLabel* rx = new QLabel(QString().setNum(rot[0]));
-	QLabel* ry = new QLabel(QString().setNum(rot[4]));
-	QLabel* rz = new QLabel(QString().setNum(rot[8]));
-	*/
 	QLineEdit* rx = new QLineEdit(QString().setNum(rot[0]));
 	rx->setValidator(new QDoubleValidator(rx));
 	QLineEdit* ry = new QLineEdit(QString().setNum(rot[4]));
 	ry->setValidator(new QDoubleValidator(ry));
 	QLineEdit* rz = new QLineEdit(QString().setNum(rot[8]));
 	rz->setValidator(new QDoubleValidator(rz));
-
+	*/
 	QGroupBox* posgroup = new QGroupBox(tr("position"));
 	QLayout* posgroup_layout = new QHBoxLayout();
 	posgroup_layout->addWidget(x);

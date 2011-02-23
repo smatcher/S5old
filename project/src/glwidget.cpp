@@ -21,6 +21,8 @@
 
 	 qtGreen = QColor::fromCmykF(0.20, 0.0, 1.0, 0.0);
 	 qtPurple = QColor::fromCmykF(0.39, 0.39, 0.0, 0.0);
+
+	 setSizePolicy(QSizePolicy::Minimum,QSizePolicy::Minimum);
  }
 
  GLWidget::~GLWidget()

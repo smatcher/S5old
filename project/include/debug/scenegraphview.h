@@ -15,6 +15,8 @@ private :
 public :
 	SceneGraphView(SceneGraph* item);
 	~SceneGraphView();
+
+	QSize sizeHint() const;
 };
 
 #endif // SCENEGRAPHVIEW_H

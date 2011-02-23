@@ -7,6 +7,8 @@ PropertiesPanel::PropertiesPanel()
 	m_widget = NULL;
 
 	setLayout(m_layout);
+
+	setSizePolicy(QSizePolicy::Fixed,QSizePolicy::Minimum);
 }
 
 PropertiesPanel::~PropertiesPanel()
@@ -34,4 +36,9 @@ void PropertiesPanel::selectionChanged(const QItemSelection& selected, const QIt
 
 	Node* n = static_cast<Node*>(sel.first().internalPointer());
 	setWidget(n->getWidget());
+}
+
+QSize PropertiesPanel::sizeHint() const
+{
+	return QSize(200, 600);
 }
