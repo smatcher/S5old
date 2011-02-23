@@ -7,9 +7,11 @@ class IUpdatable : public IProperty
 {
 public:
     /// Constructor
-    IUpdatable(QString);
+	IUpdatable(const QString& name = "Basic Updatable");
+	/// Destructor
+	~IUpdatable();
 
-    virtual void update(float elapsed_time);
+	virtual void update(float elapsed_time) = 0;
 };
 
 #endif // IUPDATABLE_H

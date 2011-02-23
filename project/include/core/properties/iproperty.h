@@ -10,7 +10,8 @@ class IProperty : public ChildOf<PropertySet>
 {
 public:
     /// Constructor
-    IProperty(QString);
+	IProperty(const QString& name = "Basic Property");
+	~IProperty();
 };
 
 #endif // IPROPERTY_H
