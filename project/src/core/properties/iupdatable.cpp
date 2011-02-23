@@ -1,5 +1,5 @@
 #include "include/core/properties/iupdatable.h"
 
-IUpdatable::IUpdatable(QString propName = "Basic Updatable") : IProperty(propName)
+IUpdatable::IUpdatable(QString propName = QString("Basic Updatable")) : IProperty(propName)
 {
 }
