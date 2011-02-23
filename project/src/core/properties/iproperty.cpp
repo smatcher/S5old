@@ -1,5 +1,5 @@
 #include "include/core/properties/iproperty.h"
 
-IProperty::IProperty() : ChildOf<PropertySet>(QString("Basic Property"))
+IProperty::IProperty(QString propName = "Basic Property") : ChildOf<PropertySet>(propName)
 {
 }

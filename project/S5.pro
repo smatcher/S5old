@@ -26,7 +26,9 @@ SOURCES += \
 	src/debug/scenegraphmodel.cpp \
 	src/debug/widgets/nodewidget.cpp \
     src/debug/widgets/transformwidget.cpp \
-    src/debug/widgets/propertiespanel.cpp
+    src/debug/widgets/propertiespanel.cpp \
+    src/core/properties/iupdatable.cpp \
+    src/core/properties/dummyupdatable.cpp
 
 HEADERS  += \
     include/window.h \
@@ -61,6 +63,8 @@ HEADERS  += \
 	include/debug/scenegraphview.h \
 	include/debug/widgets/nodewidget.h \
     include/debug/widgets/transformwidget.h \
-    include/debug/widgets/propertiespanel.h
+    include/debug/widgets/propertiespanel.h \
+    include/core/properties/iupdatable.h \
+    include/core/properties/dummyupdatable.h
 
 FORMS    +=

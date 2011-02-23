@@ -9,7 +9,8 @@ class PropertySet;
 class IProperty : public ChildOf<PropertySet>
 {
 public:
-    IProperty();
+    /// Constructor
+    IProperty(QString);
 };
 
 #endif // IPROPERTY_H
