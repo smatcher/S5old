@@ -3,7 +3,8 @@
 
 #include "include/core/scenegraph/scenegraph.h"
 #include "include/core/scenegraph/node.h"
-#include "QAbstractItemModel"
+#include <QAbstractItemModel>
+#include <QItemSelectionModel>
 
 class SceneGraph;
 class Node;

@@ -1,5 +1,6 @@
 #include <QApplication>
 #include <QDesktopWidget>
+//#include <QPlastiqueStyle>
 
 #include "include/window.h"
 #include "include/core/scenegraph/scenegraph.h"
@@ -9,6 +10,8 @@
 int main(int argc, char *argv[])
 {
 	QApplication app(argc, argv);
+	app.setStyle("Plastique");
+
 	SceneGraph sg;
 	Node n1("Node 1");
 	Node s11("Son 1 of 1");

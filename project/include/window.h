@@ -7,6 +7,7 @@
 #include "include/core/scenegraph/scenegraph.h"
 
 class GLWidget;
+class PropertiesPanel;
 
 class Window : public QWidget
 {
@@ -19,8 +20,8 @@ protected:
 	void keyPressEvent(QKeyEvent *event);
 
 private:
-	GLWidget *glWidget;
-	NodeWidget* nodeWidget;
+	GLWidget* glWidget;
+	PropertiesPanel* propertiesWidget;
 	QTreeView* treeWidget;
 };
 

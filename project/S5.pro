@@ -25,7 +25,8 @@ SOURCES += \
 	src/debug/scenegraphview.cpp \
 	src/debug/scenegraphmodel.cpp \
 	src/debug/widgets/nodewidget.cpp \
-    src/debug/widgets/transformwidget.cpp
+    src/debug/widgets/transformwidget.cpp \
+    src/debug/widgets/propertiespanel.cpp
 
 HEADERS  += \
     include/window.h \
@@ -59,6 +60,7 @@ HEADERS  += \
 	include/debug/scenegraphmodel.h \
 	include/debug/scenegraphview.h \
 	include/debug/widgets/nodewidget.h \
-    include/debug/widgets/transformwidget.h
+    include/debug/widgets/transformwidget.h \
+    include/debug/widgets/propertiespanel.h
 
 FORMS    +=

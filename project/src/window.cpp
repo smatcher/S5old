@@ -1,26 +1,32 @@
 #include <QtGui>
 
- #include "include/debug/widgets/nodewidget.h"
- #include "include/glwidget.h"
- #include "include/window.h"
+#include "include/debug/widgets/nodewidget.h"
+#include "include/debug/widgets/propertiespanel.h"
+#include "include/glwidget.h"
+#include "include/window.h"
 
  Window::Window(SceneGraph& sceneGraph)
  {
-	 glWidget = new GLWidget(sceneGraph);
-	 nodeWidget = sceneGraph.child(0)->getWidget();
-	 treeWidget = sceneGraph.getDebugView();
+	glWidget = new GLWidget(sceneGraph);
+	treeWidget = sceneGraph.getDebugView();
+	propertiesWidget = new PropertiesPanel();
 
-	 QHBoxLayout *mainLayout = new QHBoxLayout;
-	 mainLayout->addWidget(glWidget);
-	 mainLayout->addWidget(treeWidget);
-	 mainLayout->addWidget(nodeWidget);
-	 setLayout(mainLayout);
+	QHBoxLayout *mainLayout = new QHBoxLayout;
+	mainLayout->addWidget(glWidget);
+	mainLayout->addWidget(treeWidget);
+	mainLayout->addWidget(propertiesWidget);
+	setLayout(mainLayout);
 
 	glWidget->setXRotation(15 * 16);
 	glWidget->setYRotation(345 * 16);
 	glWidget->setZRotation(0);
 
-	 setWindowTitle(tr("Hello GL"));
+	QObject::connect(treeWidget->selectionModel(),
+					 SIGNAL(selectionChanged(const QItemSelection&,const QItemSelection&)),
+					 propertiesWidget,
+					 SLOT(selectionChanged(const QItemSelection&,const QItemSelection&)));
+
+	setWindowTitle(tr("Hello GL"));
  }
 
  void Window::keyPressEvent(QKeyEvent *e)
