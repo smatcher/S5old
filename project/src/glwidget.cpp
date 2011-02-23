@@ -34,7 +34,7 @@
 
  QSize GLWidget::sizeHint() const
  {
-	 return QSize(400, 400);
+	 return QSize(600, 600);
  }
 
  static void qNormalizeAngle(int &angle)

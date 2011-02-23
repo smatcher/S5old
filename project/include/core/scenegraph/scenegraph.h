@@ -4,8 +4,8 @@
 #include "include/core/utils/parenting.h"
 #include "include/core/scenegraph/node.h"
 
-#include "include/core/scenegraph/scenegraphview.h"
-#include "include/core/scenegraph/scenegraphmodel.h"
+#include "include/debug/scenegraphview.h"
+#include "include/debug/scenegraphmodel.h"
 
 class SceneGraphModel;
 class SceneGraphView;

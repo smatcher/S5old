@@ -22,8 +22,10 @@ SOURCES += \
     src/core/maths/frustum.cpp \
     src/core/maths/boundingsphere.cpp \
     src/core/maths/aabb.cpp \
-	src/core/scenegraph/scenegraphview.cpp \
-    src/core/scenegraph/scenegraphmodel.cpp
+	src/debug/scenegraphview.cpp \
+	src/debug/scenegraphmodel.cpp \
+	src/debug/widgets/nodewidget.cpp \
+    src/debug/widgets/transformwidget.cpp
 
 HEADERS  += \
     include/window.h \
@@ -54,7 +56,9 @@ HEADERS  += \
     include/core/maths/boundingvolume.h \
     include/core/maths/boundingsphere.h \
     include/core/maths/aabb.h \
-	include/core/scenegraph/scenegraphmodel.h \
-	include/core/scenegraph/scenegraphview.h
+	include/debug/scenegraphmodel.h \
+	include/debug/scenegraphview.h \
+	include/debug/widgets/nodewidget.h \
+    include/debug/widgets/transformwidget.h
 
 FORMS    +=

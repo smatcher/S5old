@@ -1,4 +1,4 @@
-#include "include/core/scenegraph/scenegraphmodel.h"
+#include "include/debug/scenegraphmodel.h"
 
 SceneGraphModel::SceneGraphModel(SceneGraph* item)
 {

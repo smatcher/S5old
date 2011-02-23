@@ -1,9 +1,11 @@
 #include "include/core/scenegraph/node.h"
+#include "include/debug/widgets/nodewidget.h"
 #include "QtOpenGL"
 #include <QColor>
 
 Node::Node(const QString& name) : ParentOf<Node>(), ChildOf< ParentOf<Node> >(name), Transform<double>()
 {
+	m_widget = NULL;
 }
 
 void Node::drawTransform(const GLWidget* widget, bool recursive) const
@@ -35,4 +37,22 @@ void Node::drawTransform(const GLWidget* widget, bool recursive) const
 			}
 		}
 	glPopMatrix();
+}
+
+PropertySet& Node::properties()
+{
+	return m_properties;
+}
+
+NodeWidget* Node::getWidget()
+{
+	if(m_widget == NULL)
+		m_widget = new NodeWidget(*this);
+
+	return m_widget;
+}
+
+void Node::widgetDestroyed()
+{
+	m_widget = NULL;
 }

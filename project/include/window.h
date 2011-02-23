@@ -6,8 +6,6 @@
 
 #include "include/core/scenegraph/scenegraph.h"
 
-class QSlider;
-
 class GLWidget;
 
 class Window : public QWidget
@@ -22,6 +20,7 @@ protected:
 
 private:
 	GLWidget *glWidget;
+	NodeWidget* nodeWidget;
 	QTreeView* treeWidget;
 };
 
