@@ -12,6 +12,8 @@ public :
 	TransformWidget(Transformd& transform);
 	~TransformWidget();
 
+	QSize sizeHint() const;
+
 private :
 	Transformd m_transform;
 };
