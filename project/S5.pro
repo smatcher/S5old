@@ -67,6 +67,8 @@ HEADERS  += \
     include/debug/widgets/propertiespanel.h \
 	include/debug/widgets/propertywidget.h \
     include/core/properties/iupdatable.h \
-    include/core/properties/dummyupdatable.h
+    include/core/properties/dummyupdatable.h \
+    include/core/managers/manager.h \
+    include/core/managers/manager.hpp
 
 FORMS    +=

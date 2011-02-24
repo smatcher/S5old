@@ -7,10 +7,10 @@ class DummyUpdatable : public IUpdatable
 {
 public:
     DummyUpdatable();
-    void update(float elapsed_time);
+    void update(double elapsed_time);
 
 private:
-    float angle;
+    double angle;
 
 };
 

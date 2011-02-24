@@ -11,7 +11,7 @@ public:
 	/// Destructor
 	~IUpdatable();
 
-	virtual void update(float elapsed_time) = 0;
+        virtual void update(double elapsed_time) = 0;
 };
 
 #endif // IUPDATABLE_H
