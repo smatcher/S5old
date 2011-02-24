@@ -3,22 +3,23 @@
 
 #include <QVector>
 
-template <class T>
+template <class Managee>
 class Manager
 {
 public:
     Manager();
     ~Manager();
 
-    static Manager<T>* getInstance();
+    static Manager<Managee>* getInstance();
 
-    void add(T* managee);
-    void remove(T* managee);
+    void add(Managee* managee);
+    void remove(Managee* managee);
 
 private:
-    static Manager<T>* instance;
+    static Manager<Managee>* instance;
 
-    QVector<T*> registeredManagees;
+protected:
+    QVector<Managee*> registeredManagees;
 };
 
 #include "manager.hpp"

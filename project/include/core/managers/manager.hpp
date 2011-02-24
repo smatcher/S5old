@@ -1,37 +1,37 @@
-// This include should fail since parenting.h includes parenting.hpp
+// Manageehis include should fail since parenting.h includes parenting.hpp
 // However QtCreator needs this include in order to provide code assistance.
 #include "manager.h"
 
-template <class T>
-Manager<T> *Manager<T>::instance = 0;
+template <class Managee>
+Manager<Managee> *Manager<Managee>::instance = 0;
 
-template <class T>
-Manager<T>::Manager()
+template <class Managee>
+Manager<Managee>::Manager()
 {
 }
 
-template <class T>
-Manager<T>::~Manager()
+template <class Managee>
+Manager<Managee>::~Manager()
 {
 }
 
 
-template <class T>
-Manager<T>::getInstance()
+template <class Managee>
+Manager<Managee>* Manager<Managee>::getInstance()
 {
-    if(this->instance == 0)
-        this->instance = new Manager<T>();
-    return this->instance;
+    if(instance == 0)
+        instance = new Manager<Managee>();
+    return instance;
 }
 
-template <class T>
-void Manager<T>::add(T* managee)
+template <class Managee>
+void Manager<Managee>::add(Managee* managee)
 {
     registeredManagees += managee;
 }
 
-template <class T>
-void Manager<T>::remove(T* managee)
+template <class Managee>
+void Manager<Managee>::remove(Managee* managee)
 {
     int index = registeredManagees.indexOf(managee);
     registeredManagees.remove(index);

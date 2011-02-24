@@ -29,7 +29,8 @@ SOURCES += \
     src/debug/widgets/propertiespanel.cpp \
 	src/debug/widgets/propertywidget.cpp \
     src/core/properties/iupdatable.cpp \
-    src/core/properties/dummyupdatable.cpp
+    src/core/properties/dummyupdatable.cpp \
+    src/core/managers/updatemanager.cpp
 
 HEADERS  += \
     include/window.h \
@@ -69,6 +70,9 @@ HEADERS  += \
     include/core/properties/iupdatable.h \
     include/core/properties/dummyupdatable.h \
     include/core/managers/manager.h \
-    include/core/managers/manager.hpp
+    include/core/managers/manager.hpp \
+    include/core/managers/updatemanager.h \
+    include/core/managers/managee.h \
+    include/core/managers/managee.hpp
 
 FORMS    +=

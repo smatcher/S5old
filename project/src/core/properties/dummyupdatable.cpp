@@ -8,6 +8,7 @@ DummyUpdatable::DummyUpdatable() : IUpdatable(QString("DummyUpdatable"))
 
 void DummyUpdatable::update(double elapsed_time)
 {
+    std::cout << "Updating DummyUpdatable" << std::endl;
     Node* parentNode = (Node*)this->parent();
     parentNode->rotate(Vector3d(1.0, 0.0, 0.0), angle*elapsed_time);
 }
