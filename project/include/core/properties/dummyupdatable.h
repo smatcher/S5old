@@ -3,7 +3,7 @@
 
 #include "include/core/properties/iupdatable.h"
 
-class DummyUpdatable : IUpdatable
+class DummyUpdatable : public IUpdatable
 {
 public:
     DummyUpdatable();

@@ -6,6 +6,7 @@
 #include "include/core/scenegraph/scenegraph.h"
 #include "include/core/scenegraph/node.h"
 #include "include/core/maths/trigo.h"
+#include "include/core/properties/dummyupdatable.h"
 
 int main(int argc, char *argv[])
 {
@@ -23,10 +24,13 @@ int main(int argc, char *argv[])
 	Node n4("Node 4");
 	Node s41("Son 1 of 4");
 	Node nn("????");
-	Node pro("Profit");
-	IProperty prop;
+        Node pro("Profit");
 
-	n1.properties().link(&prop);
+        IProperty prop1;
+        DummyUpdatable prop2;
+
+        n1.properties().link(&prop1);
+        n1.properties().link(&prop2);
 
 	sg.link(&n1);
 	sg.link(&n2);
