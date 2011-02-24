@@ -4,6 +4,7 @@
 PropertiesPanel::PropertiesPanel()
 {
 	m_layout = new QHBoxLayout();
+	m_layout->setMargin(0);
 	m_widget = NULL;
 
 	setLayout(m_layout);

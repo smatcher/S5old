@@ -9,7 +9,7 @@
 
 TransformWidget::TransformWidget(Transformd &transform) : QGroupBox(tr("Transform")), m_transform(transform)
 {
-	setSizePolicy(QSizePolicy::Maximum,QSizePolicy::Maximum);
+	setSizePolicy(QSizePolicy::Expanding,QSizePolicy::Maximum);
 
 	QLayout* layout = new QVBoxLayout();
 
@@ -66,4 +66,9 @@ TransformWidget::TransformWidget(Transformd &transform) : QGroupBox(tr("Transfor
 TransformWidget::~TransformWidget()
 {
 
+}
+
+QSize TransformWidget::sizeHint() const
+{
+	return QSize(200,100);
 }
