@@ -15,7 +15,9 @@ private:
 
 	void widgetDestroyed();
 public:
-    IProperty();
+   /// Constructor
+	IProperty(const QString& name = "Basic Property");
+	/// Destructor
 	~IProperty();
 
 	virtual PropertyWidget* getWidget();

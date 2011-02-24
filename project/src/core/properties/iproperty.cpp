@@ -1,7 +1,7 @@
 #include "include/core/properties/iproperty.h"
 #include <QGroupBox>
 
-IProperty::IProperty() : ChildOf<PropertySet>(QString("Basic Property"))
+IProperty::IProperty(const QString& propName) : ChildOf<PropertySet>(propName)
 {
 	m_widget = NULL;
 }
@@ -25,3 +25,4 @@ void IProperty::widgetDestroyed()
 {
 	m_widget = NULL;
 }
+
