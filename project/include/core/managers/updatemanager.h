@@ -2,9 +2,11 @@
 #define UPDATEMANAGER_H
 
 #include "include/core/managers/manager.h"
-#include "include/core/managers/managee.h"
+#include "include/core/properties/iupdatable.h"
 
-class UpdateManager : public Manager< Managee<UpdateManager> >
+
+class IUpdatable;
+class UpdateManager : public Manager<IUpdatable>
 {
 public:
     UpdateManager();

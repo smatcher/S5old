@@ -8,7 +8,7 @@ class Managee
 {
 public:
     Managee();
-	virtual ~Managee();
+    virtual ~Managee();
 };
 
 #include "managee.hpp"

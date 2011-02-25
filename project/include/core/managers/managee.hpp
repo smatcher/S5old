@@ -3,12 +3,15 @@
 template <class Manager>
 Managee<Manager>::Managee()
 {
-    Manager::getInstance()->add(this);
+    Manager* manager = (Manager*)Manager::getInstance();
+    manager->add((typename Manager::ManagedType*)this);
 }
+
 
 
 template <class Manager>
 Managee<Manager>::~Managee()
 {
-    Manager::getInstance()->remove(this);
+    Manager* manager = (Manager*)Manager::getInstance();
+    manager->remove((typename Manager::ManagedType*)this);
 }
