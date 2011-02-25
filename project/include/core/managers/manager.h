@@ -8,7 +8,7 @@ class Manager
 {
 public:
     Manager();
-    ~Manager();
+	virtual ~Manager();
 
     static Manager<Managee>* getInstance();
 

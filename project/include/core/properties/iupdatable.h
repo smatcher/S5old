@@ -13,7 +13,7 @@ public:
     /// Constructor
 	IUpdatable(const QString& name = "Basic Updatable");
 	/// Destructor
-	~IUpdatable();
+	virtual ~IUpdatable();
 
         virtual void update(double elapsed_time) = 0;
 };

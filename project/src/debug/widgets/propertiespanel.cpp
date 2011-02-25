@@ -31,7 +31,7 @@ void PropertiesPanel::setWidget(NodeWidget *widget)
 	}
 }
 
-void PropertiesPanel::selectionChanged(const QItemSelection& selected, const QItemSelection& deselected)
+void PropertiesPanel::selectionChanged(const QItemSelection& selected, const QItemSelection&)
 {
 	QModelIndexList sel = selected.indexes();
 

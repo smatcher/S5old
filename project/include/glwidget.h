@@ -14,7 +14,7 @@ class GLWidget : public QGLWidget
 
 public:
 	GLWidget(const SceneGraph&, QWidget *parent = 0);
-	~GLWidget();
+	virtual ~GLWidget();
 
 	QSize minimumSizeHint() const;
 	QSize sizeHint() const;

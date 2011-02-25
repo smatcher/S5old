@@ -10,7 +10,7 @@ class TransformWidget : public QGroupBox
 
 public :
 	TransformWidget(Transformd& transform);
-	~TransformWidget();
+	virtual ~TransformWidget();
 
 	QSize sizeHint() const;
 

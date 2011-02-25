@@ -3,3 +3,7 @@
 PropertySet::PropertySet()
 {
 }
+
+PropertySet::~PropertySet()
+{
+}

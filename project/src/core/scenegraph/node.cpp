@@ -8,6 +8,11 @@ Node::Node(const QString& name) : ParentOf<Node>(), ChildOf< ParentOf<Node> >(na
 	m_widget = NULL;
 }
 
+Node::~Node()
+{
+
+}
+
 void Node::drawTransform(const GLWidget* widget, bool recursive) const
 {
 	glPushMatrix();

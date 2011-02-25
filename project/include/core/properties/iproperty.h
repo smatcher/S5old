@@ -18,7 +18,7 @@ public:
    /// Constructor
 	IProperty(const QString& name = "Basic Property");
 	/// Destructor
-	~IProperty();
+	virtual ~IProperty();
 
 	virtual PropertyWidget* getWidget();
 };

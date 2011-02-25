@@ -18,7 +18,7 @@ private :
 
 public :
 	NodeWidget(Node& node);
-	~NodeWidget();
+	virtual ~NodeWidget();
 };
 
 #endif // NODEWIDGET_H

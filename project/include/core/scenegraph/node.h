@@ -19,6 +19,7 @@ private :
 	void widgetDestroyed();
 public:
 	Node(const QString& name = "Anon Node");
+	virtual ~Node();
 
 	PropertySet& properties();
 

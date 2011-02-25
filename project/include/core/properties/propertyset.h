@@ -9,6 +9,7 @@ class PropertySet : public ParentOf<IProperty>
 {
 public:
     PropertySet();
+	virtual ~PropertySet();
 };
 
 #endif // PROPERTYSET_H

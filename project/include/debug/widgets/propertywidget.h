@@ -14,7 +14,7 @@ private :
 
 public :
 	PropertyWidget(IProperty* property);
-	~PropertyWidget();
+	virtual ~PropertyWidget();
 };
 
 #endif // PROPERTYWIDGET_H
