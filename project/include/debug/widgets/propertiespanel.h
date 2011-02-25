@@ -15,7 +15,7 @@ private :
 	NodeWidget* m_widget;
 public :
 	PropertiesPanel();
-	~PropertiesPanel();
+	virtual ~PropertiesPanel();
 
 	void setWidget(NodeWidget* widget);
 

@@ -43,7 +43,7 @@ public:
 	}
 
 	// Destructeur
-	~Plane()
+	virtual ~Plane()
 	{
 	}
 

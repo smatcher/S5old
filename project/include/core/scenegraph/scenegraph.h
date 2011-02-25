@@ -14,7 +14,7 @@ class SceneGraph : public ParentOf<Node>
 {		
 public:
     SceneGraph();
-	~SceneGraph();
+	virtual ~SceneGraph();
 
 	SceneGraphView* getDebugView();
 	SceneGraphModel* getDebugModel();

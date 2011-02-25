@@ -19,7 +19,7 @@ private :
 	Node* getNode(const QModelIndex &index) const;
 public :
 	SceneGraphModel(SceneGraph* item);
-	~SceneGraphModel();
+	virtual ~SceneGraphModel();
 
 	QModelIndex index(int row, int column, const QModelIndex &parent) const;
 	QModelIndex parent(const QModelIndex&) const;

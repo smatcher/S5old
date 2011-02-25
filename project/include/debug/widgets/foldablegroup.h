@@ -16,7 +16,7 @@ protected :
 
 public :
 	FoldableGroup(const QString& name = "Foldable exemple");
-	~FoldableGroup();
+	virtual ~FoldableGroup();
 
 	void setGroup(QWidget* group);
 };

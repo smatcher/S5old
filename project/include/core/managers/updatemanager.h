@@ -8,7 +8,7 @@ class UpdateManager : public Manager< Managee<UpdateManager> >
 {
 public:
     UpdateManager();
-    ~UpdateManager();
+    virtual ~UpdateManager();
 
     void update(double elapsed_time);
 };

@@ -44,7 +44,7 @@ public :
 	/// Constructor, if parent is different from NULL, the constructor will ask the parent to make the link.
 	ChildOf(const QString& name, Parent* parent = NULL);
 	/// Destructor
-	~ChildOf();
+	virtual ~ChildOf();
 
 	/// Name getter
 	const QString& getName();
