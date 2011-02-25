@@ -10,8 +10,8 @@ FoldableGroup::FoldableGroup(const QString &name)
 	m_group = NULL;
 	m_layout = new QGridLayout();
 
-	m_layout->addChildWidget(m_button);
-	m_layout->addChildWidget(m_label);
+	m_layout->addWidget(m_button);
+	m_layout->addWidget(m_label);
 
 	setLayout(m_layout);
 }
@@ -29,5 +29,5 @@ void FoldableGroup::setGroup(QWidget* group)
 		delete m_group;
 	}
 	m_group = group;
-	m_layout->addChildWidget(m_group);
+	m_layout->addWidget(m_group);
 }

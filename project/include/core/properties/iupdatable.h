@@ -2,8 +2,12 @@
 #define IUPDATABLE_H
 
 #include "include/core/properties/iproperty.h"
+#include "include/core/managers/managee.h"
+#include "include/core/managers/updatemanager.h"
 
-class IUpdatable : public IProperty
+class UpdateManager;
+
+class IUpdatable : public IProperty, public Managee<UpdateManager>
 {
 public:
     /// Constructor
@@ -11,7 +15,7 @@ public:
 	/// Destructor
 	~IUpdatable();
 
-	virtual void update(float elapsed_time) = 0;
+        virtual void update(double elapsed_time) = 0;
 };
 
 #endif // IUPDATABLE_H

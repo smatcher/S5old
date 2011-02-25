@@ -6,6 +6,7 @@
 
  #include "include/glwidget.h"
  #include "include/qtlogo.h"
+#include "include/core/managers/updatemanager.h"
 
  #ifndef GL_MULTISAMPLE
  #define GL_MULTISAMPLE  0x809D
@@ -96,6 +97,8 @@
 
  void GLWidget::paintGL()
  {
+     ((UpdateManager*)UpdateManager::getInstance())->update(0.1);
+
 	 glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	 glLoadIdentity();
 	 glTranslatef(0.0, 0.0, -10.0);
