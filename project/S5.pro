@@ -29,7 +29,8 @@ SOURCES += \
     src/debug/widgets/propertiespanel.cpp \
 	src/debug/widgets/propertywidget.cpp \
     src/core/properties/iupdatable.cpp \
-    src/core/properties/dummyupdatable.cpp
+    src/core/properties/dummyupdatable.cpp \
+    src/debug/widgets/foldablegroup.cpp
 
 HEADERS  += \
     include/window.h \
@@ -67,6 +68,7 @@ HEADERS  += \
     include/debug/widgets/propertiespanel.h \
 	include/debug/widgets/propertywidget.h \
     include/core/properties/iupdatable.h \
-    include/core/properties/dummyupdatable.h
+    include/core/properties/dummyupdatable.h \
+    include/debug/widgets/foldablegroup.h
 
 FORMS    +=
