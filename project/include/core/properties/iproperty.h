@@ -6,6 +6,7 @@
 #include "include/debug/widgets/propertywidget.h"
 
 class PropertySet;
+class Node;
 
 class IProperty : public ChildOf<PropertySet>
 {
@@ -19,6 +20,8 @@ public:
 	IProperty(const QString& name = "Basic Property");
 	/// Destructor
 	virtual ~IProperty();
+
+	Node* node();
 
 	virtual PropertyWidget* getWidget();
 };

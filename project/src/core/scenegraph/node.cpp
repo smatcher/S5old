@@ -3,7 +3,7 @@
 #include "QtOpenGL"
 #include <QColor>
 
-Node::Node(const QString& name) : ParentOf<Node>(), ChildOf< ParentOf<Node> >(name), Transform<double>()
+Node::Node(const QString& name) : ParentOf<Node>(), ChildOf< ParentOf<Node> >(name), Transform<double>(), m_properties(this)
 {
 	m_widget = NULL;
 }

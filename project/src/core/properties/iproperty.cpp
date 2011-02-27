@@ -11,6 +11,11 @@ IProperty::~IProperty()
 
 }
 
+Node* IProperty::node()
+{
+	return parent()->node();
+}
+
 PropertyWidget* IProperty::getWidget()
 {
 	if(m_widget == NULL)

@@ -41,6 +41,8 @@ template <class Parent>
 class ChildOf
 {
 public :
+	typedef Parent *ParentPtrType;
+
 	/// Constructor, if parent is different from NULL, the constructor will ask the parent to make the link.
 	ChildOf(const QString& name, Parent* parent = NULL);
 	/// Destructor
@@ -58,7 +60,7 @@ public :
 	/// (justForget won't ask the parent to unlink, if you don't know what you are doing just forget this argument)
 	void unlinkFromParent(bool justForget = false);
 	/// Set the parent, don't use it directly, it won't tell the parent to link, link from the parent instead
-	void setParent(void* parent);
+	void setParent(Parent* parent);
 
 private :
 	/// Reference to the parent, NULL if no parent
@@ -77,6 +79,8 @@ template <class Child>
 class ParentOf
 {
 public :
+	typedef Child *ChildPtrType;
+
 	/// Constructor
 	ParentOf();
 	/// Destructor
@@ -90,13 +94,10 @@ public :
 	int childCount() const;
 	/// Link
 	void link(Child* son);
-	void link(ChildOf< ParentOf<Child> >* son);
 	/// Unlink from child, the child is not destroyed, returns a pointer to the child
 	Child* unlink(const QString& childName);
 	/// Unlink from all childs, children are not destroyed
 	void unlinkAll();
-
-	typedef Child ChildClass;
 
 private :
 	QMap<QString, Child*> m_sons;

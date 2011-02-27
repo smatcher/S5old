@@ -47,12 +47,6 @@ int ParentOf<Child>::childCount() const
 }
 
 template<class Child>
-void ParentOf<Child>::link(ChildOf< ParentOf<Child> >* son)
-{
-	link((Child*)son);
-}
-
-template<class Child>
 void ParentOf<Child>::link(Child* son)
 {
 	#ifdef DEBUG
@@ -66,7 +60,7 @@ void ParentOf<Child>::link(Child* son)
 		if(!m_sons.contains(name))
 		{
 			m_sons.insert(name,son);
-			son->setParent((void*)this);
+			son->setParent((typename Child::ParentPtrType)this);
 		}
 		else
 		{
@@ -116,7 +110,7 @@ ChildOf<Parent>::ChildOf(const QString& name, Parent* parent)
 	m_name = name;
 
 	if(parent != NULL)
-		parent->link((typename Parent::ChildClass*)this);
+		parent->link((typename Parent::ChildPtrType)this);
 }
 
 template<class Parent>
@@ -182,7 +176,7 @@ void ChildOf<Parent>::unlinkFromParent(bool justForgetParent)
 }
 
 template<class Parent>
-void ChildOf<Parent>::setParent(void* parent)
+void ChildOf<Parent>::setParent(Parent* parent)
 {
 	m_parent = static_cast<Parent*>(parent);
 }
