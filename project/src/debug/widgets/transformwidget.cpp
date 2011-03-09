@@ -1,4 +1,4 @@
-#include "include/debug/widgets/transformwidget.h"
+#include "debug/widgets/transformwidget.h"
 #include <QVBoxLayout>
 #include <QHBoxLayout>
 #include <QGroupBox>

@@ -1,5 +1,5 @@
-#include "include/core/properties/dummyupdatable.h"
-#include "include/core/scenegraph/node.h"
+#include "core/properties/dummyupdatable.h"
+#include "core/scenegraph/node.h"
 
 DummyUpdatable::DummyUpdatable() : IUpdatable(QString("DummyUpdatable"))
 {

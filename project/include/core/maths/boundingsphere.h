@@ -3,7 +3,7 @@
 #ifndef BOUNDING_SPHERE_H
 #define BOUNDING_SPHERE_H
 
-#include "include/core/maths/boundingvolume.h"
+#include "core/maths/boundingvolume.h"
 
 class BoundingSphere : public BoundingVolume
 {

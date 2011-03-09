@@ -1,6 +1,6 @@
 // trigo.cpp - IMPORTANT : everything is in DEGREES !
 
-#include "include/core/maths/trigo.h"
+#include "core/maths/trigo.h"
 #include <iostream>
 #define SIN_ARRAY_SIZE 72000
 

@@ -1,7 +1,7 @@
 #ifndef MANAGEE_H
 #define MANAGEE_H
 
-#include "include/core/managers/manager.h"
+#include "core/managers/manager.h"
 
 template <class Manager>
 class Managee

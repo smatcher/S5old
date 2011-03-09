@@ -4,9 +4,9 @@
 
  #include <math.h>
 
- #include "include/glwidget.h"
- #include "include/qtlogo.h"
-#include "include/core/managers/updatemanager.h"
+ #include "core/framework/glwidget.h"
+ #include "qtlogo.h"
+#include "core/managers/updatemanager.h"
 
  #ifndef GL_MULTISAMPLE
  #define GL_MULTISAMPLE  0x809D

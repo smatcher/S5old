@@ -1,4 +1,4 @@
-#include "include/core/properties/iproperty.h"
+#include "core/properties/iproperty.h"
 #include <QGroupBox>
 
 IProperty::IProperty(const QString& propName) : ChildOf<PropertySet>(propName)

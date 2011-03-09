@@ -1,8 +1,7 @@
-#include "include/core/framework/engine.h"
+#include "core/framework/engine.h"
 
-#include "include/core/scenegraph/scenegraph.h"
-#include "include/window.h"
-#include "include/core/maths/trigo.h"
+#include "core/scenegraph/scenegraph.h"
+#include "core/maths/trigo.h"
 
 #include <QDesktopWidget>
 

@@ -1,4 +1,4 @@
-#include "include/core/scenegraph/scenegraph.h"
+#include "core/scenegraph/scenegraph.h"
 
 SceneGraph::SceneGraph()
 {

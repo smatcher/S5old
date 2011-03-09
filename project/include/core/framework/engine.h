@@ -2,8 +2,8 @@
 #define ENGINE_HPP
 
 #include <QApplication>
-#include "include/core/scenegraph/scenegraph.h"
-#include "include/window.h"
+#include "core/scenegraph/scenegraph.h"
+#include "core/framework/window.h"
 
 class Engine : public QApplication
 {

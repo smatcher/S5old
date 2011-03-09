@@ -1,5 +1,5 @@
-#include "include/core/managers/updatemanager.h"
-#include "include/core/properties/iupdatable.h"
+#include "core/managers/updatemanager.h"
+#include "core/properties/iupdatable.h"
 #include <iostream>
 
 UpdateManager::UpdateManager()

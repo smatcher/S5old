@@ -3,10 +3,10 @@
 #ifndef TRANSFORM_H
 #define TRANSFORM_H
 
-#include "include/core/maths/vector3.h"
-#include "include/core/maths/matrix3.h"
-#include "include/core/maths/matrix4.h"
-#include "include/core/maths/trigo.h"
+#include "core/maths/vector3.h"
+#include "core/maths/matrix3.h"
+#include "core/maths/matrix4.h"
+#include "core/maths/trigo.h"
 #include <iostream>
 
 #define TRANSFORM_OPENGL_SUPPORT
@@ -153,6 +153,6 @@ typedef Transform<int>				Transformi;
 typedef Transform<short>			Transforms;
 typedef Transform<unsigned char>	Transformub;
 
-#include "include/core/maths/transform.hpp"
+#include "core/maths/transform.hpp"
 
 #endif // TRANSFORM_H

@@ -3,7 +3,7 @@
 
 #include <GL/glew.h>
 #include <QGLWidget>
-#include "include/core/scenegraph/scenegraph.h"
+#include "core/scenegraph/scenegraph.h"
 
 class QtLogo;
 class SceneGraph;

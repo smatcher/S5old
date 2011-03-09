@@ -3,7 +3,7 @@
 #ifndef BOUNDING_VOLUME_H
 #define BOUNDING_VOLUME_H
 
-#include "include/core/maths/vector3.h"
+#include "core/maths/vector3.h"
 
 class Frustum;
 

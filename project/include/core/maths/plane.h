@@ -3,8 +3,8 @@
 #ifndef PLANE_H
 #define PLANE_H
 
-#include "include/core/maths/vector3.h"
-#include "include/core/maths/constants.h"
+#include "core/maths/vector3.h"
+#include "core/maths/constants.h"
 #include <iostream>
 
 template <class T>

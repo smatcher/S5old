@@ -4,7 +4,7 @@
 #include <QWidget>
 #include <QTreeWidget>
 
-#include "include/core/scenegraph/scenegraph.h"
+#include "core/scenegraph/scenegraph.h"
 
 class GLWidget;
 class PropertiesPanel;

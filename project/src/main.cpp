@@ -1,10 +1,10 @@
 #include <QApplication>
 
-#include "include/core/framework/engine.h"
-#include "include/core/scenegraph/scenegraph.h"
-#include "include/core/scenegraph/node.h"
-#include "include/core/maths/trigo.h"
-#include "include/core/properties/dummyupdatable.h"
+#include "core/framework/engine.h"
+#include "core/scenegraph/scenegraph.h"
+#include "core/scenegraph/node.h"
+#include "core/maths/trigo.h"
+#include "core/properties/dummyupdatable.h"
 
 int main(int argc, char *argv[])
 {

@@ -1,7 +1,7 @@
 // aabb.cpp
 
-#include "include/core/maths/aabb.h"
-#include "include/core/maths/frustum.h"
+#include "core/maths/aabb.h"
+#include "core/maths/frustum.h"
 
 AABB::AABB(const Vector3f& center, const Vector3f& half_dimensions) : BoundingVolume(center)
 {

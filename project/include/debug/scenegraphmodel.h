@@ -1,8 +1,8 @@
 #ifndef SCENEGRAPHMODEL_H
 #define SCENEGRAPHMODEL_H
 
-#include "include/core/scenegraph/scenegraph.h"
-#include "include/core/scenegraph/node.h"
+#include "core/scenegraph/scenegraph.h"
+#include "core/scenegraph/node.h"
 #include <QAbstractItemModel>
 #include <QItemSelectionModel>
 

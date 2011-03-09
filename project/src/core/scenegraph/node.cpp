@@ -1,5 +1,5 @@
-#include "include/core/scenegraph/node.h"
-#include "include/debug/widgets/nodewidget.h"
+#include "core/scenegraph/node.h"
+#include "debug/widgets/nodewidget.h"
 #include "QtOpenGL"
 #include <QColor>
 

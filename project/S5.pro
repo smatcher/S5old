@@ -11,9 +11,7 @@ TEMPLATE = app
 
 SOURCES += \
     src/main.cpp\
-    src/window.cpp \
-    src/glwidget.cpp \
-	src/qtlogo.cpp \
+    src/qtlogo.cpp \
     src/core/scenegraph/node.cpp \
     src/core/scenegraph/scenegraph.cpp \
     src/core/properties/propertyset.cpp \
@@ -22,21 +20,21 @@ SOURCES += \
     src/core/maths/frustum.cpp \
     src/core/maths/boundingsphere.cpp \
     src/core/maths/aabb.cpp \
-	src/debug/scenegraphview.cpp \
-	src/debug/scenegraphmodel.cpp \
-	src/debug/widgets/nodewidget.cpp \
+    src/debug/scenegraphview.cpp \
+    src/debug/scenegraphmodel.cpp \
+    src/debug/widgets/nodewidget.cpp \
     src/debug/widgets/transformwidget.cpp \
     src/debug/widgets/propertiespanel.cpp \
-	src/debug/widgets/propertywidget.cpp \
+    src/debug/widgets/propertywidget.cpp \
     src/core/properties/iupdatable.cpp \
     src/core/properties/dummyupdatable.cpp \
     src/debug/widgets/foldablegroup.cpp \
     src/core/managers/updatemanager.cpp \
-    src/core/framework/engine.cpp
+    src/core/framework/engine.cpp \
+    src/core/framework/glwidget.cpp \
+    src/core/framework/window.cpp 
 
 HEADERS  += \
-    include/window.h \
-    include/glwidget.h \
     include/qtlogo.h \
     include/core/utils/parenting.h \
     include/core/utils/parenting.hpp \
@@ -63,12 +61,12 @@ HEADERS  += \
     include/core/maths/boundingvolume.h \
     include/core/maths/boundingsphere.h \
     include/core/maths/aabb.h \
-	include/debug/scenegraphmodel.h \
-	include/debug/scenegraphview.h \
-	include/debug/widgets/nodewidget.h \
+    include/debug/scenegraphmodel.h \
+    include/debug/scenegraphview.h \
+    include/debug/widgets/nodewidget.h \
     include/debug/widgets/transformwidget.h \
     include/debug/widgets/propertiespanel.h \
-	include/debug/widgets/propertywidget.h \
+    include/debug/widgets/propertywidget.h \
     include/core/properties/iupdatable.h \
     include/core/properties/dummyupdatable.h \
     include/debug/widgets/foldablegroup.h \
@@ -77,6 +75,11 @@ HEADERS  += \
     include/core/managers/updatemanager.h \
     include/core/managers/managee.h \
     include/core/managers/managee.hpp \
-    include/core/framework/engine.h
+    include/core/framework/engine.h \
+    include/core/framework/glwidget.h \
+    include/core/framework/window.h 
+
+INCLUDEPATH += \
+	include
 
 FORMS    +=

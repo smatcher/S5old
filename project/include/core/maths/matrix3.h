@@ -4,7 +4,7 @@
 #define MATRIX3_H
 
 #include <iostream>
-#include "include/core/maths/vector3.h"
+#include "core/maths/vector3.h"
 
 template <class T>
 class Matrix3
@@ -140,6 +140,6 @@ typedef Matrix3<int> Matrix3i;
 typedef Matrix3<float> Matrix3f;
 typedef Matrix3<double> Matrix3d;
 
-#include "include/core/maths/matrix3.hpp"
+#include "core/maths/matrix3.hpp"
 
 #endif	// MATRIX3_H

@@ -1,7 +1,7 @@
 // frustum.cpp
 
-#include "include/core/maths/frustum.h"
-#include "include/core/maths/constants.h"
+#include "core/maths/frustum.h"
+#include "core/maths/constants.h"
 /*
 #include <GL/glew.h>
 #include <GL/glfw.h>

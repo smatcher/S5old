@@ -2,7 +2,7 @@
 #define TRANSFORMWIDGET_H
 
 #include <QGroupBox>
-#include "include/core/maths/transform.h"
+#include "core/maths/transform.h"
 
 class TransformWidget : public QGroupBox
 {

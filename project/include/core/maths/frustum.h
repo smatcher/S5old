@@ -3,9 +3,9 @@
 #ifndef FRUSTUM_H
 #define FRUSTUM_H
 
-#include "include/core/maths/plane.h"
-#include "include/core/maths/boundingvolume.h"
-#include "include/core/maths/matrix4.h"
+#include "core/maths/plane.h"
+#include "core/maths/boundingvolume.h"
+#include "core/maths/matrix4.h"
 
 class Frustum
 {

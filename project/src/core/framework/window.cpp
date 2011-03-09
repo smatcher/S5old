@@ -1,9 +1,9 @@
 #include <QtGui>
 
-#include "include/debug/widgets/nodewidget.h"
-#include "include/debug/widgets/propertiespanel.h"
-#include "include/glwidget.h"
-#include "include/window.h"
+#include "debug/widgets/nodewidget.h"
+#include "debug/widgets/propertiespanel.h"
+#include "core/framework/window.h"
+#include "core/framework/glwidget.h"
 
  Window::Window(SceneGraph& sceneGraph)
  {

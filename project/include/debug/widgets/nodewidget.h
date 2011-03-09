@@ -3,8 +3,8 @@
 
 #include <QWidget>
 
-#include "include/core/scenegraph/node.h"
-#include "include/debug/widgets/transformwidget.h"
+#include "core/scenegraph/node.h"
+#include "debug/widgets/transformwidget.h"
 #include <QLayout>
 
 class NodeWidget : public QWidget

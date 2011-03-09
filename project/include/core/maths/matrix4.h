@@ -4,8 +4,8 @@
 #define MATRIX4_H
 
 #include <iostream>
-#include "include/core/maths/vector4.h"
-#include "include/core/maths/matrix3.h"
+#include "core/maths/vector4.h"
+#include "core/maths/matrix3.h"
 
 template <class T>
 class Matrix4
@@ -144,7 +144,7 @@ typedef Matrix4<int> Matrix4i;
 typedef Matrix4<float> Matrix4f;
 typedef Matrix4<double> Matrix4d;
 
-#include "include/core/maths/matrix4.hpp"
+#include "core/maths/matrix4.hpp"
 
 #endif	// MATRIX4_H
 

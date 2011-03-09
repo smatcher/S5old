@@ -131,6 +131,6 @@ typedef Vector4<int>			Vector4i;
 typedef Vector4<short>			Vector4s;
 typedef Vector4<unsigned char>	Vector4ub;
 
-#include "include/core/maths/vector4.hpp"
+#include "core/maths/vector4.hpp"
 
 #endif	// VECTOR_4_H

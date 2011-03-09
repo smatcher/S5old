@@ -5,7 +5,7 @@
 #ifndef AABB_H
 #define AABB_H
 
-#include "include/core/maths/boundingvolume.h"
+#include "core/maths/boundingvolume.h"
 
 class AABB : public BoundingVolume
 {

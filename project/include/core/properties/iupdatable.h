@@ -1,9 +1,9 @@
 #ifndef IUPDATABLE_H
 #define IUPDATABLE_H
 
-#include "include/core/properties/iproperty.h"
-#include "include/core/managers/managee.h"
-#include "include/core/managers/updatemanager.h"
+#include "core/properties/iproperty.h"
+#include "core/managers/managee.h"
+#include "core/managers/updatemanager.h"
 
 class UpdateManager;
 

@@ -4,7 +4,7 @@
 #include <QWidget>
 #include <QLayout>
 #include <QItemSelection>
-#include "include/debug/widgets/nodewidget.h"
+#include "debug/widgets/nodewidget.h"
 
 class PropertiesPanel : public QWidget
 {

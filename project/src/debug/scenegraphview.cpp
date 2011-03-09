@@ -1,4 +1,4 @@
-#include "include/debug/scenegraphview.h"
+#include "debug/scenegraphview.h"
 
 SceneGraphView::SceneGraphView(SceneGraph* item)
 {

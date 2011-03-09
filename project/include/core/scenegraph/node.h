@@ -1,10 +1,10 @@
 #ifndef NODE_H
 #define NODE_H
 
-#include "include/core/utils/parenting.h"
-#include "include/core/maths/transform.h"
-#include "include/core/properties/propertyset.h"
-#include "include/glwidget.h"
+#include "core/utils/parenting.h"
+#include "core/maths/transform.h"
+#include "core/properties/propertyset.h"
+#include "core/framework/glwidget.h"
 
 class GLWidget;
 class NodeWidget;

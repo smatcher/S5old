@@ -2,8 +2,8 @@
 #ifndef TRANSFORM_HPP_
 #define TRANSFORM_HPP_
 
-#include "include/core/maths/plane.h"
-#include "include/core/maths/transform.h"
+#include "core/maths/plane.h"
+#include "core/maths/transform.h"
 
 // Constructeur
 template <class T>

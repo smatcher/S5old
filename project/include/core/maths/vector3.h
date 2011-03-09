@@ -144,6 +144,6 @@ typedef Vector3<int>			Vector3i;
 typedef Vector3<short>			Vector3s;
 typedef Vector3<unsigned char>	Vector3ub;
 
-#include "include/core/maths/vector3.hpp"
+#include "core/maths/vector3.hpp"
 
 #endif	// VECTOR_3_H

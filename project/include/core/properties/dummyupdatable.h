@@ -1,7 +1,7 @@
 #ifndef DUMMYUPDATABLE_H
 #define DUMMYUPDATABLE_H
 
-#include "include/core/properties/iupdatable.h"
+#include "core/properties/iupdatable.h"
 
 class DummyUpdatable : public IUpdatable
 {

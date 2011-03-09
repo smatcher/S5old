@@ -1,4 +1,4 @@
-#include "include/core/properties/propertyset.h"
+#include "core/properties/propertyset.h"
 
 PropertySet::PropertySet(Node* node)
 {

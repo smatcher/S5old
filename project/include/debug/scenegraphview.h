@@ -1,7 +1,7 @@
 #ifndef SCENEGRAPHVIEW_H
 #define SCENEGRAPHVIEW_H
 
-#include "include/core/scenegraph/scenegraph.h"
+#include "core/scenegraph/scenegraph.h"
 #include "QTreeView"
 
 class SceneGraph;

@@ -79,7 +79,7 @@
 	
 ****************************************************************************/
 	
-#include "include/qtlogo.h"
+#include "qtlogo.h"
 	
 static const qreal tee_height = 0.311126;
 static const qreal cross_width = 0.25;

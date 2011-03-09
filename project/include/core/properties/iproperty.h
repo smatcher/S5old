@@ -1,9 +1,9 @@
 #ifndef IPROPERTY_H
 #define IPROPERTY_H
 
-#include "include/core/utils/parenting.h"
-#include "include/core/properties/propertyset.h"
-#include "include/debug/widgets/propertywidget.h"
+#include "core/utils/parenting.h"
+#include "core/properties/propertyset.h"
+#include "debug/widgets/propertywidget.h"
 
 class PropertySet;
 class Node;

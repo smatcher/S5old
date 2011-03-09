@@ -1,4 +1,4 @@
-#include "include/debug/widgets/foldablegroup.h"
+#include "debug/widgets/foldablegroup.h"
 #include <QLabel>
 #include <QPushButton>
 #include <QGridLayout>

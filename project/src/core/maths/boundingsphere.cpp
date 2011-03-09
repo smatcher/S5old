@@ -1,8 +1,8 @@
 // boundingsphere.cpp
 
-#include "include/core/maths/boundingsphere.h"
-#include "include/core/maths/frustum.h"
-#include "include/core/maths/constants.h"
+#include "core/maths/boundingsphere.h"
+#include "core/maths/frustum.h"
+#include "core/maths/constants.h"
 
 BoundingSphere::BoundingSphere(const Vector3f& center, float radius) : BoundingVolume(center)
 {

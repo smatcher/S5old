@@ -1,4 +1,4 @@
-#include "include/core/properties/iupdatable.h"
+#include "core/properties/iupdatable.h"
 
 IUpdatable::IUpdatable(const QString& propName) : IProperty(propName), Managee<UpdateManager>()
 {
