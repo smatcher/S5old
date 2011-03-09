@@ -1,8 +1,6 @@
 #include <QApplication>
-#include <QDesktopWidget>
-//#include <QPlastiqueStyle>
 
-#include "include/window.h"
+#include "include/core/framework/engine.h"
 #include "include/core/scenegraph/scenegraph.h"
 #include "include/core/scenegraph/node.h"
 #include "include/core/maths/trigo.h"
@@ -10,10 +8,10 @@
 
 int main(int argc, char *argv[])
 {
-	QApplication app(argc, argv);
-	app.setStyle("Plastique");
+	Engine engine(argc, argv);
+	engine.setStyle("Plastique");
 
-	SceneGraph sg;
+	SceneGraph* sg = engine.getScenegraph_TEMPORARY();
 	Node n1("Node 1");
 	Node s11("Son 1 of 1");
 	Node s12("Son 2 of 1");
@@ -32,10 +30,10 @@ int main(int argc, char *argv[])
         n1.properties().link(&prop1);
         n1.properties().link(&prop2);
 
-	sg.link(&n1);
-	sg.link(&n2);
-	sg.link(&n3);
-	sg.link(&n4);
+	sg->link(&n1);
+	sg->link(&n2);
+	sg->link(&n3);
+	sg->link(&n4);
 	n1.link(&s11);
 	n1.link(&s12);
 	n2.link(&s21);
@@ -44,27 +42,13 @@ int main(int argc, char *argv[])
 	s41.link(&nn);
 	s41.link(&pro);
 
-	initTrigo();
-
 	n1.moveTo(Vector3d(2,2,2));
 	n1.rotate(Vector3d(0,1,0),75);
 	s11.moveTo(Vector3d(0.5,0,0.5));
 	s12.moveTo(Vector3d(-0.5,0,-0.5));
 
-	Window window(sg);
-	window.resize(window.sizeHint());
-	int desktopArea = QApplication::desktop()->width() *
-					  QApplication::desktop()->height();
-	int widgetArea = window.width() * window.height();
+	int ret = engine.exec();
 
-	if (((float)widgetArea / (float)desktopArea) < 0.75f)
-		window.show();
-	else
-		window.showMaximized();
-
-	int ret = app.exec();
-
-	sg.unlinkAll();
 	n1.unlinkAll();
 	n2.unlinkAll();
 	n3.unlinkAll();

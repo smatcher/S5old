@@ -31,7 +31,8 @@ SOURCES += \
     src/core/properties/iupdatable.cpp \
     src/core/properties/dummyupdatable.cpp \
     src/debug/widgets/foldablegroup.cpp \
-    src/core/managers/updatemanager.cpp
+    src/core/managers/updatemanager.cpp \
+    src/core/framework/engine.cpp
 
 HEADERS  += \
     include/window.h \
@@ -75,6 +76,7 @@ HEADERS  += \
     include/core/managers/manager.hpp \
     include/core/managers/updatemanager.h \
     include/core/managers/managee.h \
-    include/core/managers/managee.hpp
+    include/core/managers/managee.hpp \
+    include/core/framework/engine.h
 
 FORMS    +=
