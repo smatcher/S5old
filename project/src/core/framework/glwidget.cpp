@@ -54,7 +54,6 @@
 	 if (angle != xRot) {
 		 xRot = angle;
 		 emit xRotationChanged(angle);
-		 updateGL();
 	 }
  }
 
@@ -64,7 +63,6 @@
 	 if (angle != yRot) {
 		 yRot = angle;
 		 emit yRotationChanged(angle);
-		 updateGL();
 	 }
  }
 
@@ -74,9 +72,13 @@
 	 if (angle != zRot) {
 		 zRot = angle;
 		 emit zRotationChanged(angle);
-		 updateGL();
 	 }
  }
+
+void GLWidget::redraw()
+{
+	updateGL();
+}
 
  void GLWidget::initializeGL()
  {
@@ -97,7 +99,6 @@
 
  void GLWidget::paintGL()
  {
-     ((UpdateManager*)UpdateManager::getInstance())->update(0.1);
 
 	 glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	 glLoadIdentity();

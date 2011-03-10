@@ -9,7 +9,6 @@
 int main(int argc, char *argv[])
 {
 	Engine engine(argc, argv);
-	engine.setStyle("Plastique");
 
 	SceneGraph* sg = engine.getScenegraph_TEMPORARY();
 	Node n1("Node 1");
@@ -47,7 +46,7 @@ int main(int argc, char *argv[])
 	s11.moveTo(Vector3d(0.5,0,0.5));
 	s12.moveTo(Vector3d(-0.5,0,-0.5));
 
-	int ret = engine.exec();
+	int ret = engine.start();
 
 	n1.unlinkAll();
 	n2.unlinkAll();

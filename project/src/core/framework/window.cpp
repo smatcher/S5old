@@ -26,7 +26,7 @@
 					 propertiesWidget,
 					 SLOT(selectionChanged(const QItemSelection&,const QItemSelection&)));
 
-	setWindowTitle(tr("Hello GL"));
+	setWindowTitle(tr("S5 Engine"));
  }
 
  void Window::keyPressEvent(QKeyEvent *e)

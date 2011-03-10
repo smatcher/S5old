@@ -15,6 +15,7 @@ class Window : public QWidget
 
 public:
 	Window(SceneGraph& sceneGraph);
+	GLWidget* getGLW_TEMPORARY() {return glWidget;}
 
 protected:
 	void keyPressEvent(QKeyEvent *event);

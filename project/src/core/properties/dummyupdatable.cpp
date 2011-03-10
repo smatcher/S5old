@@ -3,7 +3,7 @@
 
 DummyUpdatable::DummyUpdatable() : IUpdatable(QString("DummyUpdatable"))
 {
-	this->angle = 10;
+	this->angle = 180;
 }
 
 void DummyUpdatable::update(double elapsed_time)

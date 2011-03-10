@@ -19,10 +19,12 @@ public:
 	QSize minimumSizeHint() const;
 	QSize sizeHint() const;
 
+
 public slots:
 	void setXRotation(int angle);
 	void setYRotation(int angle);
 	void setZRotation(int angle);
+	void redraw();
 
 signals:
 	void xRotationChanged(int angle);
