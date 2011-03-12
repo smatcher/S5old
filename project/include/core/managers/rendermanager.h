@@ -3,11 +3,11 @@
 
 #include "core/managers/manager.h"
 
-class Rendered;
+class IRenderable;
 class GLWidget;
 class SceneGraph;
 
-class RenderManager : public Manager<Rendered>
+class RenderManager : public Manager<IRenderable>
 {
 private :
 	GLWidget* m_context;

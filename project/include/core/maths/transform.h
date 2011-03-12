@@ -12,7 +12,7 @@
 #define TRANSFORM_OPENGL_SUPPORT
 
 #ifdef TRANSFORM_OPENGL_SUPPORT
-	#include <GL/glew.h>
+//	#include <GL/glew.h> // pas besoin visiblement
 	#include <GL/glfw.h>
 #endif
 

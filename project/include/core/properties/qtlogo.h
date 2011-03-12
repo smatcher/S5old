@@ -29,19 +29,14 @@
 ** Nokia at qt-info@nokia.com.
 **
 **
-**
-**
-**
-**
-**
-**
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
 	
 #ifndef QTLOGO_H
 #define QTLOGO_H
-	
+
+#include "core/properties/irenderable.h"
 #include <QObject>
 #include <QtOpenGL>
 	
@@ -49,13 +44,14 @@ class Patch;
 class Geometry;
 	
 //! [0]
-class QtLogo : public QObject
+class QtLogo : public QObject, public IRenderable
 {
 public:
     QtLogo(QObject *parent, int d = 64, qreal s = 1.0);
     virtual ~QtLogo();
     void setColor(QColor c);
-    void draw() const;
+	void draw() const;
+	void render(double elapsed_time, GLWidget* context);
 	
 private:
     void buildGeometry(int d, qreal s);

@@ -5,6 +5,7 @@
 #include "core/scenegraph/node.h"
 #include "core/maths/trigo.h"
 #include "core/properties/dummyupdatable.h"
+#include "core/properties/qtlogo.h"
 #ifdef Q_WS_X11
 	#include <X11/Xlib.h>
 #endif
@@ -33,10 +34,16 @@ int main(int argc, char *argv[])
         Node pro("Profit");
 
         IProperty prop1;
-        DummyUpdatable prop2;
+		DummyUpdatable prop2;
+		QtLogo prop3(engine.getGLW_TEMPORARY());
+		QtLogo prop31(engine.getGLW_TEMPORARY());
+		QtLogo prop32(engine.getGLW_TEMPORARY());
 
         n1.properties().link(&prop1);
         n1.properties().link(&prop2);
+		n1.properties().link(&prop3);
+		s11.properties().link(&prop31);
+		s12.properties().link(&prop32);
 
 	sg->link(&n1);
 	sg->link(&n2);

@@ -30,6 +30,7 @@ public :
 	bool isRunning() {return m_running;}
 
 	SceneGraph* getScenegraph_TEMPORARY() {return &m_scene;}
+	GLWidget*   getGLW_TEMPORARY() {return m_window.getGLW_TEMPORARY();}
 };
 
 #endif // ENGINE_HPP

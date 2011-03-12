@@ -1,6 +1,7 @@
 #include "core/managers/rendermanager.h"
 #include "core/framework/glwidget.h"
 #include "core/scenegraph/scenegraph.h"
+#include "core/properties/irenderable.h"
 
 #include <QtOpenGL>
 #include <math.h>
@@ -61,6 +62,16 @@ void RenderManager::render(double elapsed_time, SceneGraph* sg)
 	glRotatef(m_context->xRot / 16.0, 1.0, 0.0, 0.0);
 	glRotatef(m_context->yRot / 16.0, 0.0, 1.0, 0.0);
 	glRotatef(m_context->zRot / 16.0, 0.0, 0.0, 1.0);
+
+	std::cout<< registeredManagees.count() << " Renderable nodes to render." << std::endl;
+
+	for(int index = 0; index < registeredManagees.count(); index++)
+	{
+		glPushMatrix();
+		IRenderable* prop = (IRenderable*)registeredManagees[index];
+		prop->render(elapsed_time, m_context);
+		glPopMatrix();
+	}
 
 	glDisable(GL_LIGHTING);
 	for(int i=0 ; i<sg->childCount() ; i++)

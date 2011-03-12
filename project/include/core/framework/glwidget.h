@@ -1,7 +1,7 @@
 #ifndef GLWIDGET_H
 #define GLWIDGET_H
 
-#include <GL/glew.h>
+// #include <GL/glew.h> // pas besoin visiblement
 #include <QGLWidget>
 #include "core/scenegraph/scenegraph.h"
 
