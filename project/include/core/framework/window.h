@@ -4,26 +4,30 @@
 #include <QWidget>
 #include <QTreeWidget>
 
-#include "core/scenegraph/scenegraph.h"
-
 class GLWidget;
 class PropertiesPanel;
+class Engine;
 
-class Window : public QWidget
+class AppWindow : public QWidget
 {
 	Q_OBJECT
 
 public:
-	Window(SceneGraph& sceneGraph);
-	GLWidget* getGLW_TEMPORARY() {return glWidget;}
+	AppWindow(Engine* engine);
+	GLWidget* getGLW_TEMPORARY() {return m_glWidget;}
 
 protected:
 	void keyPressEvent(QKeyEvent *event);
+	void closeEvent(QCloseEvent *evt);
 
 private:
-	GLWidget* glWidget;
-	PropertiesPanel* propertiesWidget;
-	QTreeView* treeWidget;
+	// widgets
+	GLWidget*        m_glWidget;
+	PropertiesPanel* m_propertiesWidget;
+	QTreeView*       m_treeWidget;
+
+	// engine
+	Engine* m_engine;
 };
 
 #endif

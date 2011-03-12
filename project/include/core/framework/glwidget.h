@@ -5,48 +5,40 @@
 #include <QGLWidget>
 #include "core/scenegraph/scenegraph.h"
 
-class QtLogo;
-class SceneGraph;
-
 class GLWidget : public QGLWidget
 {
 	Q_OBJECT
 
 public:
-	GLWidget(const SceneGraph&, QWidget *parent = 0);
+	GLWidget(QWidget *parent = 0);
 	virtual ~GLWidget();
 
 	QSize minimumSizeHint() const;
 	QSize sizeHint() const;
 
-
-public slots:
 	void setXRotation(int angle);
 	void setYRotation(int angle);
 	void setZRotation(int angle);
-	void redraw();
 
-signals:
-	void xRotationChanged(int angle);
-	void yRotationChanged(int angle);
-	void zRotationChanged(int angle);
+	bool needResize(QSize* size);
+	void isResized();
+
+	int xRot;
+	int yRot;
+	int zRot;
 
 protected:
-	void initializeGL();
-	void paintGL();
-	void resizeGL(int width, int height);
+	void resizeEvent(QResizeEvent *evt);
+	void paintEvent(QPaintEvent *);
+	void closeEvent(QCloseEvent *evt);
 	void mousePressEvent(QMouseEvent *event);
 	void mouseMoveEvent(QMouseEvent *event);
 
 private:
-	QtLogo *logo;
-	const SceneGraph& m_sg;
-	int xRot;
-	int yRot;
-	int zRot;
 	QPoint lastPos;
-	QColor qtGreen;
-	QColor qtPurple;
+
+	QSize m_newSize;
+	bool  m_needResize;
 };
 
 #endif

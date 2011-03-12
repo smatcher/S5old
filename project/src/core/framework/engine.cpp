@@ -6,22 +6,12 @@
 
 #include <QDesktopWidget>
 
-void EngineLoop::run()
-{
-	forever
-	{
-		msleep(1000/60);
-		((UpdateManager*)UpdateManager::getInstance())->update(1.0/60);
-		emit needRedraw();
-		//m_gl->glupdate();
-	}
-}
-
 Engine::Engine(int argc, char *argv[]) :
 	m_app(argc, argv),
 	m_scene(),
-	m_window(m_scene),
-	m_loopThread(m_window.getGLW_TEMPORARY())
+	m_window(this),
+	m_loopThread(this,m_window.getGLW_TEMPORARY()),
+	m_running(false)
 {
 	init(argc, argv);
 }
@@ -46,14 +36,23 @@ void Engine::init(int argc, char *argv[])
 		m_window.show();
 	else
 		m_window.showMaximized();
-
 }
 
 int Engine::start()
 {
 	int ret;
+	m_running = true;
 	m_loopThread.start();
+
 	ret = m_app.exec();
+
+	m_running = false;
 	m_loopThread.wait();
 	return ret;
+}
+
+void Engine::stop()
+{
+	m_running = false;
+	m_loopThread.wait();
 }

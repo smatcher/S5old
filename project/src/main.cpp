@@ -5,9 +5,18 @@
 #include "core/scenegraph/node.h"
 #include "core/maths/trigo.h"
 #include "core/properties/dummyupdatable.h"
+#ifdef Q_WS_X11
+	#include <X11/Xlib.h>
+#endif
+
+
 
 int main(int argc, char *argv[])
 {
+	#ifdef Q_WS_X11
+		XInitThreads();
+	#endif
+
 	Engine engine(argc, argv);
 
 	SceneGraph* sg = engine.getScenegraph_TEMPORARY();

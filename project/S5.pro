@@ -32,7 +32,9 @@ SOURCES += \
     src/core/managers/updatemanager.cpp \
     src/core/framework/engine.cpp \
     src/core/framework/glwidget.cpp \
-    src/core/framework/window.cpp 
+    src/core/framework/window.cpp \ 
+    src/core/framework/engineloop.cpp \
+    src/core/managers/rendermanager.cpp
 
 HEADERS  += \
     include/qtlogo.h \
@@ -45,7 +47,7 @@ HEADERS  += \
     include/core/maths/vector4.hpp \
     include/core/maths/vector4.h \
     include/core/maths/vector3.hpp \
-    include/core/maths/vector3.h \
+	include/core/maths/vector3.h \
     include/core/maths/vector2.hpp \
     include/core/maths/vector2.h \
     include/core/maths/trigo.h \
@@ -77,7 +79,9 @@ HEADERS  += \
     include/core/managers/managee.hpp \
     include/core/framework/engine.h \
     include/core/framework/glwidget.h \
-    include/core/framework/window.h 
+    include/core/framework/window.h \ 
+    include/core/framework/engineloop.h \
+    include/core/managers/rendermanager.h
 
 INCLUDEPATH += \
 	include

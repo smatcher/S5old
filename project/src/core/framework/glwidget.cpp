@@ -1,29 +1,22 @@
-#include <QtGui>
-#include <GL/glew.h>
- #include <QtOpenGL>
-
- #include <math.h>
-
- #include "core/framework/glwidget.h"
- #include "qtlogo.h"
+#include "core/framework/glwidget.h"
 #include "core/managers/updatemanager.h"
+
+#include <QtGui>
 
  #ifndef GL_MULTISAMPLE
  #define GL_MULTISAMPLE  0x809D
  #endif
 
- GLWidget::GLWidget(const SceneGraph& sg, QWidget *parent)
-	 : QGLWidget(QGLFormat(QGL::SampleBuffers), parent), m_sg(sg)
+ GLWidget::GLWidget(QWidget *parent)
+		: QGLWidget(parent)
  {
-	 logo = 0;
 	 xRot = 0;
 	 yRot = 0;
 	 zRot = 0;
-
-	 qtGreen = QColor::fromCmykF(0.20, 0.0, 1.0, 0.0);
-	 qtPurple = QColor::fromCmykF(0.39, 0.39, 0.0, 0.0);
+	 m_needResize = false;
 
 	 setSizePolicy(QSizePolicy::Minimum,QSizePolicy::Minimum);
+	 setAutoBufferSwap(false);
  }
 
  GLWidget::~GLWidget()
@@ -53,7 +46,6 @@
 	 qNormalizeAngle(angle);
 	 if (angle != xRot) {
 		 xRot = angle;
-		 emit xRotationChanged(angle);
 	 }
  }
 
@@ -62,7 +54,6 @@
 	 qNormalizeAngle(angle);
 	 if (angle != yRot) {
 		 yRot = angle;
-		 emit yRotationChanged(angle);
 	 }
  }
 
@@ -71,14 +62,10 @@
 	 qNormalizeAngle(angle);
 	 if (angle != zRot) {
 		 zRot = angle;
-		 emit zRotationChanged(angle);
 	 }
  }
-
-void GLWidget::redraw()
-{
-	updateGL();
-}
+/*
+ TODO : move to render thread
 
  void GLWidget::initializeGL()
  {
@@ -129,6 +116,9 @@ void GLWidget::redraw()
  #endif
 	 glMatrixMode(GL_MODELVIEW);
  }
+*/
+
+
 
  void GLWidget::mousePressEvent(QMouseEvent *event)
  {
@@ -150,3 +140,30 @@ void GLWidget::redraw()
 	 lastPos = event->pos();
  }
 
+ void GLWidget::resizeEvent(QResizeEvent *evt)
+ {
+	 m_newSize = evt->size();
+	 m_needResize = true;
+	 //glt.resizeViewport(evt->size());
+ }
+
+ void GLWidget::paintEvent(QPaintEvent *)
+ {
+	 // Handled by an other thread.
+ }
+
+void GLWidget::closeEvent(QCloseEvent *evt)
+{
+	QGLWidget::closeEvent(evt);
+}
+
+ bool GLWidget::needResize(QSize* size)
+ {
+	 *size = m_newSize;
+	 return m_needResize;
+ }
+
+ void GLWidget::isResized()
+ {
+	 m_needResize = false;
+ }
