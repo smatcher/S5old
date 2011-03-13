@@ -4,6 +4,7 @@
 #include "core/properties/irenderable.h"
 
 #include <QtOpenGL>
+#include <QGLFormat>
 #include <math.h>
 
 RenderManager::RenderManager() : m_context(NULL)
@@ -18,8 +19,11 @@ void RenderManager::init(GLWidget* context)
 {
 	m_context = context;
 
-	m_context->makeCurrent();
+	QGLFormat format = m_context->format();
+	format.setSwapInterval(1);
+	m_context->setFormat(format);
 
+	m_context->makeCurrent();
 	m_context->qglClearColor(Qt::black);
 	glEnable(GL_DEPTH_TEST);
 	glEnable(GL_CULL_FACE);
@@ -63,7 +67,7 @@ void RenderManager::render(double elapsed_time, SceneGraph* sg)
 	glRotatef(m_context->yRot / 16.0, 0.0, 1.0, 0.0);
 	glRotatef(m_context->zRot / 16.0, 0.0, 0.0, 1.0);
 
-	std::cout<< registeredManagees.count() << " Renderable nodes to render." << std::endl;
+	//std::cout<< registeredManagees.count() << " Renderable nodes to render." << std::endl;
 
 	for(int index = 0; index < registeredManagees.count(); index++)
 	{

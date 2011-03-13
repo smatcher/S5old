@@ -22,7 +22,6 @@ void EngineLoop::run()
 
 	while(m_engine->isRunning())
 	{
-		msleep(1000/60);
 		updateManager->update(1.0/60);
 		renderManager->render(1000/60,m_engine->getScenegraph_TEMPORARY());
 	}

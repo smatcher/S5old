@@ -12,7 +12,7 @@ UpdateManager::~UpdateManager()
 
 void UpdateManager::update(double elapsed_time)
 {
-    std::cout<< registeredManagees.count() << " Updatable nodes to update." << std::endl;
+	//std::cout<< registeredManagees.count() << " Updatable nodes to update." << std::endl;
 
     for(int index = 0; index < registeredManagees.count(); index++)
     {
