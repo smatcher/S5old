@@ -14,6 +14,8 @@ class AppWindow : public QWidget
 
 public:
 	AppWindow(Engine* engine);
+	virtual ~AppWindow();
+
 	GLWidget* getGLW_TEMPORARY() {return m_glWidget;}
 
 protected:

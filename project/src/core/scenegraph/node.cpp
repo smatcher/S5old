@@ -3,7 +3,7 @@
 #include "QtOpenGL"
 #include <QColor>
 
-Node::Node(const QString& name) : ParentOf<Node>(), ChildOf< ParentOf<Node> >(name), Transform<double>(), m_properties(this)
+Node::Node(const QString& name) : ChildOf<ParentOfNode>(name), Transform<double>(), m_properties(this)
 {
 	m_widget = NULL;
 }
@@ -11,6 +11,25 @@ Node::Node(const QString& name) : ParentOf<Node>(), ChildOf< ParentOf<Node> >(na
 Node::~Node()
 {
 
+}
+
+Transformd Node::globalTransform()
+{
+	Transformd ret;
+
+	Transformd* trans = static_cast<Transformd*>(this);
+
+	if(parent()->type() == ParentOfNode::NODE)
+	{
+		Node* parentNode = static_cast<Node*>(parent());
+		ret = parentNode->globalTransform() * (*trans);
+	}
+	else
+	{
+		ret = (*trans);
+	}
+
+	return ret;
 }
 
 void Node::drawTransform(const GLWidget* widget, bool recursive) const

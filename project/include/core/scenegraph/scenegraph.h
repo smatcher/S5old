@@ -2,7 +2,7 @@
 #define SCENEGRAPH_H
 
 #include "core/utils/parenting.h"
-#include "core/scenegraph/node.h"
+#include "core/scenegraph/parentofnode.h"
 
 #include "debug/scenegraphview.h"
 #include "debug/scenegraphmodel.h"
@@ -10,11 +10,12 @@
 class SceneGraphModel;
 class SceneGraphView;
 
-class SceneGraph : public ParentOf<Node>
+class SceneGraph : public ParentOfNode
 {		
 public:
     SceneGraph();
 	virtual ~SceneGraph();
+	virtual ParentOfNode::TYPE type() {return ParentOfNode::SCENEGRAPH;}
 
 	SceneGraphView* getDebugView();
 	SceneGraphModel* getDebugModel();

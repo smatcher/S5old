@@ -83,7 +83,8 @@ HEADERS  += \
     include/core/framework/window.h \ 
     include/core/framework/engineloop.h \
     include/core/managers/rendermanager.h \
-    include/core/properties/irenderable.h
+    include/core/properties/irenderable.h \
+    include/core/scenegraph/parentofnode.h
 
 INCLUDEPATH += \
 	include

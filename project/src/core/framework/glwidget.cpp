@@ -2,10 +2,11 @@
 #include "core/managers/updatemanager.h"
 
 #include <QtGui>
+#include <iostream>
 
- #ifndef GL_MULTISAMPLE
- #define GL_MULTISAMPLE  0x809D
- #endif
+#ifndef GL_MULTISAMPLE
+#define GL_MULTISAMPLE  0x809D
+#endif
 
  GLWidget::GLWidget(QWidget *parent)
 		: QGLWidget(parent)
@@ -21,6 +22,7 @@
 
  GLWidget::~GLWidget()
  {
+	 std::cout << "~GLWidget()" << std::endl;
  }
 
  QSize GLWidget::minimumSizeHint() const
@@ -154,6 +156,7 @@
 
 void GLWidget::closeEvent(QCloseEvent *evt)
 {
+	std::cout << "GLWidget :: closeevent" << std::endl;
 	QGLWidget::closeEvent(evt);
 }
 

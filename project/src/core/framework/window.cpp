@@ -6,6 +6,8 @@
 #include "core/framework/glwidget.h"
 #include "core/framework/engine.h"
 
+#include <iostream>
+
  AppWindow::AppWindow(Engine* engine)
  {
 	m_engine = engine;
@@ -31,6 +33,11 @@
 	setWindowTitle(tr("S5 Engine"));
  }
 
+ AppWindow::~AppWindow()
+ {
+	 std::cout << "~AppWindow" << std::endl;
+ }
+
  void AppWindow::keyPressEvent(QKeyEvent *e)
  {
 	 if (e->key() == Qt::Key_Escape)
@@ -41,6 +48,7 @@
 
  void AppWindow::closeEvent(QCloseEvent *evt)
  {
+	 std::cout << "Appwindow::closeevent" << std::endl;
 	 m_engine->stop();
 	 QWidget::closeEvent(evt);
  }

@@ -465,6 +465,6 @@ void QtLogo::draw() const
 
 void QtLogo::render(double elapsed_time, GLWidget* context)
 {
-	node()->glMultf();
+	node()->globalTransform().glMultf();
 	this->draw();
 }

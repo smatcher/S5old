@@ -5,11 +5,12 @@
 #include "core/maths/transform.h"
 #include "core/properties/propertyset.h"
 #include "core/framework/glwidget.h"
+#include "core/scenegraph/parentofnode.h"
 
 class GLWidget;
 class NodeWidget;
 
-class Node : public ParentOf<Node>, public ChildOf< ParentOf<Node> >, public Transform<double>
+class Node : public ParentOfNode, public ChildOf< ParentOfNode >, public Transform<double>
 {
 	friend class NodeWidget;
 private :
@@ -20,9 +21,13 @@ private :
 public:
 	Node(const QString& name = "Anon Node");
 	virtual ~Node();
+	virtual ParentOfNode::TYPE type() {return ParentOfNode::NODE;}
 
 	PropertySet& properties();
 
+	Transformd globalTransform();
+
+	// Debug
 	void drawTransform(const GLWidget* widget, bool recursive) const;
 	virtual NodeWidget* getWidget();
 };
