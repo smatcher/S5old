@@ -18,11 +18,13 @@ void EngineLoop::run()
 	RenderManager* renderManager = ((RenderManager*)RenderManager::getInstance());
 	UpdateManager* updateManager = ((UpdateManager*)UpdateManager::getInstance());
 
+        m_gl->makeCurrent();
 	renderManager->init(m_gl);
 
 	while(m_engine->isRunning())
 	{
 		updateManager->update(1.0/60);
 		renderManager->render(1000/60,m_engine->getScenegraph_TEMPORARY());
-	}
+        }
+        m_gl->doneCurrent();
 }

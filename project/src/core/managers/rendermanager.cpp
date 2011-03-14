@@ -22,7 +22,6 @@ void RenderManager::init(GLWidget* context)
 {
 	m_context = context;
 
-	m_context->makeCurrent();
 	m_context->qglClearColor(Qt::black);
 	glEnable(GL_DEPTH_TEST);
 	glEnable(GL_CULL_FACE);
@@ -32,16 +31,12 @@ void RenderManager::init(GLWidget* context)
 	glEnable(GL_MULTISAMPLE);
 	static GLfloat lightPosition[4] = { 1.5, 5.0, 7.0, 1.0 };
 	glLightfv(GL_LIGHT0, GL_POSITION, lightPosition);
-
-	m_context->doneCurrent();
 }
 
 void RenderManager::render(double elapsed_time, SceneGraph* sg)
 {
 	if(m_context == NULL)
 		return;
-
-	m_context->makeCurrent();
 
 	QSize resizeTo;
 	if(m_context->needResize(&resizeTo))
@@ -86,5 +81,4 @@ void RenderManager::render(double elapsed_time, SceneGraph* sg)
 	glEnable(GL_LIGHTING);
 
 	m_context->swapBuffers();
-	m_context->doneCurrent();
 }
