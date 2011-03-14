@@ -15,11 +15,20 @@
 	m_treeWidget = engine->getScenegraph_TEMPORARY()->getDebugView();
 	m_propertiesWidget = new PropertiesPanel();
 
+	QDockWidget* dock1 = new QDockWidget();
+	QDockWidget* dock2 = new QDockWidget();
+
+dock1->setWidget(m_treeWidget);
+dock2->setWidget(m_propertiesWidget);
+
 	QHBoxLayout *mainLayout = new QHBoxLayout;
 	mainLayout->addWidget(m_glWidget);
-	mainLayout->addWidget(m_treeWidget);
-	mainLayout->addWidget(m_propertiesWidget);
+	mainLayout->addWidget(dock1);
+	mainLayout->addWidget(dock2);
+//	mainLayout->addWidget(m_treeWidget);
+//	mainLayout->addWidget(m_propertiesWidget);
 	setLayout(mainLayout);
+
 
 	m_glWidget->setXRotation(15 * 16);
 	m_glWidget->setYRotation(345 * 16);
@@ -35,20 +44,19 @@
 
  AppWindow::~AppWindow()
  {
-	 std::cout << "~AppWindow" << std::endl;
  }
 
- void AppWindow::keyPressEvent(QKeyEvent *e)
- {
-	 if (e->key() == Qt::Key_Escape)
-		 close();
-	 else
-		 QWidget::keyPressEvent(e);
- }
+void AppWindow::keyPressEvent(QKeyEvent *e)
+{
+	if (e->key() == Qt::Key_Escape)
+		close();
+	else
+		QWidget::keyPressEvent(e);
+}
 
- void AppWindow::closeEvent(QCloseEvent *evt)
- {
-	 std::cout << "Appwindow::closeevent" << std::endl;
-	 m_engine->stop();
-	 QWidget::closeEvent(evt);
- }
+void AppWindow::closeEvent(QCloseEvent *evt)
+{
+	m_engine->stop();
+	evt->accept();
+//	QWidget::closeEvent(evt);
+}
