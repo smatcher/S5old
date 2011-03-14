@@ -22,7 +22,6 @@
 
  GLWidget::~GLWidget()
  {
-	 std::cout << "~GLWidget()" << std::endl;
  }
 
  QSize GLWidget::minimumSizeHint() const
@@ -156,7 +155,6 @@
 
 void GLWidget::closeEvent(QCloseEvent *evt)
 {
-	std::cout << "GLWidget :: closeevent" << std::endl;
 	QGLWidget::closeEvent(evt);
 }
 
