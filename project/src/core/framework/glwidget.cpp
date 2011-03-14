@@ -2,23 +2,28 @@
 #include "core/managers/updatemanager.h"
 
 #include <QtGui>
+#include <QGLFormat>
 #include <iostream>
 
 #ifndef GL_MULTISAMPLE
 #define GL_MULTISAMPLE  0x809D
 #endif
 
- GLWidget::GLWidget(QWidget *parent)
+GLWidget::GLWidget(QWidget *parent)
 		: QGLWidget(parent)
- {
-	 xRot = 0;
-	 yRot = 0;
-	 zRot = 0;
-	 m_needResize = false;
+{
+	xRot = 0;
+	yRot = 0;
+	zRot = 0;
+	m_needResize = false;
 
-	 setSizePolicy(QSizePolicy::Minimum,QSizePolicy::Minimum);
-	 setAutoBufferSwap(false);
- }
+	setSizePolicy(QSizePolicy::Minimum,QSizePolicy::Minimum);
+	setAutoBufferSwap(false);
+
+	QGLFormat _format = format();
+	_format.setSwapInterval(1);
+	setFormat(_format);
+}
 
  GLWidget::~GLWidget()
  {

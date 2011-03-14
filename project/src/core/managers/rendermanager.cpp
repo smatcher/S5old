@@ -4,7 +4,6 @@
 #include "core/properties/irenderable.h"
 
 #include <QtOpenGL>
-#include <QGLFormat>
 #include <math.h>
 
 #ifndef GL_MULTISAMPLE
@@ -22,10 +21,6 @@ RenderManager::~RenderManager()
 void RenderManager::init(GLWidget* context)
 {
 	m_context = context;
-
-	QGLFormat format = m_context->format();
-	format.setSwapInterval(1);
-	m_context->setFormat(format);
 
 	m_context->makeCurrent();
 	m_context->qglClearColor(Qt::black);
