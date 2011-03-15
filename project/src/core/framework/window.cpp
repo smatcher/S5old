@@ -18,17 +18,18 @@
 	QDockWidget* dock1 = new QDockWidget();
 	QDockWidget* dock2 = new QDockWidget();
 
-dock1->setWidget(m_treeWidget);
-dock2->setWidget(m_propertiesWidget);
+	setCentralWidget(m_glWidget);
+	dock1->setWidget(m_treeWidget);
+	dock2->setWidget(m_propertiesWidget);
 
-	QHBoxLayout *mainLayout = new QHBoxLayout;
-	mainLayout->addWidget(m_glWidget);
-	mainLayout->addWidget(dock1);
-	mainLayout->addWidget(dock2);
+//	QHBoxLayout *mainLayout = new QHBoxLayout;
+//	mainLayout->addWidget(m_glWidget);
 //	mainLayout->addWidget(m_treeWidget);
 //	mainLayout->addWidget(m_propertiesWidget);
-	setLayout(mainLayout);
+//	setLayout(mainLayout);
 
+	addDockWidget(Qt::RightDockWidgetArea, dock1);
+	addDockWidget(Qt::RightDockWidgetArea, dock2);
 
 	m_glWidget->setXRotation(15 * 16);
 	m_glWidget->setYRotation(345 * 16);

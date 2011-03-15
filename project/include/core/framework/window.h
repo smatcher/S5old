@@ -1,14 +1,14 @@
 #ifndef WINDOW_H
 #define WINDOW_H
 
-#include <QWidget>
+#include <QMainWindow>
 #include <QTreeWidget>
 
 class GLWidget;
 class PropertiesPanel;
 class Engine;
 
-class AppWindow : public QWidget
+class AppWindow : public QMainWindow
 {
 	Q_OBJECT
 

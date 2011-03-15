@@ -41,5 +41,5 @@ void PropertiesPanel::selectionChanged(const QItemSelection& selected, const QIt
 
 QSize PropertiesPanel::sizeHint() const
 {
-	return QSize(200, 600);
+	return QSize(200, 300);
 }

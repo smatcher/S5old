@@ -3,6 +3,8 @@
 #include "core/managers/updatemanager.h"
 #include "core/managers/rendermanager.h"
 
+#include <QDateTime>
+
 EngineLoop::EngineLoop(Engine* engine, GLWidget* gl) : QThread()
 {
 	m_gl = gl;
@@ -18,13 +20,20 @@ void EngineLoop::run()
 	RenderManager* renderManager = ((RenderManager*)RenderManager::getInstance());
 	UpdateManager* updateManager = ((UpdateManager*)UpdateManager::getInstance());
 
-        m_gl->makeCurrent();
+	m_gl->makeCurrent();
 	renderManager->init(m_gl);
+
+	QDateTime lastTime = QDateTime::currentDateTime();
 
 	while(m_engine->isRunning())
 	{
-		updateManager->update(1.0/60);
-		renderManager->render(1000/60,m_engine->getScenegraph_TEMPORARY());
-        }
-        m_gl->doneCurrent();
+		QDateTime time = QDateTime::currentDateTime();
+		double elapsed = double(lastTime.msecsTo(time))/1000.0;
+
+		updateManager->update(elapsed);
+		renderManager->render(elapsed,m_engine->getScenegraph_TEMPORARY());
+
+		lastTime = time;
+	}
+	m_gl->doneCurrent();
 }
