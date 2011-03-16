@@ -124,7 +124,22 @@ GLWidget::GLWidget(QWidget *parent)
  }
 */
 
+bool GLWidget::event(QEvent *e)
+{
+	if(e->type() == QEvent::MouseButtonPress ||
+	   e->type() == QEvent::MouseButtonRelease ||
+	   e->type() == QEvent::MouseMove ||
+	   e->type() == QEvent::Resize ||
+	   e->type() == QEvent::Close)
+	{
+		return QGLWidget::event(e);
+	}
 
+	//std::cout << "GLWidget got event " << e->type() << std::endl;
+	// L'event n'existe pas
+	return true;
+
+}
 
  void GLWidget::mousePressEvent(QMouseEvent *event)
  {

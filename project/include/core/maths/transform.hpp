@@ -254,5 +254,14 @@ void Transform<T>::moveTo(const Vector3<T_scalar>& target)
 	position=target;
 }
 
+template <class T>
+Vector3<T> Transform<T>::toEuler() const
+{
+	Vector3<T> ret;
+	ret.x =  atan2(rotation.get(3,1),rotation.get(3,2));
+	ret.y =  fastAcos(rotation.get(3,3));
+	ret.z = -atan2(rotation.get(1,3),rotation.get(2,3));
+	return ret;
+}
 
 #endif //TRANSFORM_HPP_

@@ -3,9 +3,6 @@
 #include "manager.h"
 
 template <class Managee>
-Manager<Managee> *Manager<Managee>::instance = 0;
-
-template <class Managee>
 Manager<Managee>::Manager()
 {
 }
@@ -13,15 +10,6 @@ Manager<Managee>::Manager()
 template <class Managee>
 Manager<Managee>::~Manager()
 {
-}
-
-
-template <class Managee>
-Manager<Managee>* Manager<Managee>::getInstance()
-{
-    if(instance == 0)
-        instance = new Manager<Managee>();
-    return instance;
 }
 
 template <class Managee>

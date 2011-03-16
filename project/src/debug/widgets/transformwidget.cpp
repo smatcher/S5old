@@ -28,12 +28,12 @@ TransformWidget::TransformWidget(Transformd &transform) : QGroupBox(tr("Transfor
 	z->setDisabled(true);
 
 
-	Matrix3d rot = m_transform.getRotation();
-	QLineEdit* rx = new QLineEdit(QString().setNum(rot[0],'g',2));
+	Vector3d rot = m_transform.toEuler();
+	QLineEdit* rx = new QLineEdit(QString().setNum(rot.x,'g',2));
 	rx->setDisabled(true);
-	QLineEdit* ry = new QLineEdit(QString().setNum(rot[4],'g',2));
+	QLineEdit* ry = new QLineEdit(QString().setNum(rot.y,'g',2));
 	ry->setDisabled(true);
-	QLineEdit* rz = new QLineEdit(QString().setNum(rot[8],'g',2));
+	QLineEdit* rz = new QLineEdit(QString().setNum(rot.z,'g',2));
 	rz->setDisabled(true);
 
 	/*

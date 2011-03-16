@@ -28,6 +28,7 @@ public:
 	int zRot;
 
 protected:
+	bool event(QEvent * e);
 	void resizeEvent(QResizeEvent *evt);
 	void paintEvent(QPaintEvent *);
 	void closeEvent(QCloseEvent *evt);

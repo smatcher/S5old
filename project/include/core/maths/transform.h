@@ -126,6 +126,8 @@ public:
 	template <class T_scalar>
 	const Vector3<T_scalar> apply(const Vector3<T_scalar>& vec) const {return (rotation*vec)+position;}
 
+	Vector3<T> toEuler() const;
+
 #ifdef TRANSFORM_OPENGL_SUPPORT
 
 	void glLoadf() const	{glLoadMatrixf(Matrix4f(rotation, position));}

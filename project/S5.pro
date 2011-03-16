@@ -35,7 +35,8 @@ SOURCES += \
     src/core/framework/window.cpp \ 
     src/core/framework/engineloop.cpp \
     src/core/managers/rendermanager.cpp \
-    src/core/properties/irenderable.cpp
+    src/core/properties/irenderable.cpp \
+    src/core/properties/camera.cpp
 
 HEADERS  += \
 	include/core/properties/qtlogo.h \
@@ -84,7 +85,9 @@ HEADERS  += \
     include/core/framework/engineloop.h \
     include/core/managers/rendermanager.h \
     include/core/properties/irenderable.h \
-    include/core/scenegraph/parentofnode.h
+    include/core/scenegraph/parentofnode.h \
+    include/core/properties/camera.h \
+    include/core/utils/singleton.h
 
 INCLUDEPATH += \
 	include

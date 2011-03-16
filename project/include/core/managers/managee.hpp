@@ -1,10 +1,11 @@
 #include "managee.h"
+#include "core/utils/singleton.h"
 
 template <class Manager>
 Managee<Manager>::Managee()
 {
-    Manager* manager = (Manager*)Manager::getInstance();
-    manager->add((typename Manager::ManagedType*)this);
+	Manager* manager = &(Singleton<Manager>::getInstance());
+	manager->add((typename Manager::ManagedType*)this);
 }
 
 
@@ -12,6 +13,6 @@ Managee<Manager>::Managee()
 template <class Manager>
 Managee<Manager>::~Managee()
 {
-    Manager* manager = (Manager*)Manager::getInstance();
+	Manager* manager = &(Singleton<Manager>::getInstance());
     manager->remove((typename Manager::ManagedType*)this);
 }

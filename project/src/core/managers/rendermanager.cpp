@@ -2,6 +2,7 @@
 #include "core/framework/glwidget.h"
 #include "core/scenegraph/scenegraph.h"
 #include "core/properties/irenderable.h"
+#include "core/properties/camera.h"
 
 #include <QtOpenGL>
 #include <math.h>
@@ -10,12 +11,49 @@
 #define GL_MULTISAMPLE  0x809D
 #endif
 
-RenderManager::RenderManager() : m_context(NULL)
+RenderManager::RenderManager() : m_context(NULL), m_camera(NULL), m_cameraChanged(true)
 {
 }
 
 RenderManager::~RenderManager()
 {
+}
+
+void RenderManager::setupProjection()
+{
+	QSize resizeTo;
+	bool needResize = m_context->needResize(&resizeTo);
+	if(needResize || m_cameraChanged)
+	{
+		if(needResize)
+		{
+			int side = qMin(resizeTo.width(), resizeTo.height());
+			glViewport((resizeTo.width() - side) / 2, (resizeTo.height() - side) / 2, side, side);
+			m_context->isResized();
+		}
+
+		glMatrixMode(GL_PROJECTION);
+		glLoadIdentity();
+
+		if(m_camera != NULL)
+		{
+//			Matrix4d mat = m_camera->getProjection((float)resizeTo.width() / (float)resizeTo.height());
+//			glLoadMatrixd(mat.values);
+			m_camera->setProjection(1); // Pas besoin de passer l'aspect, il a déjà été pris en compte dans le viewport
+		}
+		else
+		{
+			#ifdef QT_OPENGL_ES_1
+				glOrthof(-5, +5, -5, +5, 1.0, 50.0);
+			#else
+				glOrtho(-5, +5, -5, +5, 1.0, 50.0);
+			#endif
+		}
+
+		glMatrixMode(GL_MODELVIEW);
+	}
+
+	m_cameraChanged = false;
 }
 
 void RenderManager::init(GLWidget* context)
@@ -38,30 +76,22 @@ void RenderManager::render(double elapsed_time, SceneGraph* sg)
 	if(m_context == NULL)
 		return;
 
-	QSize resizeTo;
-	if(m_context->needResize(&resizeTo))
-	{
-		int side = qMin(resizeTo.width(), resizeTo.height());
-		glViewport((resizeTo.width() - side) / 2, (resizeTo.height() - side) / 2, side, side);
-
-		glMatrixMode(GL_PROJECTION);
-		glLoadIdentity();
-		#ifdef QT_OPENGL_ES_1
-			glOrthof(-5, +5, -5, +5, 1.0, 50.0);
-		#else
-			glOrtho(-5, +5, -5, +5, 1.0, 50.0);
-		#endif
-		glMatrixMode(GL_MODELVIEW);
-
-		m_context->isResized();
-	}
+	setupProjection();
 
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	glLoadIdentity();
-	glTranslatef(0.0, 0.0, -10.0);
-	glRotatef(m_context->xRot / 16.0, 1.0, 0.0, 0.0);
-	glRotatef(m_context->yRot / 16.0, 0.0, 1.0, 0.0);
-	glRotatef(m_context->zRot / 16.0, 0.0, 0.0, 1.0);
+
+	if(m_camera != NULL)
+	{
+		m_camera->node()->globalTransform().getInverse().glMultd();
+	}
+	else
+	{
+		glTranslatef(0.0, 0.0, -10.0);
+		glRotatef(m_context->xRot / 16.0, 1.0, 0.0, 0.0);
+		glRotatef(m_context->yRot / 16.0, 0.0, 1.0, 0.0);
+		glRotatef(m_context->zRot / 16.0, 0.0, 0.0, 1.0);
+	}
 
 	//std::cout<< registeredManagees.count() << " Renderable nodes to render." << std::endl;
 
@@ -81,4 +111,10 @@ void RenderManager::render(double elapsed_time, SceneGraph* sg)
 	glEnable(GL_LIGHTING);
 
 	m_context->swapBuffers();
+}
+
+void RenderManager::setCurrentCamera(Camera* cam)
+{
+	m_camera = cam;
+	m_cameraChanged = true;
 }
