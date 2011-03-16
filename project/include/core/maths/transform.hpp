@@ -257,10 +257,10 @@ void Transform<T>::moveTo(const Vector3<T_scalar>& target)
 template <class T>
 Vector3<T> Transform<T>::toEuler() const
 {
-	Vector3<T> ret;
-	ret.x =  atan2(rotation.get(3,1),rotation.get(3,2));
-	ret.y =  fastAcos(rotation.get(3,3));
-	ret.z = -atan2(rotation.get(1,3),rotation.get(2,3));
+    Vector3<T> ret;
+    ret.x =  360*atan2(rotation.get(2,0),rotation.get(2,1))/2*M_PI;
+    ret.y =  fastAcos(rotation.get(2,2));
+    ret.z = -360*atan2(rotation.get(0,2),rotation.get(1,2))/2*M_PI;
 	return ret;
 }
 

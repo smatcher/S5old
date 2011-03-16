@@ -93,7 +93,13 @@ public:
 	operator Matrix4<T> () {return Matrix4<T>(rotation, position);}
 	operator const Matrix4<T> () const {return Matrix4<T>(rotation, position);}
 
-	void invert() {rotation.invert(); position = Vector3<T>(-position.x,-position.y,-position.z);}
+    void invert()
+    {
+        Matrix4<T> mat = *this;
+        mat.invert();
+        *this = mat;
+    //	rotation.invert(); position = Vector3<T>(-position.x,-position.y,-position.z);
+    }
 
 	// setters
 	template <class T_scalar>
