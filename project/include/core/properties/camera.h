@@ -2,9 +2,11 @@
 #define CAMERA_H
 
 #include "core/properties/iproperty.h"
+#include "core/managers/managee.h"
+#include "core/managers/cameramanager.h"
 #include "core/maths/matrix4.h"
 
-class Camera : public IProperty
+class Camera : public IProperty, public Managee<CameraManager>
 {
 public :
 	/// Constructror
@@ -26,7 +28,10 @@ private :
 
 	Matrix4d m_projection;
 
-	void computeProjection();
+    void computeProjection();
+
+    /// Debug
+    virtual void drawDebug(const GLWidget*) const;
 };
 
 #endif // CAMERA_H

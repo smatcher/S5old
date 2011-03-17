@@ -11,7 +11,7 @@
 #define GL_MULTISAMPLE  0x809D
 #endif
 
-RenderManager::RenderManager() : m_context(NULL), m_camera(NULL), m_cameraChanged(true)
+RenderManager::RenderManager() : m_context(NULL), m_camera(NULL), m_cameraChanged(true), m_drawDebug(false)
 {
 }
 
@@ -103,12 +103,15 @@ void RenderManager::render(double elapsed_time, SceneGraph* sg)
 		glPopMatrix();
 	}
 
-	glDisable(GL_LIGHTING);
-	for(int i=0 ; i<sg->childCount() ; i++)
-	{
-		sg->child(i)->drawTransform(m_context,true);
-	}
-	glEnable(GL_LIGHTING);
+    if(m_drawDebug)
+    {
+        glDisable(GL_LIGHTING);
+        for(int i=0 ; i<sg->childCount() ; i++)
+        {
+            sg->child(i)->drawDebug(m_context,true);
+        }
+        glEnable(GL_LIGHTING);
+    }
 
 	m_context->swapBuffers();
 }
@@ -117,4 +120,9 @@ void RenderManager::setCurrentCamera(Camera* cam)
 {
 	m_camera = cam;
 	m_cameraChanged = true;
+}
+
+void RenderManager::setDrawDebug(bool draw)
+{
+    m_drawDebug = draw;
 }

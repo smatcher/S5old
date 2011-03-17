@@ -24,11 +24,12 @@ public:
 	virtual ParentOfNode::TYPE type() {return ParentOfNode::NODE;}
 
 	PropertySet& properties();
+    const PropertySet& properties() const;
 
 	Transformd globalTransform();
 
 	// Debug
-	void drawTransform(const GLWidget* widget, bool recursive) const;
+    virtual void drawDebug(const GLWidget* widget, bool recursive) const;
 	virtual NodeWidget* getWidget();
 };
 

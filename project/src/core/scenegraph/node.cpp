@@ -32,7 +32,7 @@ Transformd Node::globalTransform()
 	return ret;
 }
 
-void Node::drawTransform(const GLWidget* widget, bool recursive) const
+void Node::drawDebug(const GLWidget* widget, bool recursive) const
 {
 	glPushMatrix();
 		this->glMultd();
@@ -53,11 +53,16 @@ void Node::drawTransform(const GLWidget* widget, bool recursive) const
 			glVertex3d(0,0,1);
 		glEnd();
 
+        for(int i=0 ; i<properties().childCount() ; i++)
+        {
+            properties().child(i)->drawDebug(widget);
+        }
+
 		if(recursive)
 		{
 			for(int i= 0 ; i<childCount() ; i++)
 			{
-				child(i)->drawTransform(widget,true);
+                child(i)->drawDebug(widget,true);
 			}
 		}
 	glPopMatrix();
@@ -66,6 +71,11 @@ void Node::drawTransform(const GLWidget* widget, bool recursive) const
 PropertySet& Node::properties()
 {
 	return m_properties;
+}
+
+const PropertySet& Node::properties() const
+{
+    return m_properties;
 }
 
 NodeWidget* Node::getWidget()

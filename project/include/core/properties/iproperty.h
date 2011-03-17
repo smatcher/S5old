@@ -5,6 +5,7 @@
 #include "core/properties/propertyset.h"
 #include "debug/widgets/propertywidget.h"
 
+class GLWidget;
 class PropertySet;
 class Node;
 
@@ -23,7 +24,9 @@ public:
 
 	Node* node();
 
-	virtual PropertyWidget* getWidget();
+    // Debug
+    virtual void drawDebug(const GLWidget* widget) const;
+    virtual PropertyWidget* getWidget();
 };
 
 #endif // IPROPERTY_H

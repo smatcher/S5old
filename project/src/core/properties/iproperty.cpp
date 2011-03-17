@@ -13,7 +13,11 @@ IProperty::~IProperty()
 
 Node* IProperty::node()
 {
-	return parent()->node();
+    PropertySet* _parent = parent();
+    if(_parent != NULL)
+        return parent()->node();
+    else
+        return NULL;
 }
 
 PropertyWidget* IProperty::getWidget()
@@ -31,3 +35,6 @@ void IProperty::widgetDestroyed()
 	m_widget = NULL;
 }
 
+void IProperty::drawDebug(const GLWidget*) const
+{
+}

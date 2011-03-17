@@ -1,7 +1,8 @@
 #include "core/properties/camera.h"
+#include "core/framework/glwidget.h"
 #include <QtOpenGL>
 
-Camera::Camera(double yfov, double znear, double zfar) : IProperty("Camera")
+Camera::Camera(double yfov, double znear, double zfar) : IProperty("Camera"), Managee()
 {
 	m_yfov = yfov;
 	m_znear = znear;
@@ -18,7 +19,7 @@ const Matrix4d& Camera::getProjection(double aspect)
 {
 	if(m_lastAspect != aspect || m_needComputation)
 	{
-		aspect = m_lastAspect;
+        m_lastAspect = aspect;
 		computeProjection();
 	}
 	return m_projection;
@@ -26,7 +27,8 @@ const Matrix4d& Camera::getProjection(double aspect)
 
 void Camera::setProjection(double aspect)
 {
-	gluPerspective(m_yfov,aspect,m_znear,m_zfar);
+//	gluPerspective(m_yfov,aspect,m_znear,m_zfar);
+    glLoadMatrixd(getProjection(aspect));
 }
 
 void Camera::setParameters(double yfov, double znear, double zfar)
@@ -37,40 +39,83 @@ void Camera::setParameters(double yfov, double znear, double zfar)
 	m_needComputation = true;
 }
 
+void computeProjectionFunction(Matrix4d& mat, double yfov, double znear, double zfar, double aspect)
+{
+    const float h = 1.0f/tan(yfov*M_PI/360);
+    float neg_depth = znear-zfar;
+
+    mat[0] = h / aspect;
+    mat[1] = 0;
+    mat[2] = 0;
+    mat[3] = 0;
+
+    mat[4] = 0;
+    mat[5] = h;
+    mat[6] = 0;
+    mat[7] = 0;
+
+    mat[8] = 0;
+    mat[9] = 0;
+    mat[10] = (zfar + znear)/neg_depth;
+    mat[11] = -1;
+
+    mat[12] = 0;
+    mat[13] = 0;
+    mat[14] = 2.0f*(znear*zfar)/neg_depth;
+    mat[15] = 0;
+}
+
 void Camera::computeProjection()
 {
-	double xymax = m_znear * tan(m_yfov * M_PI / 360);
-	double ymin = -xymax;
-	double xmin = -xymax;
+    computeProjectionFunction(m_projection, m_yfov, m_znear, m_zfar, m_lastAspect);
+}
 
-	double width = xymax - xmin;
-	double height = xymax - ymin;
+void Camera::drawDebug(const GLWidget* widget) const
+{
+    glPushMatrix();
 
-	double depth = m_zfar - m_znear;
-	double q = -(m_zfar + m_znear) / depth;
-	double qn = -2 * (m_zfar * m_znear) / depth;
+        Matrix4d mat;
+        computeProjectionFunction(mat, m_yfov, m_znear, m_zfar, 1);
+        mat.invert();
+        glMultMatrixd(mat.values);
 
-	double w = 2 * m_znear / width;
-	w = w / m_lastAspect;
-	double h = 2 * m_znear / height;
+        widget->qglColor(Qt::gray);
+        glBegin(GL_LINES);
+            glVertex3d(-1,-1,-1);
+            glVertex3d( 1,-1,-1);
 
-	m_projection[0]  = w;
-	m_projection[1]  = 0;
-	m_projection[2]  = 0;
-	m_projection[3]  = 0;
+            glVertex3d(-1,-1,-1);
+            glVertex3d(-1, 1,-1);
 
-	m_projection[4]  = 0;
-	m_projection[5]  = h;
-	m_projection[6]  = 0;
-	m_projection[7]  = 0;
+            glVertex3d(-1,-1,-1);
+            glVertex3d(-1,-1, 1);
 
-	m_projection[8]  = 0;
-	m_projection[9]  = 0;
-	m_projection[10] = q;
-	m_projection[11] = -1;
+            glVertex3d( 1,-1,-1);
+            glVertex3d( 1, 1,-1);
 
-	m_projection[12] = 0;
-	m_projection[13] = 0;
-	m_projection[14] = qn;
-	m_projection[15] = 0;
+            glVertex3d( 1,-1,-1);
+            glVertex3d( 1,-1, 1);
+
+            glVertex3d(-1, 1,-1);
+            glVertex3d( 1, 1,-1);
+
+            glVertex3d(-1, 1,-1);
+            glVertex3d(-1, 1, 1);
+
+            glVertex3d(-1,-1, 1);
+            glVertex3d( 1,-1, 1);
+
+            glVertex3d(-1,-1, 1);
+            glVertex3d(-1, 1, 1);
+
+            glVertex3d( 1, 1, 1);
+            glVertex3d(-1, 1, 1);
+
+            glVertex3d( 1, 1, 1);
+            glVertex3d( 1,-1, 1);
+
+            glVertex3d( 1, 1, 1);
+            glVertex3d( 1, 1,-1);
+        glEnd();
+    glPopMatrix();
 }

@@ -304,7 +304,7 @@ T Matrix4<T>::determinant()
 
 // Renvoi de la matrice transposée
 template <class T>
-Matrix4<T> Matrix4<T>::getTranspose()
+Matrix4<T> Matrix4<T>::getTranspose() const
 {
 	Matrix4<T> result = *this;
 	result.transpose();
@@ -326,7 +326,7 @@ void Matrix4<T>::transpose()
 
 // Renvoi de l'inverse de la matrice
 template <class T>
-Matrix4<T> Matrix4<T>::getInverseTranspose()
+Matrix4<T> Matrix4<T>::getInverseTranspose() const
 {
 	Matrix4<T> result = *this;
 	result.invertAndTranspose();
@@ -343,7 +343,7 @@ void Matrix4<T>::invert()
 
 // Renvoi de la transposée de l'inverse de la matrice
 template <class T>
-Matrix4<T> Matrix4<T>::getInverse()
+Matrix4<T> Matrix4<T>::getInverse() const
 {
 	Matrix4<T> result = *this;
 	result.invert();

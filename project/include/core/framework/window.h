@@ -5,6 +5,7 @@
 #include <QTreeWidget>
 
 class GLWidget;
+class RenderWidget;
 class PropertiesPanel;
 class Engine;
 
@@ -25,7 +26,8 @@ protected:
 private:
 	// widgets
 	GLWidget*        m_glWidget;
-	PropertiesPanel* m_propertiesWidget;
+    RenderWidget*    m_renderWidget;
+    PropertiesPanel* m_propertiesWidget;
 	QTreeView*       m_treeWidget;
 
 	// engine

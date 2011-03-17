@@ -16,5 +16,5 @@ SceneGraphView::~SceneGraphView()
 
 QSize SceneGraphView::sizeHint() const
 {
-	return QSize(200,300);
+    return QSize(200,200);
 }

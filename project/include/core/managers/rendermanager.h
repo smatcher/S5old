@@ -19,7 +19,8 @@ protected :
 private :
 	GLWidget* m_context;
 	Camera* m_camera;
-	bool m_cameraChanged;
+    bool m_cameraChanged;
+    bool m_drawDebug;
 
 	void setupProjection();
 
@@ -30,6 +31,7 @@ public:
 	void render(double elapsed_time, SceneGraph* sg);
 
 	void setCurrentCamera(Camera* cam);
+    void setDrawDebug(bool draw);
 };
 
 typedef Singleton<RenderManager> RENDER_MANAGER;

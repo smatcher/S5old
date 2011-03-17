@@ -33,8 +33,6 @@ int main(int argc, char *argv[])
     QtLogo qt(engine.getGLW_TEMPORARY());
     Camera cam(70,1,200);
 
-    RENDER_MANAGER::getInstance().setCurrentCamera(&cam);
-
     nRot.properties().link(&prop1);
     nRot.properties().link(&rot);
     nQt.properties().link(&qt);

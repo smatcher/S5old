@@ -104,15 +104,15 @@ public:
 	T determinant();
 
 	// Transposition
-	Matrix4<T> getTranspose();
+    Matrix4<T> getTranspose() const;
 	void transpose();
 
 	// Inversion
-	Matrix4<T> getInverse();
+    Matrix4<T> getInverse() const;
 	void invert();
 
 	// Transposée de l'inverse
-	Matrix4<T> getInverseTranspose();
+    Matrix4<T> getInverseTranspose() const;
 	void invertAndTranspose();
 
 	// Getters/Setters
