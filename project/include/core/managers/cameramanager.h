@@ -8,16 +8,19 @@ class Camera;
 class RenderWidget;
 class CameraManager : public Manager<Camera>
 {
+	friend class RenderWidget;
+
 public :
     CameraManager();
     ~CameraManager();
-
-    virtual void onManageeAdded(Camera *managee);
 
     RenderWidget* getDebugView();
 
 private :
     RenderWidget* m_widget;
+
+	virtual void onManageeAdded(Camera *managee);
+	void widgetDestroyed();
 };
 
 typedef Singleton<CameraManager> CAMERA_MANAGER;

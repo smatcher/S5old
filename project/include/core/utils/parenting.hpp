@@ -61,6 +61,7 @@ void ParentOf<Child>::link(Child* son)
 		{
 			m_sons.insert(name,son);
 			son->setParent((typename Child::ParentPtrType)this);
+			onLinked(son);
 		}
 		else
 		{
@@ -83,6 +84,7 @@ Child* ParentOf<Child>::unlink(const QString& childName)
 		ret = i.value();
 		ret->unlinkFromParent(true);
 		m_sons.erase(i);
+		onUnlinked(ret);
 	}
 	return ret;
 }
@@ -172,11 +174,14 @@ void ChildOf<Parent>::unlinkFromParent(bool justForgetParent)
 	{
 		m_parent->unlink(m_name);
 	}
+	Parent* oldParent = m_parent;
 	m_parent = NULL;
+	onUnlinked(oldParent);
 }
 
 template<class Parent>
 void ChildOf<Parent>::setParent(Parent* parent)
 {
 	m_parent = static_cast<Parent*>(parent);
+	onLinked(m_parent);
 }

@@ -12,10 +12,13 @@ class Node;
 class IProperty : public ChildOf<PropertySet>
 {
 	friend class PropertyWidget;
-private:
+
+protected:
 	PropertyWidget* m_widget;
 
+private:
 	void widgetDestroyed();
+
 public:
    /// Constructor
 	IProperty(const QString& name = "Basic Property");

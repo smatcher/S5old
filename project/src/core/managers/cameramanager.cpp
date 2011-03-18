@@ -22,3 +22,8 @@ RenderWidget* CameraManager::getDebugView()
 
     return m_widget;
 }
+
+void CameraManager::widgetDestroyed()
+{
+	m_widget = NULL;
+}

@@ -6,6 +6,7 @@
 #include "core/managers/cameramanager.h"
 #include "core/maths/matrix4.h"
 
+class CameraRadioButton;
 class Camera : public IProperty, public Managee<CameraManager>
 {
 public :
@@ -19,6 +20,8 @@ public :
 
 	void setParameters(double yfov, double znear, double zfar);
 
+	void setRadioButton(CameraRadioButton* radio);
+
 private :
 	bool m_needComputation;
 	double m_yfov;
@@ -26,12 +29,16 @@ private :
 	double m_zfar;
 	double m_lastAspect;
 
+	CameraRadioButton* m_radiobutton;
+
 	Matrix4d m_projection;
 
     void computeProjection();
 
     /// Debug
-    virtual void drawDebug(const GLWidget*) const;
+	virtual void drawDebug(const GLWidget*) const;
+	virtual void onLinked(PropertySet *);
+	virtual void onUnlinked(PropertySet *);
 };
 
 #endif // CAMERA_H

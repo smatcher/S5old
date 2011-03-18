@@ -11,7 +11,8 @@ RenderWidget::RenderWidget()
     QVBoxLayout* layout = new QVBoxLayout;
     layout->addWidget(drawDebug);
     layout->addWidget(cameraBox);
-    setLayout(layout);
+	layout->addStretch(1);
+	setLayout(layout);
 
     camerasLayout = new QVBoxLayout;
     cameraBox->setLayout(camerasLayout);
@@ -32,6 +33,7 @@ RenderWidget::RenderWidget()
 
 RenderWidget::~RenderWidget()
 {
+	CAMERA_MANAGER::getInstance().widgetDestroyed();
 }
 
 void RenderWidget::cameraAdded(Camera *cam)

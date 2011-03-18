@@ -67,6 +67,9 @@ private :
 	Parent* m_parent;
 	/// Name of the child, must be different from its brothers's name.
 	QString m_name;
+
+	virtual void onLinked(Parent*) {}
+	virtual void onUnlinked(Parent*) {}
 };
 
 /**
@@ -101,6 +104,9 @@ public :
 
 private :
 	QMap<QString, Child*> m_sons;
+
+	virtual void onLinked(Child*) {}
+	virtual void onUnlinked(Child*) {}
 };
 
 #include "parenting.hpp"

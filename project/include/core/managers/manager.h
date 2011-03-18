@@ -14,15 +14,17 @@ public:
     void add(Managee* managee);
     void remove(Managee* managee);
 
-    virtual void onManageeAdded(Managee* managee);
-    virtual void onManageeRemoved(Managee* managee);
-
     const QVector<Managee*>& managees() const;
 
     typedef Managee ManagedType;
 
 protected:
-    QVector<Managee*> registeredManagees;
+	QVector<Managee*> registeredManagees;
+
+private:
+	virtual void onManageeAdded(Managee* managee);
+	virtual void onManageeRemoved(Managee* managee);
+
 };
 
 #include "manager.hpp"

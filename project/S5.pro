@@ -13,10 +13,10 @@ SOURCES += \
     src/main.cpp\
 	src/core/properties/qtlogo.cpp \
     src/core/scenegraph/node.cpp \
-    src/core/scenegraph/scenegraph.cpp \
-    src/core/properties/propertyset.cpp \
+	src/core/properties/propertyset.cpp \
+	src/core/scenegraph/scenegraph.cpp \
     src/core/properties/iproperty.cpp \
-    src/core/maths/trigo.cpp \
+	src/core/maths/trigo.cpp \
     src/core/maths/frustum.cpp \
     src/core/maths/boundingsphere.cpp \
     src/core/maths/aabb.cpp \
@@ -92,7 +92,8 @@ HEADERS  += \
     include/core/utils/singleton.h \
     include/core/managers/cameramanager.h \
     include/debug/widgets/renderwidget.h \
-    include/debug/widgets/cameraradiobutton.h
+    include/debug/widgets/cameraradiobutton.h \
+    include/core/utils/customevents.h
 
 INCLUDEPATH += \
 	include

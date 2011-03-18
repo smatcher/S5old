@@ -4,6 +4,7 @@
 #include "core/managers/rendermanager.h"
 #include "core/properties/camera.h"
 #include "core/scenegraph/node.h"
+#include "core/utils/customevents.h"
 #include <QRadioButton>
 
 class CameraRadioButton : public QRadioButton
@@ -13,33 +14,58 @@ class CameraRadioButton : public QRadioButton
 private:
     Camera* m_camera;
 
+	void nameAfterCamera()
+	{
+		if(m_camera != NULL)
+		{
+			Node* node = m_camera->node();
+			if(node != NULL)
+				this->setText(node->getName());
+			else
+				this->setText("Unlinked camera");
+		}
+		else
+		{
+			this->setText("Editor cam");
+		}
+	}
 public:
     CameraRadioButton(Camera* camera) : QRadioButton()
     {
-        m_camera = camera;
+		m_camera = camera;
+		nameAfterCamera();
 
-        if(camera != NULL)
-        {
-            Node* node = camera->node();
-            if(node != NULL)
-                this->setText(node->getName());
-            else
-                this->setText("Unlinked camera");
-        }
-        else
-        {
-            this->setText("Editor cam");
-        }
+		if(m_camera != NULL)
+			m_camera->setRadioButton(this);
 
         connect(this, SIGNAL(toggled(bool)), this, SLOT(isToggled(bool)));
-    }
+	}
+
+	virtual ~CameraRadioButton()
+	{
+		if(m_camera != NULL)
+			m_camera->setRadioButton(this);
+	}
 
 public slots:
     void isToggled(bool checked)
     {
         if(checked)
             RENDER_MANAGER::getInstance().setCurrentCamera(m_camera);
-    }
+	}
+
+	virtual bool event(QEvent* evt)
+	{
+		if(evt->type() == UPDATED_EVENT::type())
+		{
+			nameAfterCamera();
+			return true;
+		}
+		else
+		{
+			return QRadioButton::event(evt);
+		}
+	}
 };
 
 #endif // CAMERARADIOBUTTON_H
