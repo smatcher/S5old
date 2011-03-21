@@ -38,7 +38,10 @@ SOURCES += \
     src/core/properties/irenderable.cpp \
     src/core/properties/camera.cpp \
     src/core/managers/cameramanager.cpp \
-    src/debug/widgets/renderwidget.cpp
+    src/debug/widgets/renderwidget.cpp \
+    src/core/resources/iresource.cpp \
+    src/core/resources/mesh.cpp \
+    src/core/properties/meshrenderer.cpp
 
 HEADERS  += \
 	include/core/properties/qtlogo.h \
@@ -93,7 +96,10 @@ HEADERS  += \
     include/core/managers/cameramanager.h \
     include/debug/widgets/renderwidget.h \
     include/debug/widgets/cameraradiobutton.h \
-    include/core/utils/customevents.h
+    include/core/utils/customevents.h \
+    include/core/resources/mesh.h \
+    include/core/resources/iresource.h \
+    include/core/properties/meshrenderer.h
 
 INCLUDEPATH += \
 	include
