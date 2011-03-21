@@ -5,6 +5,7 @@
 #include "core/properties/camera.h"
 #include "core/scenegraph/node.h"
 #include "core/utils/customevents.h"
+#include "debug/widgets/renderwidget.h"
 #include <QRadioButton>
 
 class CameraRadioButton : public QRadioButton
@@ -59,6 +60,11 @@ public slots:
 		if(evt->type() == UPDATED_EVENT::type())
 		{
 			nameAfterCamera();
+			return true;
+		}
+		else if(evt->type() == DELETED_EVENT::type())
+		{
+			((RenderWidget*)this->parentWidget())->cameraRemoved(this);
 			return true;
 		}
 		else

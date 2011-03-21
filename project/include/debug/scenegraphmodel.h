@@ -26,7 +26,7 @@ public :
 	int rowCount(const QModelIndex&) const;
 	int columnCount(const QModelIndex&) const;
 	QVariant data(const QModelIndex&, int role) const;
-
+	virtual bool event(QEvent* evt);
 };
 
 #endif // SCENEGRAPHMODEL_H

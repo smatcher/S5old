@@ -1,4 +1,5 @@
 #include "debug/scenegraphmodel.h"
+#include "core/utils/customevents.h"
 
 SceneGraphModel::SceneGraphModel(SceneGraph* item)
 {
@@ -84,4 +85,17 @@ QVariant SceneGraphModel::data(const QModelIndex& parent, int role) const
 		if(n != NULL) return QVariant(n->getName());
 	}
 	return QVariant();
+}
+
+bool SceneGraphModel::event(QEvent* evt)
+{
+	if(evt->type() == UPDATED_EVENT::type())
+	{
+		emit dataChanged(QModelIndex(), QModelIndex());
+		return true;
+	}
+	else
+	{
+		return QAbstractItemModel::event(evt);
+	}
 }

@@ -138,7 +138,7 @@ void ChildOf<Parent>::setName(const QString& name)
 	// Change name
 	m_name = name;
 	// Relink
-	parent->link(this);
+	parent->link((typename Parent::ChildPtrType)this);
 }
 
 template<class Parent>

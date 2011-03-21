@@ -7,6 +7,7 @@
 #include "core/framework/glwidget.h"
 #include "core/framework/engine.h"
 #include "core/managers/cameramanager.h"
+#include "core/utils/customevents.h"
 
 #include <iostream>
 
@@ -69,4 +70,17 @@ void AppWindow::closeEvent(QCloseEvent *evt)
 	m_engine->stop();
 	evt->accept();
 //	QWidget::closeEvent(evt);
+}
+
+bool AppWindow::event(QEvent* evt)
+{
+	if(evt->type() == UPDATED_EVENT::type())
+	{
+		m_propertiesWidget->updateData();
+		return true;
+	}
+	else
+	{
+		return QMainWindow::event(evt);
+	}
 }

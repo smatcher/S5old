@@ -42,6 +42,12 @@ void RenderWidget::cameraAdded(Camera *cam)
     camerasLayout->addWidget(radio);
 }
 
+void RenderWidget::cameraRemoved(CameraRadioButton *radio)
+{
+	camerasLayout->removeWidget(radio);
+	delete radio;
+}
+
 void RenderWidget::drawDebugChanged(int state)
 {
     switch(state)

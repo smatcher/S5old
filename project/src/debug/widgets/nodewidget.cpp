@@ -22,3 +22,13 @@ NodeWidget::~NodeWidget()
 {
 	m_node.widgetDestroyed();
 }
+
+void NodeWidget::updateData()
+{
+	m_transformWidget->updateData();
+	for(int i=0 ; i<m_node.properties().childCount() ; i++)
+	{
+		PropertyWidget* widget = m_node.properties().child(i)->getWidget();
+		widget->updateData();
+	}
+}

@@ -15,6 +15,8 @@ Camera::Camera(double yfov, double znear, double zfar) : IProperty("Camera"), Ma
 
 Camera::~Camera()
 {
+	if(m_radiobutton != NULL)
+		QCoreApplication::postEvent(m_radiobutton,new DELETED_EVENT());
 }
 
 const Matrix4d& Camera::getProjection(double aspect)

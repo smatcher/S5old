@@ -21,6 +21,8 @@ public :
 
 	QSize sizeHint() const;
 
+	virtual void updateData();
+
 public slots :
 	void selectionChanged(const QItemSelection& selected, const QItemSelection& deselected);
 };

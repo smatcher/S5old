@@ -33,4 +33,5 @@ SceneGraphModel* SceneGraph::getDebugModel()
 void SceneGraph::clearDebug()
 {
 	m_debugView = NULL;
+	m_debugModel = NULL;
 }

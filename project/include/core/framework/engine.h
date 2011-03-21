@@ -9,6 +9,8 @@
 
 class Engine
 {
+	friend class EngineLoop;
+
 private :
 	QApplication m_app;
 

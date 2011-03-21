@@ -19,6 +19,8 @@ private :
 public :
 	NodeWidget(Node& node);
 	virtual ~NodeWidget();
+
+	virtual void updateData();
 };
 
 #endif // NODEWIDGET_H

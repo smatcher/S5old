@@ -2,6 +2,7 @@
 #include "core/framework/engine.h"
 #include "core/managers/updatemanager.h"
 #include "core/managers/rendermanager.h"
+#include "core/utils/customevents.h"
 
 #include <QDateTime>
 
@@ -25,6 +26,7 @@ void EngineLoop::run()
 
 	QDateTime lastTime = QDateTime::currentDateTime();
 
+	int i=0;
 	while(m_engine->isRunning())
 	{
 		QDateTime time = QDateTime::currentDateTime();
@@ -34,6 +36,14 @@ void EngineLoop::run()
 		renderManager->render(elapsed,m_engine->getScenegraph_TEMPORARY());
 
 		lastTime = time;
+
+		i++;
+
+		if(i%10 == 0) {
+			// Debug update
+			QCoreApplication::postEvent(m_engine->m_scene.getDebugModel(),new UPDATED_EVENT());
+			QCoreApplication::postEvent(&(m_engine->m_window),new UPDATED_EVENT());
+		}
 	}
 	m_gl->doneCurrent();
 }

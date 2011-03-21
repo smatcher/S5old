@@ -43,3 +43,9 @@ QSize PropertiesPanel::sizeHint() const
 {
     return QSize(200, 200);
 }
+
+void PropertiesPanel::updateData()
+{
+	if(m_widget != NULL)
+		m_widget->updateData();
+}

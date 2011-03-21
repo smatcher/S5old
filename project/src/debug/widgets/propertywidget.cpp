@@ -18,3 +18,5 @@ PropertyWidget::~PropertyWidget()
 {
 	m_property->widgetDestroyed();
 }
+
+void PropertyWidget::updateData() {}

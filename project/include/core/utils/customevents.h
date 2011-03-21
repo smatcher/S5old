@@ -5,7 +5,8 @@
 
 enum CustomEvent
 {
-	UPDATED
+	UPDATED,
+	DELETED
 };
 
 template <CustomEvent type>
@@ -27,5 +28,6 @@ public :
 };
 
 typedef Event<UPDATED> UPDATED_EVENT;
+typedef Event<DELETED> DELETED_EVENT;
 
 #endif // CUSTOMEVENTS_H

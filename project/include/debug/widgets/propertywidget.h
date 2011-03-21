@@ -15,6 +15,8 @@ private :
 public :
 	PropertyWidget(IProperty* property);
 	virtual ~PropertyWidget();
+
+	virtual void updateData();
 };
 
 #endif // PROPERTYWIDGET_H

@@ -5,6 +5,7 @@
 #include <QLayout>
 
 class Camera;
+class CameraRadioButton;
 class RenderWidget : public QWidget
 {
     Q_OBJECT
@@ -14,6 +15,7 @@ public :
     virtual ~RenderWidget();
 
     void cameraAdded(Camera* cam);
+	void cameraRemoved(CameraRadioButton *radio);
 
     QSize sizeHint() const;
 
