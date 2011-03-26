@@ -1,11 +1,12 @@
 #ifndef MESH_H
 #define MESH_H
 
-#include "core/resources/iresource.h"
-#include <QtOpenGL>
+//#include "core/resources/iresource.h"
+//#include <QtOpenGL>
 
-class Mesh : public IResource
+class Mesh
 {
+/*
 public:
 
     struct Vertex
@@ -78,6 +79,7 @@ protected:
 
     Face* m_faces;
     int m_nb_faces;
+*/
 };
 
 #endif // MESH_H
