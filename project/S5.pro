@@ -40,7 +40,6 @@ SOURCES += \
     src/core/managers/cameramanager.cpp \
     src/debug/widgets/renderwidget.cpp \
     src/core/resources/iresource.cpp \
-    src/core/resources/mesh.cpp \
     src/core/properties/meshrenderer.cpp
 
 HEADERS  += \
@@ -97,9 +96,14 @@ HEADERS  += \
     include/debug/widgets/renderwidget.h \
     include/debug/widgets/cameraradiobutton.h \
     include/core/utils/customevents.h \
-    include/core/resources/mesh.h \
+    include/core/graphics/mesh.h \
     include/core/resources/iresource.h \
-    include/core/properties/meshrenderer.h
+    include/core/properties/meshrenderer.h \
+    include/core/graphics/texture.h \
+    include/core/graphics/material.h \
+    include/core/graphics/shader.h \
+    include/core/resources/iresourcefactory.h \
+    include/core/resources/iresourcemanager.h
 
 INCLUDEPATH += \
 	include
