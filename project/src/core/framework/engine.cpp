@@ -42,9 +42,11 @@ int Engine::start()
 {
 	int ret;
 	m_running = true;
-	m_loopThread.start();
+//	m_loopThread.start();
+	m_loopThread.run();
 
-	ret = m_app.exec();
+	ret = 0;
+//	ret = m_app.exec();
 
 	m_running = false;
 	m_loopThread.wait();

@@ -44,6 +44,8 @@ void EngineLoop::run()
 			QCoreApplication::postEvent(m_engine->m_scene.getDebugModel(),new UPDATED_EVENT());
 			QCoreApplication::postEvent(&(m_engine->m_window),new UPDATED_EVENT());
 		}
+
+		QCoreApplication::processEvents();
 	}
 	m_gl->doneCurrent();
 }
