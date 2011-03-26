@@ -40,7 +40,6 @@ SOURCES += \
     src/core/managers/cameramanager.cpp \
     src/debug/widgets/renderwidget.cpp \
     src/core/resources/iresource.cpp \
-    src/core/resources/mesh.cpp \
     src/core/properties/meshrenderer.cpp
 
 HEADERS  += \
