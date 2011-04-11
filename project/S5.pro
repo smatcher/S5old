@@ -106,6 +106,10 @@ HEADERS  += \
     include/core/resources/iresourcemanager.h
 
 INCLUDEPATH += \
-	include
+	include \
+	../dep/assimp/include
+
+LIBS += \
+	-L../dep/assimp/lib -lassimp
 
 FORMS    +=
