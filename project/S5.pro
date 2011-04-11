@@ -110,10 +110,6 @@ HEADERS  += \
     include/core/resources/resourcesmanager.hpp
 
 INCLUDEPATH += \
-	include \
-	../dep/assimp/include
-
-LIBS += \
-	-L../dep/assimp/lib -lassimp
+	include
 
 FORMS    +=
