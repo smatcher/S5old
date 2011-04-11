@@ -8,14 +8,13 @@ template <class Resource>
 class IResourceFactory
 {
 public:
-	virtual Resource* load(QString name) = 0;
-
-	void addSearchPath(const QString& path);
-	void removeSearchPath(const QString& path);
-	void clearSearchPaths();
+	virtual void load(Resource* resource) = 0;
+	QList<Resource*> searchPath(const QString& path, bool recursive);
 
 protected:
-	QList<QString> m_search_paths;
+	virtual void parseFile(const QString& path, QList<Resource*> content) = 0;
 };
+
+#include "iresourcefactory.hpp"
 
 #endif // IRESOURCEFACTORY_H

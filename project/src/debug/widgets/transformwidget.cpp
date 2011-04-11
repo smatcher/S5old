@@ -10,20 +10,20 @@ TransformWidget::TransformWidget(Transformd &transform) : QGroupBox(tr("Transfor
 
 	Vector3d pos = m_transform.getPosition();
 
-	m_x = new QLineEdit(QString().setNum(pos.x,'g',2));
+	m_x = new QLineEdit(QString().setNum(pos.x,'g',3));
 	m_x->setDisabled(true);
-	m_y = new QLineEdit(QString().setNum(pos.y,'g',2));
+	m_y = new QLineEdit(QString().setNum(pos.y,'g',3));
 	m_y->setDisabled(true);
-	m_z = new QLineEdit(QString().setNum(pos.z,'g',2));
+	m_z = new QLineEdit(QString().setNum(pos.z,'g',3));
 	m_z->setDisabled(true);
 
 
 	Vector3d rot = m_transform.toEuler();
-	m_rx = new QLineEdit(QString().setNum(rot.x,'g',2));
+	m_rx = new QLineEdit(QString().setNum(rot.x,'g',3));
 	m_rx->setDisabled(true);
-	m_ry = new QLineEdit(QString().setNum(rot.y,'g',2));
+	m_ry = new QLineEdit(QString().setNum(rot.y,'g',3));
 	m_ry->setDisabled(true);
-	m_rz = new QLineEdit(QString().setNum(rot.z,'g',2));
+	m_rz = new QLineEdit(QString().setNum(rot.z,'g',3));
 	m_rz->setDisabled(true);
 
 	QGroupBox* posgroup = new QGroupBox(tr("position"));
@@ -58,12 +58,12 @@ QSize TransformWidget::sizeHint() const
 void TransformWidget::updateData()
 {
 	Vector3d pos = m_transform.getPosition();
-	m_x->setText(QString().setNum(pos.x,'g',2));
-	m_y->setText(QString().setNum(pos.y,'g',2));
-	m_z->setText(QString().setNum(pos.z,'g',2));
+	m_x->setText(QString().setNum(pos.x,'g',3));
+	m_y->setText(QString().setNum(pos.y,'g',3));
+	m_z->setText(QString().setNum(pos.z,'g',3));
 
 	Vector3d rot = m_transform.toEuler();
-	m_rx->setText(QString().setNum(rot.x,'g',2));
-	m_ry->setText(QString().setNum(rot.y,'g',2));
-	m_rz->setText(QString().setNum(rot.z,'g',2));
+	m_rx->setText(QString().setNum(rot.x,'g',3));
+	m_ry->setText(QString().setNum(rot.y,'g',3));
+	m_rz->setText(QString().setNum(rot.z,'g',3));
 }

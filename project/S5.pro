@@ -98,14 +98,16 @@ HEADERS  += \
     include/debug/widgets/cameraradiobutton.h \
     include/core/utils/customevents.h \
     include/core/graphics/mesh.h \
-    include/core/resources/iresource.h \
     include/core/properties/meshrenderer.h \
     include/core/graphics/texture.h \
     include/core/graphics/material.h \
     include/core/graphics/shader.h \
-    include/core/resources/iresourcefactory.h \
-    include/core/resources/iresourcemanager.h \
-    include/core/utils/stb_image.h
+    include/core/utils/stb_image.h \
+    include/core/resources/resource.h \
+    include/core/resources/resource.hpp \
+    include/core/resources/resourcemanager.h \
+    include/core/resources/iresourcefactory.hpp \
+    include/core/resources/resourcesmanager.hpp
 
 INCLUDEPATH += \
 	include \
