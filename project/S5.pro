@@ -40,7 +40,8 @@ SOURCES += \
     src/core/managers/cameramanager.cpp \
     src/debug/widgets/renderwidget.cpp \
     src/core/resources/iresource.cpp \
-    src/core/properties/meshrenderer.cpp
+    src/core/properties/meshrenderer.cpp \
+    src/core/utils/stb_image.cpp
 
 HEADERS  += \
 	include/core/properties/qtlogo.h \
@@ -103,7 +104,8 @@ HEADERS  += \
     include/core/graphics/material.h \
     include/core/graphics/shader.h \
     include/core/resources/iresourcefactory.h \
-    include/core/resources/iresourcemanager.h
+    include/core/resources/iresourcemanager.h \
+    include/core/utils/stb_image.h
 
 INCLUDEPATH += \
 	include \
