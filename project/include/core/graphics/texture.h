@@ -18,6 +18,7 @@ public:
 	{
 		if(m_hasgltex)
 		{
+			glEnable(GL_TEXTURE_2D);
 			glBindTexture(GL_TEXTURE_2D , m_gltexture);
 		}
 	}

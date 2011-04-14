@@ -450,6 +450,8 @@ void QtLogo::buildGeometry(int divisions, qreal scale)
 //! [4]	
 void QtLogo::draw() const
 {
+	glDisable(GL_TEXTURE_2D);
+
     geom->loadArrays();	
 	
     glEnableClientState(GL_VERTEX_ARRAY);

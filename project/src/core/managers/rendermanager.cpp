@@ -106,14 +106,22 @@ void RenderManager::render(double elapsed_time, SceneGraph* sg)
     if(m_drawDebug)
     {
         glDisable(GL_LIGHTING);
-        for(int i=0 ; i<sg->childCount() ; i++)
+		glDisable(GL_TEXTURE_2D);
+		for(int i=0 ; i<sg->childCount() ; i++)
         {
             sg->child(i)->drawDebug(m_context,true);
         }
-        glEnable(GL_LIGHTING);
+		glEnable(GL_TEXTURE_2D);
+		glEnable(GL_LIGHTING);
     }
 
 	m_context->swapBuffers();
+
+	GLenum error = glGetError();
+	if(error != GL_NO_ERROR)
+	{
+	   qDebug() << gluErrorString(error);
+	}
 }
 
 void RenderManager::setCurrentCamera(Camera* cam)

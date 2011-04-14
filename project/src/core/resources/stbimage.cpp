@@ -40,16 +40,34 @@ void StbImage::buildGLTexture()
 {
 	if(m_data != NULL)
 	{
+		// Do a vertical flip (openGL prefers bottomtop images)
+		int i, j;
+		for( j = 0; j*2 < m_height; ++j )
+		{
+			int index1 = j * m_width * m_comp;
+			int index2 = (m_height - 1 - j) * m_width * m_comp;
+			for( i = m_width * m_comp; i > 0; --i )
+			{
+				unsigned char temp = m_data[index1];
+				m_data[index1] = m_data[index2];
+				m_data[index2] = temp;
+				++index1;
+				++index2;
+			}
+		}
+		// Get GL texture
+		glEnable(GL_TEXTURE_2D);
+
 		glGenTextures(1,&m_gltexture);
 
 		glBindTexture(GL_TEXTURE_2D, m_gltexture);
 
-		glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
-		glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_NEAREST);
-		glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+		glTexEnvi(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_NEAREST);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 
-		glTexParameterf(GL_TEXTURE_2D,GL_TEXTURE_WRAP_S, GL_REPEAT);
-		glTexParameterf(GL_TEXTURE_2D,GL_TEXTURE_WRAP_T, GL_REPEAT);
+		glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_WRAP_S, GL_REPEAT);
+		glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_WRAP_T, GL_REPEAT);
 
 		GLenum mode = GL_RGBA;
 
@@ -66,9 +84,9 @@ void StbImage::buildGLTexture()
 				break;
 		}
 
-		//gluBuild2DMipmaps(GL_TEXTURE_2D, m_comp, m_width, m_height, mode, GL_UNSIGNED_BYTE, m_data);
 		glTexParameteri(GL_TEXTURE_2D,GL_GENERATE_MIPMAP, GL_TRUE);
 		glTexImage2D(GL_TEXTURE_2D, 0, m_comp, m_width, m_height, 0, mode, GL_UNSIGNED_BYTE, m_data);
+
 		m_hasgltex = true;
 
 		stbi_image_free(m_data);

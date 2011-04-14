@@ -4,6 +4,9 @@
 #include "core/managers/rendermanager.h"
 #include "core/utils/customevents.h"
 
+#include "core/resources/managers.h"
+#include "core/properties/meshrenderer.h"
+
 #include <QDateTime>
 
 EngineLoop::EngineLoop(Engine* engine, GLWidget* gl) : QThread()
@@ -23,6 +26,17 @@ void EngineLoop::run()
 
 	m_gl->makeCurrent();
 	renderManager->init(m_gl);
+
+	initResourceManagers();
+
+	Mesh mesh = MeshManager::getInstance().get("duckmesh");
+	Material material = MaterialManager::getInstance().get("duckmesh");
+	Texture texture = TextureManager::getInstance().get("duck.tga");
+
+	Node nDuck("Duck");
+	MeshRenderer mrender(mesh,material,texture);
+	nDuck.properties().link(&mrender);
+	m_engine->getScenegraph_TEMPORARY()->link(&nDuck);
 
 	QDateTime lastTime = QDateTime::currentDateTime();
 

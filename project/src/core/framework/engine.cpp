@@ -6,10 +6,6 @@
 
 #include <QDesktopWidget>
 
-#include "core/resources/managers.h"
-#include "core/resources/assimpfactory.h"
-#include "core/resources/stbimage.h"
-
 Engine::Engine(int argc, char *argv[]) :
 	m_app(argc, argv),
 	m_scene(),
@@ -40,13 +36,6 @@ void Engine::init(int argc, char *argv[])
 		m_window.show();
 	else
 		m_window.showMaximized();
-
-	MeshManager::getInstance().addFactory(new AssimpFactory()); // TODO : this is a memory leak, i don't like leaks, get rid of this leak.
-	TextureManager::getInstance().addFactory(new StbImageFactory());
-
-	MeshManager::getInstance().parseDir("../media/models",true);
-	TextureManager::getInstance().parseDir("../media/textures",true);
-	TextureManager::getInstance().loadAll();
 }
 
 int Engine::start()
