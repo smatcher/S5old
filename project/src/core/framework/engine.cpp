@@ -6,6 +6,9 @@
 
 #include <QDesktopWidget>
 
+#include "core/resources/managers.h"
+#include "core/resources/assimpfactory.h"
+
 Engine::Engine(int argc, char *argv[]) :
 	m_app(argc, argv),
 	m_scene(),
@@ -36,6 +39,9 @@ void Engine::init(int argc, char *argv[])
 		m_window.show();
 	else
 		m_window.showMaximized();
+
+	MeshManager::getInstance().addFactory(new AssimpFactory()); // TODO : this is a memory leak, i don't like leaks, get rid of this leak.
+	MeshManager::getInstance().parseDir("../media/models",true);
 }
 
 int Engine::start()

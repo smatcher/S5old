@@ -20,11 +20,12 @@ public:
 	void load(const QString& name);
 	void loadAll();
 	void loadFile(const QString& path);
-	void loadUsed();
 
 	void unloadUnused();
 	void unloadEverything();
 	void unload(Handle resource);
+
+	void add(Resource* resource);
 
 protected:
 	QHash<QString,Resource*> m_resources;

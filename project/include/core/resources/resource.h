@@ -2,6 +2,7 @@
 #define IRESOURCE_H
 
 #include <QString>
+#include <QDebug>
 
 class IResourceFactory;
 
@@ -9,12 +10,13 @@ template <class Resource>
 class ResourceHandle
 {
 public:
-	ResourceHandle(const Resource& from);
-	ResourceHandle(const ResourceHandle& copy);
+	ResourceHandle();
+	ResourceHandle(Resource& from);
+	ResourceHandle(const ResourceHandle<Resource>& copy);
 	virtual ~ResourceHandle();
 
 	Resource* operator&();
-	void operator=();
+	ResourceHandle<Resource>& operator=(const ResourceHandle<Resource>& handle);
 
 private:
 	Resource* m_data;
@@ -30,18 +32,25 @@ public:
 		STATE_LOADED
 	};
 
-	ResourceData(const QString& name, const QString& path, IResourceFactory* factory);
+	ResourceData(const QString& name, const QString& path, IResourceFactory* factory) :
+		m_factory(factory),
+		m_name(name),
+		m_path(path),
+		m_state(STATE_UNLOADED),
+		m_ref(0) {}
 
-	void incRef();
-	void decRef();
-	int refCount();
+	// Reference counting
+	void incRef()  {m_ref++;}
+	void decRef()  {m_ref--; if(m_ref < 0) { qDebug() << "Warning : " << m_name << " reference count is negative";}}
+	int refCount() {return m_ref;}
 
-	const QString& name();
-	const QString& path();
-	const State state();
-	const IResourceFactory* factory();
+	// Getters
+	const QString& name() {return m_name;}
+	const QString& path() {return m_path;}
+	State state()         {return m_state;}
+	const IResourceFactory* factory() {return m_factory;}
 
-	void unload();
+	virtual bool unload() = 0;
 
 protected:
 	IResourceFactory* m_factory;

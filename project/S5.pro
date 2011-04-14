@@ -39,9 +39,12 @@ SOURCES += \
     src/core/properties/camera.cpp \
     src/core/managers/cameramanager.cpp \
     src/debug/widgets/renderwidget.cpp \
-    src/core/resources/iresource.cpp \
     src/core/properties/meshrenderer.cpp \
-    src/core/utils/stb_image.cpp
+    src/core/utils/stb_image.cpp \
+    src/core/resources/assimpmesh.cpp \
+    src/core/resources/assimpfactory.cpp \
+    src/core/resources/assimpmaterial.cpp \
+    src/core/resources/iresourcefactory.cpp
 
 HEADERS  += \
 	include/core/properties/qtlogo.h \
@@ -106,10 +109,19 @@ HEADERS  += \
     include/core/resources/resource.h \
     include/core/resources/resource.hpp \
     include/core/resources/resourcemanager.h \
-    include/core/resources/iresourcefactory.hpp \
-    include/core/resources/resourcesmanager.hpp
+    include/core/resources/resourcesmanager.hpp \
+    include/core/resources/assimpmesh.h \
+    include/core/resources/iresourcefactory.h \
+    include/core/resources/stbimage.h \
+    include/core/resources/managers.h \
+    include/core/resources/assimpmaterial.h \
+    include/core/resources/assimpfactory.h
 
 INCLUDEPATH += \
-	include
+	include \
+	../dep/assimp/include
+
+LIBS += \
+	-L../dep/assimp/lib -lassimp
 
 FORMS    +=

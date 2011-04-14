@@ -9,7 +9,7 @@
 template <class Resource, class Handle>
 Handle ResourceManager<Resource, Handle>::get(const QString& name)
 {
-	return Handle(m_resources.find(name));
+	return Handle(*(m_resources.find(name).value()));
 }
 
 
@@ -22,14 +22,26 @@ void ResourceManager<Resource, Handle>::addFactory(IResourceFactory* factory)
 template <class Resource, class Handle>
 void ResourceManager<Resource, Handle>::parseDir(const QString& path, bool recursive)
 {
-	for(QList<IResourceFactory*>::iterator it = m_factories.begin() ; it != m_factories.end() ; it++)
+	for(typename QList< IResourceFactory * >::Iterator it = m_factories.begin() ; it != m_factories.end() ; it++)
 	{
-		(*it)->searchDir(path, recursive);
+		QList<ResourceData*> found = (*it)->searchDir(path, recursive);
+
+		for(typename QList<ResourceData*>::Iterator it2 = found.begin() ; it2 != found.end() ; it2++)
+		{
+			if(!m_resources.contains((*it2)->name()))
+			{
+				m_resources.insert((*it2)->name(),static_cast<Resource*>(*it2));
+			}
+			else
+			{
+				qDebug() << "Resource named " << (*it2)->name() << " discarded because an other resource add the same name";
+			}
+		}
 	}
 }
 
 template <class Resource, class Handle>
-void ResourceManager<ResourceManager, Handle>::load(const QString& name)
+void ResourceManager<Resource, Handle>::load(const QString& name)
 {
 	Resource* resource = m_resources.find(name);
 	if(resource->state() == Resource::STATE_UNLOADED)
@@ -37,18 +49,41 @@ void ResourceManager<ResourceManager, Handle>::load(const QString& name)
 }
 
 template <class Resource, class Handle>
-void ResourceManager<ResourceManager, Handle>::loadAll()
+void ResourceManager<Resource, Handle>::loadAll()
 {
 }
 
 template <class Resource, class Handle>
-void ResourceManager<ResourceManager, Handle>::loadFile(const QString& path)
+void ResourceManager<Resource, Handle>::loadFile(const QString& path)
 {
 }
 
 template <class Resource, class Handle>
-void ResourceManager<ResourceManager, Handle>::loadUnused()
+void ResourceManager<Resource, Handle>::unloadUnused()
 {
+}
+
+template <class Resource, class Handle>
+void ResourceManager<Resource, Handle>::unloadEverything()
+{
+}
+
+template <class Resource, class Handle>
+void ResourceManager<Resource, Handle>::unload(Handle resource)
+{
+}
+
+template <class Resource, class Handle>
+void ResourceManager<Resource, Handle>::add(Resource* resource)
+{
+	if(!m_resources.contains(resource->name()))
+	{
+		m_resources.insert(resource->name(),resource);
+	}
+	else
+	{
+		qDebug() << "Resource named " << resource->name() << " discarded because an other resource add the same name";
+	}
 }
 
 #endif // RESOURCESMANAGER_HPP

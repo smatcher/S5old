@@ -4,17 +4,16 @@
 #include <QList>
 #include <QString>
 
-template <class Resource>
+class ResourceData;
+
 class IResourceFactory
 {
 public:
-	virtual void load(Resource* resource) = 0;
-	QList<Resource*> searchPath(const QString& path, bool recursive);
+	virtual void load(ResourceData* resource) = 0;
+	virtual QList<ResourceData*> searchDir(const QString& path, bool recursive);
 
 protected:
-	virtual void parseFile(const QString& path, QList<Resource*> content) = 0;
+	virtual void parseFile(const QString& path, QList<ResourceData*>& content) = 0;
 };
-
-#include "iresourcefactory.hpp"
 
 #endif // IRESOURCEFACTORY_H

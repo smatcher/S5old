@@ -4211,7 +4211,7 @@ stbi_uc *stbi_gif_load_from_file   (FILE *f, int *x, int *y, int *comp, int req_
 {
    uint8 *u = 0;
    stbi s;
-   stbi_gif g={0};
+   stbi_gif g={0,0,0,0,0,0,0,0,{{0}},{{0}},{{0,0,0}},0,0,0,0,0,0,0,0,0,0,0}; // Lol sinon ca fait des warning
    start_file(&s, f);
 
    u = stbi_gif_load_next(&s, &g, comp, req_comp);
@@ -4229,7 +4229,7 @@ stbi_uc *stbi_gif_load_from_memory (stbi_uc const *buffer, int len, int *x, int 
 {
    uint8 *u = 0;
    stbi s;
-   stbi_gif g={0};
+   stbi_gif g={0,0,0,0,0,0,0,0,{{0}},{{0}},{{0,0,0}},0,0,0,0,0,0,0,0,0,0,0}; // Lol sinon ca fait des warning
    start_mem(&s, buffer, len);
    u = stbi_gif_load_next(&s, &g, comp, req_comp);
    if (u == (void *) 1) u = 0;  // end of animated gif marker
