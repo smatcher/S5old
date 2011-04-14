@@ -13,6 +13,7 @@
 #endif
 
 #include "core/resources/managers.h"
+#include "core/properties/meshrenderer.h"
 
 int main(int argc, char *argv[])
 {
@@ -38,6 +39,15 @@ int main(int argc, char *argv[])
 	nQt.properties().link(&qt);
 	nCam.properties().link(&cam);
 
+	Mesh mesh = MeshManager::getInstance().get("duckmesh");
+	Material material = MaterialManager::getInstance().get("duckmesh");
+	Texture texture = TextureManager::getInstance().get("duck.tga");
+
+	Node nDuck("Duck");
+	MeshRenderer mrender(mesh,material,texture);
+	nDuck.properties().link(&mrender);
+
+	sg->link(&nDuck);
 	sg->link(&nRot);
 	sg->link(&nQt);
 	nRot.link(&nCam);

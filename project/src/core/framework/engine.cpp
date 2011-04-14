@@ -6,6 +6,8 @@
 
 #include <QDesktopWidget>
 
+#include "core/resources/managers.h"
+
 Engine::Engine(int argc, char *argv[]) :
 	m_app(argc, argv),
 	m_scene(),
@@ -36,6 +38,9 @@ void Engine::init(int argc, char *argv[])
 		m_window.show();
 	else
 		m_window.showMaximized();
+
+	m_window.getGLW_TEMPORARY()->makeCurrent();
+	initResourceManagers();
 }
 
 int Engine::start()
