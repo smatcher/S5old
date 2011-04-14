@@ -45,12 +45,17 @@ void ResourceManager<Resource, Handle>::load(const QString& name)
 {
 	Resource* resource = m_resources.find(name);
 	if(resource->state() == Resource::STATE_UNLOADED)
-		resource->factory()->load(resource);
+		resource->load();
 }
 
 template <class Resource, class Handle>
 void ResourceManager<Resource, Handle>::loadAll()
 {
+	for(typename QHash<QString, Resource*>::Iterator it = m_resources.begin() ; it != m_resources.end() ; it++)
+	{
+		if((*it)->state() == Resource::STATE_UNLOADED)
+			(*it)->load();
+	}
 }
 
 template <class Resource, class Handle>
@@ -61,6 +66,11 @@ void ResourceManager<Resource, Handle>::loadFile(const QString& path)
 template <class Resource, class Handle>
 void ResourceManager<Resource, Handle>::unloadUnused()
 {
+	for(typename QMap<QString, Resource*>::Iterator it = m_resources.begin() ; it != m_resources.end() ; it++)
+	{
+		if((*it)->state() == Resource::STATE_LOADED && (*it)->refCount() < 1)
+			(*it)->unload();
+	}
 }
 
 template <class Resource, class Handle>

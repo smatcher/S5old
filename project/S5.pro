@@ -44,7 +44,8 @@ SOURCES += \
     src/core/resources/assimpmesh.cpp \
     src/core/resources/assimpfactory.cpp \
     src/core/resources/assimpmaterial.cpp \
-    src/core/resources/iresourcefactory.cpp
+    src/core/resources/iresourcefactory.cpp \
+    src/core/resources/stbimage.cpp
 
 HEADERS  += \
 	include/core/properties/qtlogo.h \

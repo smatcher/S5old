@@ -3,8 +3,7 @@
 
 #include <QString>
 #include <QDebug>
-
-class IResourceFactory;
+#include "core/resources/iresourcefactory.h"
 
 template <class Resource>
 class ResourceHandle
@@ -48,8 +47,8 @@ public:
 	const QString& name() {return m_name;}
 	const QString& path() {return m_path;}
 	State state()         {return m_state;}
-	const IResourceFactory* factory() {return m_factory;}
 
+	virtual void load()   {m_factory->load(this);}
 	virtual bool unload() = 0;
 
 protected:

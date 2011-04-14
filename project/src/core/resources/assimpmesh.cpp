@@ -34,6 +34,12 @@ void AssimpMesh::draw()
 		glDisable(GL_COLOR_MATERIAL);
 	}
 
+	if(m_mesh->mTextureCoords[0] != NULL) {
+		glEnable(GL_TEXTURE_2D);
+	} else {
+		glDisable(GL_TEXTURE_2D);
+	}
+
 	for (unsigned t = 0; t < m_mesh->mNumFaces; ++t) {
 		const struct aiFace* face = &m_mesh->mFaces[t];
 		GLenum face_mode;
@@ -53,6 +59,8 @@ void AssimpMesh::draw()
 			Color4f(&m_mesh->mColors[0][index]);
 			if(m_mesh->mNormals != NULL)
 			glNormal3fv(&m_mesh->mNormals[index].x);
+			if(m_mesh->mTextureCoords[0] != NULL)
+			glTexCoord2fv(&m_mesh->mTextureCoords[0][index].x);
 			glVertex3fv(&m_mesh->mVertices[index].x);
 		}
 

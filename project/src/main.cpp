@@ -32,12 +32,13 @@ int main(int argc, char *argv[])
 
 	Mesh mesh = MeshManager::getInstance().get("duckmesh");
 	Material material = MaterialManager::getInstance().get("duckmesh");
+	Texture texture = TextureManager::getInstance().get("duck.tga");
 
     IProperty prop1;
     DummyUpdatable rot;
 	QtLogo qt(engine.getGLW_TEMPORARY());
 	Camera cam(70,1,200);
-	MeshRenderer mrender(mesh,material);
+	MeshRenderer mrender(mesh,material,texture);
 
 	nRot.properties().link(&prop1);
 	nRot.properties().link(&rot);
