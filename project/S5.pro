@@ -45,7 +45,10 @@ SOURCES += \
     src/core/resources/assimpfactory.cpp \
     src/core/resources/assimpmaterial.cpp \
     src/core/resources/iresourcefactory.cpp \
-    src/core/resources/stbimage.cpp
+    src/core/resources/stbimage.cpp \
+    src/core/inputs/qtkeytranslator.cpp \
+    src/core/inputs/inputmanager.cpp \
+    src/core/properties/dummycontrolable.cpp
 
 HEADERS  += \
 	include/core/properties/qtlogo.h \
@@ -116,7 +119,10 @@ HEADERS  += \
     include/core/resources/stbimage.h \
     include/core/resources/managers.h \
     include/core/resources/assimpmaterial.h \
-    include/core/resources/assimpfactory.h
+    include/core/resources/assimpfactory.h \
+    include/core/inputs/inputmanager.h \
+    include/core/inputs/qtkeytranslator.h \
+    include/core/properties/dummycontrolable.h
 
 INCLUDEPATH += \
 	include \

@@ -5,6 +5,7 @@
 #include "core/scenegraph/node.h"
 #include "core/maths/trigo.h"
 #include "core/properties/dummyupdatable.h"
+#include "core/properties/dummycontrolable.h"
 #include "core/properties/qtlogo.h"
 #include "core/properties/camera.h"
 #include "core/managers/rendermanager.h"
@@ -15,6 +16,8 @@
 #include "core/resources/managers.h"
 #include "core/properties/meshrenderer.h"
 
+#include "core/inputs/inputmanager.h"
+
 int main(int argc, char *argv[])
 {
 	#ifdef Q_WS_X11
@@ -23,7 +26,15 @@ int main(int argc, char *argv[])
 
 	Engine engine(argc, argv);
 
-    SceneGraph* sg = engine.getScenegraph_TEMPORARY();
+	SceneGraph* sg = engine.getScenegraph_TEMPORARY();
+
+	QList<InputManager::Control> controls;
+	controls.push_back(InputManager::Control(false,"avance"));
+	controls.push_back(InputManager::Control(false,"recule"));
+	INPUT_MANAGER::getInstance().addControls(controls);
+
+	INPUT_MANAGER::getInstance().addBinding("KB_Z","avance");
+	INPUT_MANAGER::getInstance().addBinding("KB_S","recule");
 
     Node nRot("Rotating node");
 	Node nQt("Qt Logo");
@@ -45,7 +56,9 @@ int main(int argc, char *argv[])
 
 	Node nDuck("Duck");
 	MeshRenderer mrender(mesh,material,texture);
+	DummyControlable cont;
 	nDuck.properties().link(&mrender);
+	nDuck.properties().link(&cont);
 
 	sg->link(&nDuck);
 	sg->link(&nRot);

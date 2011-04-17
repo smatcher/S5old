@@ -62,7 +62,9 @@ void AppWindow::keyPressEvent(QKeyEvent *e)
 	if (e->key() == Qt::Key_Escape)
 		close();
 	else
+	{
 		QWidget::keyPressEvent(e);
+	}
 }
 
 void AppWindow::closeEvent(QCloseEvent *evt)

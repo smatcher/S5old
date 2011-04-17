@@ -40,6 +40,7 @@ void Engine::init(int argc, char *argv[])
 		m_window.showMaximized();
 
 	m_window.getGLW_TEMPORARY()->makeCurrent();
+
 	initResourceManagers();
 }
 
