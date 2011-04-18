@@ -10,6 +10,7 @@ MeshRenderer::MeshRenderer(Mesh& mesh, Material& material, Texture& texture) : I
 
 void MeshRenderer::render(double elapsed_time, GLWidget* context)
 {
+	node()->globalTransform().glMultf();
 
 	if(&m_material != NULL)
 		((MaterialData*)&m_material)->apply();

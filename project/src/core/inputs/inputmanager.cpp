@@ -78,6 +78,11 @@ void InputManager::removeBinding(const QString &input)
 
 void InputManager::reportbutton(InputSource source, ButtonStatus status, int button_id)
 {
+	// Find binding
+	QMap<int, Control>::Iterator control = m_bindings[source].find(button_id);
+
+	if(control != m_bindings[source].end())
+		m_controls[control->id].buttonStatus = status;
 }
 
 void InputManager::reportaxis(InputSource source, float status, int axis_id)
@@ -104,10 +109,12 @@ int InputManager::getControlId(const QString &control)
 
 float InputManager::getAxisValue(int id)
 {
+	return m_controls[id].axisValue;
 }
 
 InputManager::ButtonStatus InputManager::getButtonStatus(int id)
 {
+	return m_controls[id].buttonStatus;
 }
 
 InputManager::InputSource InputManager::extractSource(const QString& input)

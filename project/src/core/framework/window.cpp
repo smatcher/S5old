@@ -8,6 +8,7 @@
 #include "core/framework/engine.h"
 #include "core/managers/cameramanager.h"
 #include "core/utils/customevents.h"
+#include "core/inputs/inputmanager.h"
 
 #include <iostream>
 
@@ -63,7 +64,19 @@ void AppWindow::keyPressEvent(QKeyEvent *e)
 		close();
 	else
 	{
+		INPUT_MANAGER::getInstance().reportbutton(InputManager::Source_KeyBoard,InputManager::Held,e->key());
 		QWidget::keyPressEvent(e);
+	}
+}
+
+void AppWindow::keyReleaseEvent(QKeyEvent *e)
+{
+	if (e->key() == Qt::Key_Escape)
+		close();
+	else
+	{
+		INPUT_MANAGER::getInstance().reportbutton(InputManager::Source_KeyBoard,InputManager::Off,e->key());
+		QWidget::keyReleaseEvent(e);
 	}
 }
 

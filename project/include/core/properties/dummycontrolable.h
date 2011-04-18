@@ -12,6 +12,8 @@ public:
 private:
 	int m_control_forward;
 	int m_control_backward;
+	int m_control_left;
+	int m_control_right;
 };
 
 #endif // DUMMYCONTROLABLE_H
