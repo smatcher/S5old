@@ -88,7 +88,7 @@ void StbImage::buildGLTexture()
 				break;
 		}
 
-		glTexParameteri(GL_TEXTURE_2D,GL_GENERATE_MIPMAP, GL_TRUE);
+//		glTexParameteri(GL_TEXTURE_2D,GL_GENERATE_MIPMAP, GL_TRUE);
 		glTexImage2D(GL_TEXTURE_2D, 0, m_comp, m_width, m_height, 0, mode, GL_UNSIGNED_BYTE, m_data);
 
 		m_hasgltex = true;

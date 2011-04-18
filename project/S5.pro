@@ -126,8 +126,20 @@ INCLUDEPATH += \
 	include \
 	../dep/assimp/include
 
+macx {
 LIBS += \
-		-L../dep/assimp/lib -lassimp -lopenal -lalut -lGLEW
+        -L../dep/assimp/lib -lassimp
+}
+unix:!macx{
+LIBS += \
+        -L../dep/assimp/lib -lassimp
+}
+win32 {
+LIBS += \
+        -L../dep/assimp/lib-win32 -lassimp
+}
+
+LIBS += -lopenal -lalut -lGLEW
 
 s5debug {
 	DEFINES += _DEBUG
