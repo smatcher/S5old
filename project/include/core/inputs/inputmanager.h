@@ -57,6 +57,7 @@ public:
 	InputManager();
 
 	// Register controls
+	void addControl(Control control);
 	void addControls(QList<Control> controls);
 
 	// Edit bindings
@@ -65,8 +66,8 @@ public:
 	void removeBinding(const QString& input);
 
 	// Report inputs
-	void reportbutton(InputSource source, ButtonStatus status, int button_id);
-	void reportaxis(InputSource source, float status, int axis_id);
+	void reportButton(InputSource source, ButtonStatus status, int button_id);
+	void reportAxis(InputSource source, float status, int axis_id);
 
 	// Query controls
 	int getControlId(const QString& control);

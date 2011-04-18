@@ -64,7 +64,7 @@ void AppWindow::keyPressEvent(QKeyEvent *e)
 		close();
 	else
 	{
-		INPUT_MANAGER::getInstance().reportbutton(InputManager::Source_KeyBoard,InputManager::Held,e->key());
+		INPUT_MANAGER::getInstance().reportButton(InputManager::Source_KeyBoard,InputManager::Held,e->key());
 		QWidget::keyPressEvent(e);
 	}
 }
@@ -75,7 +75,7 @@ void AppWindow::keyReleaseEvent(QKeyEvent *e)
 		close();
 	else
 	{
-		INPUT_MANAGER::getInstance().reportbutton(InputManager::Source_KeyBoard,InputManager::Off,e->key());
+		INPUT_MANAGER::getInstance().reportButton(InputManager::Source_KeyBoard,InputManager::Off,e->key());
 		QWidget::keyReleaseEvent(e);
 	}
 }

@@ -10,20 +10,25 @@ InputManager::InputManager()
 	}
 }
 
+void InputManager::addControl(Control control)
+{
+	if(!m_controls_dict.contains(control.name))
+	{
+		control.id = m_controls.length();
+		m_controls_dict.insert(control.name, control);
+		m_controls.push_back(ControlStatus(control));
+	}
+	else
+	{
+		qDebug() << "Warning : control " << control.name << " declared more than once";
+	}
+}
+
 void InputManager::addControls(QList<Control> controls)
 {
 	for(QList<Control>::Iterator it = controls.begin() ; it != controls.end() ; it++)
 	{
-		if(!m_controls_dict.contains(it->name))
-		{
-			it->id = m_controls.length();
-			m_controls_dict.insert(it->name, *it);
-			m_controls.push_back(ControlStatus(*it));
-		}
-		else
-		{
-			qDebug() << "Warning : control " << it->name << " declared more than once";
-		}
+		addControl(*it);
 	}
 }
 
@@ -76,7 +81,7 @@ void InputManager::removeBinding(const QString &input)
 	}
 }
 
-void InputManager::reportbutton(InputSource source, ButtonStatus status, int button_id)
+void InputManager::reportButton(InputSource source, ButtonStatus status, int button_id)
 {
 	// Find binding
 	QMap<int, Control>::Iterator control = m_bindings[source].find(button_id);
@@ -85,7 +90,7 @@ void InputManager::reportbutton(InputSource source, ButtonStatus status, int but
 		m_controls[control->id].buttonStatus = status;
 }
 
-void InputManager::reportaxis(InputSource source, float status, int axis_id)
+void InputManager::reportAxis(InputSource source, float status, int axis_id)
 {
 }
 

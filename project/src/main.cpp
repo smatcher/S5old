@@ -36,9 +36,13 @@ int main(int argc, char *argv[])
 	INPUT_MANAGER::getInstance().addControls(controls);
 
 	INPUT_MANAGER::getInstance().addBinding("KB_Z","avance");
+	INPUT_MANAGER::getInstance().addBinding("KB_Up","avance");
 	INPUT_MANAGER::getInstance().addBinding("KB_S","recule");
+	INPUT_MANAGER::getInstance().addBinding("KB_Down","recule");
 	INPUT_MANAGER::getInstance().addBinding("KB_Q","gauche");
+	INPUT_MANAGER::getInstance().addBinding("KB_Left","gauche");
 	INPUT_MANAGER::getInstance().addBinding("KB_D","droite");
+	INPUT_MANAGER::getInstance().addBinding("KB_Right","droite");
 
     Node nRot("Rotating node");
 	Node nQt("Qt Logo");
