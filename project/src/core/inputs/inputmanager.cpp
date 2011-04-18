@@ -49,15 +49,23 @@ void InputManager::addBinding(const QString &input, const QString &control)
 		if(control_id != m_controls_dict.end())
 		{
 			int input_value = m_translator.toValue(input);
-			QMap<int,Control>::Iterator input_id = m_bindings[source_index].find(input_value);
 
-			if(input_id != m_bindings[source_index].end())
+			if(input_value != -1)
 			{
-				qDebug() << "Error : " << input << " already bound to " << input_id.value().name;
+				QMap<int,Control>::Iterator input_id = m_bindings[source_index].find(input_value);
+
+				if(input_id != m_bindings[source_index].end())
+				{
+					qDebug() << "Error : " << input << " already bound to " << input_id.value().name;
+				}
+				else
+				{
+					m_bindings[source_index].insert(input_value, *control_id);
+				}
 			}
 			else
 			{
-				m_bindings[source_index].insert(input_value, *control_id);
+				qDebug() << "Error : " << input << " is not a valid key";
 			}
 		}
 		else
