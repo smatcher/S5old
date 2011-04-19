@@ -42,10 +42,6 @@
 	addDockWidget(Qt::RightDockWidgetArea, dock2);
     addDockWidget(Qt::RightDockWidgetArea, dock3);
 
-	m_glWidget->setXRotation(15 * 16);
-	m_glWidget->setYRotation(345 * 16);
-	m_glWidget->setZRotation(0);
-
 	QObject::connect(m_treeWidget->selectionModel(),
 					 SIGNAL(selectionChanged(const QItemSelection&,const QItemSelection&)),
 					 m_propertiesWidget,

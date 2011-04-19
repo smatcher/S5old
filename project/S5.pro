@@ -48,7 +48,8 @@ SOURCES += \
     src/core/resources/stbimage.cpp \
     src/core/inputs/qtkeytranslator.cpp \
     src/core/inputs/inputmanager.cpp \
-    src/core/properties/dummycontrolable.cpp
+    src/core/properties/dummycontrolable.cpp \
+    src/debug/tools/debugcamera.cpp
 
 HEADERS  += \
 	include/core/properties/qtlogo.h \
@@ -122,7 +123,8 @@ HEADERS  += \
     include/core/resources/assimpfactory.h \
     include/core/inputs/inputmanager.h \
     include/core/inputs/qtkeytranslator.h \
-    include/core/properties/dummycontrolable.h
+    include/core/properties/dummycontrolable.h \
+    include/debug/tools/debugcamera.h
 
 INCLUDEPATH += \
 	include \

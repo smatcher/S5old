@@ -4,6 +4,7 @@
 // #include <GL/glew.h> // pas besoin visiblement
 #include <QGLWidget>
 #include "core/scenegraph/scenegraph.h"
+#include "debug/tools/debugcamera.h"
 
 class GLWidget : public QGLWidget
 {
@@ -16,16 +17,10 @@ public:
 	QSize minimumSizeHint() const;
 	QSize sizeHint() const;
 
-	void setXRotation(int angle);
-	void setYRotation(int angle);
-	void setZRotation(int angle);
-
 	bool needResize(QSize* size);
 	void isResized();
 
-	int xRot;
-	int yRot;
-	int zRot;
+	void applyCamera();
 
 protected:
 	bool event(QEvent * e);
@@ -36,10 +31,10 @@ protected:
 	void mouseMoveEvent(QMouseEvent *event);
 
 private:
-	QPoint lastPos;
-
 	QSize m_newSize;
 	bool  m_needResize;
+
+	DebugCamera m_camera;
 };
 
 #endif

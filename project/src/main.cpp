@@ -47,16 +47,19 @@ int main(int argc, char *argv[])
     Node nRot("Rotating node");
 	Node nQt("Qt Logo");
 	Node nCam("Camera");
+	Node nCamFollow("Camera Follow");
 
     IProperty prop1;
     DummyUpdatable rot;
 	QtLogo qt(engine.getGLW_TEMPORARY());
 	Camera cam(70,1,200);
+	Camera camFollow(90,1,200);
 
 	nRot.properties().link(&prop1);
 	nRot.properties().link(&rot);
 	nQt.properties().link(&qt);
 	nCam.properties().link(&cam);
+	nCamFollow.properties().link(&camFollow);
 
 	Mesh mesh = MeshManager::getInstance().get("duckmesh");
 	Material material = MaterialManager::getInstance().get("duckmesh");
@@ -67,6 +70,7 @@ int main(int argc, char *argv[])
 	DummyControlable cont;
 	nDuck.properties().link(&mrender);
 	nDuck.properties().link(&cont);
+	nDuck.link(&nCamFollow);
 
 	sg->link(&nDuck);
 	sg->link(&nRot);
@@ -74,9 +78,12 @@ int main(int argc, char *argv[])
 	nRot.link(&nCam);
 
     nRot.moveTo(Vector3d(0,0,0));
-	nQt.moveTo(Vector3d(0,2,0));
+	nQt.moveTo(Vector3d(0,-0.5,0));
+	nQt.rotate(Vector3d(1,0,0),90);
     nCam.moveTo(Vector3d(0,1,2));
 	nCam.rotate(Vector3d(1,0,0),330);
+	nCamFollow.moveTo(Vector3d(0,2,3));
+	nCamFollow.rotate(Vector3d(1,0,0),345);
 
 	int ret = engine.start();
 

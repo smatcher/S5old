@@ -27,7 +27,7 @@ void RenderManager::setupProjection()
 	{
 		if(needResize)
 		{
-			int side = qMin(resizeTo.width(), resizeTo.height());
+			int side = qMax(resizeTo.width(), resizeTo.height());
 			glViewport((resizeTo.width() - side) / 2, (resizeTo.height() - side) / 2, side, side);
 			m_context->isResized();
 		}
@@ -87,10 +87,7 @@ void RenderManager::render(double elapsed_time, SceneGraph* sg)
 	}
 	else
 	{
-		glTranslatef(0.0, 0.0, -10.0);
-		glRotatef(m_context->xRot / 16.0, 1.0, 0.0, 0.0);
-		glRotatef(m_context->yRot / 16.0, 0.0, 1.0, 0.0);
-		glRotatef(m_context->zRot / 16.0, 0.0, 0.0, 1.0);
+		m_context->applyCamera();
 	}
 
 	//std::cout<< registeredManagees.count() << " Renderable nodes to render." << std::endl;

@@ -133,6 +133,6 @@ typedef Vector2<int>			Vector2i;
 typedef Vector2<short>			Vector2s;
 typedef Vector2<unsigned char>	Vector2ub;
 
-#include "Vector2.hpp"
+#include "vector2.hpp"
 
 #endif	// VECTOR2_H
