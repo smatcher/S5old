@@ -21,7 +21,6 @@ public:
 
 protected:
 	void keyPressEvent(QKeyEvent *event);
-	void keyReleaseEvent(QKeyEvent *event);
 	void closeEvent(QCloseEvent *evt);
 	virtual bool event(QEvent* evt);
 

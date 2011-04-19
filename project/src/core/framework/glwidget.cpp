@@ -1,5 +1,6 @@
 #include "core/framework/glwidget.h"
 #include "core/managers/updatemanager.h"
+#include "core/inputs/inputmanager.h"
 
 #include <QtGui>
 #include <QGLFormat>
@@ -15,6 +16,7 @@ GLWidget::GLWidget(QWidget *parent)
 	m_needResize = false;
 
 	setSizePolicy(QSizePolicy::Minimum,QSizePolicy::Minimum);
+	setFocusPolicy(Qt::StrongFocus);
 	setAutoBufferSwap(false);
 
 	QGLFormat _format = format();
@@ -101,6 +103,8 @@ bool GLWidget::event(QEvent *e)
 	   e->type() == QEvent::MouseButtonRelease ||
 	   e->type() == QEvent::MouseMove ||
 	   e->type() == QEvent::Resize ||
+	   e->type() == QEvent::KeyPress ||
+	   e->type() == QEvent::KeyRelease ||
 	   e->type() == QEvent::Close)
 	{
 		return QGLWidget::event(e);
@@ -124,6 +128,30 @@ bool GLWidget::event(QEvent *e)
 					 event->x(),
 					 event->y());
  }
+
+void GLWidget::keyPressEvent(QKeyEvent *e)
+{
+	if (e->key() == Qt::Key_Escape)
+		window()->close();
+	else
+	{
+		INPUT_MANAGER::getInstance().reportButton(InputManager::Source_KeyBoard,InputManager::Held,e->key());
+		QWidget::keyPressEvent(e);
+	}
+}
+
+void GLWidget::keyReleaseEvent(QKeyEvent *e)
+{
+	if (e->key() == Qt::Key_Escape)
+		close();
+	else
+	{
+		INPUT_MANAGER::getInstance().reportButton(InputManager::Source_KeyBoard,InputManager::Off,e->key());
+		QWidget::keyReleaseEvent(e);
+	}
+}
+
+
 
  void GLWidget::resizeEvent(QResizeEvent *evt)
  {
