@@ -131,3 +131,8 @@ void RenderManager::setDrawDebug(bool draw)
 {
     m_drawDebug = draw;
 }
+
+const Camera* RenderManager::getCurrentCamera()
+{
+	return m_camera;
+}

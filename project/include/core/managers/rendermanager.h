@@ -31,7 +31,9 @@ public:
 	void render(double elapsed_time, SceneGraph* sg);
 
 	void setCurrentCamera(Camera* cam);
-    void setDrawDebug(bool draw);
+	void setDrawDebug(bool draw);
+
+	const Camera* getCurrentCamera();
 };
 
 typedef Singleton<RenderManager> RENDER_MANAGER;
