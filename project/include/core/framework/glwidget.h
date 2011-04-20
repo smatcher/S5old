@@ -28,6 +28,7 @@ protected:
 	void paintEvent(QPaintEvent *);
 	void closeEvent(QCloseEvent *evt);
 	void mousePressEvent(QMouseEvent *event);
+	void mouseReleaseEvent(QMouseEvent *event);
 	void mouseMoveEvent(QMouseEvent *event);
 	void keyPressEvent(QKeyEvent * event);
 	void keyReleaseEvent(QKeyEvent * event);

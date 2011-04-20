@@ -118,6 +118,20 @@ bool GLWidget::event(QEvent *e)
 
  void GLWidget::mousePressEvent(QMouseEvent *event)
  {
+	 m_camera.update(event->buttons() & Qt::LeftButton,
+					 event->buttons() & Qt::RightButton,
+					 event->buttons() & Qt::MiddleButton,
+					 event->x(),
+					 event->y());
+ }
+
+void GLWidget::mouseReleaseEvent(QMouseEvent *event)
+ {
+	 m_camera.update(event->buttons() & Qt::LeftButton,
+					 event->buttons() & Qt::RightButton,
+					 event->buttons() & Qt::MiddleButton,
+					 event->x(),
+					 event->y());
  }
 
  void GLWidget::mouseMoveEvent(QMouseEvent *event)
