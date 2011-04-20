@@ -33,16 +33,16 @@ int main(int argc, char *argv[])
 	controls.push_back(InputManager::Control(false,"recule"));
 	controls.push_back(InputManager::Control(false,"gauche"));
 	controls.push_back(InputManager::Control(false,"droite"));
-	INPUT_MANAGER::getInstance().addControls(controls);
+	INPUT_MANAGER.addControls(controls);
 
-	INPUT_MANAGER::getInstance().addBinding("KB_Z","avance");
-	INPUT_MANAGER::getInstance().addBinding("KB_Up","avance");
-	INPUT_MANAGER::getInstance().addBinding("KB_S","recule");
-	INPUT_MANAGER::getInstance().addBinding("KB_Down","recule");
-	INPUT_MANAGER::getInstance().addBinding("KB_Q","gauche");
-	INPUT_MANAGER::getInstance().addBinding("KB_Left","gauche");
-	INPUT_MANAGER::getInstance().addBinding("KB_D","droite");
-	INPUT_MANAGER::getInstance().addBinding("KB_Right","droite");
+	INPUT_MANAGER.addBinding("KB_Z","avance");
+	INPUT_MANAGER.addBinding("KB_Up","avance");
+	INPUT_MANAGER.addBinding("KB_S","recule");
+	INPUT_MANAGER.addBinding("KB_Down","recule");
+	INPUT_MANAGER.addBinding("KB_Q","gauche");
+	INPUT_MANAGER.addBinding("KB_Left","gauche");
+	INPUT_MANAGER.addBinding("KB_D","droite");
+	INPUT_MANAGER.addBinding("KB_Right","droite");
 
     Node nRot("Rotating node");
 	Node nQt("Qt Logo");
@@ -61,9 +61,9 @@ int main(int argc, char *argv[])
 	nCam.properties().link(&cam);
 	nCamFollow.properties().link(&camFollow);
 
-	Mesh mesh = MeshManager::getInstance().get("duckmesh");
-	Material material = MaterialManager::getInstance().get("duckmesh");
-	Texture texture = TextureManager::getInstance().get("duck.tga");
+	Mesh mesh = MESH_MANAGER.get("duckmesh");
+	Material material = MATERIAL_MANAGER.get("duckmesh");
+	Texture texture = TEXTURE_MANAGER.get("duck.tga");
 
 	Node nDuck("Duck");
 	MeshRenderer mrender(mesh,material,texture);

@@ -6,7 +6,7 @@
 
 DummyControlable::DummyControlable()
 {
-	InputManager& manager  = INPUT_MANAGER::getInstance();
+	InputManager& manager  = INPUT_MANAGER;
 	m_control_forward = manager.getControlId("avance");
 	m_control_backward = manager.getControlId("recule");
 	m_control_left = manager.getControlId("gauche");
@@ -15,7 +15,7 @@ DummyControlable::DummyControlable()
 
 void DummyControlable::update(double elapsed_time)
 {
-	InputManager& manager  = INPUT_MANAGER::getInstance();
+	InputManager& manager  = INPUT_MANAGER;
 
 	if(manager.getButtonStatus(m_control_forward) == InputManager::Held)
 	{

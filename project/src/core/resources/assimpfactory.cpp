@@ -29,7 +29,7 @@ void AssimpFactory::parseFile(const QString& path, QList<ResourceData*>& content
 			AssimpMesh* mesh = new AssimpMesh(name,path,this,aimesh);
 			AssimpMaterial* material = new AssimpMaterial(name,path,this,aimaterial);
 			content.push_back(mesh);
-			MaterialManager::getInstance().add(material);
+			MATERIAL_MANAGER.add(material);
 			qDebug() << "Assimp found the mesh : " << name << " in " << path;
 		}
 	}

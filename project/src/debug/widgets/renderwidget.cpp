@@ -19,7 +19,7 @@ RenderWidget::RenderWidget()
     CameraRadioButton* editorCam = new CameraRadioButton(NULL);
     editorCam->setChecked(true);
     camerasLayout->addWidget(editorCam);
-    const QVector<Camera*>& cameras = CAMERA_MANAGER::getInstance().managees();
+	const QVector<Camera*>& cameras = CAMERA_MANAGER.managees();
     for(int i=0 ; i<cameras.count() ; i++)
     {
         CameraRadioButton* cam = new CameraRadioButton(cameras.at(i));
@@ -33,7 +33,7 @@ RenderWidget::RenderWidget()
 
 RenderWidget::~RenderWidget()
 {
-	CAMERA_MANAGER::getInstance().widgetDestroyed();
+	CAMERA_MANAGER.widgetDestroyed();
 }
 
 void RenderWidget::cameraAdded(Camera *cam)
@@ -53,10 +53,10 @@ void RenderWidget::drawDebugChanged(int state)
     switch(state)
     {
         case Qt::Checked :
-            RENDER_MANAGER::getInstance().setDrawDebug(true);
+			RENDER_MANAGER.setDrawDebug(true);
             break;
         case Qt::Unchecked :
-            RENDER_MANAGER::getInstance().setDrawDebug(false);
+			RENDER_MANAGER.setDrawDebug(false);
             break;
         default :
             break;

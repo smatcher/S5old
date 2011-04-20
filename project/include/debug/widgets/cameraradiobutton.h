@@ -52,7 +52,7 @@ public slots:
     void isToggled(bool checked)
     {
         if(checked)
-            RENDER_MANAGER::getInstance().setCurrentCamera(m_camera);
+			RENDER_MANAGER.setCurrentCamera(m_camera);
 	}
 
 	virtual bool event(QEvent* evt)

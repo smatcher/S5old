@@ -13,19 +13,24 @@
 #include "core/resources/assimpfactory.h"
 #include "core/resources/stbimage.h"
 
-typedef Singleton< ResourceManager< MeshData,     Mesh> >     MeshManager;
-typedef Singleton< ResourceManager< TextureData,  Texture> >  TextureManager;
-typedef Singleton< ResourceManager< MaterialData, Material> > MaterialManager;
-typedef Singleton< ResourceManager< ShaderData,   Shader> >   ShaderManager;
+typedef Singleton< ResourceManager< MeshData,     Mesh> >     SingletonMeshManager;
+typedef Singleton< ResourceManager< TextureData,  Texture> >  SingletonTextureManager;
+typedef Singleton< ResourceManager< MaterialData, Material> > SingletonMaterialManager;
+typedef Singleton< ResourceManager< ShaderData,   Shader> >   SingletonShaderManager;
+
+#define MESH_MANAGER SingletonMeshManager::getInstance()
+#define TEXTURE_MANAGER SingletonTextureManager::getInstance()
+#define MATERIAL_MANAGER SingletonMaterialManager::getInstance()
+#define SHADER_MANAGER SingletonShaderManager::getInstance()
 
 inline void initResourceManagers()
 {
-	MeshManager::getInstance().addFactory(new AssimpFactory()); // TODO : this is a memory leak, i don't like leaks, get rid of this leak.
-	TextureManager::getInstance().addFactory(new StbImageFactory());
+	MESH_MANAGER.addFactory(new AssimpFactory()); // TODO : this is a memory leak, i don't like leaks, get rid of this leak.
+	TEXTURE_MANAGER.addFactory(new StbImageFactory());
 
-	MeshManager::getInstance().parseDir("../media/models",true);
-	TextureManager::getInstance().parseDir("../media/textures",true);
-	TextureManager::getInstance().loadAll();
+	MESH_MANAGER.parseDir("../media/models",true);
+	TEXTURE_MANAGER.parseDir("../media/textures",true);
+	TEXTURE_MANAGER.loadAll();
 }
 
 #endif // MANAGERS_H

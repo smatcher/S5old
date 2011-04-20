@@ -18,6 +18,7 @@ public:
     void update(double elapsed_time);
 };
 
-typedef Singleton<UpdateManager> UPDATE_MANAGER;
+typedef Singleton<UpdateManager> SingletonUpdateManager;
+#define UPDATE_MANAGER SingletonUpdateManager::getInstance()
 
 #endif // UPDATEMANAGER_H

@@ -63,7 +63,7 @@ bool GLWidget::event(QEvent *e)
 
 void GLWidget::mousePressEvent(QMouseEvent *event)
 {
-	if(RENDER_MANAGER::getInstance().getCurrentCamera() == NULL)
+	if(RENDER_MANAGER.getCurrentCamera() == NULL)
 	{
 		m_camera.update(event->buttons() & Qt::LeftButton,
 				event->buttons() & Qt::RightButton,
@@ -78,7 +78,7 @@ void GLWidget::mousePressEvent(QMouseEvent *event)
 
 void GLWidget::mouseReleaseEvent(QMouseEvent *event)
 {
-	if(RENDER_MANAGER::getInstance().getCurrentCamera() == NULL)
+	if(RENDER_MANAGER.getCurrentCamera() == NULL)
 	{
 		m_camera.update(event->buttons() & Qt::LeftButton,
 				event->buttons() & Qt::RightButton,
@@ -93,7 +93,7 @@ void GLWidget::mouseReleaseEvent(QMouseEvent *event)
 
 void GLWidget::mouseMoveEvent(QMouseEvent *event)
 {
-	if(RENDER_MANAGER::getInstance().getCurrentCamera() == NULL)
+	if(RENDER_MANAGER.getCurrentCamera() == NULL)
 	{
 		m_camera.update(event->buttons() & Qt::LeftButton,
 				event->buttons() & Qt::RightButton,
@@ -112,12 +112,12 @@ void GLWidget::keyPressEvent(QKeyEvent *e)
 		window()->close();
 	else
 	{
-		if(RENDER_MANAGER::getInstance().getCurrentCamera() == NULL)
+		if(RENDER_MANAGER.getCurrentCamera() == NULL)
 		{
 		}
 		else
 		{
-			INPUT_MANAGER::getInstance().reportButton(InputManager::Source_KeyBoard,InputManager::Held,e->key());
+			INPUT_MANAGER.reportButton(InputManager::Source_KeyBoard,InputManager::Held,e->key());
 			QWidget::keyPressEvent(e);
 		}
 	}
@@ -129,12 +129,12 @@ void GLWidget::keyReleaseEvent(QKeyEvent *e)
 		close();
 	else
 	{
-		if(RENDER_MANAGER::getInstance().getCurrentCamera() == NULL)
+		if(RENDER_MANAGER.getCurrentCamera() == NULL)
 		{
 		}
 		else
 		{
-			INPUT_MANAGER::getInstance().reportButton(InputManager::Source_KeyBoard,InputManager::Off,e->key());
+			INPUT_MANAGER.reportButton(InputManager::Source_KeyBoard,InputManager::Off,e->key());
 			QWidget::keyReleaseEvent(e);
 		}
 	}

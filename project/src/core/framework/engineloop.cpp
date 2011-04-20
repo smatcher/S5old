@@ -21,8 +21,8 @@ EngineLoop::~EngineLoop()
 
 void EngineLoop::run()
 {
-	RenderManager* renderManager = &(RENDER_MANAGER::getInstance());
-	UpdateManager* updateManager = &(UPDATE_MANAGER::getInstance());
+	RenderManager* renderManager = &(RENDER_MANAGER);
+	UpdateManager* updateManager = &(UPDATE_MANAGER);
 
 	m_gl->makeCurrent();
 	renderManager->init(m_gl);

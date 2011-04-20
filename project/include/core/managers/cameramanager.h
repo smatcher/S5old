@@ -23,6 +23,7 @@ private :
 	void widgetDestroyed();
 };
 
-typedef Singleton<CameraManager> CAMERA_MANAGER;
+typedef Singleton<CameraManager> SingletonCameraManager;
+#define CAMERA_MANAGER SingletonCameraManager::getInstance()
 
 #endif // CAMERAMANAGER_H

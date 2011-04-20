@@ -36,6 +36,7 @@ public:
 	const Camera* getCurrentCamera();
 };
 
-typedef Singleton<RenderManager> RENDER_MANAGER;
+typedef Singleton<RenderManager> SingletonRenderManager;
+#define RENDER_MANAGER SingletonRenderManager::getInstance()
 
 #endif // RENDERMANAGER_H

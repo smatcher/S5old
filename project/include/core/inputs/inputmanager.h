@@ -84,6 +84,7 @@ private:
 	InputSource extractSource(const QString& input);
 };
 
-typedef Singleton<InputManager> INPUT_MANAGER;
+typedef Singleton<InputManager> SingletonInputManager;
+#define INPUT_MANAGER SingletonInputManager::getInstance()
 
 #endif // INPUTMANAGER_H

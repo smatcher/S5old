@@ -15,7 +15,7 @@ AppWindow::AppWindow(Engine* engine)
 {
 	m_engine = engine;
 	m_glWidget = new GLWidget(this);
-	m_renderWidget = CAMERA_MANAGER::getInstance().getDebugView();
+	m_renderWidget = CAMERA_MANAGER.getDebugView();
 	m_treeWidget = engine->getScenegraph_TEMPORARY()->getDebugView();
 	m_propertiesWidget = new PropertiesPanel();
 
