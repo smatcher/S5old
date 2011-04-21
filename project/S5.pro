@@ -49,7 +49,8 @@ SOURCES += \
     src/core/inputs/qtkeytranslator.cpp \
     src/core/inputs/inputmanager.cpp \
     src/core/properties/dummycontrolable.cpp \
-    src/debug/tools/debugcamera.cpp
+    src/debug/tools/debugcamera.cpp \
+    src/debug/widgets/meshrendererwidget.cpp
 
 HEADERS  += \
 	include/core/properties/qtlogo.h \
@@ -124,7 +125,8 @@ HEADERS  += \
     include/core/inputs/inputmanager.h \
     include/core/inputs/qtkeytranslator.h \
     include/core/properties/dummycontrolable.h \
-    include/debug/tools/debugcamera.h
+    include/debug/tools/debugcamera.h \
+    include/debug/widgets/meshrendererwidget.h
 
 INCLUDEPATH += \
 	include \

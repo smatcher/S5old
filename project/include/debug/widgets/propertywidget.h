@@ -4,12 +4,14 @@
 #include <QWidget>
 
 class IProperty;
+class QGroupBox;
 
 class PropertyWidget : public QWidget
 {
 	Q_OBJECT
 
-private :
+protected :
+	QGroupBox* m_box;
 	IProperty* m_property;
 
 public :

@@ -1,5 +1,6 @@
 #include "core/properties/meshrenderer.h"
 #include "core/scenegraph/node.h"
+#include "debug/widgets/meshrendererwidget.h"
 
 MeshRenderer::MeshRenderer(Mesh& mesh, Material& material, Texture& texture) : IRenderable("MeshRenderer")
 {
@@ -26,4 +27,12 @@ void MeshRenderer::render(double elapsed_time, GLWidget* context)
 		((MeshData*)&m_mesh)->draw();
 	else
 		qDebug() << "MeshRenderer : no mesh to draw for " << node()->getName();
+}
+
+PropertyWidget* MeshRenderer::getWidget()
+{
+	if(m_widget == NULL)
+		m_widget = new MeshRendererWidget(this);
+
+	return m_widget;
 }

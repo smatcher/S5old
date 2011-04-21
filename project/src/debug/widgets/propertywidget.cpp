@@ -8,8 +8,8 @@ PropertyWidget::PropertyWidget(IProperty *property)
 	m_property = property;
 	QHBoxLayout* layout = new QHBoxLayout();
 	layout->setMargin(0);
-	QGroupBox* box = new QGroupBox(property->getName());
-	layout->addWidget(box);
+	m_box = new QGroupBox(property->getName());
+	layout->addWidget(m_box);
 	setLayout(layout);
 	setSizePolicy(QSizePolicy::Expanding,QSizePolicy::Maximum);
 }
