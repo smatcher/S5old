@@ -8,6 +8,7 @@
 #include "core/properties/dummycontrolable.h"
 #include "core/properties/qtlogo.h"
 #include "core/properties/camera.h"
+#include "core/properties/soundemitter.h"
 #include "core/managers/rendermanager.h"
 #ifdef Q_WS_X11
 	#include <X11/Xlib.h>
@@ -17,6 +18,13 @@
 #include "core/properties/meshrenderer.h"
 
 #include "core/inputs/inputmanager.h"
+
+#include <AL/al.h>
+#include <AL/alc.h>
+//#include <AL/alu.h>
+#include <AL/alut.h>
+
+
 
 int main(int argc, char *argv[])
 {
@@ -44,13 +52,13 @@ int main(int argc, char *argv[])
 	INPUT_MANAGER.addBinding("KB_D","droite");
 	INPUT_MANAGER.addBinding("KB_Right","droite");
 
-    Node nRot("Rotating node");
+        Node nRot("Rotating node");
 	Node nQt("Qt Logo");
 	Node nCam("Camera");
 	Node nCamFollow("Camera Follow");
 
-    IProperty prop1;
-    DummyUpdatable rot;
+        IProperty prop1;
+        DummyUpdatable rot;
 	QtLogo qt(engine.getGLW_TEMPORARY());
 	Camera cam(70,1,200);
 	Camera camFollow(90,1,200);
@@ -64,12 +72,16 @@ int main(int argc, char *argv[])
 	Mesh mesh = MESH_MANAGER.get("duckmesh");
 	Material material = MATERIAL_MANAGER.get("duckmesh");
 	Texture texture = TEXTURE_MANAGER.get("duck.tga");
+        Sample sample = SAMPLE_MANAGER.get("quacking.wav");
+
 
 	Node nDuck("Duck");
 	MeshRenderer mrender(mesh,material,texture);
 	DummyControlable cont;
+        SoundEmitter sound(sample);
 	nDuck.properties().link(&mrender);
 	nDuck.properties().link(&cont);
+        nDuck.properties().link(&sound);
 	nDuck.link(&nCamFollow);
 
 	sg->link(&nDuck);

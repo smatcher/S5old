@@ -8,6 +8,8 @@
 
 #include "core/resources/managers.h"
 
+#include <AL/alut.h>
+
 Engine::Engine(int argc, char *argv[]) :
 	m_app(argc, argv),
 	m_scene(),
@@ -38,7 +40,7 @@ void Engine::init(int argc, char *argv[])
 		m_window.show();
 	else
 		m_window.showMaximized();
-
+        alutInit(&argc, argv);
 	m_window.getGLW_TEMPORARY()->makeCurrent();
 
 	initResourceManagers();

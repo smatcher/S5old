@@ -50,7 +50,11 @@ SOURCES += \
     src/core/inputs/inputmanager.cpp \
     src/core/properties/dummycontrolable.cpp \
     src/debug/tools/debugcamera.cpp \
-    src/debug/widgets/meshrendererwidget.cpp
+    src/debug/widgets/meshrendererwidget.cpp \
+    src/core/properties/soundemitter.cpp \
+    src/core/resources/samplefactory.cpp \
+    src/core/managers/soundmanager.cpp \
+    src/debug/widgets/soundemitterwidget.cpp
 
 HEADERS  += \
 	include/core/properties/qtlogo.h \
@@ -126,13 +130,18 @@ HEADERS  += \
     include/core/inputs/qtkeytranslator.h \
     include/core/properties/dummycontrolable.h \
     include/debug/tools/debugcamera.h \
-    include/debug/widgets/meshrendererwidget.h
+    include/debug/widgets/meshrendererwidget.h \
+    include/core/properties/soundemitter.h \
+    include/core/resources/samplefactory.h \
+    include/core/resources/sample.h \
+    include/core/managers/soundmanager.h \
+    include/debug/widgets/soundemitterwidget.h
 
 INCLUDEPATH += \
 	include \
 	../dep/assimp/include
 
 LIBS += \
-	-L../dep/assimp/lib -lassimp
+        -L../dep/assimp/lib -lassimp -lopenal -lalut
 
 FORMS    +=
