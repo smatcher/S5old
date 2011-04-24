@@ -54,7 +54,8 @@ SOURCES += \
     src/core/properties/soundemitter.cpp \
     src/core/resources/samplefactory.cpp \
     src/core/managers/soundmanager.cpp \
-    src/debug/widgets/soundemitterwidget.cpp
+    src/debug/widgets/soundemitterwidget.cpp \
+    src/core/properties/grid.cpp
 
 HEADERS  += \
 	include/core/properties/qtlogo.h \
@@ -135,7 +136,8 @@ HEADERS  += \
     include/core/resources/samplefactory.h \
     include/core/resources/sample.h \
     include/core/managers/soundmanager.h \
-    include/debug/widgets/soundemitterwidget.h
+    include/debug/widgets/soundemitterwidget.h \
+    include/core/properties/grid.h
 
 INCLUDEPATH += \
 	include \

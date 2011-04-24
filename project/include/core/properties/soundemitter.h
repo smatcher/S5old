@@ -23,6 +23,7 @@ public:
     SoundEmitter(Sample& sample);
 
     void play();
+    void pause();
     void stop();
 
     void setLoop(bool value);

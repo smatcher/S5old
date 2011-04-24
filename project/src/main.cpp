@@ -10,6 +10,7 @@
 #include "core/properties/camera.h"
 #include "core/properties/soundemitter.h"
 #include "core/managers/rendermanager.h"
+#include "core/properties/grid.h"
 #ifdef Q_WS_X11
 	#include <X11/Xlib.h>
 #endif
@@ -66,6 +67,7 @@ int main(int argc, char *argv[])
 	nRot.properties().link(&prop1);
 	nRot.properties().link(&rot);
 	nQt.properties().link(&qt);
+        nQt.properties().link(new Grid(0.5f, 0.5f, 20, 20));
 	nCam.properties().link(&cam);
 	nCamFollow.properties().link(&camFollow);
 
