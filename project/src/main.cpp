@@ -67,7 +67,7 @@ int main(int argc, char *argv[])
 	nRot.properties().link(&prop1);
 	nRot.properties().link(&rot);
 	nQt.properties().link(&qt);
-        nQt.properties().link(new Grid(0.5f, 0.5f, 20, 20));
+        nQt.properties().link(new Grid(1.0f, 1.0f, 40, 40));
 	nCam.properties().link(&cam);
 	nCamFollow.properties().link(&camFollow);
 
