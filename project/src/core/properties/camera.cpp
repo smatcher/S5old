@@ -11,6 +11,8 @@ Camera::Camera(double yfov, double znear, double zfar) : IProperty("Camera"), Ma
 	m_zfar = zfar;
 	m_needComputation = true;
 	m_lastAspect = 0;
+
+	m_radiobutton = NULL;
 }
 
 Camera::~Camera()

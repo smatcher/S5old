@@ -6,6 +6,7 @@
 #include "core/framework/glwidget.h"
 #include "core/framework/window.h"
 #include "core/framework/engineloop.h"
+#include "debug/debugwindow.h"
 
 class Engine
 {
@@ -16,6 +17,7 @@ private :
 
 	SceneGraph m_scene;
 	AppWindow  m_window;
+	DebugWindow m_debugWindow;
 
 	EngineLoop m_loopThread;
 

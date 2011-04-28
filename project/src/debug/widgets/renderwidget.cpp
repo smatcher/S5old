@@ -27,7 +27,7 @@ RenderWidget::RenderWidget()
     }
     //camerasLayout->addStretch(1);
 
-    setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Minimum);
+	setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Maximum);
     connect(drawDebug, SIGNAL(stateChanged(int)), this, SLOT(drawDebugChanged(int)));
 }
 

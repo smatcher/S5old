@@ -14,6 +14,7 @@ Engine::Engine(int argc, char *argv[]) :
 	m_app(argc, argv),
 	m_scene(),
 	m_window(this),
+	m_debugWindow(this),
 	m_loopThread(this,m_window.getGLW_TEMPORARY()),
 	m_running(false)
 {
@@ -40,8 +41,11 @@ void Engine::init(int argc, char *argv[])
 		m_window.show();
 	else
 		m_window.showMaximized();
-        alutInit(&argc, argv);
+
+	alutInit(&argc, argv);
 	m_window.getGLW_TEMPORARY()->makeCurrent();
+
+	m_debugWindow.show();
 
 	initResourceManagers();
 }
