@@ -28,6 +28,8 @@ public:
 
 	Transformd globalTransform();
 
+	void addProperty(IProperty* property);
+
 	// Debug
     virtual void drawDebug(const GLWidget* widget, bool recursive) const;
 	virtual NodeWidget* getWidget();

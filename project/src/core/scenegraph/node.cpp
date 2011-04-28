@@ -32,6 +32,11 @@ Transformd Node::globalTransform()
 	return ret;
 }
 
+void Node::addProperty(IProperty *property)
+{
+	m_properties.link(property);
+}
+
 void Node::drawDebug(const GLWidget* widget, bool recursive) const
 {
 	glPushMatrix();

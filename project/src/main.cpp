@@ -53,55 +53,44 @@ int main(int argc, char *argv[])
 	INPUT_MANAGER.addBinding("KB_D","droite");
 	INPUT_MANAGER.addBinding("KB_Right","droite");
 
-        Node nRot("Rotating node");
-	Node nQt("Qt Logo");
-	Node nCam("Camera");
-	Node nCamFollow("Camera Follow");
+	Node* nRot = new Node("Rotating node");
+	Node* nQt = new Node("Qt Logo");
+	Node* nCam = new Node("Camera");
+	Node* nCamFollow = new Node("Camera Follow");
 
-        IProperty prop1;
-        DummyUpdatable rot;
-	QtLogo qt(engine.getGLW_TEMPORARY());
-	Camera cam(70,1,200);
-	Camera camFollow(90,1,200);
-
-	nRot.properties().link(&prop1);
-	nRot.properties().link(&rot);
-	nQt.properties().link(&qt);
-        nQt.properties().link(new Grid(1.0f, 1.0f, 40, 40));
-	nCam.properties().link(&cam);
-	nCamFollow.properties().link(&camFollow);
+	nRot->addProperty(new IProperty());
+	nRot->addProperty(new DummyUpdatable());
+	nQt->addProperty(new QtLogo(engine.getGLW_TEMPORARY()));
+	nQt->addProperty(new Grid(1.0f, 1.0f, 40, 40));
+	nCam->addProperty(new Camera(70,1,200));
+	nCamFollow->addProperty(new Camera(90,1,200));
 
 	Mesh mesh = MESH_MANAGER.get("duckmesh");
 	Material material = MATERIAL_MANAGER.get("duckmesh");
 	Texture texture = TEXTURE_MANAGER.get("duck.tga");
-        Sample sample = SAMPLE_MANAGER.get("quacking.wav");
+	Sample sample = SAMPLE_MANAGER.get("quacking.wav");
 
 
-	Node nDuck("Duck");
-	MeshRenderer mrender(mesh,material,texture);
-	DummyControlable cont;
-        SoundEmitter sound(sample);
-	nDuck.properties().link(&mrender);
-	nDuck.properties().link(&cont);
-        nDuck.properties().link(&sound);
-	nDuck.link(&nCamFollow);
+	Node* nDuck = new Node("Duck");
+	nDuck->addProperty(new MeshRenderer(mesh,material,texture));
+	nDuck->addProperty(new DummyControlable());
+	nDuck->addProperty(new SoundEmitter(sample));
+	nDuck->link(nCamFollow);
 
-	sg->link(&nDuck);
-	sg->link(&nRot);
-	sg->link(&nQt);
-	nRot.link(&nCam);
+	sg->link(nDuck);
+	sg->link(nRot);
+	sg->link(nQt);
+	nRot->link(nCam);
 
-    nRot.moveTo(Vector3d(0,0,0));
-	nQt.moveTo(Vector3d(0,-0.5,0));
-	nQt.rotate(Vector3d(1,0,0),90);
-    nCam.moveTo(Vector3d(0,1,2));
-	nCam.rotate(Vector3d(1,0,0),330);
-	nCamFollow.moveTo(Vector3d(0,2,3));
-	nCamFollow.rotate(Vector3d(1,0,0),345);
+	nRot->moveTo(Vector3d(0,0,0));
+	nQt->moveTo(Vector3d(0,-0.5,0));
+	nQt->rotate(Vector3d(1,0,0),90);
+	nCam->moveTo(Vector3d(0,1,2));
+	nCam->rotate(Vector3d(1,0,0),330);
+	nCamFollow->moveTo(Vector3d(0,2,3));
+	nCamFollow->rotate(Vector3d(1,0,0),345);
 
 	int ret = engine.start();
-
-    nRot.unlinkAll();
 
 	return ret;
 }
