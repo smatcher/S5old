@@ -65,5 +65,5 @@ void RenderWidget::drawDebugChanged(int state)
 
 QSize RenderWidget::sizeHint() const
 {
-    return QSize(200,200);
+    return QSize(240,200);
 }
