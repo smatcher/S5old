@@ -2,8 +2,6 @@
 #include "core/inputs/inputmanager.h"
 #include "core/scenegraph/node.h"
 
-#include <QDebug>
-
 DummyControlable::DummyControlable()
 {
 	InputManager& manager  = INPUT_MANAGER;

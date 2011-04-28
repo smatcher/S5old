@@ -70,7 +70,6 @@ int main(int argc, char *argv[])
 	Texture texture = TEXTURE_MANAGER.get("duck.tga");
 	Sample sample = SAMPLE_MANAGER.get("quacking.wav");
 
-
 	Node* nDuck = new Node("Duck");
 	nDuck->addProperty(new MeshRenderer(mesh,material,texture));
 	nDuck->addProperty(new DummyControlable());

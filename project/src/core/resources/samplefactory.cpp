@@ -5,6 +5,8 @@
 #include <AL/alut.h>
 #include <QDir>
 
+#include "debug/log/log.h"
+
 void SampleFactory::load(ResourceData* resource)
 {
         SampleData* sample_data = static_cast<SampleData*>(resource);
@@ -27,7 +29,7 @@ void SampleFactory::load(ResourceData* resource)
             /*TODO: correct error handling?*/
             if(alGetError() == AL_NO_ERROR)
             {
-                qDebug() << "Sound loaded "<< resource->name();
+				logInfo( "Sound loaded "<< resource->name() );
 
                 /* Copy data to the new buffer */
                 alBufferData(sample_data->m_buffer, format, data, size, freq);
@@ -36,7 +38,7 @@ void SampleFactory::load(ResourceData* resource)
                 alutUnloadWAV(format, data, size, freq);
             }
             else
-                qDebug() << "OpenAL failed to load " << resource->name() << "\n" << alGetError();
+				logError( "OpenAL failed to load " << resource->name() << "\n" << alGetError() );
         }
 }
 
@@ -49,13 +51,13 @@ void SampleFactory::parseFile(const QString &path, QList<ResourceData *> &conten
         dir.cdUp();
         if(dir.exists())
         {
-                qDebug() << "Sample found " << name;
+				debug( "RESOURCE PARSING" ,"Sample found " << name );
                 SampleData* sample = new SampleData(name,path,this);
                 content.push_back(sample);
         }
         else
         {
-                qDebug() << path << " : " << dir << " does not exist";
+				debug( "RESOURCE PARSING" , path << " : " << dir << " does not exist");
         }
 }
 

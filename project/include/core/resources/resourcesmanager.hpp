@@ -4,6 +4,7 @@
 #include "resourcemanager.h"
 
 #include "core/resources/iresourcefactory.h"
+#include "debug/log/log.h"
 
 
 template <class Resource, class Handle>
@@ -34,7 +35,7 @@ void ResourceManager<Resource, Handle>::parseDir(const QString& path, bool recur
 			}
 			else
 			{
-				qDebug() << "Resource named " << (*it2)->name() << " discarded because an other resource add the same name";
+				logError( "Resource named " << (*it2)->name() << " discarded because an other resource add the same name" );
 			}
 		}
 	}
@@ -92,7 +93,7 @@ void ResourceManager<Resource, Handle>::add(Resource* resource)
 	}
 	else
 	{
-		qDebug() << "Resource named " << resource->name() << " discarded because an other resource add the same name";
+		logError( "Resource named " << resource->name() << " discarded because an other resource add the same name" );
 	}
 }
 

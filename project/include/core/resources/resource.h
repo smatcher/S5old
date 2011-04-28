@@ -2,8 +2,9 @@
 #define IRESOURCE_H
 
 #include <QString>
-#include <QDebug>
 #include "core/resources/iresourcefactory.h"
+
+#include "debug/log/log.h"
 
 template <class Resource>
 class ResourceHandle
@@ -40,7 +41,7 @@ public:
 
 	// Reference counting
 	void incRef()  {m_ref++;}
-	void decRef()  {m_ref--; if(m_ref < 0) { qDebug() << "Warning : " << m_name << " reference count is negative";}}
+	void decRef()  {m_ref--; if(m_ref < 0) { logWarn( m_name << "reference count is negative"); }}
 	int refCount() {return m_ref;}
 
 	// Getters

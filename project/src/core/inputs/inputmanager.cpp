@@ -1,6 +1,7 @@
 #include "core/inputs/inputmanager.h"
 #include <QStringList>
-#include <QDebug>
+
+#include "debug/log/log.h"
 
 InputManager::InputManager()
 {
@@ -20,7 +21,7 @@ void InputManager::addControl(Control control)
 	}
 	else
 	{
-		qDebug() << "Warning : control " << control.name << " declared more than once";
+		logWarn( "control " << control.name << " declared more than once");
 	}
 }
 
@@ -56,7 +57,7 @@ void InputManager::addBinding(const QString &input, const QString &control)
 
 				if(input_id != m_bindings[source_index].end())
 				{
-					qDebug() << "Error : " << input << " already bound to " << input_id.value().name;
+					logError( input << " already bound to " << input_id.value().name );
 				}
 				else
 				{
@@ -65,17 +66,17 @@ void InputManager::addBinding(const QString &input, const QString &control)
 			}
 			else
 			{
-				qDebug() << "Error : " << input << " is not a valid key";
+				logError( input << " is not a valid key" );
 			}
 		}
 		else
 		{
-			qDebug() << "Error : cannot bind to control " << control << " because it does not exist";
+			logError( "cannot bind to control " << control << " because it does not exist");
 		}
 	}
 	else
 	{
-		qDebug() << "Error : cannot bind " << input << " because it is not a valid key";
+		logError( "cannot bind " << input << " because it is not a valid key");
 	}
 }
 
@@ -114,7 +115,7 @@ int InputManager::getControlId(const QString &control)
 	}
 	else
 	{
-		qDebug() << "Error : trying to access id for " << control << " which is an unknwown control";
+		logError( "trying to access id for " << control << " which is an unknwown control");
 	}
 
 	return ret;

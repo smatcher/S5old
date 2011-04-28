@@ -6,6 +6,8 @@
 
 #include "core/resources/managers.h"
 
+#include "debug/log/log.h"
+
 void AssimpFactory::load(ResourceData* resource)
 {
 	if(resource->state() == AssimpMesh::STATE_UNLOADED)
@@ -30,12 +32,12 @@ void AssimpFactory::parseFile(const QString& path, QList<ResourceData*>& content
 			AssimpMaterial* material = new AssimpMaterial(name,path,this,aimaterial);
 			content.push_back(mesh);
 			MATERIAL_MANAGER.add(material);
-			qDebug() << "Assimp found the mesh : " << name << " in " << path;
+			logInfo( "Assimp found the mesh : " << name << " in " << path );
 		}
 	}
 	else
 	{
-		qDebug() << "Assimp could not read " << path;
+		logError( "Assimp could not read " << path );
 	}
 }
 

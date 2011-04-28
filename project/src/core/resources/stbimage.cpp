@@ -1,6 +1,8 @@
 #include "core/resources/stbimage.h"
 #include <QDir>
 
+#include "debug/log/log.h"
+
 /*
 
  DATA
@@ -109,7 +111,7 @@ void StbImageFactory::load(ResourceData *resource)
 
 	if(data != NULL)
 	{
-		qDebug() << "StbImage loaded " << resource->name() << " (" << x << "x" << y <<")";
+		logInfo( "StbImage loaded " << resource->name() << " (" << x << "x" << y << ")");
 		stbresource->m_data = data;
 		stbresource->m_width = x;
 		stbresource->m_height = y;
@@ -119,7 +121,7 @@ void StbImageFactory::load(ResourceData *resource)
 	}
 	else
 	{
-		qDebug() << "StbImage failed to load " << resource->name() << "\n" << stbi_failure_reason();
+		logWarn( "StbImage failed to load " << resource->name() << "\n" << stbi_failure_reason());
 	}
 
 }
@@ -131,12 +133,12 @@ void StbImageFactory::parseFile(const QString &path, QList<ResourceData *> &cont
 	dir.cdUp();
 	if(dir.exists())
 	{
-		qDebug() << "StbImage found " << name;
+		debug( "RESOURCE PARSING" , "StbImage found " << name);
 		StbImage* image = new StbImage(name,path,this);
 		content.push_back(image);
 	}
 	else
 	{
-		qDebug() << path << " : " << dir << " does not exist";
+		debug( "RESOURCE PARSING" , path << " : " << dir << " does not exist");
 	}
 }

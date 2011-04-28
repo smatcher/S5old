@@ -7,6 +7,8 @@
 #include <QtOpenGL>
 #include <math.h>
 
+#include "debug/log/log.h"
+
 #ifndef GL_MULTISAMPLE
 #define GL_MULTISAMPLE  0x809D
 #endif
@@ -117,7 +119,7 @@ void RenderManager::render(double elapsed_time, SceneGraph* sg)
 	GLenum error = glGetError();
 	if(error != GL_NO_ERROR)
 	{
-	   qDebug() << gluErrorString(error);
+	   logError( gluErrorString(error) );
 	}
 }
 
