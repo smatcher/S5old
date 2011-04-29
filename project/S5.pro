@@ -125,7 +125,7 @@ INCLUDEPATH += \
 LIBS += \
         -L../dep/assimp/lib -lassimp -lopenal -lalut
 
-debug {
+s5debug {
 	DEFINES += _DEBUG
 }
 
