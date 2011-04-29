@@ -5,21 +5,16 @@
 #include "core/scenegraph/scenegraph.h"
 #include "core/framework/glwidget.h"
 #include "core/framework/window.h"
-#include "core/framework/engineloop.h"
 #include "debug/debugwindow.h"
 
 class Engine
 {
-	friend class EngineLoop;
-
 private :
 	QApplication m_app;
 
 	SceneGraph m_scene;
 	AppWindow  m_window;
 	DebugWindow m_debugWindow;
-
-	EngineLoop m_loopThread;
 
 	bool m_running;
 

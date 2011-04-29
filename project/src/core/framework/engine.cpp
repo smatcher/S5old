@@ -1,10 +1,14 @@
 #include "core/framework/engine.h"
 
 #include "core/scenegraph/scenegraph.h"
+#include "core/managers/rendermanager.h"
 #include "core/managers/updatemanager.h"
 #include "core/maths/trigo.h"
 
+#include "core/utils/customevents.h"
+
 #include <QDesktopWidget>
+#include <QDateTime>
 
 #include "core/resources/managers.h"
 
@@ -15,7 +19,6 @@ Engine::Engine(int argc, char *argv[]) :
 	m_scene(),
 	m_window(this),
 	m_debugWindow(this),
-	m_loopThread(this,m_window.getGLW_TEMPORARY()),
 	m_running(false)
 {
 	init(argc, argv);
@@ -52,21 +55,45 @@ void Engine::init(int argc, char *argv[])
 
 int Engine::start()
 {
-	int ret;
+	int ret = 0;
 	m_running = true;
-//	m_loopThread.start();
-	m_loopThread.run();
 
-	ret = 0;
-//	ret = m_app.exec();
+	RenderManager* renderManager = &(RENDER_MANAGER);
+	UpdateManager* updateManager = &(UPDATE_MANAGER);
+
+	renderManager->init(m_window.getGLW_TEMPORARY());
+/*
+	initResourceManagers();
+*/
+	QDateTime lastTime = QDateTime::currentDateTime();
+
+	int i=0;
+	while(m_running)
+	{
+		QDateTime time = QDateTime::currentDateTime();
+		double elapsed = double(lastTime.msecsTo(time))/1000.0;
+
+		updateManager->update(elapsed);
+		renderManager->render(elapsed,&m_scene);
+
+		lastTime = time;
+
+		i++;
+
+		if(i%10 == 0) {
+			// Debug update
+			QCoreApplication::postEvent(m_scene.getDebugModel(),new UPDATED_EVENT());
+			QCoreApplication::postEvent(&(m_window),new UPDATED_EVENT());
+		}
+
+		QCoreApplication::processEvents();
+	}
 
 	m_running = false;
-	m_loopThread.wait();
 	return ret;
 }
 
 void Engine::stop()
 {
 	m_running = false;
-	m_loopThread.wait();
 }

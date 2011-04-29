@@ -33,7 +33,6 @@ SOURCES += \
     src/core/framework/engine.cpp \
     src/core/framework/glwidget.cpp \
     src/core/framework/window.cpp \ 
-    src/core/framework/engineloop.cpp \
     src/core/managers/rendermanager.cpp \
     src/core/properties/irenderable.cpp \
     src/core/properties/camera.cpp \
@@ -103,7 +102,6 @@ HEADERS  += \
     include/core/framework/engine.h \
     include/core/framework/glwidget.h \
     include/core/framework/window.h \ 
-    include/core/framework/engineloop.h \
     include/core/managers/rendermanager.h \
     include/core/properties/irenderable.h \
     include/core/scenegraph/parentofnode.h \
