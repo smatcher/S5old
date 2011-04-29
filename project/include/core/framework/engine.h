@@ -5,7 +5,10 @@
 #include "core/scenegraph/scenegraph.h"
 #include "core/framework/glwidget.h"
 #include "core/framework/window.h"
-#include "debug/debugwindow.h"
+
+#ifdef WITH_TOOLS
+	#include "debug/debugwindow.h"
+#endif
 
 class Engine
 {
@@ -14,7 +17,10 @@ private :
 
 	SceneGraph m_scene;
 	AppWindow  m_window;
-	DebugWindow m_debugWindow;
+
+	#ifdef WITH_TOOLS
+		DebugWindow m_debugWindow;
+	#endif
 
 	bool m_running;
 

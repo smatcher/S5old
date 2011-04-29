@@ -8,16 +8,25 @@
 #include "core/scenegraph/parentofnode.h"
 
 class GLWidget;
-class NodeWidget;
+
+#ifdef WITH_TOOLS
+	class NodeWidget;
+#endif
 
 class Node : public ParentOfNode, public ChildOf< ParentOfNode >, public Transform<double>
 {
-	friend class NodeWidget;
+	#ifdef WITH_TOOLS
+		friend class NodeWidget;
+	#endif
+
 private :
 	PropertySet m_properties;
-	NodeWidget* m_widget;
 
-	void widgetDestroyed();
+	#ifdef WITH_TOOLS
+		NodeWidget* m_widget;
+		void widgetDestroyed();
+	#endif
+
 public:
 	Node(const QString& name = "Anon Node");
 	virtual ~Node();
@@ -31,8 +40,11 @@ public:
 	void addProperty(IProperty* property);
 
 	// Debug
-    virtual void drawDebug(const GLWidget* widget, bool recursive) const;
-	virtual NodeWidget* getWidget();
+	virtual void drawDebug(const GLWidget* widget, bool recursive) const;
+
+	#ifdef WITH_TOOLS
+		virtual NodeWidget* getWidget();
+	#endif
 };
 
 #endif // NODE_H

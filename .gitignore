@@ -1,3 +1,5 @@
 project-build-desktop
 build-release
+build-release-tools
 build-debug
+build-debug-tools

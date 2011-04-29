@@ -2,13 +2,13 @@
 #define SCENEGRAPH_H
 
 #include "core/utils/parenting.h"
+#include "core/scenegraph/node.h"
 #include "core/scenegraph/parentofnode.h"
 
-#include "debug/scenegraphview.h"
-#include "debug/scenegraphmodel.h"
-
-class SceneGraphModel;
-class SceneGraphView;
+#ifdef WITH_TOOLS
+	class SceneGraphModel;
+	class SceneGraphView;
+#endif
 
 class SceneGraph : public ParentOfNode
 {		
@@ -17,13 +17,15 @@ public:
 	virtual ~SceneGraph();
 	virtual ParentOfNode::TYPE type() {return ParentOfNode::SCENEGRAPH;}
 
-	SceneGraphView* getDebugView();
-	SceneGraphModel* getDebugModel();
-	void clearDebug();
+#ifdef WITH_TOOLS
+		SceneGraphView* getDebugView();
+		SceneGraphModel* getDebugModel();
+		void clearDebug();
 
-private :
-	SceneGraphView* m_debugView;
-	SceneGraphModel* m_debugModel;
+	private :
+		SceneGraphView* m_debugView;
+		SceneGraphModel* m_debugModel;
+#endif
 };
 
 #endif // SCENEGRAPH_H

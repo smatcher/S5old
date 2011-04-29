@@ -1,16 +1,27 @@
 #include "core/scenegraph/scenegraph.h"
 
+#ifdef WITH_TOOLS
+	#include "debug/scenegraphview.h"
+	#include "debug/scenegraphmodel.h"
+#endif
+
 SceneGraph::SceneGraph()
 {
-	m_debugView = NULL;
-	m_debugModel = NULL;
+	#ifdef WITH_TOOLS
+		m_debugView = NULL;
+		m_debugModel = NULL;
+	#endif
 }
 
 SceneGraph::~SceneGraph()
 {
-	if(m_debugView != NULL)
-		delete m_debugView;
+	#ifdef WITH_TOOLS
+		if(m_debugView != NULL)
+			delete m_debugView;
+	#endif
 }
+
+#ifdef WITH_TOOLS
 
 SceneGraphView* SceneGraph::getDebugView()
 {
@@ -35,3 +46,5 @@ void SceneGraph::clearDebug()
 	m_debugView = NULL;
 	m_debugModel = NULL;
 }
+
+#endif

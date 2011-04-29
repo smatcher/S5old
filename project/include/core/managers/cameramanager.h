@@ -5,22 +5,32 @@
 #include "core/utils/singleton.h"
 
 class Camera;
-class RenderWidget;
+
+#ifdef WITH_TOOLS
+	class RenderWidget;
+#endif
+
 class CameraManager : public Manager<Camera>
 {
-	friend class RenderWidget;
+	#ifdef WITH_TOOLS
+		friend class RenderWidget;
+	#endif
 
 public :
     CameraManager();
     ~CameraManager();
 
-    RenderWidget* getDebugView();
+	#ifdef WITH_TOOLS
 
-private :
-    RenderWidget* m_widget;
+		RenderWidget* getDebugView();
 
-	virtual void onManageeAdded(Camera *managee);
-	void widgetDestroyed();
+	private :
+		RenderWidget* m_widget;
+
+		virtual void onManageeAdded(Camera *managee);
+		void widgetDestroyed();
+
+	#endif
 };
 
 typedef Singleton<CameraManager> SingletonCameraManager;

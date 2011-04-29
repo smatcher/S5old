@@ -31,6 +31,8 @@ void MeshRenderer::render(double elapsed_time, GLWidget* context)
 		debug( "RENDERING" , "MeshRenderer : no mesh to draw for " << node()->getName());
 }
 
+#ifdef WITH_TOOLS
+
 PropertyWidget* MeshRenderer::getWidget()
 {
 	if(m_widget == NULL)
@@ -38,3 +40,5 @@ PropertyWidget* MeshRenderer::getWidget()
 
 	return m_widget;
 }
+
+#endif

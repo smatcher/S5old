@@ -12,13 +12,21 @@
 
 #include "core/resources/managers.h"
 
+#ifdef WITH_TOOLS
+	#include "debug/scenegraphmodel.h"
+#endif
+
 #include <AL/alut.h>
 
 Engine::Engine(int argc, char *argv[]) :
 	m_app(argc, argv),
 	m_scene(),
 	m_window(this),
-	m_debugWindow(this),
+
+	#ifdef WITH_TOOLS
+		m_debugWindow(this),
+	#endif
+
 	m_running(false)
 {
 	init(argc, argv);
@@ -48,7 +56,9 @@ void Engine::init(int argc, char *argv[])
 	alutInit(&argc, argv);
 	m_window.getGLW_TEMPORARY()->makeCurrent();
 
-	m_debugWindow.show();
+	#ifdef WITH_TOOLS
+		m_debugWindow.show();
+	#endif
 
 	initResourceManagers();
 }
@@ -80,11 +90,13 @@ int Engine::start()
 
 		i++;
 
-		if(i%10 == 0) {
-			// Debug update
-			QCoreApplication::postEvent(m_scene.getDebugModel(),new UPDATED_EVENT());
-			QCoreApplication::postEvent(&(m_window),new UPDATED_EVENT());
-		}
+		#ifdef WITH_TOOLS
+			if(i%10 == 0) {
+				// Debug update
+				QCoreApplication::postEvent(m_scene.getDebugModel(),new UPDATED_EVENT());
+				QCoreApplication::postEvent(&(m_debugWindow),new UPDATED_EVENT());
+			}
+		#endif
 
 		QCoreApplication::processEvents();
 	}

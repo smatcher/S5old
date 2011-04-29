@@ -5,7 +5,7 @@
 #include <QHash>
 #include <QDebug>
 
-#ifdef QT_DEBUG
+#ifdef _DEBUG
 	#define debug(topic, message)\
 	{\
 		if(Log::displaysTopic(topic))\

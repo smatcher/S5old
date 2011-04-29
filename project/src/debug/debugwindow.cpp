@@ -5,6 +5,7 @@
 #include "debug/widgets/nodewidget.h"
 #include "debug/widgets/propertiespanel.h"
 #include "debug/widgets/renderwidget.h"
+#include "debug/scenegraphview.h"
 
 #include "core/framework/engine.h"
 #include "core/managers/cameramanager.h"

@@ -3,7 +3,10 @@
 
 #include "core/utils/parenting.h"
 #include "core/properties/propertyset.h"
-#include "debug/widgets/propertywidget.h"
+
+#ifdef WITH_TOOLS
+	#include "debug/widgets/propertywidget.h"
+#endif
 
 class GLWidget;
 class PropertySet;
@@ -11,13 +14,6 @@ class Node;
 
 class IProperty : public ChildOf<PropertySet>
 {
-	friend class PropertyWidget;
-
-protected:
-	PropertyWidget* m_widget;
-
-private:
-	void widgetDestroyed();
 
 public:
    /// Constructor
@@ -27,9 +23,24 @@ public:
 
 	Node* node();
 
-    // Debug
-    virtual void drawDebug(const GLWidget* widget) const;
-    virtual PropertyWidget* getWidget();
+	// Debug
+	virtual void drawDebug(const GLWidget* widget) const;
+
+#ifdef WITH_TOOLS
+
+	friend class PropertyWidget;
+
+	protected:
+		PropertyWidget* m_widget;
+
+	private:
+		void widgetDestroyed();
+
+	public:
+		virtual PropertyWidget* getWidget();
+
+#endif
+
 };
 
 #endif // IPROPERTY_H

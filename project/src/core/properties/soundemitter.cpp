@@ -84,6 +84,7 @@ void SoundEmitter::setVelocity(Vector3d velocity)
     alSourcefv(m_source, AL_VELOCITY, velocityv);
 }
 
+#ifdef WITH_TOOLS
 
 PropertyWidget* SoundEmitter::getWidget()
 {
@@ -92,3 +93,5 @@ PropertyWidget* SoundEmitter::getWidget()
 
         return m_widget;
 }
+
+#endif

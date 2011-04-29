@@ -1,11 +1,16 @@
 #include "core/scenegraph/node.h"
-#include "debug/widgets/nodewidget.h"
 #include "QtOpenGL"
 #include <QColor>
 
+#ifdef WITH_TOOLS
+	#include "debug/widgets/nodewidget.h"
+#endif
+
 Node::Node(const QString& name) : ChildOf<ParentOfNode>(name), Transform<double>(), m_properties(this)
 {
-	m_widget = NULL;
+	#ifdef WITH_TOOLS
+		m_widget = NULL;
+	#endif
 }
 
 Node::~Node()
@@ -83,15 +88,19 @@ const PropertySet& Node::properties() const
     return m_properties;
 }
 
-NodeWidget* Node::getWidget()
-{
-	if(m_widget == NULL)
-		m_widget = new NodeWidget(*this);
+#ifdef WITH_TOOLS
 
-	return m_widget;
-}
+	NodeWidget* Node::getWidget()
+	{
+		if(m_widget == NULL)
+			m_widget = new NodeWidget(*this);
 
-void Node::widgetDestroyed()
-{
-	m_widget = NULL;
-}
+		return m_widget;
+	}
+
+	void Node::widgetDestroyed()
+	{
+		m_widget = NULL;
+	}
+
+#endif

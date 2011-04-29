@@ -5,8 +5,11 @@
 #include "core/managers/managee.h"
 #include "core/resources/sample.h"
 #include "core/maths/vector3.h"
-#include "debug/widgets/soundemitterwidget.h"
 #include "core/managers/soundmanager.h"
+
+#ifdef WITH_TOOLS
+	#include "debug/widgets/soundemitterwidget.h"
+#endif
 
 #include <AL/al.h>
 
@@ -41,7 +44,9 @@ public:
     void setPosition(Vector3d position);
     void setVelocity(Vector3d velocity);
 
-    virtual PropertyWidget* getWidget();
+	#ifdef WITH_TOOLS
+		virtual PropertyWidget* getWidget();
+	#endif
 private:
     Sample   m_sample;
     ALuint  m_source;

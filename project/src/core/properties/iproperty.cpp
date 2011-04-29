@@ -3,7 +3,9 @@
 
 IProperty::IProperty(const QString& propName) : ChildOf<PropertySet>(propName)
 {
-	m_widget = NULL;
+	#ifdef WITH_TOOLS
+		m_widget = NULL;
+	#endif
 }
 
 IProperty::~IProperty()
@@ -20,6 +22,12 @@ Node* IProperty::node()
         return NULL;
 }
 
+void IProperty::drawDebug(const GLWidget*) const
+{
+}
+
+#ifdef WITH_TOOLS
+
 PropertyWidget* IProperty::getWidget()
 {
 	if(m_widget == NULL)
@@ -35,6 +43,4 @@ void IProperty::widgetDestroyed()
 	m_widget = NULL;
 }
 
-void IProperty::drawDebug(const GLWidget*) const
-{
-}
+#endif

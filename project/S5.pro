@@ -20,15 +20,8 @@ SOURCES += \
     src/core/maths/frustum.cpp \
     src/core/maths/boundingsphere.cpp \
     src/core/maths/aabb.cpp \
-    src/debug/scenegraphview.cpp \
-    src/debug/scenegraphmodel.cpp \
-    src/debug/widgets/nodewidget.cpp \
-    src/debug/widgets/transformwidget.cpp \
-    src/debug/widgets/propertiespanel.cpp \
-    src/debug/widgets/propertywidget.cpp \
     src/core/properties/iupdatable.cpp \
     src/core/properties/dummyupdatable.cpp \
-    src/debug/widgets/foldablegroup.cpp \
     src/core/managers/updatemanager.cpp \
     src/core/framework/engine.cpp \
     src/core/framework/glwidget.cpp \
@@ -37,7 +30,6 @@ SOURCES += \
     src/core/properties/irenderable.cpp \
     src/core/properties/camera.cpp \
     src/core/managers/cameramanager.cpp \
-    src/debug/widgets/renderwidget.cpp \
     src/core/properties/meshrenderer.cpp \
     src/core/utils/stb_image.cpp \
     src/core/resources/assimpmesh.cpp \
@@ -49,14 +41,11 @@ SOURCES += \
     src/core/inputs/inputmanager.cpp \
     src/core/properties/dummycontrolable.cpp \
     src/debug/tools/debugcamera.cpp \
-    src/debug/widgets/meshrendererwidget.cpp \
     src/core/properties/soundemitter.cpp \
     src/core/resources/samplefactory.cpp \
     src/core/managers/soundmanager.cpp \
-    src/debug/widgets/soundemitterwidget.cpp \
     src/core/properties/grid.cpp \
-    src/debug/log/log.cpp \
-    src/debug/debugwindow.cpp
+	src/debug/log/log.cpp
 
 HEADERS  += \
 	include/core/properties/qtlogo.h \
@@ -85,15 +74,8 @@ HEADERS  += \
     include/core/maths/boundingvolume.h \
     include/core/maths/boundingsphere.h \
     include/core/maths/aabb.h \
-    include/debug/scenegraphmodel.h \
-    include/debug/scenegraphview.h \
-    include/debug/widgets/nodewidget.h \
-    include/debug/widgets/transformwidget.h \
-    include/debug/widgets/propertiespanel.h \
-    include/debug/widgets/propertywidget.h \
     include/core/properties/iupdatable.h \
     include/core/properties/dummyupdatable.h \
-    include/debug/widgets/foldablegroup.h \
     include/core/managers/manager.h \
     include/core/managers/manager.hpp \
     include/core/managers/updatemanager.h \
@@ -108,8 +90,6 @@ HEADERS  += \
     include/core/properties/camera.h \
     include/core/utils/singleton.h \
     include/core/managers/cameramanager.h \
-    include/debug/widgets/renderwidget.h \
-    include/debug/widgets/cameraradiobutton.h \
     include/core/utils/customevents.h \
     include/core/graphics/mesh.h \
     include/core/properties/meshrenderer.h \
@@ -131,15 +111,12 @@ HEADERS  += \
     include/core/inputs/qtkeytranslator.h \
     include/core/properties/dummycontrolable.h \
     include/debug/tools/debugcamera.h \
-    include/debug/widgets/meshrendererwidget.h \
     include/core/properties/soundemitter.h \
     include/core/resources/samplefactory.h \
     include/core/resources/sample.h \
     include/core/managers/soundmanager.h \
-    include/debug/widgets/soundemitterwidget.h \
     include/core/properties/grid.h \
-    include/debug/log/log.h \
-    include/debug/debugwindow.h
+	include/debug/log/log.h
 
 INCLUDEPATH += \
 	include \
@@ -148,4 +125,38 @@ INCLUDEPATH += \
 LIBS += \
         -L../dep/assimp/lib -lassimp -lopenal -lalut
 
-FORMS    +=
+debug {
+	DEFINES += _DEBUG
+}
+
+tools {
+	DEFINES += WITH_TOOLS
+
+	SOURCES += \
+		src/debug/scenegraphview.cpp \
+		src/debug/scenegraphmodel.cpp \
+		src/debug/widgets/nodewidget.cpp \
+		src/debug/widgets/transformwidget.cpp \
+		src/debug/widgets/propertiespanel.cpp \
+		src/debug/widgets/propertywidget.cpp \
+		src/debug/widgets/foldablegroup.cpp \
+		src/debug/widgets/renderwidget.cpp \
+		src/debug/widgets/meshrendererwidget.cpp \
+		src/debug/widgets/soundemitterwidget.cpp \
+		src/debug/debugwindow.cpp
+
+	HEADERS += \
+		include/debug/scenegraphmodel.h \
+		include/debug/scenegraphview.h \
+		include/debug/widgets/nodewidget.h \
+		include/debug/widgets/transformwidget.h \
+		include/debug/widgets/propertiespanel.h \
+		include/debug/widgets/propertywidget.h \
+		include/debug/widgets/foldablegroup.h \
+		include/debug/widgets/renderwidget.h \
+		include/debug/widgets/cameraradiobutton.h \
+		include/debug/widgets/meshrendererwidget.h \
+		include/debug/widgets/soundemitterwidget.h \
+		include/debug/debugwindow.h
+
+}

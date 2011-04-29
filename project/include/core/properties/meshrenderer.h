@@ -16,7 +16,9 @@ public:
 	MeshRenderer(Mesh& mesh, Material& material, Texture& texture);
 	void render(double elapsed_time, GLWidget* context);
 
-	virtual PropertyWidget* getWidget();
+	#ifdef WITH_TOOLS
+		virtual PropertyWidget* getWidget();
+	#endif
 private:
 	Mesh     m_mesh;
 	Material m_material;

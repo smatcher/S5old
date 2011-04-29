@@ -1,18 +1,26 @@
 #include "core/managers/cameramanager.h"
-#include "debug/widgets/renderwidget.h"
 
-CameraManager::CameraManager() : m_widget(NULL)
+#ifdef WITH_TOOLS
+	#include "debug/widgets/renderwidget.h"
+#endif
+
+CameraManager::CameraManager()
 {
+	#ifdef WITH_TOOLS
+		m_widget = NULL;
+	#endif
 }
 
 CameraManager::~CameraManager()
 {
 }
 
+#ifdef WITH_TOOLS
+
 void CameraManager::onManageeAdded(Camera *managee)
 {
-    if(m_widget != NULL)
-        m_widget->cameraAdded(managee);
+	if(m_widget != NULL)
+	 m_widget->cameraAdded(managee);
 }
 
 RenderWidget* CameraManager::getDebugView()
@@ -27,3 +35,5 @@ void CameraManager::widgetDestroyed()
 {
 	m_widget = NULL;
 }
+
+#endif
