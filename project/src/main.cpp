@@ -89,6 +89,9 @@ int main(int argc, char *argv[])
 	nCamFollow->moveTo(Vector3d(0,2,3));
 	nCamFollow->rotate(Vector3d(1,0,0),345);
 
+    // Beurk ! Mais je peux le faire alors je me prive pas ^^
+    RENDER_MANAGER.setCurrentCamera(static_cast<Camera*>(nCam->properties().child("Camera")));
+
 	int ret = engine.start();
 
 	return ret;

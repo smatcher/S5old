@@ -1,8 +1,11 @@
 #include "core/properties/camera.h"
 #include "core/framework/glwidget.h"
 #include "core/utils/customevents.h"
-#include "debug/widgets/cameraradiobutton.h"
 #include <QtOpenGL>
+
+#ifdef WITH_TOOLS
+    #include "debug/widgets/cameraradiobutton.h"
+#endif
 
 Camera::Camera(double yfov, double znear, double zfar) : IProperty("Camera"), Managee<CameraManager>()
 {
@@ -11,14 +14,14 @@ Camera::Camera(double yfov, double znear, double zfar) : IProperty("Camera"), Ma
 	m_zfar = zfar;
 	m_needComputation = true;
 	m_lastAspect = 0;
-
-	m_radiobutton = NULL;
 }
 
 Camera::~Camera()
 {
-	if(m_radiobutton != NULL)
-		QCoreApplication::postEvent(m_radiobutton,new DELETED_EVENT());
+    #ifdef WITH_TOOLS
+        if(m_radiobutton != NULL)
+            QCoreApplication::postEvent(m_radiobutton,new DELETED_EVENT());
+    #endif
 }
 
 const Matrix4d& Camera::getProjection(double aspect)
@@ -126,6 +129,8 @@ void Camera::drawDebug(const GLWidget* widget) const
     glPopMatrix();
 }
 
+#ifdef WITH_TOOLS
+
 void Camera::setRadioButton(CameraRadioButton* radio)
 {
 	m_radiobutton = radio;
@@ -142,3 +147,6 @@ void Camera::onUnlinked(PropertySet *)
 	if(m_radiobutton != NULL)
 		QCoreApplication::postEvent(m_radiobutton,new UPDATED_EVENT());
 }
+
+#endif
+
