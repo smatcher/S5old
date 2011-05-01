@@ -27,6 +27,7 @@ public :
     void applyOnlyRotation();
 
     #ifdef WITH_TOOLS
+        CameraRadioButton* getRadioButton();
         void setRadioButton(CameraRadioButton* radio);
     #endif
 

@@ -143,6 +143,11 @@ void Camera::applyOnlyRotation()
 
 #ifdef WITH_TOOLS
 
+CameraRadioButton* Camera::getRadioButton()
+{
+    return m_radiobutton;
+}
+
 void Camera::setRadioButton(CameraRadioButton* radio)
 {
 	m_radiobutton = radio;

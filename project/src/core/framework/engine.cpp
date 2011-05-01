@@ -60,6 +60,8 @@ void Engine::init(int argc, char *argv[])
 		m_debugWindow.show();
 	#endif
 
+    RENDER_MANAGER.setCurrentCamera(NULL);
+
 	initResourceManagers();
 }
 

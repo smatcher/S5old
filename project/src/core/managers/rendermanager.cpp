@@ -9,6 +9,10 @@
 
 #include "debug/log/log.h"
 
+#ifdef WITH_TOOLS
+    #include "debug/widgets/renderwidget.h"
+#endif
+
 #ifndef GL_MULTISAMPLE
 #define GL_MULTISAMPLE  0x809D
 #endif
@@ -133,7 +137,11 @@ void RenderManager::render(double elapsed_time, SceneGraph* sg)
 void RenderManager::setCurrentCamera(Camera* cam)
 {
 	m_camera = cam;
-	m_cameraChanged = true;
+    m_cameraChanged = true;
+
+    #ifdef WITH_TOOLS
+        CAMERA_MANAGER.getDebugView()->activeCameraChanged(m_camera);
+    #endif
 }
 
 void RenderManager::setDrawDebug(bool draw)

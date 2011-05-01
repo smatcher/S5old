@@ -15,7 +15,8 @@ public :
     virtual ~RenderWidget();
 
     void cameraAdded(Camera* cam);
-	void cameraRemoved(CameraRadioButton *radio);
+    void cameraRemoved(CameraRadioButton *radio);
+    void activeCameraChanged(Camera* cam);
 
     QSize sizeHint() const;
 
@@ -24,6 +25,7 @@ public slots :
 
 private:
     QVBoxLayout* camerasLayout;
+    CameraRadioButton* editorCam;
 };
 
 #endif // RENDERWIDGET_H

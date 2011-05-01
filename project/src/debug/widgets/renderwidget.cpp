@@ -16,8 +16,7 @@ RenderWidget::RenderWidget()
 
     camerasLayout = new QVBoxLayout;
     cameraBox->setLayout(camerasLayout);
-    CameraRadioButton* editorCam = new CameraRadioButton(NULL);
-    editorCam->setChecked(true);
+    editorCam = new CameraRadioButton(NULL);
     camerasLayout->addWidget(editorCam);
 	const QVector<Camera*>& cameras = CAMERA_MANAGER.managees();
     for(int i=0 ; i<cameras.count() ; i++)
@@ -46,6 +45,25 @@ void RenderWidget::cameraRemoved(CameraRadioButton *radio)
 {
 	camerasLayout->removeWidget(radio);
 	delete radio;
+}
+
+void RenderWidget::activeCameraChanged(Camera* cam)
+{
+    if(cam == NULL)
+    {
+        if(! editorCam->isChecked())
+            editorCam->setChecked(true);
+    }
+    else
+    {
+        CameraRadioButton* radio = cam->getRadioButton();
+
+        if(radio != NULL)
+        {
+            if(! radio->isChecked())
+                radio->setChecked(true);
+        }
+    }
 }
 
 void RenderWidget::drawDebugChanged(int state)
