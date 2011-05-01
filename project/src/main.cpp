@@ -92,10 +92,14 @@ int main(int argc, char *argv[])
     // Beurk ! Mais je peux le faire alors je me prive pas ^^
     RENDER_MANAGER.setCurrentCamera(static_cast<Camera*>(nCam->properties().child("Camera")));
     RenderManager::Background background;
-    background.type = RenderManager::SINGLE_TEXTURE;
+    background.type = RenderManager::SKYBOX;
     background.color = Vector3f(1,1,0);
-    for(int i=0 ; i<6 ; i++)
-        background.textures[i] = texture;
+    background.textures[0] = TEXTURE_MANAGER.get("stormy_front.tga");
+    background.textures[1] = TEXTURE_MANAGER.get("stormy_left.tga");
+    background.textures[2] = TEXTURE_MANAGER.get("stormy_back.tga");
+    background.textures[3] = TEXTURE_MANAGER.get("stormy_right.tga");
+    background.textures[4] = TEXTURE_MANAGER.get("stormy_top.tga");
+    background.textures[5] = TEXTURE_MANAGER.get("stormy_bottom.tga");
     RENDER_MANAGER.setBackground(background);
 
 	int ret = engine.start();
