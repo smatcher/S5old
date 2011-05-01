@@ -21,7 +21,10 @@ public :
 	const Matrix4d& getProjection(double aspect);
 	void setProjection(double aspect);
 
-	void setParameters(double yfov, double znear, double zfar);
+    void setParameters(double yfov, double znear, double zfar);
+
+    void applyTransform();
+    void applyOnlyRotation();
 
     #ifdef WITH_TOOLS
         void setRadioButton(CameraRadioButton* radio);

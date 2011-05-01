@@ -21,6 +21,7 @@ public:
 	void isResized();
 
 	void applyCamera();
+    void applyCameraRotation();
 
 protected:
 	bool event(QEvent * e);

@@ -91,6 +91,12 @@ int main(int argc, char *argv[])
 
     // Beurk ! Mais je peux le faire alors je me prive pas ^^
     RENDER_MANAGER.setCurrentCamera(static_cast<Camera*>(nCam->properties().child("Camera")));
+    RenderManager::Background background;
+    background.type = RenderManager::SINGLE_TEXTURE;
+    background.color = Vector3f(1,1,0);
+    for(int i=0 ; i<6 ; i++)
+        background.textures[i] = texture;
+    RENDER_MANAGER.setBackground(background);
 
 	int ret = engine.start();
 

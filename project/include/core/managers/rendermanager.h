@@ -4,6 +4,9 @@
 #include "core/managers/manager.h"
 #include "core/utils/singleton.h"
 
+#include "core/graphics/texture.h"
+#include "core/maths/vector3.h"
+
 class IRenderable;
 class GLWidget;
 class Camera;
@@ -11,7 +14,24 @@ class SceneGraph;
 
 class RenderManager : public Manager<IRenderable>
 {
-	friend class Singleton<RenderManager>;
+    friend class Singleton<RenderManager>;
+
+public :
+
+    enum BackgroundType
+    {
+        NO_CLEAR,
+        COLOR,
+        SINGLE_TEXTURE,
+        SKYBOX
+    };
+
+    struct Background
+    {
+        BackgroundType type;
+        Texture textures[6];
+        Vector3f color;
+    };
 
 protected :
 	RenderManager();
@@ -21,8 +41,10 @@ private :
 	Camera* m_camera;
     bool m_cameraChanged;
     bool m_drawDebug;
+    Background m_defaultBackground;
 
-	void setupProjection();
+    void setupProjection();
+    void applyBackground();
 
 public:
 	virtual ~RenderManager();
@@ -32,6 +54,8 @@ public:
 
 	void setCurrentCamera(Camera* cam);
 	void setDrawDebug(bool draw);
+
+    void setBackground(const Background& background);
 
 	const Camera* getCurrentCamera();
 };

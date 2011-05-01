@@ -129,6 +129,18 @@ void Camera::drawDebug(const GLWidget* widget) const
     glPopMatrix();
 }
 
+void Camera::applyTransform()
+{
+    node()->globalTransform().getInverse().glMultd();
+}
+
+void Camera::applyOnlyRotation()
+{
+    Matrix3d rotation = node()->globalTransform().getRotation();
+    Transformd transform(rotation.getInverse(),Vector3d());
+    transform.glMultd();
+}
+
 #ifdef WITH_TOOLS
 
 void Camera::setRadioButton(CameraRadioButton* radio)

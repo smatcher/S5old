@@ -44,6 +44,11 @@ void GLWidget::applyCamera()
 	m_camera.lookAt();
 }
 
+void GLWidget::applyCameraRotation()
+{
+    m_camera.rotateOnly();
+}
+
 bool GLWidget::event(QEvent *e)
 {
 	if(e->type() == QEvent::MouseButtonPress ||

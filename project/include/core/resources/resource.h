@@ -18,7 +18,7 @@ public:
 	Resource* operator&();
 	ResourceHandle<Resource>& operator=(const ResourceHandle<Resource>& handle);
 
-private:
+protected:
 	Resource* m_data;
 };
 

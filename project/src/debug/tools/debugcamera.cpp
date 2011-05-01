@@ -101,6 +101,12 @@ void DebugCamera::lookAt()
 
 }
 
+void DebugCamera::rotateOnly()
+{
+    glRotated(rotation_x, 1.0, 0.0, 0.0);
+    glRotated(rotation_y, 0.0, 1.0, 0.0);
+}
+
 // Retour aux valeurs par défaut
 void DebugCamera::reset()
 {
