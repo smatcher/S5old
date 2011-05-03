@@ -15,6 +15,8 @@
 #include "core/resources/stbimage.h"
 #include "core/resources/samplefactory.h"
 
+#include "core/utils/primitives.h"
+
 typedef Singleton< ResourceManager< MeshData,     Mesh> >     SingletonMeshManager;
 typedef Singleton< ResourceManager< TextureData,  Texture> >  SingletonTextureManager;
 typedef Singleton< ResourceManager< MaterialData, Material> > SingletonMaterialManager;
@@ -31,13 +33,15 @@ inline void initResourceManagers()
 {
 	MESH_MANAGER.addFactory(new AssimpFactory()); // TODO : this is a memory leak, i don't like leaks, get rid of this leak.
 	TEXTURE_MANAGER.addFactory(new StbImageFactory());
-        SAMPLE_MANAGER.addFactory(new SampleFactory());
+    SAMPLE_MANAGER.addFactory(new SampleFactory());
 
-        MESH_MANAGER.parseDir("../media/models",true);
+    MESH_MANAGER.parseDir("../media/models",true);
 	TEXTURE_MANAGER.parseDir("../media/textures",true);
-        TEXTURE_MANAGER.loadAll();
-        SAMPLE_MANAGER.parseDir("../media/sounds",true);
-        SAMPLE_MANAGER.loadAll();
+    TEXTURE_MANAGER.loadAll();
+    SAMPLE_MANAGER.parseDir("../media/sounds",true);
+    SAMPLE_MANAGER.loadAll();
+
+    MESH_MANAGER.add(PrimitiveMesh::buildPlane());
 }
 
 #endif // MANAGERS_H

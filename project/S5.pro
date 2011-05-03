@@ -45,7 +45,9 @@ SOURCES += \
     src/core/resources/samplefactory.cpp \
     src/core/managers/soundmanager.cpp \
     src/core/properties/grid.cpp \
-	src/debug/log/log.cpp
+	src/debug/log/log.cpp \
+    src/core/resources/rawmesh.cpp \
+    src/core/utils/primitives.cpp
 
 HEADERS  += \
 	include/core/properties/qtlogo.h \
@@ -116,7 +118,9 @@ HEADERS  += \
     include/core/resources/sample.h \
     include/core/managers/soundmanager.h \
     include/core/properties/grid.h \
-	include/debug/log/log.h
+	include/debug/log/log.h \
+    include/core/resources/rawmesh.h \
+    include/core/utils/primitives.h
 
 INCLUDEPATH += \
 	include \
