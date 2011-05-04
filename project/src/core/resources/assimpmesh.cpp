@@ -26,6 +26,7 @@ void AssimpMesh::draw()
 		glDisable(GL_LIGHTING);
 	} else {
 		glEnable(GL_LIGHTING);
+		glShadeModel(GL_SMOOTH);
 	}
 
 	if(m_mesh->mColors[0] != NULL) {

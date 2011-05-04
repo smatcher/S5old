@@ -8,25 +8,27 @@ class RawMesh : public MeshData
 {
 public:
 
-    struct Face
-    {
-        int* indices;
-        int nbIndices;
-    };
+	bool m_NormalsArePerVertex;
 
-    float* m_vertices;
-    GLbyte* m_colors;
-    float* m_normals;
-    float* m_texcoords;
-    int    m_nbVertex;
+	struct Face
+	{
+		int* indices;
+		int nbIndices;
+	};
 
-    Face* m_faces;
-    int   m_nbFaces;
+	float* m_vertices;
+	GLbyte* m_colors;
+	float* m_normals;
+	float* m_texcoords;
+	int    m_nbVertex;
 
-    RawMesh(const QString& name, const QString& path, IResourceFactory* factory);
-    virtual bool unload();
+	Face* m_faces;
+	int   m_nbFaces;
 
-    virtual void draw();
+	RawMesh(const QString& name, const QString& path, IResourceFactory* factory);
+	virtual bool unload();
+
+	virtual void draw();
 };
 
 #endif // RAWMESH_H
