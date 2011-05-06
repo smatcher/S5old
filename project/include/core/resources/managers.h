@@ -43,6 +43,7 @@ inline void initResourceManagers()
 
 	MESH_MANAGER.add(PrimitiveMesh::buildCube());
 	MESH_MANAGER.add(PrimitiveMesh::buildPlane());
+	MESH_MANAGER.add(PrimitiveMesh::buildSphere(16,32));
 }
 
 #endif // MANAGERS_H

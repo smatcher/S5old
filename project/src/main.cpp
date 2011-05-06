@@ -60,6 +60,7 @@ int main(int argc, char *argv[])
 	Node* nHead = new Node("Head");
 	Node* nStar = new Node("Star");
 	Node* nUni = new Node("Unicorn");
+	Node* nBall = new Node("Ball");
 
 	nRot->addProperty(new IProperty());
 	nRot->addProperty(new DummyUpdatable());
@@ -71,16 +72,19 @@ int main(int argc, char *argv[])
 
 	Mesh plane = MESH_MANAGER.get("Plane");
 	Mesh cube = MESH_MANAGER.get("Cube");
+	Mesh sphere = MESH_MANAGER.get("Sphere_16_32");
 	Mesh mesh = MESH_MANAGER.get("duckmesh");
 	Material material = MATERIAL_MANAGER.get("duckmesh");
 	Texture texture = TEXTURE_MANAGER.get("duck.tga");
 	Texture unicorn = TEXTURE_MANAGER.get("unicorn.tga");
 	Texture star = TEXTURE_MANAGER.get("star.tga");
+	Texture ball = TEXTURE_MANAGER.get("ball.tga");
 	Sample sample = SAMPLE_MANAGER.get("quacking.wav");
 
 	Node* nDuck = new Node("Duck");
 	nDuck->addProperty(new MeshRenderer(mesh,material,texture));
 	nStar->addProperty(new MeshRenderer(plane,material,star));
+	nBall->addProperty(new MeshRenderer(sphere,material,ball));
 	nUni->addProperty(new MeshRenderer(cube,material,unicorn));
 	nDuck->addProperty(new DummyControlable());
 	nDuck->addProperty(new SoundEmitter(sample));
@@ -93,6 +97,7 @@ int main(int argc, char *argv[])
 	sg->link(nDuck);
 	sg->link(nRot);
 	sg->link(nQt);
+	sg->link(nBall);
 	nRot->link(nCam);
 
 	nRot->moveTo(Vector3d(0,0,0));
@@ -105,7 +110,6 @@ int main(int argc, char *argv[])
 
 	nUni->rotate(Vector3d(0,0,-1),90);
 	nUni->rotate(Vector3d(-1,0,0),90);
-	nStar->rotate(Vector3d(0,0,1),90);
 	nHead->moveTo(Vector3d(0,0.5,0));
 	nUni->moveTo(Vector3d(1.5,0,0));
 	nStar->moveTo(Vector3d(-1.5,0,0));

@@ -1,4 +1,5 @@
 #include "core/utils/primitives.h"
+#include "core/maths/trigo.h"
 
 PrimitiveMesh::PrimitiveMesh(QString name) :
 	RawMesh(name,"",NULL)
@@ -86,10 +87,56 @@ PrimitiveMesh* PrimitiveMesh::buildCube()
 
 PrimitiveMesh* PrimitiveMesh::buildSphere(int rings, int segments)
 {
-	PrimitiveMesh* ret = new PrimitiveMesh(QString("Sphere")+QString().setNum(rings)+QString("-")+QString().setNum(segments));
+	PrimitiveMesh* ret = new PrimitiveMesh(QString("Sphere_")+QString().setNum(rings)+QString("_")+QString().setNum(segments));
 
 	ret->m_NormalsArePerVertex = true;
-	ret->m_nbVertex = 2 + (rings - 2) * segments;
+	ret->m_nbVertex = (rings + 1) * (segments+1);
+
+	ret->m_vertices = new float[3*ret->m_nbVertex]();
+	ret->m_normals = new float[3*ret->m_nbVertex]();
+	ret->m_texcoords = new float[2*ret->m_nbVertex]();
+
+	// Vertex
+	for(int r=0 ; r<rings+1 ; r++) {
+		for(int s=0 ; s<segments+1 ; s++) {
+			int index = (s + r * (segments+1));
+			float phi = 360 * (float(s)/segments);
+			float theta = 180 * (float(r)/rings);
+			float x = fastSin(theta) * fastCos(phi);
+			float y = fastCos(theta);
+			float z = fastSin(theta) * fastSin(phi);
+			// Vertex
+			ret->m_vertices[3*index + 0] = 0.5 *  x;
+			ret->m_vertices[3*index + 1] = 0.5 *  y;
+			ret->m_vertices[3*index + 2] = 0.5 *  z;
+
+			// Normal
+			ret->m_normals[3*index + 0] = x;
+			ret->m_normals[3*index + 1] = y;
+			ret->m_normals[3*index + 2] = z;
+
+			// Texcoord
+			ret->m_texcoords[2*index + 0] = float(s)/segments;
+			ret->m_texcoords[2*index + 1] = float(r)/rings;
+		}
+	}
+
+	ret->m_nbFaces = rings * segments;
+
+	ret->m_faces = new Face[ret->m_nbFaces]();
+
+	for(int r=0 ; r<rings ; r++) {
+		for(int s=0 ; s<segments ; s++) {
+		int i = s + r * segments;
+		ret->m_faces[i].nbIndices = 4;
+		ret->m_faces[i].indices = new int[4]();
+
+		ret->m_faces[i].indices[0] = s   +  r    * (segments+1);
+		ret->m_faces[i].indices[1] = s+1 +  r    * (segments+1);
+		ret->m_faces[i].indices[2] = s+1 + (r+1) * (segments+1);
+		ret->m_faces[i].indices[3] = s   + (r+1) * (segments+1);
+		}
+	}
 
 	ret->m_state = STATE_LOADED;
 
