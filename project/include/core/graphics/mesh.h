@@ -4,8 +4,14 @@
 #include "core/resources/resource.h"
 #include <QtOpenGL>
 
+class Mesh;
+template <class R, class H> class ResourceManager;
+
 class MeshData : public ResourceData
 {
+	friend class ResourceHandle<MeshData>;
+	friend class ResourceManager<MeshData,Mesh>;
+
 public:
 	MeshData(const QString& name, const QString& path, IResourceFactory* factory) : ResourceData(name,path,factory) {}
 	virtual void draw() = 0;

@@ -16,17 +16,17 @@ void MeshRenderer::render(double elapsed_time, GLWidget* context)
 	node()->globalTransform().glMultf();
 
 	if(&m_material != NULL)
-		((MaterialData*)&m_material)->apply();
+		m_material->apply();
 	else
 		debug( "RENDERING" , "MeshRenderer : no material to apply for " << node()->getName());
 
 	if(&m_texture != NULL)
-		((TextureData*)&m_texture)->bind();
+		m_texture->bind();
 	else
 		debug( "RENDERING" , "MeshRenderer : no texture to bind for " << node()->getName());
 
 	if(&m_mesh != NULL)
-		((MeshData*)&m_mesh)->draw();
+		m_mesh->draw();
 	else
 		debug( "RENDERING" , "MeshRenderer : no mesh to draw for " << node()->getName());
 }

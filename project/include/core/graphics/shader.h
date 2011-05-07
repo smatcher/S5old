@@ -3,7 +3,14 @@
 
 #include "core/resources/resource.h"
 
-class ShaderData : public ResourceData {};
+class Shader;
+template <class R, class H> class ResourceManager;
+
+class ShaderData : public ResourceData
+{
+	friend class ResourceHandle<ShaderData>;
+	friend class ResourceManager<ShaderData, Shader>;
+};
 
 class Shader : public ResourceHandle<ShaderData>
 {

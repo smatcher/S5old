@@ -4,8 +4,14 @@
 #include "core/resources/resource.h"
 #include <QtOpenGL>
 
+class Texture;
+template <class R, class H> class ResourceManager;
+
 class TextureData : public ResourceData
 {
+	friend class ResourceHandle<TextureData>;
+	friend class ResourceManager<TextureData,Texture>;
+
 protected:
 	int m_height;
 	int m_width;
@@ -30,9 +36,9 @@ public:
 	Texture() {}
 	Texture(const Texture& from) : ResourceHandle<TextureData>(from) {}
 	Texture(TextureData& from) : ResourceHandle<TextureData>(from) {}
-    virtual ~Texture() {}
+	virtual ~Texture() {}
 
-    void bind() const {if(m_data) m_data->bind();}
+	//void bind() const {if(m_data) m_data->bind();}
 };
 
 #endif // TEXTURE_H

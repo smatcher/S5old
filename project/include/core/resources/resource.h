@@ -16,6 +16,7 @@ public:
 	virtual ~ResourceHandle();
 
 	Resource* operator&();
+	Resource* operator->();
 	ResourceHandle<Resource>& operator=(const ResourceHandle<Resource>& handle);
 
 protected:
@@ -39,18 +40,10 @@ public:
 		m_state(STATE_UNLOADED),
 		m_ref(0) {}
 
-	// Reference counting
-	void incRef()  {m_ref++;}
-	void decRef()  {m_ref--; if(m_ref < 0) { logWarn( m_name << "reference count is negative"); }}
-	int refCount() {return m_ref;}
-
 	// Getters
 	const QString& name() {return m_name;}
 	const QString& path() {return m_path;}
 	State state()         {return m_state;}
-
-	virtual void load()   {m_factory->load(this);}
-	virtual bool unload() = 0;
 
 protected:
 	IResourceFactory* m_factory;
@@ -58,6 +51,15 @@ protected:
 	QString m_path;
 	State   m_state;
 	int     m_ref;
+
+	// Reference counting
+	void incRef()  {m_ref++;}
+	void decRef()  {m_ref--; if(m_ref < 0) { logWarn( m_name << "reference count is negative"); }}
+	int refCount() {return m_ref;}
+
+	virtual void load()   {m_factory->load(this);}
+	virtual bool unload() = 0;
+
 };
 
 #include "resource.hpp"

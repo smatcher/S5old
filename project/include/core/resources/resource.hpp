@@ -34,6 +34,12 @@ Resource* ResourceHandle<Resource>::operator&()
 }
 
 template <class Resource>
+Resource* ResourceHandle<Resource>::operator->()
+{
+	return m_data;
+}
+
+template <class Resource>
 ResourceHandle<Resource>& ResourceHandle<Resource>::operator=(const ResourceHandle<Resource>& handle)
 {
 	if(m_data != NULL)

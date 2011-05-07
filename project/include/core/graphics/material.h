@@ -3,8 +3,14 @@
 
 #include "core/resources/resource.h"
 
+class Material;
+template <class R, class H> class ResourceManager;
+
 class MaterialData : public ResourceData
 {
+	friend class ResourceHandle<MaterialData>;
+	friend class ResourceManager<MaterialData,Material>;
+
 public:
 	MaterialData(const QString& name, const QString& path, IResourceFactory* factory) : ResourceData(name,path,factory) {}
 	virtual void apply() = 0;

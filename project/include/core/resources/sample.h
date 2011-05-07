@@ -4,33 +4,38 @@
 #include "core/resources/resource.h"
 #include <AL/al.h>
 
+class Sample;
+template <class R, class H> class ResourceManager;
+
 class SampleData : public ResourceData
 {
-    friend class SampleFactory;
+	friend class ResourceHandle<SampleData>;
+	friend class ResourceManager<SampleData, Sample>;
+	friend class SampleFactory;
 
 private:
-        ALuint m_buffer;
+		ALuint m_buffer;
 public:
-        SampleData(const QString& name, const QString& path, IResourceFactory* factory) : ResourceData(name,path,factory) {}
-        void bind(ALuint source)
-        {
-            alSourcei (source, AL_BUFFER, m_buffer);
-        }
+		SampleData(const QString& name, const QString& path, IResourceFactory* factory) : ResourceData(name,path,factory) {}
+		void bind(ALuint source)
+		{
+			alSourcei (source, AL_BUFFER, m_buffer);
+		}
 
-        bool unload()
-        {
-            alDeleteBuffers(1, &m_buffer);
-            return true; // wtf??
-        }
+		bool unload()
+		{
+			alDeleteBuffers(1, &m_buffer);
+			return true; // wtf??
+		}
 };
 
 class Sample : public ResourceHandle<SampleData>
 {
 public:
-        Sample() {}
-        Sample(const Sample& from) : ResourceHandle<SampleData>(from) {}
-        Sample(SampleData& from) : ResourceHandle<SampleData>(from) {}
-        virtual ~Sample() {}
+		Sample() {}
+		Sample(const Sample& from) : ResourceHandle<SampleData>(from) {}
+		Sample(SampleData& from) : ResourceHandle<SampleData>(from) {}
+		virtual ~Sample() {}
 };
 
 #endif // SAMPLE_H
