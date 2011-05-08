@@ -65,6 +65,6 @@ template <class T>
 T* Singleton<T>::instance=0;
 
 template <class T>
-bool Singleton<T>::flagDestroyed;
+bool Singleton<T>::flagDestroyed=false;
 
 #endif // SINGLETON_H

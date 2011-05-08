@@ -1,3 +1,4 @@
+#include <GL/glew.h>
 #include "core/utils/primitives.h"
 #include "core/maths/trigo.h"
 
@@ -19,68 +20,93 @@ PrimitiveMesh* PrimitiveMesh::buildCube()
 {
 	PrimitiveMesh* ret = new PrimitiveMesh("Cube");
 
-	ret->m_NormalsArePerVertex = false;
-	ret->m_nbVertex = 8;
-	ret->m_vertices = new float[8*3]();
-	ret->m_normals = new float[6*3]();
-	ret->m_texcoords = new float[8*2]();
+	//    v6----- v5
+	//   /|      /|
+	//  v1------v0|
+	//  | |     | |
+	//  | |v7---|-|v4
+	//  |/      |/
+	//  v2------v3
 
-	const float vertices[] = {
-		-0.5,  0.5, -0.5,
-		-0.5,  0.5,  0.5,
-		 0.5,  0.5,  0.5,
-		 0.5,  0.5, -0.5,
-		-0.5, -0.5, -0.5,
-		-0.5, -0.5,  0.5,
-		 0.5, -0.5,  0.5,
-		 0.5, -0.5, -0.5
+	// vertex coords array
+	const GLfloat vertices[] = {
+		 0.5, 0.5, 0.5, -0.5, 0.5, 0.5, -0.5,-0.5, 0.5,  0.5,-0.5, 0.5, // v0-v1-v2-v3
+		 0.5, 0.5, 0.5,  0.5,-0.5, 0.5,  0.5,-0.5,-0.5,  0.5, 0.5,-0.5, // v0-v3-v4-v5
+		 0.5, 0.5, 0.5,  0.5, 0.5,-0.5, -0.5, 0.5,-0.5, -0.5, 0.5, 0.5, // v0-v5-v6-v1
+		-0.5, 0.5, 0.5, -0.5, 0.5,-0.5, -0.5,-0.5,-0.5, -0.5,-0.5, 0.5, // v1-v6-v7-v2
+		-0.5,-0.5,-0.5,  0.5,-0.5,-0.5,  0.5,-0.5, 0.5, -0.5,-0.5, 0.5, // v7-v4-v3-v2
+		 0.5,-0.5,-0.5, -0.5,-0.5,-0.5, -0.5, 0.5,-0.5,  0.5, 0.5,-0.5  // v4-v7-v6-v5
 	};
 
-	const float normals[] = {
-		 1,  0,  0,
-		 0,  1,  0,
-		-1,  0,  0,
-		 0, -1,  0,
-		 0,  0,  1,
-		 0,  0, -1
+	// normal array
+	const GLfloat normals[] = {
+		 0, 0, 1,  0, 0, 1,  0, 0, 1,  0, 0, 1, // v0-v1-v2-v3
+		 1, 0, 0,  1, 0, 0,  1, 0, 0,  1, 0, 0, // v0-v3-v4-v5
+		 0, 1, 0,  0, 1, 0,  0, 1, 0,  0, 1, 0, // v0-v5-v6-v1
+		-1, 0, 0, -1, 0, 0, -1, 0, 0, -1, 0, 0, // v1-v6-v7-v2
+		 0,-1, 0,  0,-1, 0,  0,-1, 0,  0,-1, 0, // v7-v4-v3-v2
+		 0, 0,-1,  0, 0,-1,  0, 0,-1,  0, 0,-1  // v4-v7-v6-v5
 	};
 
-	const float texcoords[] = {
-		0, 0,
-		0, 1,
-		1, 1,
-		1, 0,
-		0, 0,
-		0, 1,
-		1, 1,
-		1, 0
+	// normal array
+	const GLfloat texcoords[] = {
+		 1, 1,  0, 1,  0, 0,  1, 0, // v0-v1-v2-v3
+		 1, 1,  0, 1,  0, 0,  1, 0, // v0-v3-v4-v5
+		 1, 1,  0, 1,  0, 0,  1, 0, // v0-v5-v6-v1
+		 1, 1,  0, 1,  0, 0,  1, 0, // v1-v6-v7-v2
+		 1, 1,  0, 1,  0, 0,  1, 0, // v7-v4-v3-v2
+		 1, 1,  0, 1,  0, 0,  1, 0  // v4-v7-v6-v5
 	};
 
-	memcpy(ret->m_vertices,vertices,sizeof(vertices));
-	memcpy(ret->m_normals,normals,sizeof(normals));
-	memcpy(ret->m_texcoords,texcoords,sizeof(texcoords));
+	// Set up Vertices VBO
+	glGenBuffers(1,&ret->m_vertices);
+	glBindBuffer(GL_ARRAY_BUFFER, ret->m_vertices);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
 
-	ret->m_nbFaces = 6;
+	// Set up Normals VBO
+	glGenBuffers(1,&ret->m_normals);
+	glBindBuffer(GL_ARRAY_BUFFER, ret->m_normals);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(normals), normals, GL_STATIC_DRAW);
 
-	ret->m_faces = new Face[6]();
+	glGenBuffers(1,&ret->m_texcoords);
+	glBindBuffer(GL_ARRAY_BUFFER, ret->m_texcoords);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(texcoords), texcoords, GL_STATIC_DRAW);
 
-	const int indices[][4] = {
-		{ 2, 3, 7, 6 },
-		{ 0, 1, 2, 3 },
-		{ 0, 1, 5, 4 },
-		{ 7, 6, 5, 4 },
-		{ 1, 2, 6, 5 },
-		{ 0, 3, 7, 4 },
-	};
+	ret->m_nbFaces = 2*3*6;
 
-	for(int i=0 ; i<6 ; i++)
-	{
-		ret->m_faces[i].nbIndices = 4;
-		ret->m_faces[i].indices = new int[4]();
-		memcpy(ret->m_faces[i].indices,indices[i],sizeof(indices[0]));
+	GLshort* indices = new GLshort[ret->m_nbFaces]();
+	GLshort* ptrIndices = indices;
+	for(int i=0 ; i<6 ; i++) {
+		for(int j=0 ; j<3 ; j++) {
+			*ptrIndices = 4*i+j;
+			ptrIndices++;
+		}
+		for(int j=0 ; j<4 ; j++) {
+			if(j == 1) continue;
+			*ptrIndices = 4*i+j;
+			ptrIndices++;
+		}
 	}
 
+	glGenBuffers(1,&ret->m_indices);
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ret->m_indices);
+	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(GLshort)*ret->m_nbFaces, indices, GL_STATIC_DRAW);
+
+	glBindBuffer(GL_ARRAY_BUFFER, 0);
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
+
+	delete[] indices;
+
 	ret->m_state = STATE_LOADED;
+
+	#ifdef _DEBUG
+		GLenum error = glGetError();
+		if(error != GL_NO_ERROR)
+		{
+			const char* msg = (char*)gluErrorString(error);
+			logError( QString(msg) );
+		}
+	#endif
 
 	return ret;
 }
@@ -88,7 +114,7 @@ PrimitiveMesh* PrimitiveMesh::buildCube()
 PrimitiveMesh* PrimitiveMesh::buildSphere(int rings, int segments)
 {
 	PrimitiveMesh* ret = new PrimitiveMesh(QString("Sphere_")+QString().setNum(rings)+QString("_")+QString().setNum(segments));
-
+/*
 	ret->m_NormalsArePerVertex = true;
 	ret->m_nbVertex = (rings + 1) * (segments+1);
 
@@ -139,14 +165,14 @@ PrimitiveMesh* PrimitiveMesh::buildSphere(int rings, int segments)
 	}
 
 	ret->m_state = STATE_LOADED;
-
+*/
 	return ret;
 }
 
 PrimitiveMesh* PrimitiveMesh::buildPlane()
 {
 	PrimitiveMesh* ret = new PrimitiveMesh("Plane");
-
+/*
 	ret->m_NormalsArePerVertex = false;
 
 	ret->m_nbVertex = 4;
@@ -188,6 +214,6 @@ PrimitiveMesh* PrimitiveMesh::buildPlane()
 	memcpy(ret->m_faces[0].indices,indices,sizeof(indices));
 
 	ret->m_state = STATE_LOADED;
-
+*/
 	return ret;
 }

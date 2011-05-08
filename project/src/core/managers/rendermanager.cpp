@@ -130,7 +130,8 @@ void RenderManager::render(double elapsed_time, SceneGraph* sg)
 	GLenum error = glGetError();
 	if(error != GL_NO_ERROR)
 	{
-	   logError( gluErrorString(error) );
+		const char* msg = (char*)gluErrorString(error);
+		logError( QString(msg) );
 	}
 }
 

@@ -1,107 +1,98 @@
+#include <GL/glew.h>
+#include <GL/gl.h>
 #include "core/resources/rawmesh.h"
-#include <QtOpenGL>
 
 RawMesh::RawMesh(const QString &name, const QString &path, IResourceFactory *factory) :
 	MeshData(name,path,factory),
-	m_vertices(NULL),
-	m_colors(NULL),
-	m_normals(NULL),
-	m_texcoords(NULL),
-	m_nbVertex(0),
-	m_faces(NULL),
+	m_vertices(0),
+	m_colors(0),
+	m_normals(0),
+	m_texcoords(0),
+	m_indices(0),
 	m_nbFaces(0)
 {
 }
 
 bool RawMesh::unload()
 {
-	if(m_vertices != NULL) {
-		delete[] m_vertices;
-		m_vertices = NULL;
+	if(m_vertices != 0) {
+		glDeleteBuffers(1,&m_vertices);
+		m_vertices = 0;
 	}
-
-	if(m_colors != NULL) {
-		delete[] m_colors;
-		m_colors = NULL;
+	if(m_colors != 0) {
+		glDeleteBuffers(1,&m_colors);
 	}
-
-	if(m_normals != NULL) {
-		delete[] m_normals;
-		m_colors = NULL;
-	}
-
-	if(m_texcoords != NULL) {
-		delete[] m_texcoords;
-		m_texcoords = NULL;
-	}
-
-	m_nbVertex = 0;
-
-	if(m_faces != NULL) {
-		for(int i = 0 ; i < m_nbFaces ; i++) {
-			delete[] m_faces[i].indices;
-		}
-
-		delete[] m_faces;
-		m_nbFaces = 0;
-	}
+	/* TODO
+	m_colors.destroy();
+	m_texcoords.destroy();
+	m_normals.destroy();
+	m_indices.destroy();
+*/
+	m_nbFaces = 0;
 
 	return true;
 }
 
 void RawMesh::draw()
 {
-	if(m_texcoords != NULL)
+	if(m_vertices == 0 || m_indices == 0)
+		return;
+
+	if(m_texcoords != 0)
+	{
 		glEnable(GL_TEXTURE_2D);
+		glEnableClientState(GL_TEXTURE_COORD_ARRAY);
+		glBindBuffer(GL_ARRAY_BUFFER, m_texcoords);
+		glTexCoordPointer(2, GL_FLOAT, 0, NULL);
+	}
 	else
+	{
 		glDisable(GL_TEXTURE_2D);
+	}
 
-	if(m_colors != NULL)
+	if(m_colors != 0)
+	{
 		glEnable(GL_COLOR_MATERIAL);
+		glEnableClientState(GL_COLOR_ARRAY);
+		glBindBuffer(GL_ARRAY_BUFFER, m_colors);
+		glColorPointer(4, GL_FLOAT, 0, NULL);
+	}
 	else
+	{
 		glDisable(GL_COLOR_MATERIAL);
+	}
 
-	if(m_normals == NULL)
+	if(m_normals != 0)
+	{
+		glEnable(GL_LIGHTING);
+		glShadeModel(GL_SMOOTH);
+		glEnableClientState(GL_NORMAL_ARRAY);
+		glBindBuffer(GL_ARRAY_BUFFER, m_normals);
+		glNormalPointer(GL_FLOAT, 0, NULL);
+	}
+	else
 	{
 		glDisable(GL_LIGHTING);
 	}
-	else
-	{
-		glEnable(GL_LIGHTING);
 
-		if(m_NormalsArePerVertex)
-			glShadeModel(GL_SMOOTH);
-		else
-			glShadeModel(GL_FLAT);
-	}
+	glEnableClientState(GL_VERTEX_ARRAY);
+	glBindBuffer(GL_ARRAY_BUFFER, m_vertices);
+	glVertexPointer(3, GL_FLOAT, 0, NULL);
 
-	for(int i=0 ; i<m_nbFaces ; i++) {
-		GLenum face_mode;
+	glEnableClientState(GL_INDEX_ARRAY);
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_indices);
+	glIndexPointer(GL_SHORT, 0, NULL);
 
-		switch(m_faces[i].nbIndices) {
-			case 1: face_mode = GL_POINTS; break;
-			case 2: face_mode = GL_LINES; break;
-			case 3: face_mode = GL_TRIANGLES; break;
-			default: face_mode = GL_POLYGON; break;
-		}
+	glDrawElements(GL_TRIANGLES, m_nbFaces, GL_UNSIGNED_SHORT, NULL);
 
-		glBegin(face_mode);
+	glBindBuffer(GL_ARRAY_BUFFER,0);
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER,0);
 
-		if(!m_NormalsArePerVertex && m_normals != NULL)
-			glNormal3fv(&m_normals[3*i]);
+	glDisableClientState(GL_VERTEX_ARRAY);
+	glDisableClientState(GL_NORMAL_ARRAY);
+	glDisableClientState(GL_COLOR_ARRAY);
+	glDisableClientState(GL_TEXTURE_COORD_ARRAY);
+	glDisableClientState(GL_INDEX_ARRAY);
 
-		for(int j=0 ; j<m_faces[i].nbIndices ; j++) {
-			int index = m_faces[i].indices[j];
-
-			if(m_colors != NULL)
-				glColor4bv(&m_colors[4*index]);
-			if(m_NormalsArePerVertex && m_normals != NULL)
-				glNormal3fv(&m_normals[3*index]);
-			if(m_texcoords != NULL)
-				glTexCoord2fv(&m_texcoords[2*index]);
-			glVertex3fv(&m_vertices[3*index]);
-		}
-
-		glEnd();
-	}
+	debugGL("while rendering" << name());
 };

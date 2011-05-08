@@ -6,6 +6,15 @@
 #include <QDebug>
 
 #ifdef _DEBUG
+	#define debugGL(message)\
+	{\
+		GLenum error = glGetError();\
+		if(error != GL_NO_ERROR)\
+		{\
+			const char* msg = (char*)gluErrorString(error);\
+			logError( message << QString(msg) );\
+		}\
+	}
 	#define debug(topic, message)\
 	{\
 		if(Log::displaysTopic(topic))\
@@ -27,6 +36,7 @@
 			qDebug() << Log::format( Log::ERROR, __FILE__ , __LINE__ , __FUNCTION__ ).header.toStdString().c_str() << message;\
 	}
 #else
+	#define debugGL(message) {}
 	#define debug(topic, message) {}
 	#define logInfo(message)\
 	{\
