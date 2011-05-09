@@ -83,7 +83,7 @@ void RawMesh::draw()
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_indices);
 	glIndexPointer(GL_SHORT, 0, NULL);
 
-	glDrawElements(GL_TRIANGLES, m_nbFaces, GL_UNSIGNED_SHORT, NULL);
+	glDrawElements(GL_TRIANGLES, 3*m_nbFaces, GL_UNSIGNED_SHORT, NULL);
 
 	glBindBuffer(GL_ARRAY_BUFFER,0);
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER,0);

@@ -72,9 +72,9 @@ PrimitiveMesh* PrimitiveMesh::buildCube()
 	glBindBuffer(GL_ARRAY_BUFFER, ret->m_texcoords);
 	glBufferData(GL_ARRAY_BUFFER, sizeof(texcoords), texcoords, GL_STATIC_DRAW);
 
-	ret->m_nbFaces = 2*3*6;
+	ret->m_nbFaces = 2*6;
 
-	GLshort* indices = new GLshort[ret->m_nbFaces]();
+	GLshort* indices = new GLshort[3*ret->m_nbFaces]();
 	GLshort* ptrIndices = indices;
 	for(int i=0 ; i<6 ; i++) {
 		for(int j=0 ; j<3 ; j++) {
@@ -90,7 +90,7 @@ PrimitiveMesh* PrimitiveMesh::buildCube()
 
 	glGenBuffers(1,&ret->m_indices);
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ret->m_indices);
-	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(GLshort)*ret->m_nbFaces, indices, GL_STATIC_DRAW);
+	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(GLshort)*3*ret->m_nbFaces, indices, GL_STATIC_DRAW);
 
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
@@ -99,14 +99,7 @@ PrimitiveMesh* PrimitiveMesh::buildCube()
 
 	ret->m_state = STATE_LOADED;
 
-	#ifdef _DEBUG
-		GLenum error = glGetError();
-		if(error != GL_NO_ERROR)
-		{
-			const char* msg = (char*)gluErrorString(error);
-			logError( QString(msg) );
-		}
-	#endif
+	debugGL("While building a cube primitive");
 
 	return ret;
 }
@@ -114,13 +107,12 @@ PrimitiveMesh* PrimitiveMesh::buildCube()
 PrimitiveMesh* PrimitiveMesh::buildSphere(int rings, int segments)
 {
 	PrimitiveMesh* ret = new PrimitiveMesh(QString("Sphere_")+QString().setNum(rings)+QString("_")+QString().setNum(segments));
-/*
-	ret->m_NormalsArePerVertex = true;
-	ret->m_nbVertex = (rings + 1) * (segments+1);
 
-	ret->m_vertices = new float[3*ret->m_nbVertex]();
-	ret->m_normals = new float[3*ret->m_nbVertex]();
-	ret->m_texcoords = new float[2*ret->m_nbVertex]();
+	int nbVertex = (rings+1) * (segments+1);
+
+	GLfloat* vertices = new GLfloat[3*nbVertex]();
+	GLfloat* normals = new GLfloat[3*nbVertex]();
+	GLfloat* texcoords = new GLfloat[2*nbVertex]();
 
 	// Vertex
 	for(int r=0 ; r<rings+1 ; r++) {
@@ -132,88 +124,132 @@ PrimitiveMesh* PrimitiveMesh::buildSphere(int rings, int segments)
 			float y = fastCos(theta);
 			float z = fastSin(theta) * fastSin(phi);
 			// Vertex
-			ret->m_vertices[3*index + 0] = 0.5 *  x;
-			ret->m_vertices[3*index + 1] = 0.5 *  y;
-			ret->m_vertices[3*index + 2] = 0.5 *  z;
+			vertices[3*index + 0] = 0.5 *  x;
+			vertices[3*index + 1] = 0.5 *  y;
+			vertices[3*index + 2] = 0.5 *  z;
 
 			// Normal
-			ret->m_normals[3*index + 0] = x;
-			ret->m_normals[3*index + 1] = y;
-			ret->m_normals[3*index + 2] = z;
+			normals[3*index + 0] = x;
+			normals[3*index + 1] = y;
+			normals[3*index + 2] = z;
 
 			// Texcoord
-			ret->m_texcoords[2*index + 0] = float(s)/segments;
-			ret->m_texcoords[2*index + 1] = float(r)/rings;
+			texcoords[2*index + 0] = float(s)/segments;
+			texcoords[2*index + 1] = float(r)/rings;
 		}
 	}
 
-	ret->m_nbFaces = rings * segments;
+	ret->m_nbFaces = 2 * rings * segments;
 
-	ret->m_faces = new Face[ret->m_nbFaces]();
+	GLshort* indices = new GLshort[3* ret->m_nbFaces]();
+	GLshort* ptrIndices = indices;
 
 	for(int r=0 ; r<rings ; r++) {
 		for(int s=0 ; s<segments ; s++) {
-		int i = s + r * segments;
-		ret->m_faces[i].nbIndices = 4;
-		ret->m_faces[i].indices = new int[4]();
 
-		ret->m_faces[i].indices[0] = s   +  r    * (segments+1);
-		ret->m_faces[i].indices[1] = s+1 +  r    * (segments+1);
-		ret->m_faces[i].indices[2] = s+1 + (r+1) * (segments+1);
-		ret->m_faces[i].indices[3] = s   + (r+1) * (segments+1);
+		*ptrIndices = s   +  r    * (segments+1); ptrIndices++;
+		*ptrIndices = s+1 +  r    * (segments+1); ptrIndices++;
+		*ptrIndices = s+1 + (r+1) * (segments+1); ptrIndices++;
+
+		*ptrIndices = s   +  r    * (segments+1); ptrIndices++;
+		*ptrIndices = s+1 + (r+1) * (segments+1); ptrIndices++;
+		*ptrIndices = s   + (r+1) * (segments+1); ptrIndices++;
+
 		}
 	}
 
+	// Set up Vertices VBO
+	glGenBuffers(1,&ret->m_vertices);
+	glBindBuffer(GL_ARRAY_BUFFER, ret->m_vertices);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(GLfloat) * nbVertex * 3, vertices, GL_STATIC_DRAW);
+
+	// Set up Normals VBO
+	glGenBuffers(1,&ret->m_normals);
+	glBindBuffer(GL_ARRAY_BUFFER, ret->m_normals);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(GLfloat) * nbVertex * 3, normals, GL_STATIC_DRAW);
+
+	// Set up Texture Coordinates VBO
+	glGenBuffers(1,&ret->m_texcoords);
+	glBindBuffer(GL_ARRAY_BUFFER, ret->m_texcoords);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(GLfloat) * nbVertex * 2, texcoords, GL_STATIC_DRAW);
+
+
+	glGenBuffers(1,&ret->m_indices);
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ret->m_indices);
+	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(GLshort) * ret->m_nbFaces * 3, indices, GL_STATIC_DRAW);
+
+	glBindBuffer(GL_ARRAY_BUFFER, 0);
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
+
+	delete[] vertices;
+	delete[] normals;
+	delete[] texcoords;
+	delete[] indices;
+
 	ret->m_state = STATE_LOADED;
-*/
+
+	debugGL("While build a sphere primitive");
+
 	return ret;
 }
 
 PrimitiveMesh* PrimitiveMesh::buildPlane()
 {
 	PrimitiveMesh* ret = new PrimitiveMesh("Plane");
-/*
-	ret->m_NormalsArePerVertex = false;
 
-	ret->m_nbVertex = 4;
-	ret->m_vertices = new float[4*3]();
-	ret->m_normals = new float[3]();
-	ret->m_texcoords = new float[4*2]();
-
-	const float vertices[] = {
+	const GLfloat vertices[] = {
 		-0.5, 0, -0.5,
 		-0.5, 0,  0.5,
 		 0.5, 0,  0.5,
 		 0.5, 0, -0.5
 	};
 
-	const float normals[] = {
+	const GLfloat normals[] = {
 		0, 1, 0,
+		0, 1, 0,
+		0, 1, 0,
+		0, 1, 0
 	};
 
-	const float texcoords[] = {
+	const GLfloat texcoords[] = {
 		0, 0,
 		0, 1,
 		1, 1,
 		1, 0
 	};
 
-	memcpy(ret->m_vertices,vertices,sizeof(vertices));
-	memcpy(ret->m_normals,normals,sizeof(normals));
-	memcpy(ret->m_texcoords,texcoords,sizeof(texcoords));
+	const GLshort indices[] = {
+		0, 1, 2,
+		2, 3, 0
+	};
 
-	ret->m_nbFaces = 1;
+	// Set up Vertices VBO
+	glGenBuffers(1,&ret->m_vertices);
+	glBindBuffer(GL_ARRAY_BUFFER, ret->m_vertices);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
 
-	ret->m_faces = new Face[1]();
+	// Set up Normals VBO
+	glGenBuffers(1,&ret->m_normals);
+	glBindBuffer(GL_ARRAY_BUFFER, ret->m_normals);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(normals), normals, GL_STATIC_DRAW);
 
-	ret->m_faces[0].nbIndices = 4;
-	ret->m_faces[0].indices = new int[4]();
+	// Set up Texture Coordinates VBO
+	glGenBuffers(1,&ret->m_texcoords);
+	glBindBuffer(GL_ARRAY_BUFFER, ret->m_texcoords);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(texcoords), texcoords, GL_STATIC_DRAW);
 
-	const int indices[] =  { 0, 1, 2, 3 };
+	ret->m_nbFaces = 2;
 
-	memcpy(ret->m_faces[0].indices,indices,sizeof(indices));
+	glGenBuffers(1,&ret->m_indices);
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ret->m_indices);
+	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);
+
+	glBindBuffer(GL_ARRAY_BUFFER, 0);
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
 
 	ret->m_state = STATE_LOADED;
-*/
+
+	debugGL("While building a plane primitive");
+
 	return ret;
 }
