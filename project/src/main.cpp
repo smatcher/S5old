@@ -64,7 +64,7 @@ int main(int argc, char *argv[])
 
 	nRot->addProperty(new IProperty());
 	nRot->addProperty(new DummyUpdatable());
-	nQt->addProperty(new QtLogo(engine.getGLW_TEMPORARY()));
+//	nQt->addProperty(new QtLogo(engine.getGLW_TEMPORARY()));
 	nQt->addProperty(new Grid(1.0f, 1.0f, 40, 40));
 	nCam->addProperty(new Camera(70,1,200));
 	nCamFollow->addProperty(new Camera(90,1,200));

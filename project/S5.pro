@@ -128,18 +128,24 @@ INCLUDEPATH += \
 
 macx {
 LIBS += \
-        -L../dep/assimp/lib -lassimp
+	-L../dep/assimp/lib -lassimp \
+	-lopenal -lalut
 }
 unix:!macx{
 LIBS += \
-        -L../dep/assimp/lib -lassimp
+	-L../dep/assimp/lib -lassimp \
+	-lopenal -lalut
 }
 win32 {
 LIBS += \
-        -L../dep/assimp/lib-win32 -lassimp
+	../dep/assimp/lib-win32/libassimp.a \
+	../dep/openal/lib-win32/alut.lib \
+	../dep/openal/lib-win32/OpenAL32.lib
+
+INCLUDEPATH += \
+	../dep/openal/include
 }
 
-LIBS += -lopenal -lalut -lGLEW
 
 s5debug {
 	DEFINES += _DEBUG
@@ -174,5 +180,5 @@ tools {
 		include/debug/widgets/meshrendererwidget.h \
 		include/debug/widgets/soundemitterwidget.h \
 		include/debug/debugwindow.h
-
 }
+

@@ -1,7 +1,7 @@
 #ifndef RAWMESH_H
 #define RAWMESH_H
 
-#include <GL/gl.h>
+#include <QtOpenGL>
 #include "core/graphics/mesh.h"
 
 class RawMesh : public MeshData
@@ -15,11 +15,11 @@ public:
 
 protected:
 
-	GLuint m_vertices;
-	GLuint m_normals;
-	GLuint m_colors;
-	GLuint m_texcoords;
-	GLuint m_indices;
+	QGLBuffer m_vertices;
+	QGLBuffer m_normals;
+	QGLBuffer m_colors;
+	QGLBuffer m_texcoords;
+	QGLBuffer m_indices;
 	int m_nbFaces;
 };
 

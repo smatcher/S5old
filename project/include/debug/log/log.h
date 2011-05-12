@@ -18,40 +18,40 @@
 	#define debug(topic, message)\
 	{\
 		if(Log::displaysTopic(topic))\
-			qDebug() << Log::format( Log::DEBUG, __FILE__ , __LINE__ , __FUNCTION__ , topic ).header.toStdString().c_str() << message;\
+                        qDebug() << Log::format( Log::LOG_DEBUG, __FILE__ , __LINE__ , __FUNCTION__ , topic ).header.toStdString().c_str() << message;\
 	}
 	#define logInfo(message)\
 	{\
-		if(Log::infoPolicy == Log::SHOW)\
-			qDebug() << Log::format( Log::INFO, __FILE__ , __LINE__ , __FUNCTION__ ).header.toStdString().c_str() << message;\
+                if(Log::infoPolicy == Log::POLICY_SHOW)\
+                        qDebug() << Log::format( Log::LOG_INFO, __FILE__ , __LINE__ , __FUNCTION__ ).header.toStdString().c_str() << message;\
 	}
 	#define logWarn(message)\
 	{\
-		if(Log::warnPolicy == Log::SHOW)\
-			qDebug() << Log::format( Log::WARN, __FILE__ , __LINE__ , __FUNCTION__ ).header.toStdString().c_str() << message;\
+                if(Log::warnPolicy == Log::POLICY_SHOW)\
+                        qDebug() << Log::format( Log::LOG_WARN, __FILE__ , __LINE__ , __FUNCTION__ ).header.toStdString().c_str() << message;\
 	}
 	#define logError(message)\
 	{\
-		if(Log::errorPolicy == Log::SHOW)\
-			qDebug() << Log::format( Log::ERROR, __FILE__ , __LINE__ , __FUNCTION__ ).header.toStdString().c_str() << message;\
+                if(Log::errorPolicy == Log::POLICY_SHOW)\
+                        qDebug() << Log::format( Log::LOG_ERROR, __FILE__ , __LINE__ , __FUNCTION__ ).header.toStdString().c_str() << message;\
 	}
 #else
 	#define debugGL(message) {}
 	#define debug(topic, message) {}
 	#define logInfo(message)\
 	{\
-		if(Log::infoPolicy == Log::SHOW)\
-			qDebug() << "[" << Log::format(Log::INFO).header.toStdString().c_str() << "]" << message;\
+                if(Log::infoPolicy == Log::POLICY_SHOW)\
+                        qDebug() << "[" << Log::format(Log::LOG_INFO).header.toStdString().c_str() << "]" << message;\
 	}
 	#define logWarn(message)\
 	{\
-		if(Log::warnPolicy == Log::SHOW)\
-			qDebug() << "[" << Log::format(Log::WARN).header.toStdString().c_str() << "]" << message;\
+                if(Log::warnPolicy == Log::POLICY_SHOW)\
+                        qDebug() << "[" << Log::format(Log::LOG_WARN).header.toStdString().c_str() << "]" << message;\
 	}
 	#define logError(message)\
 	{\
-		if(Log::errorPolicy == Log::SHOW)\
-			qDebug() << "[" << Log::format(Log::ERROR).header.toStdString().c_str() << "]" << message;\
+                if(Log::errorPolicy == Log::POLICY_SHOW)\
+                        qDebug() << "[" << Log::format(Log::LOG_ERROR).header.toStdString().c_str() << "]" << message;\
 	}
 #endif
 
@@ -60,16 +60,16 @@ class Log
 	public:
 		enum LogType
 		{
-			INFO,
-			WARN,
-			ERROR,
-			DEBUG
+                        LOG_INFO,
+                        LOG_WARN,
+                        LOG_ERROR,
+                        LOG_DEBUG
 		};
 
 		enum Policy
 		{
-			IGNORE,
-			SHOW
+                        POLICY_IGNORE,
+                        POLICY_SHOW
 		};
 
 		struct Format

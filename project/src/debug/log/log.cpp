@@ -1,10 +1,10 @@
 #include "debug/log/log.h"
 #include <QDir>
 
-Log::Policy Log::infoPolicy = Log::SHOW;
-Log::Policy Log::warnPolicy = Log::SHOW;
-Log::Policy Log::errorPolicy = Log::SHOW;
-Log::Policy Log::defaultDebugPolicy = Log::SHOW;
+Log::Policy Log::infoPolicy = Log::POLICY_SHOW;
+Log::Policy Log::warnPolicy = Log::POLICY_SHOW;
+Log::Policy Log::errorPolicy = Log::POLICY_SHOW;
+Log::Policy Log::defaultDebugPolicy = Log::POLICY_SHOW;
 QHash<QString, Log::Policy> Log::topicPolicy;
 
 QString typeToString(Log::LogType type)
@@ -13,16 +13,16 @@ QString typeToString(Log::LogType type)
 
 	switch(type)
 	{
-		case Log::INFO:
+                case Log::LOG_INFO:
 			stype = "Info";
 			break;
-		case Log::WARN:
+                case Log::LOG_WARN:
 			stype = "Warning";
 			break;
-		case Log::ERROR:
+                case Log::LOG_ERROR:
 			stype = "Error";
 			break;
-		case Log::DEBUG:
+                case Log::LOG_DEBUG:
 			stype = "Debug";
 			break;
 	}
@@ -66,7 +66,7 @@ bool Log::displaysTopic(const char* topic)
 	QHash<QString, Policy>::Iterator it = topicPolicy.find(QString(topic));
 
 	if(it != topicPolicy.end())
-		return it.value() == SHOW;
+                return it.value() == POLICY_SHOW;
 	else
 		return defaultDebugPolicy;
 }

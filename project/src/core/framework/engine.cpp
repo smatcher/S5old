@@ -1,4 +1,3 @@
-#include <GL/glew.h>
 #include "core/framework/engine.h"
 
 #include "core/scenegraph/scenegraph.h"
@@ -60,8 +59,6 @@ void Engine::init(int argc, char *argv[])
 	#ifdef WITH_TOOLS
 		m_debugWindow.show();
 	#endif
-
-	glewInit();
 
 	RENDER_MANAGER.setCurrentCamera(NULL);
 

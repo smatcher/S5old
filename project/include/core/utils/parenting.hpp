@@ -35,8 +35,10 @@ Child* ParentOf<Child>::child(const QString& childName) const
 template<class Child>
 Child* ParentOf<Child>::child(int nb) const
 {
-	QList<QString> keys = m_sons.keys();
+	if(m_sons.size() == 0)
+		return NULL;
 
+	QList<QString> keys = m_sons.keys();
 	return child(keys[nb]);
 }
 

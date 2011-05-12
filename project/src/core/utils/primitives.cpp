@@ -1,4 +1,4 @@
-#include <GL/glew.h>
+#include <QtOpenGL>
 #include "core/utils/primitives.h"
 #include "core/maths/trigo.h"
 
@@ -59,18 +59,21 @@ PrimitiveMesh* PrimitiveMesh::buildCube()
 	};
 
 	// Set up Vertices VBO
-	glGenBuffers(1,&ret->m_vertices);
-	glBindBuffer(GL_ARRAY_BUFFER, ret->m_vertices);
-	glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
+	ret->m_vertices.create();
+	ret->m_vertices.bind();
+	ret->m_vertices.setUsagePattern(QGLBuffer::StaticDraw);
+	ret->m_vertices.allocate(vertices, sizeof(vertices));
 
 	// Set up Normals VBO
-	glGenBuffers(1,&ret->m_normals);
-	glBindBuffer(GL_ARRAY_BUFFER, ret->m_normals);
-	glBufferData(GL_ARRAY_BUFFER, sizeof(normals), normals, GL_STATIC_DRAW);
+	ret->m_normals.create();
+	ret->m_normals.bind();
+	ret->m_normals.setUsagePattern(QGLBuffer::StaticDraw);
+	ret->m_normals.allocate(normals, sizeof(normals));
 
-	glGenBuffers(1,&ret->m_texcoords);
-	glBindBuffer(GL_ARRAY_BUFFER, ret->m_texcoords);
-	glBufferData(GL_ARRAY_BUFFER, sizeof(texcoords), texcoords, GL_STATIC_DRAW);
+	ret->m_texcoords.create();
+	ret->m_texcoords.bind();
+	ret->m_texcoords.setUsagePattern(QGLBuffer::StaticDraw);
+	ret->m_texcoords.allocate(texcoords, sizeof(texcoords));
 
 	ret->m_nbFaces = 2*6;
 
@@ -88,12 +91,14 @@ PrimitiveMesh* PrimitiveMesh::buildCube()
 		}
 	}
 
-	glGenBuffers(1,&ret->m_indices);
-	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ret->m_indices);
-	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(GLshort)*3*ret->m_nbFaces, indices, GL_STATIC_DRAW);
+	ret->m_indices.create();
+	ret->m_indices.bind();
+	ret->m_indices.setUsagePattern(QGLBuffer::StaticDraw);
+	ret->m_indices.allocate(indices, sizeof(GLshort)*3*ret->m_nbFaces);
 
-	glBindBuffer(GL_ARRAY_BUFFER, 0);
-	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
+	// Unbind buffers (binding to a non created buffer does the trick)
+//	QGLBuffer().bind();
+//	QGLBuffer(QGLBuffer::IndexBuffer).bind();
 
 	delete[] indices;
 
@@ -159,27 +164,32 @@ PrimitiveMesh* PrimitiveMesh::buildSphere(int rings, int segments)
 	}
 
 	// Set up Vertices VBO
-	glGenBuffers(1,&ret->m_vertices);
-	glBindBuffer(GL_ARRAY_BUFFER, ret->m_vertices);
-	glBufferData(GL_ARRAY_BUFFER, sizeof(GLfloat) * nbVertex * 3, vertices, GL_STATIC_DRAW);
+	ret->m_vertices.create();
+	ret->m_vertices.bind();
+	ret->m_vertices.setUsagePattern(QGLBuffer::StaticDraw);
+	ret->m_vertices.allocate(vertices, sizeof(GLfloat) * nbVertex * 3);
 
 	// Set up Normals VBO
-	glGenBuffers(1,&ret->m_normals);
-	glBindBuffer(GL_ARRAY_BUFFER, ret->m_normals);
-	glBufferData(GL_ARRAY_BUFFER, sizeof(GLfloat) * nbVertex * 3, normals, GL_STATIC_DRAW);
+	ret->m_normals.create();
+	ret->m_normals.bind();
+	ret->m_normals.setUsagePattern(QGLBuffer::StaticDraw);
+	ret->m_normals.allocate(normals, sizeof(GLfloat) * nbVertex * 3);
 
 	// Set up Texture Coordinates VBO
-	glGenBuffers(1,&ret->m_texcoords);
-	glBindBuffer(GL_ARRAY_BUFFER, ret->m_texcoords);
-	glBufferData(GL_ARRAY_BUFFER, sizeof(GLfloat) * nbVertex * 2, texcoords, GL_STATIC_DRAW);
+	ret->m_texcoords.create();
+	ret->m_texcoords.bind();
+	ret->m_texcoords.setUsagePattern(QGLBuffer::StaticDraw);
+	ret->m_texcoords.allocate(texcoords, sizeof(GLfloat) * nbVertex * 2);
+
+	ret->m_indices.create();
+	ret->m_indices.bind();
+	ret->m_indices.setUsagePattern(QGLBuffer::StaticDraw);
+	ret->m_indices.allocate(indices, sizeof(GLshort) * ret->m_nbFaces * 3);
 
 
-	glGenBuffers(1,&ret->m_indices);
-	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ret->m_indices);
-	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(GLshort) * ret->m_nbFaces * 3, indices, GL_STATIC_DRAW);
-
-	glBindBuffer(GL_ARRAY_BUFFER, 0);
-	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
+	// Unbind buffers (binding to a non created buffer does the trick)
+//	QGLBuffer().bind();
+//	QGLBuffer(QGLBuffer::IndexBuffer).bind();
 
 	delete[] vertices;
 	delete[] normals;
@@ -224,28 +234,32 @@ PrimitiveMesh* PrimitiveMesh::buildPlane()
 	};
 
 	// Set up Vertices VBO
-	glGenBuffers(1,&ret->m_vertices);
-	glBindBuffer(GL_ARRAY_BUFFER, ret->m_vertices);
-	glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
+	ret->m_vertices.create();
+	ret->m_vertices.bind();
+	ret->m_vertices.setUsagePattern(QGLBuffer::StaticDraw);
+	ret->m_vertices.allocate(vertices, sizeof(vertices));
 
 	// Set up Normals VBO
-	glGenBuffers(1,&ret->m_normals);
-	glBindBuffer(GL_ARRAY_BUFFER, ret->m_normals);
-	glBufferData(GL_ARRAY_BUFFER, sizeof(normals), normals, GL_STATIC_DRAW);
+	ret->m_normals.create();
+	ret->m_normals.bind();
+	ret->m_normals.setUsagePattern(QGLBuffer::StaticDraw);
+	ret->m_normals.allocate(normals, sizeof(normals));
 
-	// Set up Texture Coordinates VBO
-	glGenBuffers(1,&ret->m_texcoords);
-	glBindBuffer(GL_ARRAY_BUFFER, ret->m_texcoords);
-	glBufferData(GL_ARRAY_BUFFER, sizeof(texcoords), texcoords, GL_STATIC_DRAW);
+	ret->m_texcoords.create();
+	ret->m_texcoords.bind();
+	ret->m_texcoords.setUsagePattern(QGLBuffer::StaticDraw);
+	ret->m_texcoords.allocate(texcoords, sizeof(texcoords));
 
 	ret->m_nbFaces = 2;
 
-	glGenBuffers(1,&ret->m_indices);
-	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ret->m_indices);
-	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);
+	ret->m_indices.create();
+	ret->m_indices.bind();
+	ret->m_indices.setUsagePattern(QGLBuffer::StaticDraw);
+	ret->m_indices.allocate(indices, sizeof(indices));
 
-	glBindBuffer(GL_ARRAY_BUFFER, 0);
-	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
+	// Unbind buffers (binding to a non created buffer does the trick)
+//	QGLBuffer().bind();
+//	QGLBuffer(QGLBuffer::IndexBuffer).bind();
 
 	ret->m_state = STATE_LOADED;
 
