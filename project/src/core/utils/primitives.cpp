@@ -70,6 +70,7 @@ PrimitiveMesh* PrimitiveMesh::buildCube()
 	ret->m_normals.setUsagePattern(QGLBuffer::StaticDraw);
 	ret->m_normals.allocate(normals, sizeof(normals));
 
+	// Set up TexCoord VBO
 	ret->m_texcoords.create();
 	ret->m_texcoords.bind();
 	ret->m_texcoords.setUsagePattern(QGLBuffer::StaticDraw);
