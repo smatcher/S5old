@@ -37,8 +37,6 @@ public:
 	Texture(const Texture& from) : ResourceHandle<TextureData>(from) {}
 	Texture(TextureData& from) : ResourceHandle<TextureData>(from) {}
 	virtual ~Texture() {}
-
-	//void bind() const {if(m_data) m_data->bind();}
 };
 
 #endif // TEXTURE_H

@@ -1,0 +1,9 @@
+<material>
+	<texture texunit="0">ball.tga</texture>
+	<diffuse>0.3 0.3 0.9 1.0</diffuse>
+	<specular>0.3 0.3 0.9 1.0</specular>
+	<ambiant>0.3 0.3 1.0 1.0</ambiant>
+	<emission>0.0 0.0 0.0 1.0</emission>
+	<shininess>0.2</shininess>
+	<program>../programs/bump_mapping.xml</program>
+</material>

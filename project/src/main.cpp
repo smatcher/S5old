@@ -74,18 +74,17 @@ int main(int argc, char *argv[])
 	Mesh cube = MESH_MANAGER.get("Cube");
 	Mesh sphere = MESH_MANAGER.get("Sphere_16_32");
 	Mesh mesh = MESH_MANAGER.get("duckmesh");
-	Material material = MATERIAL_MANAGER.get("duckmesh");
-	Texture texture = TEXTURE_MANAGER.get("duck.tga");
-	Texture unicorn = TEXTURE_MANAGER.get("unicorn.tga");
-	Texture star = TEXTURE_MANAGER.get("star.tga");
-	Texture ball = TEXTURE_MANAGER.get("ball.tga");
+	Material duck = MATERIAL_MANAGER.get("duck");
+	Material unicorn = MATERIAL_MANAGER.get("unicorn");
+	Material star = MATERIAL_MANAGER.get("star");
+	Material ball = MATERIAL_MANAGER.get("ball");
 	Sample sample = SAMPLE_MANAGER.get("quacking.wav");
 
 	Node* nDuck = new Node("Duck");
-	nDuck->addProperty(new MeshRenderer(mesh,material,texture));
-	nStar->addProperty(new MeshRenderer(plane,material,star));
-	nBall->addProperty(new MeshRenderer(sphere,material,ball));
-	nUni->addProperty(new MeshRenderer(cube,material,unicorn));
+	nDuck->addProperty(new MeshRenderer(mesh,duck));
+	nStar->addProperty(new MeshRenderer(plane,star));
+	nBall->addProperty(new MeshRenderer(sphere,ball));
+	nUni->addProperty(new MeshRenderer(cube,unicorn));
 	nDuck->addProperty(new DummyControlable());
 	nDuck->addProperty(new SoundEmitter(sample));
 	nDuck->link(nCamFollow);

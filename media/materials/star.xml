@@ -1,0 +1,4 @@
+<material>
+	<texture texunit="0">star.tga</texture>
+	<program>../programs/bump_mapping.xml</program>
+</material>

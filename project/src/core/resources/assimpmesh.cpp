@@ -50,7 +50,7 @@ void AssimpMesh::buildVBO()
 		m_vertices.bind();
 		m_vertices.setUsagePattern(QGLBuffer::StaticDraw);
 		GLfloat* array = new GLfloat[3 * m_mesh->mNumVertices]();
-		for(int i=0 ; i < m_mesh->mNumVertices ; i++) {
+		for(unsigned int i=0 ; i < m_mesh->mNumVertices ; i++) {
 			memcpy(&(array[3*i]),&m_mesh->mVertices[i].x,3 * sizeof(GLfloat));
 		}
 		m_vertices.allocate(array,3 * sizeof(GLfloat) * m_mesh->mNumVertices);
@@ -62,7 +62,7 @@ void AssimpMesh::buildVBO()
 		m_normals.bind();
 		m_normals.setUsagePattern(QGLBuffer::StaticDraw);
 		GLfloat* array = new GLfloat[3 * m_mesh->mNumVertices]();
-		for(int i=0 ; i < m_mesh->mNumVertices ; i++) {
+		for(unsigned int i=0 ; i < m_mesh->mNumVertices ; i++) {
 			memcpy(&(array[3*i]),&m_mesh->mNormals[i].x,3 * sizeof(GLfloat));
 		}
 		m_normals.allocate(array,3 * sizeof(GLfloat) * m_mesh->mNumVertices);
@@ -74,7 +74,7 @@ void AssimpMesh::buildVBO()
 		m_colors.bind();
 		m_colors.setUsagePattern(QGLBuffer::StaticDraw);
 		GLfloat* array = new GLfloat[4 * m_mesh->mNumVertices]();
-		for(int i=0 ; i < m_mesh->mNumVertices ; i++) {
+		for(unsigned int i=0 ; i < m_mesh->mNumVertices ; i++) {
 			array[0 + 4*i] = m_mesh->mColors[0][i].r;
 			array[0 + 4*i] = m_mesh->mColors[0][i].g;
 			array[0 + 4*i] = m_mesh->mColors[0][i].b;
@@ -89,7 +89,7 @@ void AssimpMesh::buildVBO()
 		m_texcoords.bind();
 		m_texcoords.setUsagePattern(QGLBuffer::StaticDraw);
 		GLfloat* array = new GLfloat[2 * m_mesh->mNumVertices]();
-		for(int i=0 ; i < m_mesh->mNumVertices ; i++) {
+		for(unsigned int i=0 ; i < m_mesh->mNumVertices ; i++) {
 			memcpy(&(array[2*i]),&m_mesh->mTextureCoords[0][i].x,2 * sizeof(GLfloat));
 		}
 		m_texcoords.allocate(array,2 * sizeof(GLfloat) * m_mesh->mNumVertices);

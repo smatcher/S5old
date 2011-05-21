@@ -206,46 +206,46 @@ void RenderManager::applyBackground()
 				m_defaultBackground.textures[0]->bind();
 				glBegin(GL_QUADS);
 					glTexCoord2f(0, 0); glVertex3f(  10, -10, -10 );
-					glTexCoord2f(1, 0); glVertex3f( -10, -10, -10 );
-					glTexCoord2f(1, 1); glVertex3f( -10,  10, -10 );
 					glTexCoord2f(0, 1); glVertex3f(  10,  10, -10 );
+					glTexCoord2f(1, 1); glVertex3f( -10,  10, -10 );
+					glTexCoord2f(1, 0); glVertex3f( -10, -10, -10 );
 				glEnd();
 
 				// Render the left quad
 				m_defaultBackground.textures[1]->bind();
 				glBegin(GL_QUADS);
 					glTexCoord2f(0, 0); glVertex3f(  10, -10,  10 );
-					glTexCoord2f(1, 0); glVertex3f(  10, -10, -10 );
-					glTexCoord2f(1, 1); glVertex3f(  10,  10, -10 );
 					glTexCoord2f(0, 1); glVertex3f(  10,  10,  10 );
+					glTexCoord2f(1, 1); glVertex3f(  10,  10, -10 );
+					glTexCoord2f(1, 0); glVertex3f(  10, -10, -10 );
 				glEnd();
 
 				// Render the back quad
 				m_defaultBackground.textures[2]->bind();
 				glBegin(GL_QUADS);
 					glTexCoord2f(0, 0); glVertex3f( -10, -10,  10 );
-					glTexCoord2f(1, 0); glVertex3f(  10, -10,  10 );
-					glTexCoord2f(1, 1); glVertex3f(  10,  10,  10 );
 					glTexCoord2f(0, 1); glVertex3f( -10,  10,  10 );
+					glTexCoord2f(1, 1); glVertex3f(  10,  10,  10 );
+					glTexCoord2f(1, 0); glVertex3f(  10, -10,  10 );
 
 				glEnd();
 
 				// Render the right quad
 				m_defaultBackground.textures[3]->bind();
 				glBegin(GL_QUADS);
-					glTexCoord2f(0, 0); glVertex3f( -10, -10, -10 );
-					glTexCoord2f(1, 0); glVertex3f( -10, -10,  10 );
-					glTexCoord2f(1, 1); glVertex3f( -10,  10,  10 );
 					glTexCoord2f(0, 1); glVertex3f( -10,  10, -10 );
+					glTexCoord2f(1, 1); glVertex3f( -10,  10,  10 );
+					glTexCoord2f(1, 0); glVertex3f( -10, -10,  10 );
+					glTexCoord2f(0, 0); glVertex3f( -10, -10, -10 );
 				glEnd();
 
 				// Render the top quad
 				m_defaultBackground.textures[4]->bind();
 				glBegin(GL_QUADS);
-					glTexCoord2f(0, 1); glVertex3f( -10,  10, -10 );
-					glTexCoord2f(0, 0); glVertex3f( -10,  10,  10 );
-					glTexCoord2f(1, 0); glVertex3f(  10,  10,  10 );
 					glTexCoord2f(1, 1); glVertex3f(  10,  10, -10 );
+					glTexCoord2f(1, 0); glVertex3f(  10,  10,  10 );
+					glTexCoord2f(0, 0); glVertex3f( -10,  10,  10 );
+					glTexCoord2f(0, 1); glVertex3f( -10,  10, -10 );
 				glEnd();
 
 				// Render the bottom quad

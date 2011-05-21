@@ -13,7 +13,7 @@ class MeshRenderer : public IRenderable
 	friend class MeshRendererWidget;
 
 public:
-	MeshRenderer(Mesh& mesh, Material& material, Texture& texture);
+	MeshRenderer(Mesh& mesh, Material& material);
 	void render(double elapsed_time, GLWidget* context);
 
 	#ifdef WITH_TOOLS
@@ -22,7 +22,6 @@ public:
 private:
 	Mesh     m_mesh;
 	Material m_material;
-	Texture  m_texture;
 };
 
 #endif // MESHRENDERER_H

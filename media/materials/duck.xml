@@ -1,0 +1,9 @@
+<material>
+	<texture texunit="0">duck.tga</texture>
+	<texture texunit="1">duck.tga</texture>
+	<specular>0.0 0.0 0.9 1.0</specular>
+	<ambiant>0.0 1.0 0.0 1.0</ambiant>
+	<emission>0.9 0.0 0.0 1.0</emission>
+	<shininess>0.2</shininess>
+	<program>../programs/bump_mapping.xml</program>
+</material>

@@ -28,13 +28,19 @@ ResourceHandle<Resource>::~ResourceHandle()
 }
 
 template <class Resource>
-Resource* ResourceHandle<Resource>::operator&()
+bool ResourceHandle<Resource>::isValid()
+{
+	return m_data != NULL;
+}
+
+template <class Resource>
+Resource* ResourceHandle<Resource>::operator->()
 {
 	return m_data;
 }
 
 template <class Resource>
-Resource* ResourceHandle<Resource>::operator->()
+Resource* ResourceHandle<Resource>::operator*()
 {
 	return m_data;
 }

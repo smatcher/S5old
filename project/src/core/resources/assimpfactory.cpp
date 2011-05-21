@@ -1,6 +1,5 @@
 #include "core/resources/assimpfactory.h"
 #include "core/resources/assimpmesh.h"
-#include "core/resources/assimpmaterial.h"
 #include <aiPostProcess.h>
 #include <aiScene.h>
 
@@ -29,9 +28,7 @@ void AssimpFactory::parseFile(const QString& path, QList<ResourceData*>& content
 			const aiMaterial* aimaterial = scene->mMaterials[aimesh->mMaterialIndex];
 			QString name = aimesh->mName.data;
 			AssimpMesh* mesh = new AssimpMesh(name,path,this,aimesh);
-			AssimpMaterial* material = new AssimpMaterial(name,path,this,aimaterial);
 			content.push_back(mesh);
-			MATERIAL_MANAGER.add(material);
 			logInfo( "Assimp found the mesh : " << name << " in " << path );
 		}
 	}

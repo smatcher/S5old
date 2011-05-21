@@ -10,7 +10,12 @@
 template <class Resource, class Handle>
 Handle ResourceManager<Resource, Handle>::get(const QString& name)
 {
-	return Handle(*(m_resources.find(name).value()));
+	Resource* res = m_resources.find(name).value();
+
+	if(res != NULL)
+		return Handle(*res);
+	else
+		return Handle();
 }
 
 

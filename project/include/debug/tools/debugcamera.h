@@ -63,7 +63,7 @@ public:
 
 	// Mise à jour de la matrice modelview
 	void lookAt();
-    void rotateOnly();
+	void rotateOnly();
 
 	// Retour aux valeurs par défaut
 	void reset();

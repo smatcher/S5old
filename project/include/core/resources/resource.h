@@ -15,8 +15,10 @@ public:
 	ResourceHandle(const ResourceHandle<Resource>& copy);
 	virtual ~ResourceHandle();
 
-	Resource* operator&();
+	bool isValid();
+
 	Resource* operator->();
+	Resource* operator*();
 	ResourceHandle<Resource>& operator=(const ResourceHandle<Resource>& handle);
 
 protected:

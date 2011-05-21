@@ -4,11 +4,10 @@
 
 #include "debug/log/log.h"
 
-MeshRenderer::MeshRenderer(Mesh& mesh, Material& material, Texture& texture) : IRenderable("MeshRenderer")
+MeshRenderer::MeshRenderer(Mesh& mesh, Material& material) : IRenderable("MeshRenderer")
 {
 	m_mesh = mesh;
 	m_material = material;
-	m_texture = texture;
 }
 
 void MeshRenderer::render(double elapsed_time, GLWidget* context)
@@ -20,10 +19,12 @@ void MeshRenderer::render(double elapsed_time, GLWidget* context)
 	else
 		debug( "RENDERING" , "MeshRenderer : no material to apply for " << node()->getName());
 
+	/*
 	if(&m_texture != NULL)
 		m_texture->bind();
 	else
 		debug( "RENDERING" , "MeshRenderer : no texture to bind for " << node()->getName());
+	*/
 
 	if(&m_mesh != NULL)
 		m_mesh->draw();

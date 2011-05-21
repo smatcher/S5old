@@ -4,7 +4,7 @@
 #
 #-------------------------------------------------
 
-QT       += core gui opengl
+QT       += core gui opengl xml
 
 TARGET = S5
 TEMPLATE = app
@@ -34,7 +34,6 @@ SOURCES += \
 	src/core/utils/stb_image.cpp \
 	src/core/resources/assimpmesh.cpp \
 	src/core/resources/assimpfactory.cpp \
-	src/core/resources/assimpmaterial.cpp \
 	src/core/resources/iresourcefactory.cpp \
 	src/core/resources/stbimage.cpp \
 	src/core/inputs/qtkeytranslator.cpp \
@@ -47,7 +46,8 @@ SOURCES += \
 	src/core/properties/grid.cpp \
 	src/debug/log/log.cpp \
 	src/core/resources/rawmesh.cpp \
-	src/core/utils/primitives.cpp
+	src/core/utils/primitives.cpp \
+	src/core/resources/xmlmaterial.cpp
 
 HEADERS  += \
 	include/core/properties/qtlogo.h \
@@ -107,7 +107,6 @@ HEADERS  += \
 	include/core/resources/iresourcefactory.h \
 	include/core/resources/stbimage.h \
 	include/core/resources/managers.h \
-	include/core/resources/assimpmaterial.h \
 	include/core/resources/assimpfactory.h \
 	include/core/inputs/inputmanager.h \
 	include/core/inputs/qtkeytranslator.h \
@@ -120,7 +119,8 @@ HEADERS  += \
 	include/core/properties/grid.h \
 	include/debug/log/log.h \
 	include/core/resources/rawmesh.h \
-	include/core/utils/primitives.h
+	include/core/utils/primitives.h \
+	include/core/resources/xmlmaterial.h
 
 INCLUDEPATH += \
 	include \
@@ -181,4 +181,3 @@ tools {
 		include/debug/widgets/soundemitterwidget.h \
 		include/debug/debugwindow.h
 }
-
