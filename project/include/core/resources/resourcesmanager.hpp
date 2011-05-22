@@ -10,8 +10,12 @@
 template <class Resource, class Handle>
 Handle ResourceManager<Resource, Handle>::get(const QString& name)
 {
-	Resource* res = m_resources.find(name).value();
+	typename QHash<QString,Resource*>::iterator it = m_resources.find(name);
 
+	if(it == m_resources.end())
+		return Handle();
+
+	Resource* res = it.value();
 	if(res != NULL)
 		return Handle(*res);
 	else

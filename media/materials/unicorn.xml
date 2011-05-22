@@ -1,4 +1,3 @@
 <material>
 	<texture texunit="0">unicorn.tga</texture>
-	<program>../programs/bump_mapping.xml</program>
 </material>

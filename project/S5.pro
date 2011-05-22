@@ -47,7 +47,8 @@ SOURCES += \
 	src/debug/log/log.cpp \
 	src/core/resources/rawmesh.cpp \
 	src/core/utils/primitives.cpp \
-	src/core/resources/xmlmaterial.cpp
+	src/core/resources/xmlmaterial.cpp \
+    src/core/resources/glslshader.cpp
 
 HEADERS  += \
 	include/core/properties/qtlogo.h \
@@ -120,7 +121,8 @@ HEADERS  += \
 	include/debug/log/log.h \
 	include/core/resources/rawmesh.h \
 	include/core/utils/primitives.h \
-	include/core/resources/xmlmaterial.h
+	include/core/resources/xmlmaterial.h \
+    include/core/resources/glslshader.h
 
 INCLUDEPATH += \
 	include \

@@ -14,6 +14,7 @@ class MaterialData : public ResourceData
 public:
 	MaterialData(const QString& name, const QString& path, IResourceFactory* factory) : ResourceData(name,path,factory) {}
 	virtual void apply() = 0;
+	virtual void unset() = 0;
 };
 
 class Material : public ResourceHandle<MaterialData>

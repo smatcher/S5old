@@ -58,6 +58,7 @@ protected:
 public:
 	XmlMaterial(const QString& name, const QString& path, IResourceFactory* factory);
 	virtual void apply();
+	virtual void unset();
 	virtual bool unload();
 };
 

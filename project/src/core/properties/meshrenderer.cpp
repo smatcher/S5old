@@ -14,22 +14,18 @@ void MeshRenderer::render(double elapsed_time, GLWidget* context)
 {
 	node()->globalTransform().glMultf();
 
-	if(&m_material != NULL)
+	if(m_material.isValid())
 		m_material->apply();
 	else
 		debug( "RENDERING" , "MeshRenderer : no material to apply for " << node()->getName());
 
-	/*
-	if(&m_texture != NULL)
-		m_texture->bind();
-	else
-		debug( "RENDERING" , "MeshRenderer : no texture to bind for " << node()->getName());
-	*/
-
-	if(&m_mesh != NULL)
+	if(m_mesh.isValid())
 		m_mesh->draw();
 	else
 		debug( "RENDERING" , "MeshRenderer : no mesh to draw for " << node()->getName());
+
+	if(m_material.isValid())
+		m_material->unset();
 }
 
 #ifdef WITH_TOOLS

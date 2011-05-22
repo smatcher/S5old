@@ -1,0 +1,7 @@
+<program>
+	<shader type="vertex" source="fur.vert"/>
+	<shader type="fragment" source="fur.frag"/>
+	<uniform name="color_map" value="0" type="int"/>
+	<uniform name="alpha_map" value="1" type="int"/>
+	<uniform name="fur_map" value="2" type="int"/>
+</program>

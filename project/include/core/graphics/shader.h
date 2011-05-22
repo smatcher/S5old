@@ -3,9 +3,9 @@
 
 #include "core/resources/resource.h"
 
+class QGLShader;
 class ShaderProgram;
-class VertexShader;
-class FragmentShader;
+class Shader;
 template <class R, class H> class ResourceManager;
 
 class ShaderProgramData : public ResourceData
@@ -14,7 +14,9 @@ class ShaderProgramData : public ResourceData
 	friend class ResourceManager<ShaderProgramData, ShaderProgram>;
 
 public:
+	ShaderProgramData(const QString& name, const QString& path, IResourceFactory* factory) : ResourceData(name,path,factory) {}
 	virtual void use() = 0;
+	virtual void unset() = 0;
 };
 
 class ShaderProgram : public ResourceHandle<ShaderProgramData>
@@ -26,34 +28,33 @@ public:
 	virtual ~ShaderProgram() {}
 };
 
-class VertexShaderData : public ResourceData
+class ShaderData : public ResourceData
 {
-	friend class ResourceHandle<VertexShaderData>;
-	friend class ResourceManager<VertexShaderData, VertexShader>;
+	friend class ResourceHandle<ShaderData>;
+	friend class ResourceManager<ShaderData, Shader>;
+
+	public:
+		enum ShaderType
+		{
+			FRAGMENT_SHADER,
+			VERTEX_SHADER
+		};
+
+		ShaderData(const QString& name, const QString& path, IResourceFactory* factory, ShaderType type) : ResourceData(name,path,factory), m_type(type) {}
+		ShaderType shaderType() {return m_type;}
+		virtual QGLShader* shader() = 0;
+
+	protected:
+		ShaderType m_type;
 };
 
-class VertexShader : public ResourceHandle<VertexShaderData>
+class Shader : public ResourceHandle<ShaderData>
 {
 public:
-	VertexShader() {}
-	VertexShader(const VertexShader& from) : ResourceHandle<VertexShaderData>(from) {}
-	VertexShader(VertexShaderData& from) : ResourceHandle<VertexShaderData>(from) {}
-	virtual ~VertexShader() {}
-};
-
-class FragmentShaderData : public ResourceData
-{
-	friend class ResourceHandle<FragmentShaderData>;
-	friend class ResourceManager<FragmentShaderData, FragmentShader>;
-};
-
-class FragmentShader : public ResourceHandle<FragmentShaderData>
-{
-public:
-	FragmentShader() {}
-	FragmentShader(const FragmentShader& from) : ResourceHandle<FragmentShaderData>(from) {}
-	FragmentShader(FragmentShaderData& from) : ResourceHandle<FragmentShaderData>(from) {}
-	virtual ~FragmentShader() {}
+	Shader() {}
+	Shader(const Shader& from) : ResourceHandle<ShaderData>(from) {}
+	Shader(ShaderData& from) : ResourceHandle<ShaderData>(from) {}
+	virtual ~Shader() {}
 };
 
 #endif // SHADER_H

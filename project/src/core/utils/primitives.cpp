@@ -97,9 +97,8 @@ PrimitiveMesh* PrimitiveMesh::buildCube()
 	ret->m_indices.setUsagePattern(QGLBuffer::StaticDraw);
 	ret->m_indices.allocate(indices, sizeof(GLshort)*3*ret->m_nbFaces);
 
-	// Unbind buffers (binding to a non created buffer does the trick)
-//	QGLBuffer().bind();
-//	QGLBuffer(QGLBuffer::IndexBuffer).bind();
+	ret->m_indices.release();
+	ret->m_texcoords.release();
 
 	delete[] indices;
 
@@ -188,9 +187,8 @@ PrimitiveMesh* PrimitiveMesh::buildSphere(int rings, int segments)
 	ret->m_indices.allocate(indices, sizeof(GLshort) * ret->m_nbFaces * 3);
 
 
-	// Unbind buffers (binding to a non created buffer does the trick)
-//	QGLBuffer().bind();
-//	QGLBuffer(QGLBuffer::IndexBuffer).bind();
+	ret->m_indices.release();
+	ret->m_texcoords.release();
 
 	delete[] vertices;
 	delete[] normals;
@@ -258,9 +256,8 @@ PrimitiveMesh* PrimitiveMesh::buildPlane()
 	ret->m_indices.setUsagePattern(QGLBuffer::StaticDraw);
 	ret->m_indices.allocate(indices, sizeof(indices));
 
-	// Unbind buffers (binding to a non created buffer does the trick)
-//	QGLBuffer().bind();
-//	QGLBuffer(QGLBuffer::IndexBuffer).bind();
+	ret->m_indices.release();
+	ret->m_texcoords.release();
 
 	ret->m_state = STATE_LOADED;
 

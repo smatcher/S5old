@@ -184,9 +184,8 @@ void AssimpMesh::draw()
 
 	glDrawElements(GL_TRIANGLES, 3*m_nbFaces, GL_UNSIGNED_SHORT, NULL);
 
-	// Unbind buffers (binding to a non created buffer does the trick)
-	//QGLBuffer().bind();
-	//QGLBuffer(QGLBuffer::IndexBuffer).bind();
+	m_indices.release();
+	m_vertices.release();
 
 	glDisableClientState(GL_VERTEX_ARRAY);
 	glDisableClientState(GL_NORMAL_ARRAY);

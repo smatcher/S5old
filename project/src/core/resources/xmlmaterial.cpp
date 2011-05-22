@@ -41,6 +41,12 @@ void XmlMaterial::apply()
 		m_program->use();
 }
 
+void XmlMaterial::unset()
+{
+	if(m_program.isValid())
+		m_program->unset();
+}
+
 bool XmlMaterial::unload()
 {
 	return false;
@@ -158,13 +164,35 @@ void XmlMaterialFactory::load(ResourceData* resource)
 			else
 				logWarn("expected float for shininess" << "in file" << xmlresource->m_path);
 		}
+		else if(tag == "program")
+		{
+			QDomNodeList content = nodes.at(i).childNodes();
+			QString program_name = content.at(0).nodeValue();
+
+			ShaderProgram prog = SHADER_PROGRAM_MANAGER.get(program_name);
+
+			if(prog.isValid())
+			{
+				xmlresource->m_program = prog;
+			}
+			else
+			{
+				logError("In file" << xmlresource->m_path << "require program" << program_name << "which can't be found");
+			}
+		}
+		else if(tag == "uniform")
+		{
+
+		}
 		else
 		{
-			logWarn("In file" << xmlresource->m_name << "Unknown tag" << tag);
+			logWarn("In file" << xmlresource->m_path << "Unknown tag" << tag);
 		}
 	}
 
 	xmlresource->m_state = XmlMaterial::STATE_LOADED;
+
+	logInfo("XmlMaterial loaded" << xmlresource->name());
 }
 
 void XmlMaterialFactory::parseFile(const QString &path, QList<ResourceData *> &content)
