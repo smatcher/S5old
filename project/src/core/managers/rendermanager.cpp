@@ -76,6 +76,8 @@ void RenderManager::init(GLWidget* context)
 	glEnable(GL_MULTISAMPLE);
 	static GLfloat lightPosition[4] = { 1.5, 5.0, 7.0, 1.0 };
 	glLightfv(GL_LIGHT0, GL_POSITION, lightPosition);
+	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+	glEnable(GL_BLEND);
 }
 
 void RenderManager::render(double elapsed_time, SceneGraph* sg)
