@@ -12,6 +12,14 @@ XmlMaterial::XmlMaterial(const QString& name, const QString& path, IResourceFact
 	m_shininess(0.7)
 {}
 
+XmlMaterial::~XmlMaterial()
+{
+	for(int i=0 ; i<m_uniforms.length() ; i++)
+	{
+		delete m_uniforms[i];
+	}
+}
+
 void XmlMaterial::apply()
 {
 	glMaterialfv(GL_FRONT_AND_BACK, GL_DIFFUSE,  m_diffuse.coords);
@@ -38,7 +46,14 @@ void XmlMaterial::apply()
 	}
 
 	if(m_program.isValid())
+	{
 		m_program->use();
+		int nb_uniforms = m_program->nbUniforms();
+		for(int i=0 ; i<nb_uniforms ; i++)
+		{
+			m_program->setUniform(m_program->uniform(i));
+		}
+	}
 }
 
 void XmlMaterial::unset()

@@ -34,6 +34,22 @@ void GLSLShaderProgram::unset()
 		m_program->release();
 }
 
+void GLSLShaderProgram::setUniform(const UniformBase* uniform)
+{
+	if(m_program != NULL && uniform != NULL)
+		uniform->sendTo(*m_program);
+}
+
+const GLSLShaderProgram::UniformBase* GLSLShaderProgram::uniform(int nb)
+{
+	return m_uniforms[nb];
+}
+
+int GLSLShaderProgram::nbUniforms()
+{
+	return m_uniforms.length();
+}
+
 void GLSLShaderProgramFactory::load(ResourceData *resource)
 {
 	GLSLShaderProgram* program = static_cast<GLSLShaderProgram*>(resource);
@@ -87,7 +103,57 @@ void GLSLShaderProgramFactory::load(ResourceData *resource)
 		}
 		else if(tag == "uniform")
 		{
-
+			GLSLShaderProgram::UniformBase* uniform;
+			QDomNamedNodeMap attributes = nodes.at(i).attributes();
+			QString uniform_type;
+			QString name;
+			QString value;
+			if(attributes.contains("name"))
+			{
+				name = attributes.namedItem("name").nodeValue();
+			}
+			if(attributes.contains("value"))
+			{
+				name = attributes.namedItem("value").nodeValue();
+			}
+			if(attributes.contains("type"))
+			{
+				uniform_type = attributes.namedItem("type").nodeValue();
+			}
+			else
+			{
+				uniform_type = "float";
+			}
+			QStringList vallist = value.split(" ",QString::SkipEmptyParts);
+			if(uniform_type == "int")
+			{
+				GLint* data = new GLint[vallist.length()]();
+				uniform = new GLSLShaderProgram::Uniform<GLint>(name,data,vallist.length(),1);
+				for(int i=0 ; i<vallist.length() ; i++)
+				{
+					bool ok;
+					GLint val = vallist.at(i).toInt(&ok);
+					if(ok)
+						data[i] = val;
+					else
+						logWarn("non int while reading" << value << "in file" << program->m_path);
+				}
+			}
+			else
+			{
+				GLfloat* data = new GLfloat[vallist.length()]();
+				uniform = new GLSLShaderProgram::Uniform<GLfloat>(name,data,vallist.length(),1);
+				for(int i=0 ; i<vallist.length() ; i++)
+				{
+					bool ok;
+					GLfloat val = vallist.at(i).toFloat(&ok);
+					if(ok)
+						data[i] = val;
+					else
+						logWarn("non float while reading" << value << "in file" << program->m_path);
+				}
+			}
+			program->m_uniforms.push_back(uniform);
 		}
 		else
 		{

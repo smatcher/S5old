@@ -18,9 +18,13 @@ public:
 
 	virtual void use();
 	virtual void unset();
+	virtual void setUniform(const UniformBase* uniform);
+	virtual const UniformBase* uniform(int nb);
+	virtual int nbUniforms();
 
 protected:
 	QGLShaderProgram* m_program;
+	QList<ShaderProgramData::UniformBase*> m_uniforms;
 };
 
 class GLSLShaderProgramFactory : public IResourceFactory

@@ -2,8 +2,8 @@
 #define SHADER_H
 
 #include "core/resources/resource.h"
+#include <QtOpenGL>
 
-class QGLShader;
 class ShaderProgram;
 class Shader;
 template <class R, class H> class ResourceManager;
@@ -14,7 +14,43 @@ class ShaderProgramData : public ResourceData
 	friend class ResourceManager<ShaderProgramData, ShaderProgram>;
 
 public:
+	class UniformBase
+	{
+	public :
+		virtual void sendTo(QGLShaderProgram& program) const = 0;
+	};
+
+	template<class T>
+	class Uniform: public UniformBase
+	{
+	public:
+		Uniform(const QString& name, T* data, int width, int height) :
+			name(name),
+			data(data),
+			width(width),
+			height(height)
+		{}
+		~Uniform() {delete[] data;}
+
+		virtual void sendTo(QGLShaderProgram &program) const
+		{
+			//program.setUniformValueArray((const char*)name.toAscii(), data, width, height); // problème template, on va passer qu'une valeur
+			program.setUniformValue((const char*)name.toAscii(), *data);
+		}
+
+	private:
+		QString name;
+		T* data;
+		int width;
+		int height;
+	};
+
+
+public:
 	ShaderProgramData(const QString& name, const QString& path, IResourceFactory* factory) : ResourceData(name,path,factory) {}
+	virtual const UniformBase* uniform(int nb) = 0;
+	virtual int nbUniforms() = 0;
+	virtual void setUniform(const UniformBase* uniform) = 0;
 	virtual void use() = 0;
 	virtual void unset() = 0;
 };

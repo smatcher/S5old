@@ -1,4 +1,6 @@
 <program>
 	<shader type="vertex" source="bump_mapping.vert"/>
 	<shader type="fragment" source="bump_mapping.frag"/>
+	<uniform name="color_map" value="0" type="int"/>
+	<uniform name="normal_map" value="1" type="int"/>
 </program>
