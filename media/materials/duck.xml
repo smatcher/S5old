@@ -1,10 +1,10 @@
 <material>
 	<texture texunit="0">duck.tga</texture>
-	<texture texunit="1">duck.tga</texture>
-	<diffuse>0.0 0.0 0.9 1.0</diffuse>
+	<texture texunit="1">ball.tga</texture>
+	<diffuse>0.6 0.6 0.6 1.0</diffuse>
 	<specular>1.0 1.0 1.0 1.0</specular>
-	<ambient>0.0 3.0 0.0 1.0</ambient>
+	<ambient>0.4 0.4 0.4 1.0</ambient>
 	<emission>0.0 0.0 0.0 1.0</emission>
-	<shininess>1.0</shininess>
-	<program>bump_mapping</program>
+	<shininess>0.1</shininess>
+	<program>parallax_mapping</program>
 </material>

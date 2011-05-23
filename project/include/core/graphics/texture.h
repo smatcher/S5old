@@ -20,13 +20,20 @@ protected:
 
 public:
 	TextureData(const QString& name, const QString& path, IResourceFactory* factory) : ResourceData(name,path,factory), m_hasgltex(false) {}
-	void bind()
+	void bind(int i=0)
 	{
 		if(m_hasgltex)
 		{
 			glEnable(GL_TEXTURE_2D);
+			glActiveTexture(GL_TEXTURE0 + i);
 			glBindTexture(GL_TEXTURE_2D , m_gltexture);
 		}
+	}
+
+	void release(int i=0)
+	{
+		glActiveTexture(GL_TEXTURE0 + i);
+		glBindTexture(GL_TEXTURE_2D , 0);
 	}
 };
 

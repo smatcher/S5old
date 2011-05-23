@@ -1,0 +1,6 @@
+<program>
+	<shader type="vertex" source="parallax_mapping.vert"/>
+	<shader type="fragment" source="parallax_mapping.frag"/>
+	<uniform name="color_map" value="0" type="int"/>
+	<uniform name="normal_map" value="1" type="int"/>
+</program>

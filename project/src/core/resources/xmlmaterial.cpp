@@ -35,10 +35,14 @@ void XmlMaterial::apply()
 	}
 	*/
 
-	if(m_textures.length() > 0 && m_textures[0].isValid())
+	if(m_textures.length() > 0)
 	{
-		m_textures[0]->bind();
 		glEnable(GL_TEXTURE_2D);
+		for(int i = 0 ; i< m_textures.length() ; i++)
+		{
+			if(m_textures[i].isValid())
+				m_textures[i]->bind(i);
+		}
 	}
 	else
 	{
@@ -60,6 +64,12 @@ void XmlMaterial::unset()
 {
 	if(m_program.isValid())
 		m_program->unset();
+
+	for(int i = 0 ; i< m_textures.length() ; i++)
+	{
+		if(m_textures[i].isValid())
+			m_textures[i]->release(i);
+	}
 }
 
 bool XmlMaterial::unload()
