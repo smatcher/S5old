@@ -46,7 +46,7 @@ void GLWidget::applyCamera()
 
 void GLWidget::applyCameraRotation()
 {
-    m_camera.rotateOnly();
+	m_camera.rotateOnly();
 }
 
 bool GLWidget::event(QEvent *e)

@@ -1,10 +1,10 @@
 <material>
 	<texture texunit="0">duck.tga</texture>
-	<texture texunit="1">ball.tga</texture>
-	<diffuse>0.6 0.6 0.6 1.0</diffuse>
-	<specular>1.0 1.0 1.0 1.0</specular>
-	<ambient>0.4 0.4 0.4 1.0</ambient>
+	<texture texunit="1">normal.png</texture>
+	<diffuse>0.7 0.7 0.7 1.0</diffuse>
+	<specular>0.6 0.6 0.6 1.0</specular>
+	<ambient>0.5 0.5 0.5 1.0</ambient>
 	<emission>0.0 0.0 0.0 1.0</emission>
-	<shininess>0.1</shininess>
+	<shininess>0.3</shininess>
 	<program>parallax_mapping</program>
 </material>

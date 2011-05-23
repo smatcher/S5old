@@ -114,7 +114,7 @@ void GLSLShaderProgramFactory::load(ResourceData *resource)
 			}
 			if(attributes.contains("value"))
 			{
-				name = attributes.namedItem("value").nodeValue();
+				value = attributes.namedItem("value").nodeValue();
 			}
 			if(attributes.contains("type"))
 			{
