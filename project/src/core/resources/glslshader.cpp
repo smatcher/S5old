@@ -167,7 +167,7 @@ void GLSLShaderProgramFactory::load(ResourceData *resource)
 	debugGL("while loading shader program" << program->m_path);
 }
 
-void GLSLShaderProgramFactory::parseFile(const QString &path, QList<ResourceData *> &content)
+void GLSLShaderProgramFactory::parseFile(const QString &path, QList<ResourceData *> &content, const QHash<QString,QString>&)
 {
 	QDir dir(path);
 	QString name = dir.dirName();
@@ -237,7 +237,7 @@ void GLSLShaderFactory::load(ResourceData *resource)
 	debugGL("while loading shader" << shader->m_path);
 }
 
-void GLSLShaderFactory::parseFile(const QString &path, QList<ResourceData *> &content)
+void GLSLShaderFactory::parseFile(const QString &path, QList<ResourceData *> &content, const QHash<QString,QString>&)
 {
 	QDir dir(path);
 	QString name = dir.dirName();

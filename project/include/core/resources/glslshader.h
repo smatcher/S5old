@@ -33,7 +33,7 @@ public:
 	virtual void load(ResourceData* resource);
 
 protected:
-	virtual void parseFile(const QString& path, QList<ResourceData*>& content);
+	virtual void parseFile(const QString& path, QList<ResourceData*>& content, const QHash<QString,QString>& rules);
 };
 
 class GLSLShaderFactory;
@@ -57,7 +57,7 @@ public:
 	virtual void load(ResourceData* resource);
 
 protected:
-	virtual void parseFile(const QString& path, QList<ResourceData*>& content);
+	virtual void parseFile(const QString& path, QList<ResourceData*>& content, const QHash<QString,QString>& rules);
 };
 
 #endif // GLSLSHADER_H

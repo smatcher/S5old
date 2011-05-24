@@ -12,11 +12,11 @@ void AssimpFactory::load(ResourceData* resource)
 	if(resource->state() == AssimpMesh::STATE_UNLOADED)
 	{
 		QList<ResourceData*> content;
-		parseFile(resource->path(), content);
+		parseFile(resource->path(), content,QHash<QString,QString>());
 	}
 }
 
-void AssimpFactory::parseFile(const QString& path, QList<ResourceData*>& content)
+void AssimpFactory::parseFile(const QString& path, QList<ResourceData*>& content, const QHash<QString,QString>&)
 {
 	const aiScene* scene = m_importer.ReadFile(path.toLocal8Bit().data(), aiProcessPreset_TargetRealtime_Quality);
 

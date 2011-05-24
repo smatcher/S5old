@@ -220,7 +220,7 @@ void XmlMaterialFactory::load(ResourceData* resource)
 	logInfo("XmlMaterial loaded" << xmlresource->name());
 }
 
-void XmlMaterialFactory::parseFile(const QString &path, QList<ResourceData *> &content)
+void XmlMaterialFactory::parseFile(const QString &path, QList<ResourceData *> &content, const QHash<QString,QString>&)
 {
 	QDir dir(path);
 	QString name = dir.dirName();

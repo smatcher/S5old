@@ -9,9 +9,10 @@
 
   */
 
-StbImage::StbImage(const QString& name, const QString& path, IResourceFactory* factory, stbi_uc* data) :
+StbImage::StbImage(const QString& name, const QString& path, IResourceFactory* factory, stbi_uc* data, bool mipmap) :
 	TextureData(name, path, factory),
-	m_data(data)
+	m_data(data),
+	m_mipmap(mipmap)
 {
 	if(m_data != NULL)
 	{
@@ -65,10 +66,11 @@ void StbImage::buildGLTexture()
 		glBindTexture(GL_TEXTURE_2D, m_gltexture);
 
 		glTexEnvi(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
-//		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_NEAREST);
-//		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+
+		if(m_mipmap)
+			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_NEAREST);
+		else
+			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
 
 		glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_WRAP_S, GL_REPEAT);
 		glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_WRAP_T, GL_REPEAT);
@@ -88,7 +90,9 @@ void StbImage::buildGLTexture()
 				break;
 		}
 
-//		glTexParameteri(GL_TEXTURE_2D,GL_GENERATE_MIPMAP, GL_TRUE);
+		if(m_mipmap)
+			glTexParameteri(GL_TEXTURE_2D,GL_GENERATE_MIPMAP, GL_TRUE);
+
 		glTexImage2D(GL_TEXTURE_2D, 0, m_comp, m_width, m_height, 0, mode, GL_UNSIGNED_BYTE, m_data);
 
 		m_hasgltex = true;
@@ -128,7 +132,7 @@ void StbImageFactory::load(ResourceData *resource)
 
 }
 
-void StbImageFactory::parseFile(const QString &path, QList<ResourceData *> &content)
+void StbImageFactory::parseFile(const QString &path, QList<ResourceData *> &content, const QHash<QString,QString>& rules)
 {
 	QDir dir(path);
 	QString name = dir.dirName();
@@ -136,7 +140,11 @@ void StbImageFactory::parseFile(const QString &path, QList<ResourceData *> &cont
 	if(dir.exists())
 	{
 		debug( "RESOURCE PARSING" , "StbImage found " << name);
-		StbImage* image = new StbImage(name,path,this);
+		bool mipmap = true;
+		if(rules.contains("mipmap") && rules.find("mipmap").value() == "false")
+			mipmap = false;
+
+		StbImage* image = new StbImage(name,path,this,NULL,mipmap);
 		content.push_back(image);
 	}
 	else

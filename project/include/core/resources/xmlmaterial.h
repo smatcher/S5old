@@ -39,7 +39,7 @@ public:
 	virtual void load(ResourceData* resource);
 
 protected:
-	virtual void parseFile(const QString& path, QList<ResourceData*>& content);
+	virtual void parseFile(const QString& path, QList<ResourceData*>& content, const QHash<QString,QString>& rules);
 };
 
 #endif // XMLMATERIAL_H
