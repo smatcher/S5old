@@ -6,5 +6,4 @@ build-debug-tools
 bin
 .sconsign.dblite
 scons_common.pyc
-site_scons/site_tools/qt4/__init__.pyc
 

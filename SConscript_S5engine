@@ -5,10 +5,10 @@ from scons_common import *
 Import('env')
 
 EXE_NAME = 'editor'
-LIB_NAME = 'S5'
+LIB_NAME = 'S5engine'
 
-PROJECT_DIR = 'project'
-BUILD_DIR = 'bin/project/' + getObjectFilesDir()
+PROJECT_DIR = 'S5engine'
+BUILD_DIR = 'bin/S5engine/' + getObjectFilesDir()
 
 MAIN_CPP  = BUILD_DIR + '/src/main.cpp'
 TOOLS_SRC_DIR = BUILD_DIR + '/src/tools'
@@ -29,7 +29,7 @@ engineEnv.Append(LIBS=['-lassimp'])
 VariantDir(BUILD_DIR,PROJECT_DIR, duplicate=1)
 
 # Read all sources
-all_src_list	= map(lambda x: BUILD_DIR + '/' + x, getSourcesListFromFile(PROJECT_DIR+'/S5.files'))
+all_src_list	= map(lambda x: BUILD_DIR + '/' + x, getSourcesListFromFile(PROJECT_DIR+'/S5engine.files'))
 
 # Separate the sources:
 main_src_list   = []	# - main.cpp for the game
@@ -46,7 +46,7 @@ for s in all_src_list:
 
 # Read all headers
 #all_h_list	= map(lambda x: BUILD_DIR + '/' + x, getHeadersListFromFile(PROJECT_DIR+'/S5.files'))
-all_h_list	= getHeadersListFromFile(PROJECT_DIR+'/S5.files')
+all_h_list	= getHeadersListFromFile(PROJECT_DIR+'/S5engine.files')
 
 # Separate and filter the headers:
 tools_h_list  = []	# - Editor tools headers

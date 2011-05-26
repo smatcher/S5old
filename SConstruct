@@ -34,4 +34,4 @@ env.Append(LIBS=['-lGL','-lGLU'])
 env.Append(LFLAGS=['-Wl'])
 env.Append(RPATH=[os.path.join(qtdir, 'lib')])
 
-SConscript('SConscript_project','env')
+SConscript('SConscript_S5engine','env')
