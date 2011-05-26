@@ -36,7 +36,7 @@ QSize GLWidget::minimumSizeHint() const
 
 QSize GLWidget::sizeHint() const
 {
-	return QSize(600, 600);
+	return QSize(640, 480);
 }
 
 void GLWidget::applyCamera()
