@@ -92,6 +92,8 @@ void StbImage::buildGLTexture()
 
 		if(m_mipmap)
 			glTexParameteri(GL_TEXTURE_2D,GL_GENERATE_MIPMAP, GL_TRUE);
+		else
+			glTexParameteri(GL_TEXTURE_2D,GL_GENERATE_MIPMAP, GL_FALSE);
 
 		glTexImage2D(GL_TEXTURE_2D, 0, m_comp, m_width, m_height, 0, mode, GL_UNSIGNED_BYTE, m_data);
 

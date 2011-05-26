@@ -1,1 +1,6 @@
 ../dep/assimp/include
+/usr/include/QtGui
+/usr/include/QtCore
+/usr/include/QtOpenGL
+/usr/include/QtXml
+./include

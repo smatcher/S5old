@@ -70,7 +70,6 @@ if int(ARGUMENTS.get('tools', 0)):
 	tools_moc_list =  []
 	for h in tools_h_list:
 		tools_moc_list = tools_moc_list + engineEnv.XMoc4(h)
-	tools_moc_list = engineEnv.Object(tools_h_list)
 else:
 	tools_moc_list =  []
 
