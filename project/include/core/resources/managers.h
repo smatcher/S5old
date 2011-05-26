@@ -19,6 +19,8 @@
 
 #include "core/utils/primitives.h"
 
+#define MEDIA_DIR "media/"
+
 typedef Singleton< ResourceManager< MeshData,           Mesh> >           SingletonMeshManager;
 typedef Singleton< ResourceManager< TextureData,        Texture> >        SingletonTextureManager;
 typedef Singleton< ResourceManager< MaterialData,       Material> >       SingletonMaterialManager;
@@ -42,16 +44,19 @@ inline void initResourceManagers()
 	SHADER_PROGRAM_MANAGER.addFactory(new GLSLShaderProgramFactory());
 	MATERIAL_MANAGER.addFactory(new XmlMaterialFactory());
 
-	MESH_MANAGER.parseDir("../media/models",true);
-	TEXTURE_MANAGER.parseDir("../media/textures",true);
+	QString base_dir = MEDIA_DIR;
+
+	MESH_MANAGER.parseDir(base_dir + "models",true);
+	MESH_MANAGER.loadAll();
+	TEXTURE_MANAGER.parseDir(base_dir + "textures",true);
 	TEXTURE_MANAGER.loadAll();
-	SAMPLE_MANAGER.parseDir("../media/sounds",true);
+	SAMPLE_MANAGER.parseDir(base_dir + "sounds",true);
 	SAMPLE_MANAGER.loadAll();
-	SHADER_MANAGER.parseDir("../media/shaders",true);
+	SHADER_MANAGER.parseDir(base_dir + "shaders",true);
 	SHADER_MANAGER.loadAll();
-	SHADER_PROGRAM_MANAGER.parseDir("../media/shaders",true);
+	SHADER_PROGRAM_MANAGER.parseDir(base_dir + "shaders",true);
 	SHADER_PROGRAM_MANAGER.loadAll();
-	MATERIAL_MANAGER.parseDir("../media/materials",true);
+	MATERIAL_MANAGER.parseDir(base_dir + "materials",true);
 	MATERIAL_MANAGER.loadAll();
 
 	MESH_MANAGER.add(PrimitiveMesh::buildCube());

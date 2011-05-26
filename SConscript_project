@@ -1,0 +1,88 @@
+# SConscript_project
+
+from scons_common import *
+
+Import('env')
+
+EXE_NAME = 'editor'
+LIB_NAME = 'S5'
+
+PROJECT_DIR = 'project'
+BUILD_DIR = 'bin/project/' + getObjectFilesDir()
+
+MAIN_CPP  = BUILD_DIR + '/src/main.cpp'
+TOOLS_SRC_DIR = BUILD_DIR + '/src/tools'
+TOOLS_HEADER_DIR = BUILD_DIR + '/include/tools'
+
+engineEnv = env.Clone()
+engineEnv.Append(CPPPATH = [PROJECT_DIR+'/include'])
+
+# openal
+engineEnv.Append(LIBS=['-lopenal','-lalut'])
+
+# assimp
+engineEnv.Append(LIBPATH=['dep/assimp/lib'])
+engineEnv.Append(CPPPATH = ['dep/assimp/include'])
+engineEnv.Append(LIBS=['-lassimp'])
+
+
+VariantDir(BUILD_DIR,PROJECT_DIR, duplicate=1)
+
+# Read all sources
+all_src_list	= map(lambda x: BUILD_DIR + '/' + x, getSourcesListFromFile(PROJECT_DIR+'/S5.files'))
+
+# Separate the sources:
+main_src_list   = []	# - main.cpp for the game
+tools_src_list  = []	# - Editor tools sources
+others_src_list = []	# - all other sources
+
+for s in all_src_list:
+	if s == MAIN_CPP:
+		main_src_list.append(s)
+	elif s.startswith(TOOLS_SRC_DIR):
+		tools_src_list.append(s)
+	else:
+		others_src_list.append(s)
+
+# Read all headers
+#all_h_list	= map(lambda x: BUILD_DIR + '/' + x, getHeadersListFromFile(PROJECT_DIR+'/S5.files'))
+all_h_list	= getHeadersListFromFile(PROJECT_DIR+'/S5.files')
+
+# Separate and filter the headers:
+tools_h_list  = []	# - Editor tools headers
+others_h_list = []	# - all other headers
+
+for h in all_h_list:
+	if h.startswith(TOOLS_HEADER_DIR):
+		if isMocable(PROJECT_DIR + '/' + h):
+			tools_h_list.append(BUILD_DIR + '/' + h)
+	else:
+		if isMocable(PROJECT_DIR + '/' + h):
+			others_h_list.append(BUILD_DIR + '/' +h)
+
+# Moc the files
+engineEnv['QT4_AUTOSCAN'] = 0 # We scan manually
+others_moc_list = []
+for h in others_h_list:
+	others_moc_list = others_moc_list + engineEnv.XMoc4(h)
+
+if int(ARGUMENTS.get('tools', 0)):
+	tools_moc_list =  []
+	for h in tools_h_list:
+		tools_moc_list = tools_moc_list + engineEnv.XMoc4(h)
+	tools_moc_list = engineEnv.Object(tools_h_list)
+else:
+	tools_moc_list =  []
+
+# Create the object files
+main_obj_list   = engineEnv.Object(main_src_list)
+others_obj_list = engineEnv.Object(others_src_list + others_moc_list)
+
+if int(ARGUMENTS.get('tools', 0)):
+	tools_obj_list = engineEnv.Object(tools_src_list + tools_moc_list)
+else:
+	tools_obj_list =  []
+
+engineEnv.StaticLibrary(BUILD_DIR + '/' + LIB_NAME,tools_obj_list + others_obj_list)
+engineEnv.Program(BUILD_DIR + '/' + EXE_NAME,main_obj_list + tools_obj_list + others_obj_list)
+
