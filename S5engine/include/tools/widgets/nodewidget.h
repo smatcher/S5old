@@ -4,7 +4,7 @@
 #include <QWidget>
 
 #include "core/scenegraph/node.h"
-#include "debug/widgets/transformwidget.h"
+#include "tools/widgets/transformwidget.h"
 #include <QLayout>
 
 class NodeWidget : public QWidget

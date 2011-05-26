@@ -3,7 +3,7 @@
 #include <QColor>
 
 #ifdef WITH_TOOLS
-	#include "debug/widgets/nodewidget.h"
+	#include "tools/widgets/nodewidget.h"
 #endif
 
 Node::Node(const QString& name) : ChildOf<ParentOfNode>(name), Transform<double>(), m_properties(this)

@@ -8,7 +8,7 @@
 #include "core/managers/soundmanager.h"
 
 #ifdef WITH_TOOLS
-	#include "debug/widgets/soundemitterwidget.h"
+	#include "tools/widgets/soundemitterwidget.h"
 #endif
 
 #include <AL/al.h>

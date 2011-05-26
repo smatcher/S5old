@@ -5,7 +5,7 @@
 
 #include "core/resources/managers.h"
 
-#include "debug/log/log.h"
+#include "core/log/log.h"
 
 void AssimpFactory::load(ResourceData* resource)
 {

@@ -4,7 +4,7 @@
 #include <QScrollArea>
 #include <QLayout>
 #include <QItemSelection>
-#include "debug/widgets/nodewidget.h"
+#include "tools/widgets/nodewidget.h"
 
 class PropertiesPanel : public QScrollArea
 {

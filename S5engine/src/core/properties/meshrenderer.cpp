@@ -1,8 +1,8 @@
 #include "core/properties/meshrenderer.h"
 #include "core/scenegraph/node.h"
-#include "debug/widgets/meshrendererwidget.h"
+#include "tools/widgets/meshrendererwidget.h"
 
-#include "debug/log/log.h"
+#include "core/log/log.h"
 
 MeshRenderer::MeshRenderer(Mesh& mesh, Material& material) : IRenderable("MeshRenderer")
 {

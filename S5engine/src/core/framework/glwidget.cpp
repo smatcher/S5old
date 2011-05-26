@@ -41,12 +41,16 @@ QSize GLWidget::sizeHint() const
 
 void GLWidget::applyCamera()
 {
-	m_camera.lookAt();
+	#ifdef WITH_TOOLS
+		m_camera.lookAt();
+	#endif
 }
 
 void GLWidget::applyCameraRotation()
 {
-	m_camera.rotateOnly();
+	#ifdef WITH_TOOLS
+		m_camera.rotateOnly();
+	#endif
 }
 
 bool GLWidget::event(QEvent *e)
@@ -70,11 +74,13 @@ void GLWidget::mousePressEvent(QMouseEvent *event)
 {
 	if(RENDER_MANAGER.getCurrentCamera() == NULL)
 	{
-		m_camera.updateMouse(event->buttons() & Qt::LeftButton,
-				event->buttons() & Qt::RightButton,
-				event->buttons() & Qt::MiddleButton,
-				event->x(),
-				event->y());
+		#ifdef WITH_TOOLS
+			m_camera.updateMouse(event->buttons() & Qt::LeftButton,
+					event->buttons() & Qt::RightButton,
+					event->buttons() & Qt::MiddleButton,
+					event->x(),
+					event->y());
+		#endif
 	}
 	else
 	{
@@ -85,11 +91,13 @@ void GLWidget::mouseReleaseEvent(QMouseEvent *event)
 {
 	if(RENDER_MANAGER.getCurrentCamera() == NULL)
 	{
-		m_camera.updateMouse(event->buttons() & Qt::LeftButton,
-				event->buttons() & Qt::RightButton,
-				event->buttons() & Qt::MiddleButton,
-				event->x(),
-				event->y());
+		#ifdef WITH_TOOLS
+			m_camera.updateMouse(event->buttons() & Qt::LeftButton,
+					event->buttons() & Qt::RightButton,
+					event->buttons() & Qt::MiddleButton,
+					event->x(),
+					event->y());
+		#endif
 	}
 	else
 	{
@@ -100,11 +108,13 @@ void GLWidget::mouseMoveEvent(QMouseEvent *event)
 {
 	if(RENDER_MANAGER.getCurrentCamera() == NULL)
 	{
-		m_camera.updateMouse(event->buttons() & Qt::LeftButton,
-				event->buttons() & Qt::RightButton,
-				event->buttons() & Qt::MiddleButton,
-				event->x(),
-				event->y());
+		#ifdef WITH_TOOLS
+			m_camera.updateMouse(event->buttons() & Qt::LeftButton,
+					event->buttons() & Qt::RightButton,
+					event->buttons() & Qt::MiddleButton,
+					event->x(),
+					event->y());
+		#endif
 	}
 	else
 	{
@@ -119,28 +129,30 @@ void GLWidget::keyPressEvent(QKeyEvent *e)
 	{
 		if(RENDER_MANAGER.getCurrentCamera() == NULL)
 		{
-			int key = e->key();
-			switch(key)
-			{
-				case Qt::Key_Up :
-					m_camera.updateKeyboard(DebugCamera::UP,true);
-					break;
-				case Qt::Key_Down :
-					m_camera.updateKeyboard(DebugCamera::DOWN,true);
-					break;
-				case Qt::Key_Left :
-					m_camera.updateKeyboard(DebugCamera::LEFT,true);
-					break;
-				case Qt::Key_Right :
-					m_camera.updateKeyboard(DebugCamera::RIGHT,true);
-					break;
-				case Qt::Key_Shift :
-					m_camera.updateKeyboard(DebugCamera::RSHIFT,true);
-					break;
-				case Qt::Key_Control :
-					m_camera.updateKeyboard(DebugCamera::RCTRL,true);
-					break;
-			}
+			#ifdef WITH_TOOLS
+				int key = e->key();
+				switch(key)
+				{
+					case Qt::Key_Up :
+						m_camera.updateKeyboard(DebugCamera::UP,true);
+						break;
+					case Qt::Key_Down :
+						m_camera.updateKeyboard(DebugCamera::DOWN,true);
+						break;
+					case Qt::Key_Left :
+						m_camera.updateKeyboard(DebugCamera::LEFT,true);
+						break;
+					case Qt::Key_Right :
+						m_camera.updateKeyboard(DebugCamera::RIGHT,true);
+						break;
+					case Qt::Key_Shift :
+						m_camera.updateKeyboard(DebugCamera::RSHIFT,true);
+						break;
+					case Qt::Key_Control :
+						m_camera.updateKeyboard(DebugCamera::RCTRL,true);
+						break;
+				}
+			#endif
 		}
 		else
 		{
@@ -158,28 +170,30 @@ void GLWidget::keyReleaseEvent(QKeyEvent *e)
 	{
 		if(RENDER_MANAGER.getCurrentCamera() == NULL)
 		{
-			int key = e->key();
-			switch(key)
-			{
-				case Qt::Key_Up :
-					m_camera.updateKeyboard(DebugCamera::UP,false);
-					break;
-				case Qt::Key_Down :
-					m_camera.updateKeyboard(DebugCamera::DOWN,false);
-					break;
-				case Qt::Key_Left :
-					m_camera.updateKeyboard(DebugCamera::LEFT,false);
-					break;
-				case Qt::Key_Right :
-					m_camera.updateKeyboard(DebugCamera::RIGHT,false);
-					break;
-				case Qt::Key_Shift :
-					m_camera.updateKeyboard(DebugCamera::RSHIFT,false);
-					break;
-				case Qt::Key_Control :
-					m_camera.updateKeyboard(DebugCamera::RCTRL,false);
-					break;
-			}
+			#ifdef WITH_TOOLS
+				int key = e->key();
+				switch(key)
+				{
+					case Qt::Key_Up :
+						m_camera.updateKeyboard(DebugCamera::UP,false);
+						break;
+					case Qt::Key_Down :
+						m_camera.updateKeyboard(DebugCamera::DOWN,false);
+						break;
+					case Qt::Key_Left :
+						m_camera.updateKeyboard(DebugCamera::LEFT,false);
+						break;
+					case Qt::Key_Right :
+						m_camera.updateKeyboard(DebugCamera::RIGHT,false);
+						break;
+					case Qt::Key_Shift :
+						m_camera.updateKeyboard(DebugCamera::RSHIFT,false);
+						break;
+					case Qt::Key_Control :
+						m_camera.updateKeyboard(DebugCamera::RCTRL,false);
+						break;
+				}
+			#endif
 		}
 		else
 		{

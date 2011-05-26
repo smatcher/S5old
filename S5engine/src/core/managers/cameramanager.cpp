@@ -1,7 +1,7 @@
 #include "core/managers/cameramanager.h"
 
 #ifdef WITH_TOOLS
-	#include "debug/widgets/renderwidget.h"
+	#include "tools/widgets/renderwidget.h"
 #endif
 
 CameraManager::CameraManager()

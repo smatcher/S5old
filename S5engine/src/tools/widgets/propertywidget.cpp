@@ -1,4 +1,4 @@
-#include "debug/widgets/propertywidget.h"
+#include "tools/widgets/propertywidget.h"
 #include "core/properties/iproperty.h"
 #include <QHBoxLayout>
 #include <QGroupBox>

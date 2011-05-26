@@ -1,5 +1,5 @@
-#ifndef DEBUGWINDOW_H
-#define DEBUGWINDOW_H
+#ifndef TOOLSWINDOW_H
+#define TOOLSWINDOW_H
 
 #include <QWidget>
 #include <QTreeWidget>
@@ -8,13 +8,13 @@ class RenderWidget;
 class PropertiesPanel;
 class Engine;
 
-class DebugWindow : public QWidget
+class ToolsWindow : public QWidget
 {
 	Q_OBJECT
 
 public:
-	DebugWindow(Engine* engine);
-	virtual ~DebugWindow();
+	ToolsWindow(Engine* engine);
+	virtual ~ToolsWindow();
 
 protected:
 	virtual bool event(QEvent* evt);
@@ -29,4 +29,4 @@ private:
 	Engine* m_engine;
 };
 
-#endif // DEBUGWINDOW_H
+#endif // TOOLSWINDOW_H

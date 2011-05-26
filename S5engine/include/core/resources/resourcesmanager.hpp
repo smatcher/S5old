@@ -4,7 +4,7 @@
 #include "resourcemanager.h"
 
 #include "core/resources/iresourcefactory.h"
-#include "debug/log/log.h"
+#include "core/log/log.h"
 
 
 template <class Resource, class Handle>

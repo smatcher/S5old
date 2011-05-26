@@ -13,7 +13,7 @@
 #include "core/resources/managers.h"
 
 #ifdef WITH_TOOLS
-	#include "debug/scenegraphmodel.h"
+	#include "tools/scenegraphmodel.h"
 #endif
 
 #include <AL/alut.h>
@@ -24,7 +24,7 @@ Engine::Engine(int argc, char *argv[]) :
 	m_window(this),
 
 	#ifdef WITH_TOOLS
-		m_debugWindow(this),
+		m_toolswindow(this),
 	#endif
 
 	m_running(false)
@@ -57,7 +57,7 @@ void Engine::init(int argc, char *argv[])
 	m_window.getGLW_TEMPORARY()->makeCurrent();
 
 	#ifdef WITH_TOOLS
-		m_debugWindow.show();
+		m_toolswindow.show();
 	#endif
 
 	RENDER_MANAGER.setCurrentCamera(NULL);
@@ -94,7 +94,7 @@ int Engine::start()
 			if(i%10 == 0) {
 				// Debug update
 				QCoreApplication::postEvent(m_scene.getDebugModel(),new UPDATED_EVENT());
-				QCoreApplication::postEvent(&(m_debugWindow),new UPDATED_EVENT());
+				QCoreApplication::postEvent(&(m_toolswindow),new UPDATED_EVENT());
 			}
 		#endif
 

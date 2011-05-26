@@ -1,7 +1,7 @@
 #include "core/resources/stbimage.h"
 #include <QDir>
 
-#include "debug/log/log.h"
+#include "core/log/log.h"
 
 /*
 

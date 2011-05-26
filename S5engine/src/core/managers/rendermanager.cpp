@@ -7,10 +7,10 @@
 #include <QtOpenGL>
 #include <math.h>
 
-#include "debug/log/log.h"
+#include "core/log/log.h"
 
 #ifdef WITH_TOOLS
-	#include "debug/widgets/renderwidget.h"
+	#include "tools/widgets/renderwidget.h"
 #endif
 
 #ifndef GL_MULTISAMPLE

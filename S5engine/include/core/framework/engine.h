@@ -7,7 +7,7 @@
 #include "core/framework/window.h"
 
 #ifdef WITH_TOOLS
-	#include "debug/debugwindow.h"
+	#include "tools/toolswindow.h"
 #endif
 
 class Engine
@@ -19,7 +19,7 @@ private :
 	AppWindow  m_window;
 
 	#ifdef WITH_TOOLS
-		DebugWindow m_debugWindow;
+		ToolsWindow m_toolswindow;
 	#endif
 
 	bool m_running;

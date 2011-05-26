@@ -1,4 +1,4 @@
-#include "debug/widgets/propertiespanel.h"
+#include "tools/widgets/propertiespanel.h"
 #include <QHBoxLayout>
 
 PropertiesPanel::PropertiesPanel()

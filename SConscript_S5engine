@@ -12,7 +12,7 @@ BUILD_DIR = 'bin/S5engine/' + getObjectFilesDir()
 
 MAIN_CPP  = BUILD_DIR + '/src/main.cpp'
 TOOLS_SRC_DIR = BUILD_DIR + '/src/tools'
-TOOLS_HEADER_DIR = BUILD_DIR + '/include/tools'
+TOOLS_HEADER_DIR = 'include/tools'
 
 engineEnv = env.Clone()
 engineEnv.Append(CPPPATH = [PROJECT_DIR+'/include'])

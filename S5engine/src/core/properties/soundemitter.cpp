@@ -1,5 +1,5 @@
 #include "core/properties/soundemitter.h"
-#include "debug/widgets/soundemitterwidget.h"
+#include "tools/widgets/soundemitterwidget.h"
 
 SoundEmitter::SoundEmitter(Sample &sample) :
     m_sample(sample), IProperty("Sound Emitter")

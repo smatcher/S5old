@@ -4,7 +4,10 @@
 // #include <GL/glew.h> // pas besoin visiblement
 #include <QGLWidget>
 #include "core/scenegraph/scenegraph.h"
-#include "debug/tools/debugcamera.h"
+
+#ifdef WITH_TOOLS
+	#include "tools/3D/debugcamera.h"
+#endif
 
 class GLWidget : public QGLWidget
 {
@@ -21,7 +24,7 @@ public:
 	void isResized();
 
 	void applyCamera();
-    void applyCameraRotation();
+	void applyCameraRotation();
 
 protected:
 	bool event(QEvent * e);
@@ -38,7 +41,9 @@ private:
 	QSize m_newSize;
 	bool  m_needResize;
 
-	DebugCamera m_camera;
+	#ifdef WITH_TOOLS
+		DebugCamera m_camera;
+	#endif
 };
 
 #endif

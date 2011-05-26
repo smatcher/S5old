@@ -1,6 +1,6 @@
 #include "core/resources/glslshader.h"
 #include <QtOpenGL>
-#include "debug/log/log.h"
+#include "core/log/log.h"
 #include <QtXml/QtXml>
 #include "core/resources/managers.h"
 

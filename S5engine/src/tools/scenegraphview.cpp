@@ -1,5 +1,5 @@
-#include "debug/scenegraphview.h"
-#include "debug/scenegraphmodel.h"
+#include "tools/scenegraphview.h"
+#include "tools/scenegraphmodel.h"
 
 SceneGraphView::SceneGraphView(SceneGraph* item)
 {

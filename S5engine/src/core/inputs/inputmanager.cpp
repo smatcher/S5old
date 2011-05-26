@@ -1,7 +1,7 @@
 #include "core/inputs/inputmanager.h"
 #include <QStringList>
 
-#include "debug/log/log.h"
+#include "core/log/log.h"
 
 InputManager::InputManager()
 {

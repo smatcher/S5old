@@ -1,6 +1,6 @@
-#include "debug/widgets/renderwidget.h"
+#include "tools/widgets/renderwidget.h"
 #include "core/managers/rendermanager.h"
-#include "debug/widgets/cameraradiobutton.h"
+#include "tools/widgets/cameraradiobutton.h"
 #include <QtGui>
 
 RenderWidget::RenderWidget()

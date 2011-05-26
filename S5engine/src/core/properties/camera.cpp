@@ -4,7 +4,7 @@
 #include <QtOpenGL>
 
 #ifdef WITH_TOOLS
-    #include "debug/widgets/cameraradiobutton.h"
+    #include "tools/widgets/cameraradiobutton.h"
 #endif
 
 Camera::Camera(double yfov, double znear, double zfar) : IProperty("Camera"), Managee<CameraManager>()

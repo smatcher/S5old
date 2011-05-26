@@ -1,4 +1,4 @@
-#include "debug/widgets/meshrendererwidget.h"
+#include "tools/widgets/meshrendererwidget.h"
 #include "core/properties/meshrenderer.h"
 #include "core/graphics/mesh.h"
 

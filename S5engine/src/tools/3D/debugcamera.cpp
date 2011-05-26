@@ -1,4 +1,4 @@
-#include "debug/tools/debugcamera.h"
+#include "tools/3D/debugcamera.h"
 #include "core/maths/transform.h"
 
 #include <QDateTime>

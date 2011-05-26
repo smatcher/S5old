@@ -1,7 +1,7 @@
 #ifndef SOUNDEMITTERWIDGET_H
 #define SOUNDEMITTERWIDGET_H
 
-#include "debug/widgets/propertywidget.h"
+#include "tools/widgets/propertywidget.h"
 #include <QLineEdit>
 
 class SoundEmitter;

@@ -1,4 +1,4 @@
-#include "debug/widgets/nodewidget.h"
+#include "tools/widgets/nodewidget.h"
 #include <QSizePolicy>
 
 NodeWidget::NodeWidget(Node& node) : m_node(node)

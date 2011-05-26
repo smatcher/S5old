@@ -5,7 +5,7 @@
 #include "core/properties/camera.h"
 #include "core/scenegraph/node.h"
 #include "core/utils/customevents.h"
-#include "debug/widgets/renderwidget.h"
+#include "tools/widgets/renderwidget.h"
 #include <QRadioButton>
 
 class CameraRadioButton : public QRadioButton

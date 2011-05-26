@@ -1,18 +1,18 @@
-#include "debug/debugwindow.h"
+#include "tools/toolswindow.h"
 
 #include <QtGui>
 
-#include "debug/widgets/nodewidget.h"
-#include "debug/widgets/propertiespanel.h"
-#include "debug/widgets/renderwidget.h"
-#include "debug/scenegraphview.h"
+#include "tools/widgets/nodewidget.h"
+#include "tools/widgets/propertiespanel.h"
+#include "tools/widgets/renderwidget.h"
+#include "tools/scenegraphview.h"
 
 #include "core/framework/engine.h"
 #include "core/managers/cameramanager.h"
 #include "core/utils/customevents.h"
 
 
-DebugWindow::DebugWindow(Engine* engine)
+ToolsWindow::ToolsWindow(Engine* engine)
 {
 	m_engine = engine;
 	m_renderWidget = CAMERA_MANAGER.getDebugView();
@@ -53,11 +53,11 @@ DebugWindow::DebugWindow(Engine* engine)
 	setWindowTitle(tr("S5 Debug"));
 }
 
-DebugWindow::~DebugWindow()
+ToolsWindow::~ToolsWindow()
 {
 }
 
-bool DebugWindow::event(QEvent* evt)
+bool ToolsWindow::event(QEvent* evt)
 {
 	if(evt->type() == UPDATED_EVENT::type())
 	{

@@ -1,5 +1,5 @@
-#include "debug/widgets/soundemitterwidget.h"
-#include "debug/widgets/propertywidget.h"
+#include "tools/widgets/soundemitterwidget.h"
+#include "tools/widgets/propertywidget.h"
 #include "core/properties/soundemitter.h"
 #include "core/resources/sample.h"
 #include <QtGui>

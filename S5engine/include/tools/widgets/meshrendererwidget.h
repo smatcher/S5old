@@ -1,7 +1,7 @@
 #ifndef MESHRENDERERWIDGET_H
 #define MESHRENDERERWIDGET_H
 
-#include "debug/widgets/propertywidget.h"
+#include "tools/widgets/propertywidget.h"
 #include <QLineEdit>
 
 class MeshRenderer;

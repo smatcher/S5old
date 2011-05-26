@@ -1,4 +1,4 @@
-#include "debug/widgets/transformwidget.h"
+#include "tools/widgets/transformwidget.h"
 #include <QtGui>
 
 TransformWidget::TransformWidget(Transformd &transform) : QGroupBox(tr("Transform")), m_transform(transform)

@@ -5,7 +5,7 @@
 #include "core/properties/propertyset.h"
 
 #ifdef WITH_TOOLS
-	#include "debug/widgets/propertywidget.h"
+	#include "tools/widgets/propertywidget.h"
 #endif
 
 class GLWidget;

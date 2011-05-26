@@ -1,8 +1,8 @@
 #include "core/scenegraph/scenegraph.h"
 
 #ifdef WITH_TOOLS
-	#include "debug/scenegraphview.h"
-	#include "debug/scenegraphmodel.h"
+	#include "tools/scenegraphview.h"
+	#include "tools/scenegraphmodel.h"
 #endif
 
 SceneGraph::SceneGraph()

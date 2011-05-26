@@ -5,7 +5,7 @@
 #include <AL/alut.h>
 #include <QDir>
 
-#include "debug/log/log.h"
+#include "core/log/log.h"
 
 void SampleFactory::load(ResourceData* resource)
 {
