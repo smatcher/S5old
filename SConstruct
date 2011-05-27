@@ -2,13 +2,45 @@
 
 from scons_common import *
 import os
+import glob
+
+# Tries to detect the path to the installation of Qt with
+# the highest version number
+def detectLatestQtDir():
+	if sys.platform.startswith("linux"):
+		# Simple check: inspect '/usr/share/qt' and then '/usr/local/Trolltech/*'
+		paths = glob.glob('/usr/share/*')
+		if len(paths):
+			for p in paths:
+				if p == "/usr/share/qt":
+					return p
+		paths = glob.glob('/usr/local/Trolltech/*')
+		if len(paths):
+			paths.sort()
+			return paths[-1]
+		else:
+			return os.environ.get("QTDIR")
+	else:
+		# Simple check: inspect only 'C:\Qt'
+		paths = glob.glob('C:\\Qt\\*')
+		if len(paths):
+			paths.sort()
+			return paths[-1]
+		else:
+			return os.environ.get("QTDIR")
+
+
+   ###### Sconstruct ######
+
 
 env = createEnvironment(generate_help=True)	# generate the help
 
-qtdir = os.environ.get('QT4DIR')
-if not qtdir :
-	print "You must define the QT4DIR environment variable"
-	exit(1)
+qtdir = detectLatestQtDir()
+if not qtdir:
+	qtdir = os.environ.get('QT4DIR')
+	if not qtdir :
+		print "You must define the QT4DIR environment variable"
+		exit(1)
 
 if os.name == 'posix':
 	env['LINK'] = 'g++'	# We got some problem of gcc being used instead of g++ when using VariantDir()...
