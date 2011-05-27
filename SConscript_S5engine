@@ -17,15 +17,6 @@ TOOLS_HEADER_DIR = 'include/tools'
 engineEnv = env.Clone()
 engineEnv.Append(CPPPATH = [PROJECT_DIR+'/include'])
 
-# openal
-engineEnv.Append(LIBS=['-lopenal','-lalut'])
-
-# assimp
-engineEnv.Append(LIBPATH=['dep/assimp/lib'])
-engineEnv.Append(CPPPATH = ['dep/assimp/include'])
-engineEnv.Append(LIBS=['-lassimp'])
-
-
 VariantDir(BUILD_DIR,PROJECT_DIR, duplicate=1)
 
 # Read all sources

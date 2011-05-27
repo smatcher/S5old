@@ -56,14 +56,23 @@ env.EnableQt4Modules([
 		'QtXml'
 	])
 
+env.Append(LFLAGS=['-Wl'])
+env.Append(RPATH=[os.path.join(qtdir, 'lib')])
+
+### Libs
 # core
 env.Append(LIBS=['-lpthread','-lm'])
 # gui
 env.Append(LIBS=['-lXext','-lX11'])
 # opengl
 env.Append(LIBS=['-lGL','-lGLU'])
-
-env.Append(LFLAGS=['-Wl'])
-env.Append(RPATH=[os.path.join(qtdir, 'lib')])
+# openal
+env.Append(LIBS=['-lopenal','-lalut'])
+# assimp
+env.Append(LIBPATH=['dep/assimp/lib'])
+env.Append(CPPPATH = ['dep/assimp/include'])
+env.Append(LIBS=['-lassimp'])
 
 SConscript('SConscript_S5engine','env')
+SConscript('SConscript_demo_game','env')
+

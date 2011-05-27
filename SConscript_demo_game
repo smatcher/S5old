@@ -1,0 +1,78 @@
+# SConscript_demo_game
+
+from scons_common import *
+
+Import('env')
+
+EXE_NAME = 'demo'
+
+ENGINE_DIR = 'S5engine'
+PROJECT_NAME = 'demo_game'
+PROJECT_DIR = PROJECT_NAME
+BUILD_DIR = 'bin/demo_game/' + getObjectFilesDir()
+ENGINE_BUILD_DIR = 'bin/S5engine/' + getObjectFilesDir()
+
+MAIN_CPP  = BUILD_DIR + '/src/main.cpp'
+
+gameEnv = env.Clone()
+gameEnv.Append(CPPPATH = [ENGINE_DIR+'/include',PROJECT_DIR+'/include'])
+
+# engine
+gameEnv.Append(LIBPATH=[ENGINE_BUILD_DIR])
+gameEnv.Prepend(LIBS=['-lS5engine'])
+
+VariantDir(BUILD_DIR,PROJECT_DIR, duplicate=1)
+
+# Read all sources
+all_src_list	= map(lambda x: BUILD_DIR + '/' + x, getSourcesListFromFile(PROJECT_DIR+'/'+PROJECT_NAME+'.files'))
+
+# Separate the sources:
+main_src_list   = []	# - main.cpp for the game
+others_src_list = []	# - all other sources
+
+for s in all_src_list:
+	if s == MAIN_CPP:
+		main_src_list.append(s)
+	else:
+		others_src_list.append(s)
+
+# Read all headers
+#all_h_list	= map(lambda x: BUILD_DIR + '/' + x, getHeadersListFromFile(PROJECT_DIR+'/S5.files'))
+all_h_list	= getHeadersListFromFile(PROJECT_DIR+'/'+PROJECT_NAME+'.files')
+
+# Separate and filter the headers:
+tools_h_list  = []	# - Editor tools headers
+others_h_list = []	# - all other headers
+
+for h in all_h_list:
+	if h.startswith(TOOLS_HEADER_DIR):
+		if isMocable(PROJECT_DIR + '/' + h):
+			tools_h_list.append(BUILD_DIR + '/' + h)
+	else:
+		if isMocable(PROJECT_DIR + '/' + h):
+			others_h_list.append(BUILD_DIR + '/' +h)
+
+# Moc the files
+gameEnv['QT4_AUTOSCAN'] = 0 # We scan manually
+others_moc_list = []
+for h in others_h_list:
+	others_moc_list = others_moc_list + gameEnv.XMoc4(h)
+
+#if int(ARGUMENTS.get('tools', 0)):
+#	tools_moc_list =  []
+#	for h in tools_h_list:
+#		tools_moc_list = tools_moc_list + gameEnv.XMoc4(h)
+#else:
+#	tools_moc_list =  []
+
+# Create the object files
+main_obj_list   = gameEnv.Object(main_src_list)
+others_obj_list = gameEnv.Object(others_src_list + others_moc_list)
+
+#if int(ARGUMENTS.get('tools', 0)):
+#	tools_obj_list = gameEnv.Object(tools_src_list + tools_moc_list)
+#else:
+#	tools_obj_list =  []
+
+gameEnv.Program(BUILD_DIR + '/' + EXE_NAME,main_obj_list + others_obj_list)
+
