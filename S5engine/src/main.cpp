@@ -8,6 +8,7 @@
 #include "core/properties/dummycontrolable.h"
 #include "core/properties/qtlogo.h"
 #include "core/properties/camera.h"
+#include "core/properties/light.h"
 #include "core/properties/soundemitter.h"
 #include "core/managers/rendermanager.h"
 #include "core/properties/grid.h"
@@ -59,6 +60,8 @@ int main(int argc, char *argv[])
 	Node* nCamFollow = new Node("Camera Follow");
 	Node* nHead = new Node("Head");
 	Node* nStar = new Node("Star");
+	Node* nLight = new Node("Light");
+	Node* nLight2 = new Node("Light2");
 	Node* nUni = new Node("Unicorn");
 	Node* nBall = new Node("Ball");
 
@@ -69,6 +72,8 @@ int main(int argc, char *argv[])
 	nCam->addProperty(new Camera(70,1,200));
 	nCamFollow->addProperty(new Camera(90,1,200));
 	nHead->addProperty(new DummyUpdatable());
+	nLight->addProperty(new Light());
+	nLight2->addProperty(new Light());
 
 	Mesh plane = MESH_MANAGER.get("Plane");
 	Mesh cube = MESH_MANAGER.get("Cube");
@@ -91,6 +96,8 @@ int main(int argc, char *argv[])
 	nDuck->link(nHead);
 
 	nHead->link(nStar);
+	nHead->link(nLight);
+	nHead->link(nLight2);
 	nHead->link(nUni);
 
 	sg->link(nDuck);
@@ -112,6 +119,9 @@ int main(int argc, char *argv[])
 	nHead->moveTo(Vector3d(0,0.5,0));
 	nUni->moveTo(Vector3d(1.5,0,0));
 	nStar->moveTo(Vector3d(-1.5,0,0));
+	nStar->rotate(Vector3d(0,0,1),270);
+	nLight->moveTo(Vector3d(0,0,1));
+	nLight2->moveTo(Vector3d(0,0,-1));
 
 	// Beurk ! Mais je peux le faire alors je me prive pas ^^
 	RENDER_MANAGER.setCurrentCamera(static_cast<Camera*>(nCamFollow->properties().child("Camera")));

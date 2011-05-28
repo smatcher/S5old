@@ -73,6 +73,6 @@ if int(ARGUMENTS.get('tools', 0)):
 else:
 	tools_obj_list =  []
 
-engineEnv.StaticLibrary(BUILD_DIR + '/' + LIB_NAME,tools_obj_list + others_obj_list)
-engineEnv.Program(BUILD_DIR + '/' + EXE_NAME,main_obj_list + tools_obj_list + others_obj_list)
+lib = engineEnv.StaticLibrary(BUILD_DIR + '/' + LIB_NAME,tools_obj_list + others_obj_list)
+engineEnv.Program(BUILD_DIR + '/' + EXE_NAME,main_obj_list + lib)
 

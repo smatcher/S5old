@@ -3,6 +3,8 @@
 #include "core/scenegraph/scenegraph.h"
 #include "core/properties/irenderable.h"
 #include "core/properties/camera.h"
+#include "core/managers/lightingmanager.h"
+#include "core/properties/light.h"
 
 #include <QtOpenGL>
 #include <math.h>
@@ -106,6 +108,12 @@ void RenderManager::render(double elapsed_time, SceneGraph* sg)
 		m_context->applyCamera();
 
 	//std::cout<< registeredManagees.count() << " Renderable nodes to render." << std::endl;
+
+	glEnable(GL_LIGHTING);
+	for(int index = 0; index < LIGHTING_MANAGER.managees().count(); index++)
+	{
+		LIGHTING_MANAGER.managees().at(index)->sendParameters(index);
+	}
 
 	for(int index = 0; index < registeredManagees.count(); index++)
 	{

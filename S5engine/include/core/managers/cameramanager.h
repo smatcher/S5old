@@ -17,8 +17,8 @@ class CameraManager : public Manager<Camera>
 	#endif
 
 public :
-    CameraManager();
-    ~CameraManager();
+	CameraManager();
+	~CameraManager();
 
 	#ifdef WITH_TOOLS
 

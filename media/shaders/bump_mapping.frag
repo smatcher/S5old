@@ -1,12 +1,5 @@
 // bump_mapping.frag
 
-/*
-void main()
-{
-	gl_FragColor = vec4(1.0, 0.0, 0.0, 1.0);
-}
-*/
-
 uniform sampler2D color_map;
 uniform sampler2D normal_map;
 
@@ -38,6 +31,6 @@ void main()
 	float specular_factor = pow(clamp(dot(reflected_light, eye), 0.0, 1.0), gl_FrontMaterial.shininess);
 	vec4 specular = gl_LightSource[0].specular * gl_FrontMaterial.specular * specular_factor;
 
-	gl_FragColor = color*ambient + color*diffuse + specular;
+	gl_FragColor = color*ambient + color*diffuse + specular*diffuse_factor;
 }
 

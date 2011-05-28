@@ -132,3 +132,7 @@ include/tools/widgets/cameraradiobutton.h
 include/tools/widgets/meshrendererwidget.h
 include/tools/widgets/soundemitterwidget.h
 include/tools/toolswindow.h
+include/core/properties/light.h
+include/core/managers/lightingmanager.h
+src/core/properties/light.cpp
+src/core/managers/lightingmanager.cpp
