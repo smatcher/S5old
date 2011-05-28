@@ -19,7 +19,7 @@ gameEnv.Append(CPPPATH = [ENGINE_DIR+'/include',PROJECT_DIR+'/include'])
 
 # engine
 gameEnv.Append(LIBPATH=[ENGINE_BUILD_DIR])
-gameEnv.Prepend(LIBS=['-lS5engine'])
+gameEnv.Prepend(LIBS=['S5engine'])
 
 VariantDir(BUILD_DIR,PROJECT_DIR, duplicate=1)
 

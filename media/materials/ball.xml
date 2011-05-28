@@ -6,5 +6,5 @@
 	<ambient>0.5 0.5 0.5 1.0</ambient>
 	<emission>0.0 0.0 0.0 1.0</emission>
 	<shininess>0.3</shininess>
-	<program>parallax_mapping</program>
+	<program>bump_mapping</program>
 </material>
