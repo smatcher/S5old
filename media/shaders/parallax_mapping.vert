@@ -9,6 +9,7 @@ varying vec3 vertex_to_light_ts;
 varying vec3 vertex_to_camera_ts;
 
 attribute vec3 tangent;
+attribute vec3 bitangent;
 
 void main()
 {
@@ -18,7 +19,7 @@ void main()
 	// NB : pour un programme appelant bien fait, pas besoin de normalize() !
 	vec3 n = normalize(gl_NormalMatrix * gl_Normal);
 	vec3 t = normalize(gl_NormalMatrix * tangent);
-	vec3 b = cross(n, t);
+	vec3 b = normalize(gl_NormalMatrix * bitangent);
 
 	// Calcul de la position du vertex exprimé dans l'espace de la caméra
 	vec3 vertex_pos = vec3(gl_ModelViewMatrix * gl_Vertex);

@@ -15,4 +15,12 @@ void Light::sendParameters(int lightid)
 		lightPosition[i] = pos[i];
 	}
 	glLightfv(GL_LIGHT0 + lightid, GL_POSITION, lightPosition);
+	// Create light components for GL_LIGHT0
+	float ambientLight0[] = { 0.2f, 0.2f, 0.2f, 1.0f };
+	float diffuseLight0[] = { 0.8f, 0.8f, 0.8f, 1.0f };
+	float specularLight0[] = { 0.5f, 0.5f, 0.5f, 1.0f };
+	// Assign created components to GL_LIGHT0
+	glLightfv(GL_LIGHT0 + lightid, GL_AMBIENT, ambientLight0);
+	glLightfv(GL_LIGHT0 + lightid, GL_DIFFUSE, diffuseLight0);
+	glLightfv(GL_LIGHT0 + lightid, GL_SPECULAR, specularLight0);
 }

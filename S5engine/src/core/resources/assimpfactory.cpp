@@ -25,7 +25,7 @@ void AssimpFactory::parseFile(const QString& path, QList<ResourceData*>& content
 		for(unsigned i=0 ; i<scene->mNumMeshes ; i++)
 		{
 			const aiMesh* aimesh = scene->mMeshes[i];
-			const aiMaterial* aimaterial = scene->mMaterials[aimesh->mMaterialIndex];
+//			const aiMaterial* aimaterial = scene->mMaterials[aimesh->mMaterialIndex];
 			QString name = aimesh->mName.data;
 			AssimpMesh* mesh = new AssimpMesh(name,path,this,aimesh);
 			content.push_back(mesh);

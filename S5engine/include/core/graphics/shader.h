@@ -53,6 +53,7 @@ public:
 	virtual void setUniform(const UniformBase* uniform) = 0;
 	virtual void use() = 0;
 	virtual void unset() = 0;
+	virtual QGLShaderProgram* program() = 0;
 };
 
 class ShaderProgram : public ResourceHandle<ShaderProgramData>

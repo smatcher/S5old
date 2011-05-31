@@ -64,16 +64,17 @@ int main(int argc, char *argv[])
 	Node* nLight2 = new Node("Light2");
 	Node* nUni = new Node("Unicorn");
 	Node* nBall = new Node("Ball");
+	Node* nGarg = new Node("Gargoyle");
 
 	nRot->addProperty(new IProperty());
-	nRot->addProperty(new DummyUpdatable());
+//	nRot->addProperty(new DummyUpdatable());
 //	nQt->addProperty(new QtLogo(engine.getGLW_TEMPORARY()));
 	nQt->addProperty(new Grid(1.0f, 1.0f, 40, 40));
 	nCam->addProperty(new Camera(70,1,200));
 	nCamFollow->addProperty(new Camera(90,1,200));
 	nHead->addProperty(new DummyUpdatable());
 	nLight->addProperty(new Light());
-	nLight2->addProperty(new Light());
+	//nLight2->addProperty(new Light());
 
 	Mesh plane = MESH_MANAGER.get("Plane");
 	Mesh cube = MESH_MANAGER.get("Cube");
@@ -83,13 +84,15 @@ int main(int argc, char *argv[])
 	Material unicorn = MATERIAL_MANAGER.get("unicorn");
 	Material star = MATERIAL_MANAGER.get("star");
 	Material ball = MATERIAL_MANAGER.get("ball");
+	Material gargoyle = MATERIAL_MANAGER.get("gargoyle");
 	Sample sample = SAMPLE_MANAGER.get("quacking.wav");
 
 	Node* nDuck = new Node("Duck");
 	nDuck->addProperty(new MeshRenderer(mesh,duck));
-	nStar->addProperty(new MeshRenderer(plane,star));
+	//nStar->addProperty(new MeshRenderer(plane,star));
 	nBall->addProperty(new MeshRenderer(sphere,ball));
-	nUni->addProperty(new MeshRenderer(cube,unicorn));
+	//nUni->addProperty(new MeshRenderer(cube,unicorn));
+	nGarg->addProperty(new MeshRenderer(cube,gargoyle));
 	nDuck->addProperty(new DummyControlable());
 	nDuck->addProperty(new SoundEmitter(sample));
 	nDuck->link(nCamFollow);
@@ -104,6 +107,7 @@ int main(int argc, char *argv[])
 	sg->link(nRot);
 	sg->link(nQt);
 	sg->link(nBall);
+	sg->link(nGarg);
 	nRot->link(nCam);
 
 	nRot->moveTo(Vector3d(0,0,0));
@@ -123,8 +127,12 @@ int main(int argc, char *argv[])
 	nLight->moveTo(Vector3d(0,0,1));
 	nLight2->moveTo(Vector3d(0,0,-1));
 
+	nBall->moveTo(Vector3d(1,0,-1));
+	nGarg->moveTo(Vector3d(-1,0,-1));
+
 	// Beurk ! Mais je peux le faire alors je me prive pas ^^
-	RENDER_MANAGER.setCurrentCamera(static_cast<Camera*>(nCamFollow->properties().child("Camera")));
+	//RENDER_MANAGER.setCurrentCamera(static_cast<Camera*>(nCamFollow->properties().child("Camera")));
+	RENDER_MANAGER.setCurrentCamera(static_cast<Camera*>(nCam->properties().child("Camera")));
 	RenderManager::Background background;
 	background.type = RenderManager::SKYBOX;
 	background.color = Vector3f(1,1,0);

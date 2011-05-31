@@ -48,14 +48,34 @@ PrimitiveMesh* PrimitiveMesh::buildCube()
 		 0, 0,-1,  0, 0,-1,  0, 0,-1,  0, 0,-1  // v4-v7-v6-v5
 	};
 
-	// normal array
+	// tangent array
+	const GLfloat tangents[] = {
+		 1, 0, 0,  1, 0, 0,  1, 0, 0,  1, 0, 0, // v0-v1-v2-v3
+		 0, 0,-1,  0, 0,-1,  0, 0,-1,  0, 0,-1, // v0-v3-v4-v5
+		 1, 0, 0,  1, 0, 0,  1, 0, 0,  1, 0, 0, // v0-v5-v6-v1
+		 0, 0, 1,  0, 0, 1,  0, 0, 1,  0, 0, 1, // v1-v6-v7-v2
+		 0, 0, 1,  0, 0, 1,  0, 0, 1,  0, 0, 1, // v7-v4-v3-v2
+		-1, 0, 0, -1, 0, 0, -1, 0, 0, -1, 0, 0  // v4-v7-v6-v5
+	};
+
+	// bitangent array
+	const GLfloat bitangents[] = {
+		 0, 1, 0,  0, 1, 0,  0, 1, 0,  0, 1, 0, // v0-v1-v2-v3
+		 0, 1, 0,  0, 1, 0,  0, 1, 0,  0, 1, 0, // v0-v3-v4-v5
+		 0, 0,-1,  0, 0,-1,  0, 0,-1,  0, 0,-1, // v0-v5-v6-v1
+		 0, 1, 0,  0, 1, 0,  0, 1, 0,  0, 1, 0, // v1-v6-v7-v2
+		 0, 0, 1,  0, 0, 1,  0, 0, 1,  0, 0, 1, // v7-v4-v3-v2
+		 0, 1, 0,  0, 1, 0,  0, 1, 0,  0, 1, 0  // v4-v7-v6-v5
+	};
+
+// texcoord array
 	const GLfloat texcoords[] = {
 		 1, 1,  0, 1,  0, 0,  1, 0, // v0-v1-v2-v3
-		 1, 1,  0, 1,  0, 0,  1, 0, // v0-v3-v4-v5
-		 1, 1,  0, 1,  0, 0,  1, 0, // v0-v5-v6-v1
+		 0, 1,  0, 0,  1, 0,  1, 1, // v0-v3-v4-v5
+		 1, 0,  1, 1,  0, 1,  0, 0, // v0-v5-v6-v1
 		 1, 1,  0, 1,  0, 0,  1, 0, // v1-v6-v7-v2
-		 1, 1,  0, 1,  0, 0,  1, 0, // v7-v4-v3-v2
-		 1, 1,  0, 1,  0, 0,  1, 0  // v4-v7-v6-v5
+		 0, 0,  1, 0,  1, 1,  0, 1, // v7-v4-v3-v2
+		 0, 0,  1, 0,  1, 1,  0, 1  // v4-v7-v6-v5
 	};
 
 	// Set up Vertices VBO
@@ -69,6 +89,18 @@ PrimitiveMesh* PrimitiveMesh::buildCube()
 	ret->m_normals.bind();
 	ret->m_normals.setUsagePattern(QGLBuffer::StaticDraw);
 	ret->m_normals.allocate(normals, sizeof(normals));
+
+	// Set up Tangents VBO
+	ret->m_tangents.create();
+	ret->m_tangents.bind();
+	ret->m_tangents.setUsagePattern(QGLBuffer::StaticDraw);
+	ret->m_tangents.allocate(tangents, sizeof(tangents));
+
+	// Set up Bitangents VBO
+	ret->m_bitangents.create();
+	ret->m_bitangents.bind();
+	ret->m_bitangents.setUsagePattern(QGLBuffer::StaticDraw);
+	ret->m_bitangents.allocate(bitangents, sizeof(bitangents));
 
 	// Set up TexCoord VBO
 	ret->m_texcoords.create();
@@ -117,6 +149,8 @@ PrimitiveMesh* PrimitiveMesh::buildSphere(int rings, int segments)
 
 	GLfloat* vertices = new GLfloat[3*nbVertex]();
 	GLfloat* normals = new GLfloat[3*nbVertex]();
+	GLfloat* tangents = new GLfloat[3*nbVertex]();
+	GLfloat* bitangents = new GLfloat[3*nbVertex]();
 	GLfloat* texcoords = new GLfloat[2*nbVertex]();
 
 	// Vertex
@@ -128,6 +162,12 @@ PrimitiveMesh* PrimitiveMesh::buildSphere(int rings, int segments)
 			float x = fastSin(theta) * fastCos(phi);
 			float y = fastCos(theta);
 			float z = fastSin(theta) * fastSin(phi);
+			float tx = fastSin(theta) * fastCos(phi + 90);
+			float ty = fastCos(theta);
+			float tz = fastSin(theta) * fastSin(phi + 90);
+			float bx = fastSin(theta + 90) * fastCos(phi);
+			float by = fastCos(theta + 90);
+			float bz = fastSin(theta + 90) * fastSin(phi);
 			// Vertex
 			vertices[3*index + 0] = 0.5 *  x;
 			vertices[3*index + 1] = 0.5 *  y;
@@ -137,6 +177,16 @@ PrimitiveMesh* PrimitiveMesh::buildSphere(int rings, int segments)
 			normals[3*index + 0] = x;
 			normals[3*index + 1] = y;
 			normals[3*index + 2] = z;
+
+			// Tangents
+			tangents[3*index + 0] = tx;
+			tangents[3*index + 1] = ty;
+			tangents[3*index + 2] = tz;
+
+			// Bitangents
+			bitangents[3*index + 0] = bx;
+			bitangents[3*index + 1] = by;
+			bitangents[3*index + 2] = bz;
 
 			// Texcoord
 			texcoords[2*index + 0] = float(s)/segments;
@@ -175,6 +225,18 @@ PrimitiveMesh* PrimitiveMesh::buildSphere(int rings, int segments)
 	ret->m_normals.setUsagePattern(QGLBuffer::StaticDraw);
 	ret->m_normals.allocate(normals, sizeof(GLfloat) * nbVertex * 3);
 
+	// Set up Tangents VBO
+	ret->m_tangents.create();
+	ret->m_tangents.bind();
+	ret->m_tangents.setUsagePattern(QGLBuffer::StaticDraw);
+	ret->m_tangents.allocate(tangents, sizeof(GLfloat) * nbVertex * 3);
+
+	// Set up Bitangents VBO
+	ret->m_bitangents.create();
+	ret->m_bitangents.bind();
+	ret->m_bitangents.setUsagePattern(QGLBuffer::StaticDraw);
+	ret->m_bitangents.allocate(bitangents, sizeof(GLfloat) * nbVertex * 3);
+
 	// Set up Texture Coordinates VBO
 	ret->m_texcoords.create();
 	ret->m_texcoords.bind();
@@ -207,13 +269,27 @@ PrimitiveMesh* PrimitiveMesh::buildPlane()
 	PrimitiveMesh* ret = new PrimitiveMesh("Plane");
 
 	const GLfloat vertices[] = {
-		-0.5, 0, -0.5,
-		-0.5, 0,  0.5,
-		 0.5, 0,  0.5,
-		 0.5, 0, -0.5
+		-0.5,  0.5, 0,
+		-0.5, -0.5, 0,
+		 0.5, -0.5, 0,
+		 0.5,  0.5, 0
 	};
 
 	const GLfloat normals[] = {
+		0, 0, 1,
+		0, 0, 1,
+		0, 0, 1,
+		0, 0, 1
+	};
+
+	const GLfloat tangents[] = {
+		1, 0, 0,
+		1, 0, 0,
+		1, 0, 0,
+		1, 0, 0
+	};
+
+	const GLfloat bitangents[] = {
 		0, 1, 0,
 		0, 1, 0,
 		0, 1, 0,
@@ -221,10 +297,10 @@ PrimitiveMesh* PrimitiveMesh::buildPlane()
 	};
 
 	const GLfloat texcoords[] = {
-		0, 0,
 		0, 1,
-		1, 1,
-		1, 0
+		0, 0,
+		1, 0,
+		1, 1
 	};
 
 	const GLshort indices[] = {
@@ -243,6 +319,18 @@ PrimitiveMesh* PrimitiveMesh::buildPlane()
 	ret->m_normals.bind();
 	ret->m_normals.setUsagePattern(QGLBuffer::StaticDraw);
 	ret->m_normals.allocate(normals, sizeof(normals));
+
+	// Set up Tangents VBO
+	ret->m_tangents.create();
+	ret->m_tangents.bind();
+	ret->m_tangents.setUsagePattern(QGLBuffer::StaticDraw);
+	ret->m_tangents.allocate(tangents, sizeof(tangents));
+
+	// Set up Bitangents VBO
+	ret->m_bitangents.create();
+	ret->m_bitangents.bind();
+	ret->m_bitangents.setUsagePattern(QGLBuffer::StaticDraw);
+	ret->m_bitangents.allocate(bitangents, sizeof(bitangents));
 
 	ret->m_texcoords.create();
 	ret->m_texcoords.bind();

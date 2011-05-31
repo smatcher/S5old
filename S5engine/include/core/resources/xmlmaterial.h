@@ -31,6 +31,7 @@ public:
 	virtual void apply();
 	virtual void unset();
 	virtual bool unload();
+	virtual QGLShaderProgram* program();
 };
 
 class XmlMaterialFactory : public IResourceFactory

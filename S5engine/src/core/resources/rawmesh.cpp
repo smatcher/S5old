@@ -7,6 +7,8 @@ RawMesh::RawMesh(const QString &name, const QString &path, IResourceFactory *fac
 	m_normals(),
 	m_colors(),
 	m_texcoords(),
+	m_tangents(),
+	m_bitangents(),
 	m_indices(QGLBuffer::IndexBuffer),
 	m_nbFaces(0)
 {
@@ -18,6 +20,8 @@ bool RawMesh::unload()
 	m_colors.destroy();
 	m_texcoords.destroy();
 	m_normals.destroy();
+	m_tangents.destroy();
+	m_bitangents.destroy();
 	m_indices.destroy();
 
 	m_nbFaces = 0;
@@ -25,7 +29,7 @@ bool RawMesh::unload()
 	return true;
 }
 
-void RawMesh::draw()
+void RawMesh::draw(QGLShaderProgram* program)
 {
 	if(!m_vertices.isCreated() || !m_indices.isCreated())
 		return;
@@ -65,6 +69,24 @@ void RawMesh::draw()
 	else
 	{
 		glDisable(GL_LIGHTING);
+	}
+
+	if(program != NULL)
+	{
+		int location = program->attributeLocation("tangent");
+		if(location != -1)
+		{
+			m_tangents.bind();
+			program->enableAttributeArray(location);
+			program->setAttributeBuffer(location,GL_FLOAT,0,3);
+		}
+		location = program->attributeLocation("bitangent");
+		if(location != -1)
+		{
+			m_bitangents.bind();
+			program->enableAttributeArray(location);
+			program->setAttributeBuffer(location,GL_FLOAT,0,3);
+		}
 	}
 
 	glEnableClientState(GL_VERTEX_ARRAY);

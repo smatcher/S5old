@@ -21,6 +21,7 @@ public:
 	virtual void setUniform(const UniformBase* uniform);
 	virtual const UniformBase* uniform(int nb);
 	virtual int nbUniforms();
+	virtual QGLShaderProgram* program();
 
 protected:
 	QGLShaderProgram* m_program;

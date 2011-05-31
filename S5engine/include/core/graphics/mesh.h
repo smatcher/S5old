@@ -14,7 +14,7 @@ class MeshData : public ResourceData
 
 public:
 	MeshData(const QString& name, const QString& path, IResourceFactory* factory) : ResourceData(name,path,factory) {}
-	virtual void draw() = 0;
+	virtual void draw(QGLShaderProgram* program = NULL) = 0;
 };
 
 class Mesh : public ResourceHandle<MeshData>

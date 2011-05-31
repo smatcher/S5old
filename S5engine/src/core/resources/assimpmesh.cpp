@@ -11,6 +11,8 @@ AssimpMesh::AssimpMesh(const QString& name, const QString& path, IResourceFactor
 	m_normals(),
 	m_colors(),
 	m_texcoords(),
+	m_tangents(),
+	m_bitangents(),
 	m_indices(QGLBuffer::IndexBuffer),
 	m_nbFaces(0)
 {
@@ -96,6 +98,30 @@ void AssimpMesh::buildVBO()
 		delete[] array;
 	}
 
+	if(m_mesh->mTangents != NULL) {
+		m_tangents.create();
+		m_tangents.bind();
+		m_tangents.setUsagePattern(QGLBuffer::StaticDraw);
+		GLfloat* array = new GLfloat[3 * m_mesh->mNumVertices]();
+		for(unsigned int i=0 ; i < m_mesh->mNumVertices ; i++) {
+			memcpy(&(array[3*i]),&m_mesh->mTangents[i].x,3 * sizeof(GLfloat));
+		}
+		m_tangents.allocate(array,3 * sizeof(GLfloat) * m_mesh->mNumVertices);
+		delete[] array;
+	}
+
+	if(m_mesh->mBitangents != NULL) {
+		m_bitangents.create();
+		m_bitangents.bind();
+		m_bitangents.setUsagePattern(QGLBuffer::StaticDraw);
+		GLfloat* array = new GLfloat[3 * m_mesh->mNumVertices]();
+		for(unsigned int i=0 ; i < m_mesh->mNumVertices ; i++) {
+			memcpy(&(array[3*i]),&m_mesh->mBitangents[i].x,3 * sizeof(GLfloat));
+		}
+		m_bitangents.allocate(array,3 * sizeof(GLfloat) * m_mesh->mNumVertices);
+		delete[] array;
+	}
+
 	GLshort* indices = new GLshort[3 * m_nbFaces]();
 	int index = 0;
 	for (unsigned t = 0; t < m_mesh->mNumFaces; ++t) {
@@ -132,7 +158,7 @@ void AssimpMesh::buildVBO()
 	//QGLBuffer(QGLBuffer::IndexBuffer).bind();
 }
 
-void AssimpMesh::draw()
+void AssimpMesh::draw(QGLShaderProgram* program)
 {
 	if(!m_vertices.isCreated() || !m_indices.isCreated())
 		return;
@@ -172,6 +198,24 @@ void AssimpMesh::draw()
 	else
 	{
 		glDisable(GL_LIGHTING);
+	}
+
+	if(program != NULL)
+	{
+		int location = program->attributeLocation("tangent");
+		if(location != -1)
+		{
+			m_tangents.bind();
+			program->enableAttributeArray(location);
+			program->setAttributeBuffer(location,GL_FLOAT,0,3);
+		}
+		location = program->attributeLocation("bitangent");
+		if(location != -1)
+		{
+			m_bitangents.bind();
+			program->enableAttributeArray(location);
+			program->setAttributeBuffer(location,GL_FLOAT,0,3);
+		}
 	}
 
 	glEnableClientState(GL_VERTEX_ARRAY);

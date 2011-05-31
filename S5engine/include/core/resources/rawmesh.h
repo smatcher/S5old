@@ -11,7 +11,7 @@ public:
 	RawMesh(const QString& name, const QString& path, IResourceFactory* factory);
 	virtual bool unload();
 
-	virtual void draw();
+	virtual void draw(QGLShaderProgram* program = NULL);
 
 protected:
 
@@ -19,6 +19,8 @@ protected:
 	QGLBuffer m_normals;
 	QGLBuffer m_colors;
 	QGLBuffer m_texcoords;
+	QGLBuffer m_tangents;
+	QGLBuffer m_bitangents;
 	QGLBuffer m_indices;
 	int m_nbFaces;
 };

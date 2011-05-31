@@ -244,3 +244,12 @@ void XmlMaterialFactory::parseFile(const QString &path, QList<ResourceData *> &c
 		debug( "RESOURCE PARSING" , path << " : " << dir << " does not exist");
 	}
 }
+
+QGLShaderProgram* XmlMaterial::program()
+{
+	if(m_program.isValid())
+		return m_program->program();
+	else
+		return NULL;
+}
+

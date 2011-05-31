@@ -4,6 +4,8 @@
 
 #include "core/log/log.h"
 
+#include <QtOpenGL>
+
 MeshRenderer::MeshRenderer(Mesh& mesh, Material& material) : IRenderable("MeshRenderer")
 {
 	m_mesh = mesh;
@@ -12,20 +14,34 @@ MeshRenderer::MeshRenderer(Mesh& mesh, Material& material) : IRenderable("MeshRe
 
 void MeshRenderer::render(double elapsed_time, GLWidget* context)
 {
+	// The program is passed to the mesh in order to set the attributes
+	QGLShaderProgram* program = NULL;
+
 	node()->globalTransform().glMultf();
 
 	if(m_material.isValid())
+	{
 		m_material->apply();
+		program = m_material->program();
+	}
 	else
+	{
 		debug( "RENDERING" , "MeshRenderer : no material to apply for " << node()->getName());
+	}
 
 	if(m_mesh.isValid())
-		m_mesh->draw();
+	{
+		m_mesh->draw(program);
+	}
 	else
+	{
 		debug( "RENDERING" , "MeshRenderer : no mesh to draw for " << node()->getName());
+	}
 
 	if(m_material.isValid())
+	{
 		m_material->unset();
+	}
 }
 
 #ifdef WITH_TOOLS

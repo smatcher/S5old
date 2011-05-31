@@ -1,0 +1,5 @@
+<material>
+	<texture texunit="0">gargoyle_color.tga</texture>
+	<texture texunit="1">gargoyle_normal.tga</texture>
+	<program>parallax_mapping</program>
+</material>

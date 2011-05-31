@@ -50,6 +50,11 @@ int GLSLShaderProgram::nbUniforms()
 	return m_uniforms.length();
 }
 
+QGLShaderProgram* GLSLShaderProgram::program()
+{
+	return m_program;
+}
+
 void GLSLShaderProgramFactory::load(ResourceData *resource)
 {
 	GLSLShaderProgram* program = static_cast<GLSLShaderProgram*>(resource);
