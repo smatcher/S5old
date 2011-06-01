@@ -35,7 +35,7 @@ typedef Singleton< ResourceManager< ShaderData,         Shader> >         Single
 #define SHADER_MANAGER SingletonShaderManager::getInstance()
 #define SAMPLE_MANAGER SingletonSampleManager::getInstance()
 
-inline void initResourceManagers()
+inline void initResourceManagers(QString spec_dir = "")
 {
 	MESH_MANAGER.addFactory(new AssimpFactory()); // TODO : this is a memory leak, i don't like leaks, get rid of this leak.
 	TEXTURE_MANAGER.addFactory(new StbImageFactory());
@@ -47,16 +47,27 @@ inline void initResourceManagers()
 	QString base_dir = MEDIA_DIR;
 
 	MESH_MANAGER.parseDir(base_dir + "models",true);
+	if(spec_dir != "") MESH_MANAGER.parseDir(spec_dir + "models",true);
 	MESH_MANAGER.loadAll();
+
 	TEXTURE_MANAGER.parseDir(base_dir + "textures",true);
+	if(spec_dir != "") TEXTURE_MANAGER.parseDir(spec_dir + "textures",true);
 	TEXTURE_MANAGER.loadAll();
+
 	SAMPLE_MANAGER.parseDir(base_dir + "sounds",true);
+	if(spec_dir != "") SAMPLE_MANAGER.parseDir(spec_dir + "sounds",true);
 	SAMPLE_MANAGER.loadAll();
+
 	SHADER_MANAGER.parseDir(base_dir + "shaders",true);
+	if(spec_dir != "") SHADER_MANAGER.parseDir(spec_dir + "shaders",true);
 	SHADER_MANAGER.loadAll();
+
 	SHADER_PROGRAM_MANAGER.parseDir(base_dir + "shaders",true);
+	if(spec_dir != "") SHADER_PROGRAM_MANAGER.parseDir(spec_dir + "shaders",true);
 	SHADER_PROGRAM_MANAGER.loadAll();
+
 	MATERIAL_MANAGER.parseDir(base_dir + "materials",true);
+	if(spec_dir != "") MATERIAL_MANAGER.parseDir(spec_dir + "materials",true);
 	MATERIAL_MANAGER.loadAll();
 
 	MESH_MANAGER.add(PrimitiveMesh::buildCube());

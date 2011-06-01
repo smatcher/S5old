@@ -18,7 +18,7 @@
 
 #include <AL/alut.h>
 
-Engine::Engine(int argc, char *argv[]) :
+Engine::Engine(int argc, char *argv[], QString mod_dir) :
 	m_app(argc, argv),
 	m_scene(),
 	m_window(this),
@@ -29,7 +29,7 @@ Engine::Engine(int argc, char *argv[]) :
 
 	m_running(false)
 {
-	init(argc, argv);
+	init(argc, argv, mod_dir);
 }
 
 Engine::~Engine()
@@ -37,7 +37,7 @@ Engine::~Engine()
 	m_scene.unlinkAll();
 }
 
-void Engine::init(int argc, char *argv[])
+void Engine::init(int argc, char *argv[], QString mod_dir)
 {
 	initTrigo();
 
@@ -62,7 +62,7 @@ void Engine::init(int argc, char *argv[])
 
 	RENDER_MANAGER.setCurrentCamera(NULL);
 
-	initResourceManagers();
+	initResourceManagers(mod_dir);
 }
 
 int Engine::start()

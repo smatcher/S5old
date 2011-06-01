@@ -24,10 +24,10 @@ private :
 
 	bool m_running;
 
-	void init(int argc, char *argv[]);
+	void init(int argc, char *argv[], QString mod_dir);
 
 public :
-	Engine(int argc, char *argv[]);
+	Engine(int argc, char *argv[], QString mod_dir = "");
 	~Engine();
 
 	int start();

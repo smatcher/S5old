@@ -34,7 +34,7 @@ int main(int argc, char *argv[])
 		XInitThreads();
 	#endif
 
-	Engine engine(argc, argv);
+	Engine engine(argc, argv,"demo_game/media/");
 
 	SceneGraph* sg = engine.getScenegraph_TEMPORARY();
 
@@ -113,7 +113,7 @@ int main(int argc, char *argv[])
 	nRot->moveTo(Vector3d(0,0,0));
 	nQt->moveTo(Vector3d(0,-0.5,0));
 	nQt->rotate(Vector3d(1,0,0),90);
-	nCam->moveTo(Vector3d(0,1,2));
+	nCam->moveTo(Vector3d(0,1.0,1.6));
 	nCam->rotate(Vector3d(1,0,0),330);
 	nCamFollow->moveTo(Vector3d(0,2,3));
 	nCamFollow->rotate(Vector3d(1,0,0),345);
@@ -129,6 +129,7 @@ int main(int argc, char *argv[])
 
 	nBall->moveTo(Vector3d(1,0,-1));
 	nGarg->moveTo(Vector3d(-1,0,-1));
+	nDuck->rotate(Vector3d(0,1,0),137);
 
 	// Beurk ! Mais je peux le faire alors je me prive pas ^^
 	//RENDER_MANAGER.setCurrentCamera(static_cast<Camera*>(nCamFollow->properties().child("Camera")));
