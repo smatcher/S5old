@@ -21,7 +21,7 @@ private:
 	bool m_wrap_t;
 
 public:
-	StbImage(const QString& name, const QString& path, IResourceFactory* factory, stbi_uc* data = NULL, bool mipmap = true, bool wrap_s = true, bool wrap_t = true);
+	StbImage(const QString& name, const QString& path, IResourceFactory* factory, stbi_uc* data = NULL, bool mipmap = true, bool wrap_s = true, bool wrap_t = true, int comp=0);
 	virtual bool unload();
 
 	void buildGLTexture();

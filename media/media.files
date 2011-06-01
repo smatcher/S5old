@@ -38,3 +38,4 @@ shaders/bump_mapping.vert
 shaders/bump_mapping.frag
 shaders/blur.vert
 shaders/blur.frag
+textures/rules.db

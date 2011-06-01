@@ -9,9 +9,10 @@
 
   */
 
-StbImage::StbImage(const QString& name, const QString& path, IResourceFactory* factory, stbi_uc* data, bool mipmap, bool wrap_s, bool wrap_t) :
+StbImage::StbImage(const QString& name, const QString& path, IResourceFactory* factory, stbi_uc* data, bool mipmap, bool wrap_s, bool wrap_t, int comp) :
 	TextureData(name, path, factory),
 	m_data(data),
+	m_comp(comp),
 	m_mipmap(mipmap),
 	m_wrap_s(wrap_s),
 	m_wrap_t(wrap_t)
@@ -124,7 +125,7 @@ void StbImageFactory::load(ResourceData *resource)
 	StbImage* stbresource = static_cast<StbImage*>(resource);
 	int x,y,comp;
 
-	stbi_uc* data = stbi_load(stbresource->path().toLocal8Bit().data(), &x, &y, &comp, 0);
+	stbi_uc* data = stbi_load(stbresource->path().toLocal8Bit().data(), &x, &y, &comp, stbresource->m_comp);
 
 	if(data != NULL)
 	{
@@ -132,7 +133,11 @@ void StbImageFactory::load(ResourceData *resource)
 		stbresource->m_data = data;
 		stbresource->m_width = x;
 		stbresource->m_height = y;
-		stbresource->m_comp = comp;
+
+		// If we asked 0 components comp now contains the number of components
+		if(stbresource->m_comp == 0)
+			stbresource->m_comp = comp;
+
 		stbresource->m_state = StbImage::STATE_LOADED;
 		stbresource->buildGLTexture();
 	}
@@ -151,9 +156,12 @@ void StbImageFactory::parseFile(const QString &path, QList<ResourceData *> &cont
 	if(dir.exists())
 	{
 		debug( "RESOURCE PARSING" , "StbImage found " << name);
+		int comp = 3;
 		bool mipmap = true;
 		bool wrap_s = true;
 		bool wrap_t = true;
+		if(rules.contains("alpha") && rules.find("alpha").value() == "true")
+			comp = 4;
 		if(rules.contains("mipmap") && rules.find("mipmap").value() == "false")
 			mipmap = false;
 		if(rules.contains("wrap_s") && rules.find("wrap_s").value() == "false")
@@ -161,7 +169,7 @@ void StbImageFactory::parseFile(const QString &path, QList<ResourceData *> &cont
 		if(rules.contains("wrap_t") && rules.find("wrap_t").value() == "false")
 			wrap_t = false;
 
-		StbImage* image = new StbImage(name,path,this,NULL,mipmap,wrap_s,wrap_t);
+		StbImage* image = new StbImage(name,path,this,NULL,mipmap,wrap_s,wrap_t,comp);
 		content.push_back(image);
 	}
 	else

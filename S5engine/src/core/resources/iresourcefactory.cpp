@@ -21,6 +21,7 @@ QList<ResourceData*> IResourceFactory::searchDir(const QString& path, bool recur
 	{
 		if(*it != "rules.db")
 		{
+			// Fuse folder rules and file rules
 			QHash<QString,QString> rules;
 			QHash<QString, QHash<QString,QString> >::iterator it2 = files_rules.find(*it);
 			if(it2 != files_rules.end())
@@ -32,6 +33,7 @@ QList<ResourceData*> IResourceFactory::searchDir(const QString& path, bool recur
 					rules.insert(it3.key(),it3.value());
 			}
 
+			// Parse the file
 			parseFile(dir.filePath(*it),ret,rules);
 		}
 	}
@@ -94,6 +96,19 @@ void IResourceFactory::parseRuleFile(QString path, QHash<QString,QString>& folde
 		}
 		else if(tag == "file")
 		{
+			QString file_name = nodes.at(i).attributes().namedItem("name").nodeValue();
+			QHash<QString,QString> file_rules;
+			QDomNodeList file_nodes = nodes.at(i).childNodes();
+			for(int j=0 ; j<file_nodes.length() ; j++)
+			{
+				if(file_nodes.at(j).nodeName() == "rule")
+				{
+					QString name = file_nodes.at(j).attributes().namedItem("name").nodeValue();
+					QString value = file_nodes.at(j).attributes().namedItem("value").nodeValue();
+					file_rules.insert(name,value);
+				}
+			}
+			files_rules.insert(file_name,file_rules);
 		}
 	}
 }

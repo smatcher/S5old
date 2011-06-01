@@ -1,0 +1,8 @@
+<rules>
+	<file name="gargoyle_normal.tga">
+		<rule name="alpha" value="true"/>
+	</file>
+	<file name="star.tga">
+		<rule name="alpha" value="true"/>
+	</file>
+</rules>

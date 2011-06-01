@@ -89,7 +89,7 @@ int main(int argc, char *argv[])
 
 	Node* nDuck = new Node("Duck");
 	nDuck->addProperty(new MeshRenderer(mesh,duck));
-	//nStar->addProperty(new MeshRenderer(plane,star));
+	nStar->addProperty(new MeshRenderer(plane,star));
 	nBall->addProperty(new MeshRenderer(sphere,ball));
 	//nUni->addProperty(new MeshRenderer(cube,unicorn));
 	nGarg->addProperty(new MeshRenderer(cube,gargoyle));
