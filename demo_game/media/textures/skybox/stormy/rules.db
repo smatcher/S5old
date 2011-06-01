@@ -1,5 +1,7 @@
 <rules>
 	<folder>
 		<rule name="mipmap" value="false"/>
+		<rule name="wrap_s" value="false"/>
+		<rule name="wrap_t" value="false"/>
 	</folder>
 </rules>

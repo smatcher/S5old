@@ -9,10 +9,12 @@
 
   */
 
-StbImage::StbImage(const QString& name, const QString& path, IResourceFactory* factory, stbi_uc* data, bool mipmap) :
+StbImage::StbImage(const QString& name, const QString& path, IResourceFactory* factory, stbi_uc* data, bool mipmap, bool wrap_s, bool wrap_t) :
 	TextureData(name, path, factory),
 	m_data(data),
-	m_mipmap(mipmap)
+	m_mipmap(mipmap),
+	m_wrap_s(wrap_s),
+	m_wrap_t(wrap_t)
 {
 	if(m_data != NULL)
 	{
@@ -72,8 +74,15 @@ void StbImage::buildGLTexture()
 		else
 			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
 
-		glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_WRAP_S, GL_REPEAT);
-		glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_WRAP_T, GL_REPEAT);
+		if(m_wrap_s)
+			glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_WRAP_S, GL_REPEAT);
+		else
+			glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+
+		if(m_wrap_t)
+			glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_WRAP_T, GL_REPEAT);
+		else
+			glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
 
 		GLenum mode = GL_RGBA;
 
@@ -143,10 +152,16 @@ void StbImageFactory::parseFile(const QString &path, QList<ResourceData *> &cont
 	{
 		debug( "RESOURCE PARSING" , "StbImage found " << name);
 		bool mipmap = true;
+		bool wrap_s = true;
+		bool wrap_t = true;
 		if(rules.contains("mipmap") && rules.find("mipmap").value() == "false")
 			mipmap = false;
+		if(rules.contains("wrap_s") && rules.find("wrap_s").value() == "false")
+			wrap_s = false;
+		if(rules.contains("wrap_t") && rules.find("wrap_t").value() == "false")
+			wrap_t = false;
 
-		StbImage* image = new StbImage(name,path,this,NULL,mipmap);
+		StbImage* image = new StbImage(name,path,this,NULL,mipmap,wrap_s,wrap_t);
 		content.push_back(image);
 	}
 	else
