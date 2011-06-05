@@ -134,12 +134,12 @@ int main(int argc, char *argv[])
 	nLight2->moveTo(Vector3d(0,0,-1));
 
 	nWall->moveTo(Vector3d(0,0,-5));
-	nWall->setScale(Vector3d(10,10,10));
+	nWall->setScale(Vector3d(10,1,1));
 	nBall->moveTo(Vector3d(1,0,-1));
 	nGarg->moveTo(Vector3d(-3,0,-5));
 	nGarg->setScale(Vector3d(4,4,4));
 	nDuck->rotate(Vector3d(0,1,0),137);
-	nDuck->setScale(Vector3d(0.5,0.5,0.5));
+	nDuck->setScale(Vector3d(0.5,0.5,2.0));
 	nDuckGrid->rotate(Vector3d(1,0,0),270);
 
 	// Beurk ! Mais je peux le faire alors je me prive pas ^^
