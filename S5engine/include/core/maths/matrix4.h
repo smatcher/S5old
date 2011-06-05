@@ -6,6 +6,7 @@
 #include <iostream>
 #include "core/maths/vector4.h"
 #include "core/maths/matrix3.h"
+#include <QtOpenGL>
 
 template <class T>
 class Matrix4
@@ -30,6 +31,10 @@ public:
 	// Constructeur à partir de la sous-matrice 3x3 supérieure gauche et du vecteur de translation
 	template <class T_scalar>
 	Matrix4(	const Matrix3<T_scalar>& sub_matrix, const Vector3<T_scalar>& translation);
+
+	// Constructeur à partir de la sous-matrice 3x3 supérieure gauche du vecteur de translation et d'un vecteur d'echelle
+	template <class T_scalar>
+	Matrix4(	const Matrix3<T_scalar>& sub_matrix, const Vector3<T_scalar>& translation, const Vector3<T_scalar>& scale);
 
 	// Constructeur de copie
 	template <class T_scalar>
@@ -104,15 +109,15 @@ public:
 	T determinant();
 
 	// Transposition
-    Matrix4<T> getTranspose() const;
+	Matrix4<T> getTranspose() const;
 	void transpose();
 
 	// Inversion
-    Matrix4<T> getInverse() const;
+	Matrix4<T> getInverse() const;
 	void invert();
 
 	// Transposée de l'inverse
-    Matrix4<T> getInverseTranspose() const;
+	Matrix4<T> getInverseTranspose() const;
 	void invertAndTranspose();
 
 	// Getters/Setters
@@ -124,6 +129,13 @@ public:
 
 	template <class T_scalar>
 	void setColumn(const Vector4<T_scalar>& v, int j);
+
+	void glLoadf() const	{glLoadMatrixf(Matrix4<GLfloat>(values));}
+	void glLoadd() const	{glLoadMatrixd(Matrix4<GLdouble>(values));}
+	void glMultf() const	{glMultMatrixf(Matrix4<GLfloat>(values));}
+	void glMultd() const	{glMultMatrixd(Matrix4<GLdouble>(values));}
+	void glTranslatef() const	{::glTranslatef(values[12],values[13], values[14]);}
+	void glTranslated() const	{::glTranslated(values[12],values[13], values[14]);}
 };
 
 // Multiplication par un scalaire (s * m)

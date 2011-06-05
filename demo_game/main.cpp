@@ -65,11 +65,15 @@ int main(int argc, char *argv[])
 	Node* nUni = new Node("Unicorn");
 	Node* nBall = new Node("Ball");
 	Node* nGarg = new Node("Gargoyle");
+	Node* nWall = new Node("Wall");
+	Node* nDuck = new Node("Duck");
+	Node* nDuckGrid = new Node("Grid");
 
 	nRot->addProperty(new IProperty());
 //	nRot->addProperty(new DummyUpdatable());
 //	nQt->addProperty(new QtLogo(engine.getGLW_TEMPORARY()));
 	nQt->addProperty(new Grid(1.0f, 1.0f, 40, 40));
+	nDuckGrid->addProperty(new Grid(1.0f, 1.0f, 40, 40));
 	nCam->addProperty(new Camera(70,1,200));
 	nCamFollow->addProperty(new Camera(90,1,200));
 	nHead->addProperty(new DummyUpdatable());
@@ -87,16 +91,17 @@ int main(int argc, char *argv[])
 	Material gargoyle = MATERIAL_MANAGER.get("gargoyle");
 	Sample sample = SAMPLE_MANAGER.get("quacking.wav");
 
-	Node* nDuck = new Node("Duck");
 	nDuck->addProperty(new MeshRenderer(mesh,duck));
 	nStar->addProperty(new MeshRenderer(plane,star));
 	nBall->addProperty(new MeshRenderer(sphere,ball));
 	//nUni->addProperty(new MeshRenderer(cube,unicorn));
 	nGarg->addProperty(new MeshRenderer(cube,gargoyle));
+	nWall->addProperty(new MeshRenderer(plane,gargoyle));
 	nDuck->addProperty(new DummyControlable());
 	nDuck->addProperty(new SoundEmitter(sample));
 	nDuck->link(nCamFollow);
 	nDuck->link(nHead);
+	nDuck->link(nDuckGrid);
 
 	nHead->link(nStar);
 	nHead->link(nLight);
@@ -108,6 +113,7 @@ int main(int argc, char *argv[])
 	sg->link(nQt);
 	sg->link(nBall);
 	sg->link(nGarg);
+	sg->link(nWall);
 	nRot->link(nCam);
 
 	nRot->moveTo(Vector3d(0,0,0));
@@ -127,9 +133,14 @@ int main(int argc, char *argv[])
 	nLight->moveTo(Vector3d(0,0,1));
 	nLight2->moveTo(Vector3d(0,0,-1));
 
+	nWall->moveTo(Vector3d(0,0,-5));
+	nWall->setScale(Vector3d(10,10,10));
 	nBall->moveTo(Vector3d(1,0,-1));
-	nGarg->moveTo(Vector3d(-1,0,-1));
+	nGarg->moveTo(Vector3d(-3,0,-5));
+	nGarg->setScale(Vector3d(4,4,4));
 	nDuck->rotate(Vector3d(0,1,0),137);
+	nDuck->setScale(Vector3d(0.5,0.5,0.5));
+	nDuckGrid->rotate(Vector3d(1,0,0),270);
 
 	// Beurk ! Mais je peux le faire alors je me prive pas ^^
 	//RENDER_MANAGER.setCurrentCamera(static_cast<Camera*>(nCamFollow->properties().child("Camera")));

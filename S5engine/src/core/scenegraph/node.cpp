@@ -18,16 +18,16 @@ Node::~Node()
 
 }
 
-Transformd Node::globalTransform()
+Matrix4d Node::globalTransform()
 {
-	Transformd ret;
+	Matrix4d ret;
 
 	Transformd* trans = static_cast<Transformd*>(this);
 
 	if(parent()->type() == ParentOfNode::NODE)
 	{
 		Node* parentNode = static_cast<Node*>(parent());
-		ret = parentNode->globalTransform() * (*trans);
+		ret = parentNode->globalTransform() * (Matrix4d)(*trans);
 	}
 	else
 	{
@@ -63,16 +63,16 @@ void Node::drawDebug(const GLWidget* widget, bool recursive) const
 			glVertex3d(0,0,1);
 		glEnd();
 
-        for(int i=0 ; i<properties().childCount() ; i++)
-        {
-            properties().child(i)->drawDebug(widget);
-        }
+		for(int i=0 ; i<properties().childCount() ; i++)
+		{
+			properties().child(i)->drawDebug(widget);
+		}
 
 		if(recursive)
 		{
 			for(int i= 0 ; i<childCount() ; i++)
 			{
-                child(i)->drawDebug(widget,true);
+				child(i)->drawDebug(widget,true);
 			}
 		}
 	glPopMatrix();
@@ -85,7 +85,7 @@ PropertySet& Node::properties()
 
 const PropertySet& Node::properties() const
 {
-    return m_properties;
+	return m_properties;
 }
 
 #ifdef WITH_TOOLS

@@ -7,16 +7,17 @@
 
 // Constructeur
 template <class T>
-Transform<T>::Transform()
+Transform<T>::Transform() : scale_vector(1,1,1)
 {
 }
 
 template<class T>
-template <class T_scalar, class T_scalar2>
-Transform<T>::Transform(const Matrix3<T_scalar> rotation, const Vector3<T_scalar2 >position)
+template <class T_scalar, class T_scalar2, class T_scalar3>
+Transform<T>::Transform(const Matrix3<T_scalar> rotation, const Vector3<T_scalar2 >position, const Vector3<T_scalar3>scale)
 {
 	this->rotation=rotation;
 	this->position=position;
+	this->scale_vector=scale;
 }
 
 template <class T>
@@ -255,12 +256,26 @@ void Transform<T>::moveTo(const Vector3<T_scalar>& target)
 }
 
 template <class T>
+template <class T_scalar>
+void Transform<T>::setScale(const Vector3<T_scalar>& scale)
+{
+	scale_vector = scale;
+}
+
+template <class T>
+template <class T_scalar, class T_scalar2>
+void Transform<T>::scale(Vector3<T_scalar> scale)
+{
+	//scale_vector *= scale;
+}
+
+template <class T>
 Vector3<T> Transform<T>::toEuler() const
 {
-    Vector3<T> ret;
-    ret.x =  360*atan2(rotation.get(2,0),rotation.get(2,1))/2*M_PI;
-    ret.y =  fastAcos(rotation.get(2,2));
-    ret.z = -360*atan2(rotation.get(0,2),rotation.get(1,2))/2*M_PI;
+	Vector3<T> ret;
+	ret.x =  360*atan2(rotation.get(2,0),rotation.get(2,1))/2*M_PI;
+	ret.y =  fastAcos(rotation.get(2,2));
+	ret.z = -360*atan2(rotation.get(0,2),rotation.get(1,2))/2*M_PI;
 	return ret;
 }
 

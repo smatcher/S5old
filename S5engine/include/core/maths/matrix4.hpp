@@ -64,6 +64,29 @@ Matrix4<T>::Matrix4(	const Matrix3<T_scalar>& sub_matrix, const Vector3<T_scalar
 	this->values[14] = translation.z;
 	this->values[15] = T(1);
 }
+// Constructeur à partir de la sous-matrice 3x3 supérieure gauche du vecteur de translation et d'un vecteur d'echelle
+template <class T>
+template <class T_scalar>
+Matrix4<T>::Matrix4(	const Matrix3<T_scalar>& sub_matrix, const Vector3<T_scalar>& translation, const Vector3<T_scalar>& scale)
+{
+	this->values[0] = sub_matrix[0] * scale[0];
+	this->values[1] = sub_matrix[1] * scale[1];
+	this->values[2] = sub_matrix[2] * scale[2];
+	this->values[3] = T(0);
+	this->values[4] = sub_matrix[3] * scale[0];
+	this->values[5] = sub_matrix[4] * scale[1];
+	this->values[6] = sub_matrix[5] * scale[2];
+	this->values[7] = T(0);
+	this->values[8] = sub_matrix[6] * scale[0];
+	this->values[9] = sub_matrix[7] * scale[1];
+	this->values[10] = sub_matrix[8] * scale[2];
+	this->values[11] = T(0);
+
+	this->values[12] = translation.x;
+	this->values[13] = translation.y;
+	this->values[14] = translation.z;
+	this->values[15] = T(1);
+}
 
 // Constructeur de copie
 template <class T>

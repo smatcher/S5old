@@ -4,7 +4,7 @@
 #include <QtOpenGL>
 
 #ifdef WITH_TOOLS
-    #include "tools/widgets/cameraradiobutton.h"
+	#include "tools/widgets/cameraradiobutton.h"
 #endif
 
 Camera::Camera(double yfov, double znear, double zfar) : IProperty("Camera"), Managee<CameraManager>()
@@ -18,17 +18,17 @@ Camera::Camera(double yfov, double znear, double zfar) : IProperty("Camera"), Ma
 
 Camera::~Camera()
 {
-    #ifdef WITH_TOOLS
-        if(m_radiobutton != NULL)
-            QCoreApplication::postEvent(m_radiobutton,new DELETED_EVENT());
-    #endif
+	#ifdef WITH_TOOLS
+		if(m_radiobutton != NULL)
+			QCoreApplication::postEvent(m_radiobutton,new DELETED_EVENT());
+	#endif
 }
 
 const Matrix4d& Camera::getProjection(double aspect)
 {
 	if(m_lastAspect != aspect || m_needComputation)
 	{
-        m_lastAspect = aspect;
+		m_lastAspect = aspect;
 		computeProjection();
 	}
 	return m_projection;
@@ -37,7 +37,7 @@ const Matrix4d& Camera::getProjection(double aspect)
 void Camera::setProjection(double aspect)
 {
 //	gluPerspective(m_yfov,aspect,m_znear,m_zfar);
-    glLoadMatrixd(getProjection(aspect));
+	glLoadMatrixd(getProjection(aspect));
 }
 
 void Camera::setParameters(double yfov, double znear, double zfar)
@@ -50,102 +50,103 @@ void Camera::setParameters(double yfov, double znear, double zfar)
 
 void computeProjectionFunction(Matrix4d& mat, double yfov, double znear, double zfar, double aspect)
 {
-    const float h = 1.0f/tan(yfov*M_PI/360);
-    float neg_depth = znear-zfar;
+	const float h = 1.0f/tan(yfov*M_PI/360);
+	float neg_depth = znear-zfar;
 
-    mat[0] = h / aspect;
-    mat[1] = 0;
-    mat[2] = 0;
-    mat[3] = 0;
+	mat[0] = h / aspect;
+	mat[1] = 0;
+	mat[2] = 0;
+	mat[3] = 0;
 
-    mat[4] = 0;
-    mat[5] = h;
-    mat[6] = 0;
-    mat[7] = 0;
+	mat[4] = 0;
+	mat[5] = h;
+	mat[6] = 0;
+	mat[7] = 0;
 
-    mat[8] = 0;
-    mat[9] = 0;
-    mat[10] = (zfar + znear)/neg_depth;
-    mat[11] = -1;
+	mat[8] = 0;
+	mat[9] = 0;
+	mat[10] = (zfar + znear)/neg_depth;
+	mat[11] = -1;
 
-    mat[12] = 0;
-    mat[13] = 0;
-    mat[14] = 2.0f*(znear*zfar)/neg_depth;
-    mat[15] = 0;
+	mat[12] = 0;
+	mat[13] = 0;
+	mat[14] = 2.0f*(znear*zfar)/neg_depth;
+	mat[15] = 0;
 }
 
 void Camera::computeProjection()
 {
-    computeProjectionFunction(m_projection, m_yfov, m_znear, m_zfar, m_lastAspect);
+	computeProjectionFunction(m_projection, m_yfov, m_znear, m_zfar, m_lastAspect);
 }
 
 void Camera::drawDebug(const GLWidget* widget) const
 {
-    glPushMatrix();
+	glPushMatrix();
 
-        Matrix4d mat;
-        computeProjectionFunction(mat, m_yfov, m_znear, m_zfar, 1);
-        mat.invert();
-        glMultMatrixd(mat.values);
+		Matrix4d mat;
+		computeProjectionFunction(mat, m_yfov, m_znear, m_zfar, 1);
+		mat.invert();
+		glMultMatrixd(mat.values);
 
-        widget->qglColor(Qt::gray);
-        glBegin(GL_LINES);
-            glVertex3d(-1,-1,-1);
-            glVertex3d( 1,-1,-1);
+		widget->qglColor(Qt::gray);
+		glBegin(GL_LINES);
+			glVertex3d(-1,-1,-1);
+			glVertex3d( 1,-1,-1);
 
-            glVertex3d(-1,-1,-1);
-            glVertex3d(-1, 1,-1);
+			glVertex3d(-1,-1,-1);
+			glVertex3d(-1, 1,-1);
 
-            glVertex3d(-1,-1,-1);
-            glVertex3d(-1,-1, 1);
+			glVertex3d(-1,-1,-1);
+			glVertex3d(-1,-1, 1);
 
-            glVertex3d( 1,-1,-1);
-            glVertex3d( 1, 1,-1);
+			glVertex3d( 1,-1,-1);
+			glVertex3d( 1, 1,-1);
 
-            glVertex3d( 1,-1,-1);
-            glVertex3d( 1,-1, 1);
+			glVertex3d( 1,-1,-1);
+			glVertex3d( 1,-1, 1);
 
-            glVertex3d(-1, 1,-1);
-            glVertex3d( 1, 1,-1);
+			glVertex3d(-1, 1,-1);
+			glVertex3d( 1, 1,-1);
 
-            glVertex3d(-1, 1,-1);
-            glVertex3d(-1, 1, 1);
+			glVertex3d(-1, 1,-1);
+			glVertex3d(-1, 1, 1);
 
-            glVertex3d(-1,-1, 1);
-            glVertex3d( 1,-1, 1);
+			glVertex3d(-1,-1, 1);
+			glVertex3d( 1,-1, 1);
 
-            glVertex3d(-1,-1, 1);
-            glVertex3d(-1, 1, 1);
+			glVertex3d(-1,-1, 1);
+			glVertex3d(-1, 1, 1);
 
-            glVertex3d( 1, 1, 1);
-            glVertex3d(-1, 1, 1);
+			glVertex3d( 1, 1, 1);
+			glVertex3d(-1, 1, 1);
 
-            glVertex3d( 1, 1, 1);
-            glVertex3d( 1,-1, 1);
+			glVertex3d( 1, 1, 1);
+			glVertex3d( 1,-1, 1);
 
-            glVertex3d( 1, 1, 1);
-            glVertex3d( 1, 1,-1);
-        glEnd();
-    glPopMatrix();
+			glVertex3d( 1, 1, 1);
+			glVertex3d( 1, 1,-1);
+		glEnd();
+	glPopMatrix();
 }
 
 void Camera::applyTransform()
 {
-    node()->globalTransform().getInverse().glMultd();
+	node()->globalTransform().getInverse().glMultd();
 }
 
 void Camera::applyOnlyRotation()
 {
-    Matrix3d rotation = node()->globalTransform().getRotation();
-    Transformd transform(rotation.getInverse(),Vector3d());
-    transform.glMultd();
+	Transformd trans(node()->globalTransform());
+	Matrix3d rotation = trans.getRotation();
+	Transformd transform(rotation.getInverse(),Vector3d(),Vector3d(1,1,1));
+	transform.glMultd();
 }
 
 #ifdef WITH_TOOLS
 
 CameraRadioButton* Camera::getRadioButton()
 {
-    return m_radiobutton;
+	return m_radiobutton;
 }
 
 void Camera::setRadioButton(CameraRadioButton* radio)

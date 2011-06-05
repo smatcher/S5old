@@ -33,9 +33,9 @@ public:
 	virtual ParentOfNode::TYPE type() {return ParentOfNode::NODE;}
 
 	PropertySet& properties();
-    const PropertySet& properties() const;
+	const PropertySet& properties() const;
 
-	Transformd globalTransform();
+	Matrix4d globalTransform();
 
 	void addProperty(IProperty* property);
 

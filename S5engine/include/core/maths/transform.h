@@ -12,8 +12,7 @@
 #define TRANSFORM_OPENGL_SUPPORT
 
 #ifdef TRANSFORM_OPENGL_SUPPORT
-//	#include <GL/glew.h> // pas besoin visiblement
-	#include <GL/glfw.h>
+	#include <QtOpenGL>
 #endif
 
 enum TransformSpace
@@ -28,13 +27,14 @@ class Transform
 {
 protected:
 	Vector3<T> position;
+	Vector3<T> scale_vector;
 	Matrix3<T> rotation;
 
 public:
 	Transform();
 
-	template <class T_scalar, class T_scalar2>
-	Transform(const Matrix3<T_scalar> rotation, const Vector3<T_scalar2> position);
+	template <class T_scalar, class T_scalar2, class T_scalar3>
+	Transform(const Matrix3<T_scalar> rotation, const Vector3<T_scalar2> position, Vector3<T_scalar3> scale);
 
 	template <class T_scalar>
 	Transform(const Matrix4<T_scalar>& mat);
@@ -90,16 +90,16 @@ public:
 	Vector3<T> operator*(const Vector3<T_scalar>& ref) const;
 	*/
 	//Cast
-	operator Matrix4<T> () {return Matrix4<T>(rotation, position);}
-	operator const Matrix4<T> () const {return Matrix4<T>(rotation, position);}
+	operator Matrix4<T> () {return Matrix4<T>(rotation, position, scale_vector);}
+	operator const Matrix4<T> () const {return Matrix4<T>(rotation, position, scale_vector);}
 
-    void invert()
-    {
-        Matrix4<T> mat = *this;
-        mat.invert();
-        *this = mat;
-    //	rotation.invert(); position = Vector3<T>(-position.x,-position.y,-position.z);
-    }
+	void invert()
+	{
+		Matrix4<T> mat = *this;
+		mat.invert();
+		*this = mat;
+	//	rotation.invert(); position = Vector3<T>(-position.x,-position.y,-position.z);
+	}
 
 	// setters
 	template <class T_scalar>
@@ -107,6 +107,12 @@ public:
 
 	template <class T_scalar, class T_scalar2>
 	void rotate(Vector3<T_scalar> axis,T_scalar2 value);
+
+	template <class T_scalar>
+	void setScale(const Vector3<T_scalar>& scale);
+
+	template <class T_scalar, class T_scalar2>
+	void scale(Vector3<T_scalar> scale);
 
 	template <class T_scalar>
 	void lookAt(Vector3<T_scalar> target);
@@ -127,6 +133,7 @@ public:
 
 	const Matrix3<T>& getRotation() const {return this->rotation;}
 	const Vector3<T>& getPosition() const {return this->position;}
+	const Vector3<T>& getScale()    const {return this->scale_vector;}
 
 	// transformation of a vector
 	template <class T_scalar>
@@ -136,10 +143,10 @@ public:
 
 #ifdef TRANSFORM_OPENGL_SUPPORT
 
-	void glLoadf() const	{glLoadMatrixf(Matrix4f(rotation, position));}
-	void glLoadd() const	{glLoadMatrixd(Matrix4d(rotation, position));}
-	void glMultf() const	{glMultMatrixf(Matrix4f(rotation, position));}
-	void glMultd() const	{glMultMatrixd(Matrix4d(rotation, position));}
+	void glLoadf() const	{glLoadMatrixf(Matrix4f(rotation, position, scale_vector));}
+	void glLoadd() const	{glLoadMatrixd(Matrix4d(rotation, position, scale_vector));}
+	void glMultf() const	{glMultMatrixf(Matrix4f(rotation, position, scale_vector));}
+	void glMultd() const	{glMultMatrixd(Matrix4d(rotation, position, scale_vector));}
 	void glTranslatef() const	{::glTranslatef(position.x, position.y, position.z);}
 	void glTranslated() const	{::glTranslated(position.x, position.y, position.z);}
 
@@ -150,7 +157,7 @@ public:
 template <class T>
 inline std::ostream& operator<<(std::ostream& os, const Transform<T>& t)
 {
-	os << "rotation : " << t.getRotation() << " position : " << t.getPosition();
+	os << "rotation : " << t.getRotation() << " position : " << t.getPosition() << " scale : " << t.getScale();
 	return os;
 }
 
