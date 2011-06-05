@@ -44,6 +44,16 @@ void MeshRenderer::render(double elapsed_time, GLWidget* context)
 	}
 }
 
+bool MeshRenderer::isTransparent()
+{
+	bool ret = false;
+
+	if(m_material.isValid())
+		ret = m_material->isTransparent();
+
+	return ret;
+}
+
 #ifdef WITH_TOOLS
 
 PropertyWidget* MeshRenderer::getWidget()

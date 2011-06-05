@@ -68,6 +68,7 @@ int main(int argc, char *argv[])
 	Node* nWall = new Node("Wall");
 	Node* nDuck = new Node("Duck");
 	Node* nDuckGrid = new Node("Grid");
+	Node* nSand = new Node("Sand");
 
 	nRot->addProperty(new IProperty());
 //	nRot->addProperty(new DummyUpdatable());
@@ -89,6 +90,7 @@ int main(int argc, char *argv[])
 	Material star = MATERIAL_MANAGER.get("star");
 	Material ball = MATERIAL_MANAGER.get("ball");
 	Material gargoyle = MATERIAL_MANAGER.get("gargoyle");
+	Material sand = MATERIAL_MANAGER.get("sand");
 	Sample sample = SAMPLE_MANAGER.get("quacking.wav");
 
 	nDuck->addProperty(new MeshRenderer(mesh,duck));
@@ -97,6 +99,7 @@ int main(int argc, char *argv[])
 	//nUni->addProperty(new MeshRenderer(cube,unicorn));
 	nGarg->addProperty(new MeshRenderer(cube,gargoyle));
 	nWall->addProperty(new MeshRenderer(plane,gargoyle));
+	nSand->addProperty(new MeshRenderer(plane,sand));
 	nDuck->addProperty(new DummyControlable());
 	nDuck->addProperty(new SoundEmitter(sample));
 	nDuck->link(nCamFollow);
@@ -114,6 +117,7 @@ int main(int argc, char *argv[])
 	sg->link(nBall);
 	sg->link(nGarg);
 	sg->link(nWall);
+	sg->link(nSand);
 	nRot->link(nCam);
 
 	nRot->moveTo(Vector3d(0,0,0));
@@ -133,13 +137,15 @@ int main(int argc, char *argv[])
 	nLight->moveTo(Vector3d(0,0,1));
 	nLight2->moveTo(Vector3d(0,0,-1));
 
+	nSand->moveTo(Vector3d(0,-0.5,0));
+	nSand->rotate(Vector3d(1,0,0),270);
+	nSand->setScale(Vector3d(10,10,10));
 	nWall->moveTo(Vector3d(0,0,-5));
 	nWall->setScale(Vector3d(10,1,1));
 	nBall->moveTo(Vector3d(1,0,-1));
 	nGarg->moveTo(Vector3d(-3,0,-5));
-	nGarg->setScale(Vector3d(4,4,4));
+	nGarg->setScale(Vector3d(2,1,2));
 	nDuck->rotate(Vector3d(0,1,0),137);
-	nDuck->setScale(Vector3d(0.5,0.5,2.0));
 	nDuckGrid->rotate(Vector3d(1,0,0),270);
 
 	// Beurk ! Mais je peux le faire alors je me prive pas ^^

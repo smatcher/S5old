@@ -15,6 +15,7 @@ class MeshRenderer : public IRenderable
 public:
 	MeshRenderer(Mesh& mesh, Material& material);
 	void render(double elapsed_time, GLWidget* context);
+	bool isTransparent();
 
 	#ifdef WITH_TOOLS
 		virtual PropertyWidget* getWidget();

@@ -17,6 +17,7 @@ public:
 	virtual void apply() = 0;
 	virtual void unset() = 0;
 	virtual QGLShaderProgram* program() = 0;
+	virtual bool isTransparent() = 0;
 };
 
 class Material : public ResourceHandle<MaterialData>

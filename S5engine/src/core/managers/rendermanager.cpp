@@ -84,6 +84,8 @@ void RenderManager::init(GLWidget* context)
 
 void RenderManager::render(double elapsed_time, SceneGraph* sg)
 {
+	QList<IRenderable*> transparent_renderables;
+
 	if(m_context == NULL)
 		return;
 
@@ -119,7 +121,20 @@ void RenderManager::render(double elapsed_time, SceneGraph* sg)
 	{
 		glPushMatrix();
 		IRenderable* prop = (IRenderable*)registeredManagees[index];
-		prop->render(elapsed_time, m_context);
+
+		if(prop->isTransparent()){
+			transparent_renderables.push_back(prop); // Transparent renderables are deferred for later rendering
+		} else {
+			prop->render(elapsed_time, m_context);
+		}
+		glPopMatrix();
+	}
+
+	for(QList<IRenderable*>::iterator it = transparent_renderables.begin();
+		it != transparent_renderables.end();
+		it++) {
+		glPushMatrix();
+		(*it)->render(elapsed_time, m_context);
 		glPopMatrix();
 	}
 

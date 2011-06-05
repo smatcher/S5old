@@ -62,6 +62,8 @@ void Engine::init(int argc, char *argv[], QString mod_dir)
 
 	RENDER_MANAGER.setCurrentCamera(NULL);
 
+	QCoreApplication::processEvents();
+
 	initResourceManagers(mod_dir);
 }
 

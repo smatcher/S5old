@@ -22,6 +22,7 @@ protected:
 	Vector4f m_ambient;
 	Vector4f m_emission;
 	GLfloat  m_shininess;
+	bool     m_transparent;
 	ShaderProgram m_program;
 	QList<ShaderProgramData::UniformBase*> m_uniforms;
 
@@ -32,6 +33,7 @@ public:
 	virtual void unset();
 	virtual bool unload();
 	virtual QGLShaderProgram* program();
+	virtual bool isTransparent();
 };
 
 class XmlMaterialFactory : public IResourceFactory

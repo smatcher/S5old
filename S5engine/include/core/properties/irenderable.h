@@ -16,6 +16,7 @@ public:
 	virtual ~IRenderable();
 
 	virtual void render(double elapsed_time, GLWidget* context) = 0;
+	virtual bool isTransparent() {return false;}
 };
 
 #endif // IRENDERABLE_H

@@ -1,5 +1,5 @@
 #include "core/resources/xmlmaterial.h"
-#include <QtXml/QtXml>
+#include <QtXml>
 
 #include "core/resources/managers.h"
 
@@ -9,7 +9,8 @@ XmlMaterial::XmlMaterial(const QString& name, const QString& path, IResourceFact
 	m_specular(0.7,0.7,0.7,1.0),
 	m_ambient(0.7,0.7,0.7,1.0),
 	m_emission(0.0,0.0,0.0,0.0),
-	m_shininess(0.7)
+	m_shininess(0.7),
+	m_transparent(false)
 {}
 
 XmlMaterial::~XmlMaterial()
@@ -189,6 +190,13 @@ void XmlMaterialFactory::load(ResourceData* resource)
 			else
 				logWarn("expected float for shininess" << "in file" << xmlresource->m_path);
 		}
+		else if(tag == "transparent")
+		{
+			QDomNodeList content = nodes.at(i).childNodes();
+			bool val = content.at(0).nodeValue() == "true" ||
+					   content.at(0).nodeValue() == "1";
+			xmlresource->m_transparent= val;
+		}
 		else if(tag == "program")
 		{
 			QDomNodeList content = nodes.at(i).childNodes();
@@ -253,3 +261,7 @@ QGLShaderProgram* XmlMaterial::program()
 		return NULL;
 }
 
+bool XmlMaterial::isTransparent()
+{
+	return m_transparent;
+}
