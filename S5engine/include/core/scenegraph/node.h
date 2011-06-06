@@ -3,6 +3,7 @@
 
 #include "core/utils/parenting.h"
 #include "core/maths/transform.h"
+#include "core/maths/boundingvolume.h"
 #include "core/properties/propertyset.h"
 #include "core/framework/glwidget.h"
 #include "core/scenegraph/parentofnode.h"
@@ -21,6 +22,7 @@ class Node : public ParentOfNode, public ChildOf< ParentOfNode >, public Transfo
 
 private :
 	PropertySet m_properties;
+	BoundingVolume* m_bounding;
 
 	#ifdef WITH_TOOLS
 		NodeWidget* m_widget;

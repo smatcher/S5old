@@ -86,46 +86,42 @@ void RenderManager::render(double elapsed_time, SceneGraph* sg)
 {
 	QList<IRenderable*> transparent_renderables;
 
-	if(m_context == NULL)
+	if(m_context == NULL) {
 		return;
+	}
 
-	if(m_defaultBackground.type == SKYBOX)
-	{
+	if(m_defaultBackground.type == SKYBOX) {
 		setupProjection();
 		glLoadIdentity();
 		applyBackground();
-	}
-	else
-	{
+	} else {
 		glLoadIdentity();
 		applyBackground();
 		setupProjection();
 		glLoadIdentity();
 	}
 
-
-	if(m_camera != NULL)
+	if(m_camera != NULL) {
 		m_camera->applyTransform();
-	else
+	} else {
 		m_context->applyCamera();
+	}
 
 	//std::cout<< registeredManagees.count() << " Renderable nodes to render." << std::endl;
 
 	glEnable(GL_LIGHTING);
-	for(int index = 0; index < LIGHTING_MANAGER.managees().count(); index++)
-	{
+	for(int index = 0; index < LIGHTING_MANAGER.managees().count(); index++) {
 		LIGHTING_MANAGER.managees().at(index)->sendParameters(index);
 	}
 
-	for(int index = 0; index < registeredManagees.count(); index++)
-	{
+	for(QVector<IRenderable*>::iterator it = registeredManagees.begin();
+		it != registeredManagees.end();
+		it++) {
 		glPushMatrix();
-		IRenderable* prop = (IRenderable*)registeredManagees[index];
-
-		if(prop->isTransparent()){
-			transparent_renderables.push_back(prop); // Transparent renderables are deferred for later rendering
+		if((*it)->isTransparent()){
+			transparent_renderables.push_back(*it); // Transparent renderables are deferred for later rendering
 		} else {
-			prop->render(elapsed_time, m_context);
+			(*it)->render(elapsed_time, m_context);
 		}
 		glPopMatrix();
 	}
@@ -138,12 +134,10 @@ void RenderManager::render(double elapsed_time, SceneGraph* sg)
 		glPopMatrix();
 	}
 
-	if(m_drawDebug)
-	{
+	if(m_drawDebug)	{
 		glDisable(GL_LIGHTING);
 		glDisable(GL_TEXTURE_2D);
-		for(int i=0 ; i<sg->childCount() ; i++)
-		{
+		for(int i=0 ; i<sg->childCount() ; i++) {
 			sg->child(i)->drawDebug(m_context,true);
 		}
 		glEnable(GL_TEXTURE_2D);
@@ -153,8 +147,7 @@ void RenderManager::render(double elapsed_time, SceneGraph* sg)
 	m_context->swapBuffers();
 
 	GLenum error = glGetError();
-	if(error != GL_NO_ERROR)
-	{
+	if(error != GL_NO_ERROR) {
 		const char* msg = (char*)gluErrorString(error);
 		logError( QString(msg) );
 	}

@@ -6,4 +6,5 @@ build-debug-tools
 bin
 .sconsign.dblite
 scons_common.pyc
+screen.png
 

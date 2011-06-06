@@ -1,8 +1,11 @@
 #include <QtGui>
+#include <QPixmap>
 
 #include "core/framework/window.h"
 #include "core/framework/glwidget.h"
 #include "core/framework/engine.h"
+
+#include "core/log/log.h"
 
 #include <iostream>
 
@@ -22,8 +25,14 @@ AppWindow::~AppWindow()
 
 void AppWindow::keyPressEvent(QKeyEvent *e)
 {
-	if (e->key() == Qt::Key_Escape)
+	if (e->key() == Qt::Key_Escape) {
 		close();
+	} else if(e->key() == Qt::Key_F12) {
+		QImage screen = m_glWidget->grabFrameBuffer();
+		QPixmap shot = QPixmap::fromImage(screen);
+		shot.save("screen.png");
+		logInfo("Screenshot saved to screen.png");
+	}
 }
 
 void AppWindow::closeEvent(QCloseEvent *evt)
