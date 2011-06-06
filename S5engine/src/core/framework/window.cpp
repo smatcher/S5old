@@ -1,5 +1,6 @@
 #include <QtGui>
 #include <QPixmap>
+#include <QtConcurrentRun>
 
 #include "core/framework/window.h"
 #include "core/framework/glwidget.h"
@@ -8,6 +9,11 @@
 #include "core/log/log.h"
 
 #include <iostream>
+
+void saveWrapper(const QPixmap& pix, const QString& path)
+{
+	pix.save(path);
+}
 
 AppWindow::AppWindow(Engine* engine)
 {
@@ -30,7 +36,7 @@ void AppWindow::keyPressEvent(QKeyEvent *e)
 	} else if(e->key() == Qt::Key_F12) {
 		QImage screen = m_glWidget->grabFrameBuffer();
 		QPixmap shot = QPixmap::fromImage(screen);
-		shot.save("screen.png");
+		QtConcurrent::run(&saveWrapper,shot,QString("screen.png"));
 		logInfo("Screenshot saved to screen.png");
 	}
 }
