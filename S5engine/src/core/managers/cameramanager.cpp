@@ -20,15 +20,15 @@ CameraManager::~CameraManager()
 void CameraManager::onManageeAdded(Camera *managee)
 {
 	if(m_widget != NULL)
-	 m_widget->cameraAdded(managee);
+		m_widget->cameraAdded(managee);
 }
 
 RenderWidget* CameraManager::getDebugView()
 {
-    if(m_widget == NULL)
-        m_widget = new RenderWidget();
+	if(m_widget == NULL)
+		m_widget = new RenderWidget();
 
-    return m_widget;
+	return m_widget;
 }
 
 void CameraManager::widgetDestroyed()

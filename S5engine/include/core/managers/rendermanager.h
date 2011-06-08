@@ -14,24 +14,24 @@ class SceneGraph;
 
 class RenderManager : public Manager<IRenderable>
 {
-    friend class Singleton<RenderManager>;
+	friend class Singleton<RenderManager>;
 
 public :
 
-    enum BackgroundType
-    {
-        NO_CLEAR,
-        COLOR,
-        SINGLE_TEXTURE,
-        SKYBOX
-    };
+	enum BackgroundType
+	{
+		NO_CLEAR,
+		COLOR,
+		SINGLE_TEXTURE,
+		SKYBOX
+	};
 
-    struct Background
-    {
-        BackgroundType type;
-        Texture textures[6];
-        Vector3f color;
-    };
+	struct Background
+	{
+		BackgroundType type;
+		Texture textures[6];
+		Vector3f color;
+	};
 
 protected :
 	RenderManager();
@@ -39,12 +39,12 @@ protected :
 private :
 	GLWidget* m_context;
 	Camera* m_camera;
-    bool m_cameraChanged;
-    bool m_drawDebug;
-    Background m_defaultBackground;
+	bool m_cameraChanged;
+	bool m_drawDebug;
+	Background m_defaultBackground;
 
-    void setupProjection();
-    void applyBackground();
+	void setupProjection();
+	void applyBackground();
 
 public:
 	virtual ~RenderManager();
@@ -55,7 +55,7 @@ public:
 	void setCurrentCamera(Camera* cam);
 	void setDrawDebug(bool draw);
 
-    void setBackground(const Background& background);
+	void setBackground(const Background& background);
 
 	const Camera* getCurrentCamera();
 };

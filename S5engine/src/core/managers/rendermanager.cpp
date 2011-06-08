@@ -4,6 +4,7 @@
 #include "core/properties/irenderable.h"
 #include "core/properties/camera.h"
 #include "core/managers/lightingmanager.h"
+#include "core/managers/physicsmanager.h"
 #include "core/properties/light.h"
 
 #include <QtOpenGL>
@@ -142,6 +143,8 @@ void RenderManager::render(double elapsed_time, SceneGraph* sg)
 		}
 		glEnable(GL_TEXTURE_2D);
 		glEnable(GL_LIGHTING);
+		glLoadIdentity();
+		PHYSICS_MANAGER.debugDraw();
 	}
 
 	m_context->swapBuffers();

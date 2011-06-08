@@ -136,3 +136,11 @@ include/core/properties/light.h
 include/core/managers/lightingmanager.h
 src/core/properties/light.cpp
 src/core/managers/lightingmanager.cpp
+include/core/managers/physicsmanager.h
+src/core/managers/physicsmanager.cpp
+include/core/properties/physicobject.h
+src/core/properties/physicobject.cpp
+include/core/utils/GLDebugDrawer.h
+src/core/utils/GLDebugDrawer.cpp
+src/core/utils/GLDebugFont.cpp
+include/core/utils/GLDebugFont.h

@@ -6,6 +6,7 @@
 #include "core/maths/trigo.h"
 #include "core/properties/dummyupdatable.h"
 #include "core/properties/dummycontrolable.h"
+#include "core/properties/physicobject.h"
 #include "core/properties/qtlogo.h"
 #include "core/properties/camera.h"
 #include "core/properties/light.h"
@@ -142,11 +143,14 @@ int main(int argc, char *argv[])
 	nSand->setScale(Vector3d(10,10,10));
 	nWall->moveTo(Vector3d(0,0,-5));
 	nWall->setScale(Vector3d(10,1,1));
-	nBall->moveTo(Vector3d(1,0,-1));
+	nBall->moveTo(Vector3d(0,5,0));
 	nGarg->moveTo(Vector3d(-3,0,-5));
 	nGarg->setScale(Vector3d(2,1,2));
 	nDuck->rotate(Vector3d(0,1,0),137);
 	nDuckGrid->rotate(Vector3d(1,0,0),270);
+
+	nBall->addProperty(new PhysicObject(0.3));
+	nSand->addProperty(new PhysicObject(0.0));
 
 	// Beurk ! Mais je peux le faire alors je me prive pas ^^
 	//RENDER_MANAGER.setCurrentCamera(static_cast<Camera*>(nCamFollow->properties().child("Camera")));

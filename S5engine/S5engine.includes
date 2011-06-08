@@ -7,4 +7,5 @@
 /usr/include/qt4/QtCore
 /usr/include/qt4/QtOpenGL
 /usr/include/qt4/QtXml
+/usr/local/include/bullet
 ./include

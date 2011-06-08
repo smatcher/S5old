@@ -72,6 +72,13 @@ env.Append(LIBS=['-lopenal','-lalut'])
 env.Append(LIBPATH=['dep/assimp/lib'])
 env.Append(CPPPATH = ['dep/assimp/include'])
 env.Append(LIBS=['-lassimp'])
+# bullet
+env.Append(LIBS=
+		['BulletSoftBody',
+		'BulletDynamics',
+		'BulletCollision'])
+#		'BulletMath'])
+env.ParseConfig('pkg-config bullet --cflags --libs')
 
 SConscript('SConscript_S5engine','env')
 SConscript('SConscript_demo_game','env')
