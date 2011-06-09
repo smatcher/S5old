@@ -114,6 +114,10 @@ void StbImage::buildGLTexture()
 	}
 }
 
+stbi_uc* StbImage::getData() {
+	return this->m_data;
+}
+
 /*
 
   FACTORY

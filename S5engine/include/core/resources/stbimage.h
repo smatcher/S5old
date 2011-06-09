@@ -25,6 +25,8 @@ public:
 	virtual bool unload();
 
 	void buildGLTexture();
+
+	stbi_uc* getData();
 };
 
 class StbImageFactory : public IResourceFactory
