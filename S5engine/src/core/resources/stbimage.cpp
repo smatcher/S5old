@@ -118,6 +118,10 @@ stbi_uc* StbImage::getData() {
 	return this->m_data;
 }
 
+int StbImage::getComp() {
+	return this->m_comp;
+}
+
 /*
 
   FACTORY

@@ -27,6 +27,7 @@ public:
 	void buildGLTexture();
 
 	stbi_uc* getData();
+	int getComp();
 };
 
 class StbImageFactory : public IResourceFactory

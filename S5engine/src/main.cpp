@@ -9,6 +9,7 @@
 #include "core/properties/qtlogo.h"
 #include "core/properties/camera.h"
 #include "core/properties/light.h"
+#include "core/properties/terrainrenderer.h"
 #include "core/properties/soundemitter.h"
 #include "core/managers/rendermanager.h"
 #include "core/properties/grid.h"
@@ -44,12 +45,17 @@ int main(int argc, char *argv[])
 	Node* nBall = new Node("Ball");
 	Node* nLight = new Node("Light");
 
+	Node* nTerrain = new Node("Terrain");
+
 	nRot->addProperty(new IProperty());
 	nRot->addProperty(new DummyUpdatable());
 	nQt->addProperty(new QtLogo(engine.getGLW_TEMPORARY()));
 	nQt->addProperty(new Grid(1.0f, 1.0f, 40, 40));
 	nCam->addProperty(new Camera(70,1,200));
 	nLight->addProperty(new Light());
+
+	Texture heightmap = TEXTURE_MANAGER.get("heightmap");
+	nTerrain->addProperty(new TerrainRenderer(heightmap));
 
 	Mesh sphere = MESH_MANAGER.get("Sphere_16_32");
 	Material ball = MATERIAL_MANAGER.get("ball");

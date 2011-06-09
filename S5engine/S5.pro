@@ -48,7 +48,8 @@ SOURCES += \
 	src/core/resources/rawmesh.cpp \
 	src/core/utils/primitives.cpp \
 	src/core/resources/xmlmaterial.cpp \
-    src/core/resources/glslshader.cpp
+    src/core/resources/glslshader.cpp \
+    src/core/properties/terrainrenderer.cpp
 
 HEADERS  += \
 	include/core/properties/qtlogo.h \
@@ -122,7 +123,8 @@ HEADERS  += \
 	include/core/resources/rawmesh.h \
 	include/core/utils/primitives.h \
 	include/core/resources/xmlmaterial.h \
-    include/core/resources/glslshader.h
+    include/core/resources/glslshader.h \
+    include/core/properties/terrainrenderer.h
 
 INCLUDEPATH += \
 	include \
