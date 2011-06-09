@@ -36,12 +36,6 @@ void PhysicsManager::update(double elapsed)
 {
 	if(m_discreteDynamicsWorld != NULL)
 		m_discreteDynamicsWorld->stepSimulation(elapsed);
-
-	for(QVector<PhysicObject*>::iterator it = registeredManagees.begin();
-		it != registeredManagees.end();
-		it++) {
-		(*it)->onPhysicUpdate();
-	}
 }
 
 void PhysicsManager::onManageeLinked(PhysicObject *managee)

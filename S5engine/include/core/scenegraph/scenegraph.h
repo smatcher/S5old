@@ -11,11 +11,11 @@
 #endif
 
 class SceneGraph : public ParentOfNode
-{		
+{
 public:
-    SceneGraph();
+	SceneGraph();
 	virtual ~SceneGraph();
-	virtual ParentOfNode::TYPE type() {return ParentOfNode::SCENEGRAPH;}
+	virtual ParentOfNode::TYPE type() const {return ParentOfNode::SCENEGRAPH;}
 
 #ifdef WITH_TOOLS
 		SceneGraphView* getDebugView();

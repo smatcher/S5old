@@ -22,6 +22,7 @@ public:
 	virtual ~IProperty();
 
 	Node* node();
+	const Node* node() const;
 
 	// Debug
 	virtual void drawDebug(const GLWidget* widget) const;

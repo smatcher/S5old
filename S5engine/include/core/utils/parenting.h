@@ -54,6 +54,7 @@ public :
 	void setName(const QString& name);
 	/// Parent getter
 	Parent* parent();
+	const Parent* parent() const;
 	/// Index from parent
 	int childNumber();
 	/// Unlink from the parent, the object is not destroyed

@@ -14,7 +14,7 @@ public :
 		SCENEGRAPH
 	};
 
-	virtual TYPE type() = 0;
+	virtual TYPE type() const = 0;
 };
 
 #endif // PARENTOFNODE_H

@@ -8,7 +8,7 @@
 	#include "tools/widgets/nodewidget.h"
 #endif
 
-Node::Node(const QString& name) : ChildOf<ParentOfNode>(name), Transform<double>(), m_properties(this)
+Node::Node(const QString& name) : ChildOf<ParentOfNode>(name), Transform<float>(), m_properties(this)
 {
 	#ifdef WITH_TOOLS
 		m_widget = NULL;
@@ -20,25 +20,25 @@ Node::~Node()
 
 }
 
-Matrix4d Node::globalTransform(bool with_scale)
+Matrix4f Node::getGlobalTransform(bool with_scale) const
 {
-	Matrix4d ret;
+	Matrix4f ret;
 
-	Matrix4d self_mat;
+	Matrix4f self_mat;
 
 	if(with_scale) {
-		Transformd* trans = static_cast<Transformd*>(this);
-		self_mat = Matrix4d(*trans);
+		const Transformf* trans = static_cast<const Transformf*>(this);
+		self_mat = Matrix4f(*trans);
 	} else {
-		self_mat = Matrix4d(rotation,position);
+		self_mat = Matrix4f(rotation,position);
 	}
 
 	if(parent() != NULL)
 	{
 		if(parent()->type() == ParentOfNode::NODE)
 		{
-			Node* parentNode = static_cast<Node*>(parent());
-			ret = parentNode->globalTransform(with_scale) * self_mat;
+			const Node* parentNode = static_cast<const Node*>(parent());
+			ret = parentNode->getGlobalTransform(with_scale) * self_mat;
 		}
 		else
 		{
@@ -50,6 +50,24 @@ Matrix4d Node::globalTransform(bool with_scale)
 		logWarn("trying to access globalTransform on unlinked node");
 	}
 	return ret;
+}
+
+void Node::setGlobalTransform(Transformf transform)
+{
+	if(parent() != NULL && parent()->type() == ParentOfNode::NODE)
+	{
+		Node* parentNode = static_cast<const Node*>(parent());
+		Transformf parent_trans(parentNode->getGlobalTransform(false));
+		parent_trans.invert();
+		transform *= parent_trans;
+		rotation = transform.getRotation();
+		position = transform.getPosition();
+	}
+	else
+	{
+		rotation = transform.getRotation();
+		position = transform.getPosition();
+	}
 }
 
 void Node::addProperty(IProperty *property)

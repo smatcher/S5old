@@ -30,8 +30,8 @@ void GLDebugDrawer::drawSphere (const btVector3& p, btScalar radius, const btVec
 	glPushMatrix ();
 	glTranslatef (p.getX(), p.getY(), p.getZ());
 
-	int lats = 5;
-	int longs = 5;
+	int lats = 8;
+	int longs = 8;
 
 	int i, j;
 	for(i = 0; i <= lats; i++) {

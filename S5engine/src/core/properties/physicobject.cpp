@@ -6,9 +6,9 @@
 
 #include "core/log/log.h"
 
-PhysicObject::PhysicObject(float mass, const QString& name) : IProperty(name), Managee<PhysicsManager>()
+PhysicObject::PhysicObject(PhysicObject::Properties properties, const QString& name) : IProperty(name), Managee<PhysicsManager>()
 {
-	m_mass = mass;
+	m_properties = properties;
 }
 
 PhysicObject::~PhysicObject()
@@ -26,7 +26,8 @@ void PhysicObject::drawDebug(const GLWidget*) const
 
 void PhysicObject::onLinked(PropertySet*)
 {
-	btScalar mass = m_mass;
+	btScalar mass = m_properties.mass;
+	btScalar restitution = m_properties.restitution;
 	btVector3 localInertia(0,0,0);
 	btTransform myTransform;
 	/*
@@ -34,20 +35,38 @@ void PhysicObject::onLinked(PropertySet*)
 	myTransform.setOrigin( btVector3(0,5,0) );
 	*/
 	btScalar mat[16];
-	Matrix4d nodeMat = node()->globalTransform(false);
+	Matrix4d nodeMat = node()->getGlobalTransform(false);
 	for(int i=0 ;i<16 ; i++) {
 		mat[i] = nodeMat[i];
 	}
 	myTransform.setFromOpenGLMatrix(mat);
-	Vector3d nodeScale = node()->getScale();
+	Vector3f nodeScale = node()->getScale();
 	btVector3 size(nodeScale.x,nodeScale.y,nodeScale.z);
 	size *= 0.5;
-	m_shape = new btBoxShape(size);
+
+	switch(m_properties.shape) {
+		case SPHERE:
+			m_shape = new btSphereShape(size.length());
+			break;
+		case MESH:
+		default :
+			m_shape = new btBoxShape(size);
+	}
 	if(mass)
+	{
 		m_shape->calculateLocalInertia( mass, localInertia );
-	m_motion = new btDefaultMotionState(myTransform);
-	btRigidBody::btRigidBodyConstructionInfo myBoxInfo(mass, m_motion, m_shape, localInertia);
+	}
+
+	btRigidBody::btRigidBodyConstructionInfo myBoxInfo(mass, this, m_shape, localInertia);
 	m_body = new btRigidBody(myBoxInfo);
+	m_body->setRestitution(restitution);
+
+	if(mass == 0.0 && m_properties.is_kinematic)
+	{
+		m_body->setCollisionFlags( m_body->getCollisionFlags() |
+		btCollisionObject::CF_KINEMATIC_OBJECT);
+		m_body->setActivationState(DISABLE_DEACTIVATION);
+	}
 
 	PHYSICS_MANAGER.onManageeLinked(this);
 }
@@ -56,10 +75,24 @@ void PhysicObject::onUnlinked(PropertySet *)
 {
 }
 
-void PhysicObject::onPhysicUpdate()
+void PhysicObject::getWorldTransform(btTransform &worldTrans) const
 {
-	btScalar matrix[16];
-	m_motion->m_graphicsWorldTrans.getOpenGLMatrix(matrix);
-	node()->moveTo(Vector3d(matrix[12],matrix[13],matrix[14]));
+	btScalar mat[16];
+	Matrix4d nodeMat = node()->getGlobalTransform(false);
+	for(int i=0 ;i<16 ; i++) {
+		mat[i] = nodeMat[i];
+	}
+	worldTrans.setFromOpenGLMatrix(mat);
 }
 
+void PhysicObject::setWorldTransform(const btTransform &worldTrans)
+{
+	/*
+	btScalar matrix[16];
+	worldTrans.getOpenGLMatrix(matrix);
+	node()->moveTo(Vector3f(matrix[12],matrix[13],matrix[14]));
+	*/
+	btScalar matrix[16];
+	worldTrans.getOpenGLMatrix(matrix);
+	node()->setGlobalTransform(Transformf(Matrix4f(matrix)));
+}

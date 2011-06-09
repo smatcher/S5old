@@ -131,14 +131,14 @@ void Camera::drawDebug(const GLWidget* widget) const
 
 void Camera::applyTransform()
 {
-	node()->globalTransform().getInverse().glMultd();
+	node()->getGlobalTransform().getInverse().glMultd();
 }
 
 void Camera::applyOnlyRotation()
 {
-	Transformd trans(node()->globalTransform());
+	Transformf trans(node()->getGlobalTransform());
 	Matrix3d rotation = trans.getRotation();
-	Transformd transform(rotation.getInverse(),Vector3d(),Vector3d(1,1,1));
+	Transformf transform(rotation.getInverse(),Vector3f(),Vector3f(1,1,1));
 	transform.glMultd();
 }
 

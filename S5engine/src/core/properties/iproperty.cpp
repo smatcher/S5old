@@ -15,11 +15,20 @@ IProperty::~IProperty()
 
 Node* IProperty::node()
 {
-    PropertySet* _parent = parent();
-    if(_parent != NULL)
-        return parent()->node();
-    else
-        return NULL;
+	PropertySet* _parent = parent();
+	if(_parent != NULL)
+		return parent()->node();
+	else
+		return NULL;
+}
+
+const Node* IProperty::node() const
+{
+	const PropertySet* _parent = parent();
+	if(_parent != NULL)
+		return parent()->node();
+	else
+		return NULL;
 }
 
 void IProperty::drawDebug(const GLWidget*) const

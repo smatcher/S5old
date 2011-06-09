@@ -121,38 +121,46 @@ int main(int argc, char *argv[])
 	sg->link(nSand);
 	nRot->link(nCam);
 
-	nRot->moveTo(Vector3d(0,0,0));
-	nQt->moveTo(Vector3d(0,-0.5,0));
-	nQt->rotate(Vector3d(1,0,0),90);
-	nCam->moveTo(Vector3d(0,1.0,1.6));
-	nCam->rotate(Vector3d(1,0,0),330);
-	nCamFollow->moveTo(Vector3d(0,2,3));
-	nCamFollow->rotate(Vector3d(1,0,0),345);
+	nRot->moveTo(Vector3f(0,0,0));
+	nQt->moveTo(Vector3f(0,-0.5,0));
+	nQt->rotate(Vector3f(1,0,0),90);
+	nCam->moveTo(Vector3f(0,1.0,1.6));
+	nCam->rotate(Vector3f(1,0,0),330);
+	nCamFollow->moveTo(Vector3f(0,2,3));
+	nCamFollow->rotate(Vector3f(1,0,0),345);
 
-	nUni->rotate(Vector3d(0,0,-1),90);
-	nUni->rotate(Vector3d(-1,0,0),90);
-	nHead->moveTo(Vector3d(0,0.5,0));
-	nUni->moveTo(Vector3d(1.5,0,0));
-	nStar->moveTo(Vector3d(-1.5,0,0));
-	nStar->rotate(Vector3d(0,0,1),270);
-	nLight->moveTo(Vector3d(0,0,1));
-	nLight2->moveTo(Vector3d(0,0,-1));
+	nUni->rotate(Vector3f(0,0,-1),90);
+	nUni->rotate(Vector3f(-1,0,0),90);
+	nHead->moveTo(Vector3f(0,0.5,0));
+	nUni->moveTo(Vector3f(1.5,0,0));
+	nStar->moveTo(Vector3f(-1.5,0,0));
+	nStar->rotate(Vector3f(0,0,1),270);
+	nLight->moveTo(Vector3f(0,0,1));
+	nLight2->moveTo(Vector3f(0,0,-1));
 
-	nSand->moveTo(Vector3d(0,-0.5,0));
-	nSand->rotate(Vector3d(1,0,0),270);
-	nSand->setScale(Vector3d(10,10,0.1));
-	nWall->moveTo(Vector3d(0,0,-5));
-	nWall->setScale(Vector3d(10,1,1));
-	nBall->moveTo(Vector3d(0,5,0));
-	nGarg->moveTo(Vector3d(-3,0,-5));
-	nGarg->setScale(Vector3d(2,1,2));
-	nDuck->moveTo(Vector3d(0,2,0.8));
-	nDuck->rotate(Vector3d(0,1,0),-27);
-	nDuckGrid->rotate(Vector3d(1,0,0),270);
+	nSand->moveTo(Vector3f(0,-0.5,0));
+	nSand->rotate(Vector3f(1,0,0),270);
+	nSand->setScale(Vector3f(10,10,0.01));
+	nWall->moveTo(Vector3f(0,0,-5));
+	nWall->setScale(Vector3f(10,1,0.01));
+	nBall->moveTo(Vector3f(0,5,0));
+	nGarg->moveTo(Vector3f(-3,0,-5));
+	nGarg->setScale(Vector3f(2,1,2));
+	nDuck->moveTo(Vector3f(0,0.5,-1.8));
+	nDuck->rotate(Vector3f(0,1,0),127);
+	nDuckGrid->rotate(Vector3f(1,0,0),270);
 
-	nBall->addProperty(new PhysicObject(0.3));
-	nDuck->addProperty(new PhysicObject(0.3));
-	nSand->addProperty(new PhysicObject(0.0));
+	PhysicObject::Properties prop;
+	nSand->addProperty(new PhysicObject(prop));
+	nWall->addProperty(new PhysicObject(prop));
+	prop.is_kinematic = true;
+	nDuck->addProperty(new PhysicObject(prop));
+
+	prop.is_kinematic = false;
+	prop.mass = 0.3;
+	prop.restitution = 0.85;
+	prop.shape = PhysicObject::SPHERE;
+	nBall->addProperty(new PhysicObject(prop));
 
 	// Beurk ! Mais je peux le faire alors je me prive pas ^^
 	//RENDER_MANAGER.setCurrentCamera(static_cast<Camera*>(nCamFollow->properties().child("Camera")));

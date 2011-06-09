@@ -10,7 +10,7 @@ class TransformWidget : public QGroupBox
 	Q_OBJECT
 
 public :
-	TransformWidget(Transformd& transform);
+	TransformWidget(Transformf& transform);
 	virtual ~TransformWidget();
 
 	QSize sizeHint() const;
@@ -18,7 +18,7 @@ public :
 	virtual void updateData();
 
 private :
-	Transformd& m_transform;
+	Transformf& m_transform;
 
 	QLineEdit *m_x,  *m_y,  *m_z;
 	QLineEdit *m_rx, *m_ry, *m_rz;

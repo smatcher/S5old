@@ -1,13 +1,13 @@
 #include "tools/widgets/transformwidget.h"
 #include <QtGui>
 
-TransformWidget::TransformWidget(Transformd &transform) : QGroupBox(tr("Transform")), m_transform(transform)
+TransformWidget::TransformWidget(Transformf &transform) : QGroupBox(tr("Transform")), m_transform(transform)
 {
 	setSizePolicy(QSizePolicy::Expanding,QSizePolicy::Maximum);
 
 	QLayout* layout = new QVBoxLayout();
 
-	Vector3d pos = m_transform.getPosition();
+	Vector3f pos = m_transform.getPosition();
 
 	m_x = new QLineEdit(QString().setNum(pos.x,'g',3));
 	m_x->setDisabled(true);
@@ -17,7 +17,7 @@ TransformWidget::TransformWidget(Transformd &transform) : QGroupBox(tr("Transfor
 	m_z->setDisabled(true);
 
 
-	Vector3d rot = m_transform.toEuler();
+	Vector3f rot = m_transform.toEuler();
 	m_rx = new QLineEdit(QString().setNum(rot.x,'g',3));
 	m_rx->setDisabled(true);
 	m_ry = new QLineEdit(QString().setNum(rot.y,'g',3));
@@ -56,12 +56,12 @@ QSize TransformWidget::sizeHint() const
 
 void TransformWidget::updateData()
 {
-	Vector3d pos = m_transform.getPosition();
+	Vector3f pos = m_transform.getPosition();
 	m_x->setText(QString().setNum(pos.x,'g',3));
 	m_y->setText(QString().setNum(pos.y,'g',3));
 	m_z->setText(QString().setNum(pos.z,'g',3));
 
-	Vector3d rot = m_transform.toEuler();
+	Vector3f rot = m_transform.toEuler();
 	m_rx->setText(QString().setNum(rot.x,'g',3));
 	m_ry->setText(QString().setNum(rot.y,'g',3));
 	m_rz->setText(QString().setNum(rot.z,'g',3));

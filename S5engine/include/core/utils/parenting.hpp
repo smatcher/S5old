@@ -150,6 +150,12 @@ Parent* ChildOf<Parent>::parent()
 }
 
 template<class Parent>
+const Parent* ChildOf<Parent>::parent() const
+{
+	return m_parent;
+}
+
+template<class Parent>
 int ChildOf<Parent>::childNumber()
 {
 	int ret = 0;

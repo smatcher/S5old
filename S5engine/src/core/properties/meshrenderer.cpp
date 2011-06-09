@@ -17,7 +17,7 @@ void MeshRenderer::render(double elapsed_time, GLWidget* context)
 	// The program is passed to the mesh in order to set the attributes
 	QGLShaderProgram* program = NULL;
 
-	node()->globalTransform().glMultf();
+	node()->getGlobalTransform().glMultf();
 
 	if(m_material.isValid())
 	{

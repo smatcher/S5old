@@ -62,13 +62,13 @@ int main(int argc, char *argv[])
 	nRot->link(nCam);
 	nRot->link(nLight);
 
-	nRot->moveTo(Vector3d(0,0,0));
-	nQt->moveTo(Vector3d(0,-0.5,0));
-	nQt->rotate(Vector3d(1,0,0),90);
-	nCam->moveTo(Vector3d(0,1,2));
-	nCam->rotate(Vector3d(1,0,0),330);
+	nRot->moveTo(Vector3f(0,0,0));
+	nQt->moveTo(Vector3f(0,-0.5,0));
+	nQt->rotate(Vector3f(1,0,0),90);
+	nCam->moveTo(Vector3f(0,1,2));
+	nCam->rotate(Vector3f(1,0,0),330);
 
-	nLight->moveTo(Vector3d(0,0,1));
+	nLight->moveTo(Vector3f(0,0,1));
 
 	// Beurk ! Mais je peux le faire alors je me prive pas ^^
 	RENDER_MANAGER.setCurrentCamera(static_cast<Camera*>(nCam->properties().child("Camera")));

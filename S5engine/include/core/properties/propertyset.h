@@ -16,6 +16,7 @@ public:
 	virtual ~PropertySet();
 
 	Node* node();
+	const Node* node() const;
 };
 
 #endif // PROPERTYSET_H

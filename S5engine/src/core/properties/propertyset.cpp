@@ -14,3 +14,8 @@ Node* PropertySet::node()
 {
 	return m_node;
 }
+
+const Node* PropertySet::node() const
+{
+	return m_node;
+}

@@ -17,7 +17,7 @@ original_rotation_x(rotation_x), original_rotation_y(rotation_y)
 	for(int i=0 ; i<6 ; i++)
 		keys[i] = false;
 
-	target = Vector3d(-3,3,-3);
+	target = Vector3f(-3,3,-3);
 }
 
 // Destructeur
@@ -77,21 +77,21 @@ void DebugCamera::lookAt()
 	lastTime = time;
 
 	// Compute translation
-	Transformd temp;
-	temp.rotate(Vector3d(1,0,0),-rotation_x);
-	temp.rotate(Vector3d(0,1,0),-rotation_y);
+	Transformf temp;
+	temp.rotate(Vector3f(1,0,0),-rotation_x);
+	temp.rotate(Vector3f(0,1,0),-rotation_y);
 	if(keys[UP])
-		target = target + COEFF_TRANSLATION*elapsed*temp.apply(Vector3d(0,0,-1));
+		target = target + COEFF_TRANSLATION*elapsed*temp.apply(Vector3f(0,0,-1));
 	if(keys[DOWN])
-		target = target + COEFF_TRANSLATION*elapsed*temp.apply(Vector3d(0,0,1));
+		target = target + COEFF_TRANSLATION*elapsed*temp.apply(Vector3f(0,0,1));
 	if(keys[LEFT])
-		target = target + COEFF_TRANSLATION*elapsed*temp.apply(Vector3d(-1,0,0));
+		target = target + COEFF_TRANSLATION*elapsed*temp.apply(Vector3f(-1,0,0));
 	if(keys[RIGHT])
-		target = target + COEFF_TRANSLATION*elapsed*temp.apply(Vector3d(1,0,0));
+		target = target + COEFF_TRANSLATION*elapsed*temp.apply(Vector3f(1,0,0));
 	if(keys[RCTRL])
-		target = target + COEFF_TRANSLATION*elapsed*temp.apply(Vector3d(0,-1,0));
+		target = target + COEFF_TRANSLATION*elapsed*temp.apply(Vector3f(0,-1,0));
 	if(keys[RSHIFT])
-		target = target + COEFF_TRANSLATION*elapsed*temp.apply(Vector3d(0,1,0));
+		target = target + COEFF_TRANSLATION*elapsed*temp.apply(Vector3f(0,1,0));
 
 	// Apply matrix
 	glRotated(rotation_x, 1.0, 0.0, 0.0);
@@ -103,8 +103,8 @@ void DebugCamera::lookAt()
 
 void DebugCamera::rotateOnly()
 {
-    glRotated(rotation_x, 1.0, 0.0, 0.0);
-    glRotated(rotation_y, 0.0, 1.0, 0.0);
+	glRotated(rotation_x, 1.0, 0.0, 0.0);
+	glRotated(rotation_y, 0.0, 1.0, 0.0);
 }
 
 // Retour aux valeurs par défaut

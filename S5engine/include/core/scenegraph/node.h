@@ -14,7 +14,7 @@ class GLWidget;
 	class NodeWidget;
 #endif
 
-class Node : public ParentOfNode, public ChildOf< ParentOfNode >, public Transform<double>
+class Node : public ParentOfNode, public ChildOf< ParentOfNode >, public Transform<float>
 {
 	#ifdef WITH_TOOLS
 		friend class NodeWidget;
@@ -32,12 +32,13 @@ private :
 public:
 	Node(const QString& name = "Anon Node");
 	virtual ~Node();
-	virtual ParentOfNode::TYPE type() {return ParentOfNode::NODE;}
+	virtual ParentOfNode::TYPE type() const {return ParentOfNode::NODE;}
 
 	PropertySet& properties();
 	const PropertySet& properties() const;
 
-	Matrix4d globalTransform(bool with_scale=true);
+	Matrix4f getGlobalTransform(bool with_scale=true) const;
+	void setGlobalTransform(Transformf transform);
 
 	void addProperty(IProperty* property);
 
