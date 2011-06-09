@@ -18,28 +18,8 @@ PhysicsManager::PhysicsManager()
 	);
 	m_discreteDynamicsWorld->setGravity(btVector3(0,-9.81,0));
 
-	// Forme en tant que boite
-	btCollisionShape* shape_sol = new btBoxShape( btVector3(10,1,10) );
-
-	btTransform myTransform;
-	myTransform.setIdentity();
-
-	// Position du sol
-	myTransform.setOrigin( btVector3(0,-2,0) );
-	btVector3 localInertiaSol(0,0,0);
-
-	btScalar mass = 0; // Le fait que le poids de cet objet soit zéro le rends statique
-
-	btMotionState* myMotionState_Sol = new btDefaultMotionState(myTransform);
-
-	btRigidBody::btRigidBodyConstructionInfo sol_info( mass, myMotionState_Sol, shape_sol, localInertiaSol );
-
-	btRigidBody* body_sol = new btRigidBody(sol_info);
-
-	// On ajoute le sol dans le monde Bullet
-	m_discreteDynamicsWorld->addRigidBody(body_sol);
-
 	m_debug = new GLDebugDrawer();
+	m_debug->setDebugMode(btIDebugDraw::DBG_DrawWireframe);
 	m_discreteDynamicsWorld->setDebugDrawer(m_debug);
 }
 

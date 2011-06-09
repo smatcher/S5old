@@ -2,6 +2,8 @@
 #include "QtOpenGL"
 #include <QColor>
 
+#include "core/log/log.h"
+
 #ifdef WITH_TOOLS
 	#include "tools/widgets/nodewidget.h"
 #endif
@@ -18,22 +20,35 @@ Node::~Node()
 
 }
 
-Matrix4d Node::globalTransform()
+Matrix4d Node::globalTransform(bool with_scale)
 {
 	Matrix4d ret;
 
-	Transformd* trans = static_cast<Transformd*>(this);
+	Matrix4d self_mat;
 
-	if(parent()->type() == ParentOfNode::NODE)
+	if(with_scale) {
+		Transformd* trans = static_cast<Transformd*>(this);
+		self_mat = Matrix4d(*trans);
+	} else {
+		self_mat = Matrix4d(rotation,position);
+	}
+
+	if(parent() != NULL)
 	{
-		Node* parentNode = static_cast<Node*>(parent());
-		ret = parentNode->globalTransform() * (Matrix4d)(*trans);
+		if(parent()->type() == ParentOfNode::NODE)
+		{
+			Node* parentNode = static_cast<Node*>(parent());
+			ret = parentNode->globalTransform(with_scale) * self_mat;
+		}
+		else
+		{
+			ret = self_mat;
+		}
 	}
 	else
 	{
-		ret = (*trans);
+		logWarn("trying to access globalTransform on unlinked node");
 	}
-
 	return ret;
 }
 

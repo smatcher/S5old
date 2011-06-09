@@ -34,13 +34,14 @@ void PhysicObject::onLinked(PropertySet*)
 	myTransform.setOrigin( btVector3(0,5,0) );
 	*/
 	btScalar mat[16];
-	Matrix4d nodeMat = node()->globalTransform();
+	Matrix4d nodeMat = node()->globalTransform(false);
 	for(int i=0 ;i<16 ; i++) {
 		mat[i] = nodeMat[i];
 	}
 	myTransform.setFromOpenGLMatrix(mat);
 	Vector3d nodeScale = node()->getScale();
 	btVector3 size(nodeScale.x,nodeScale.y,nodeScale.z);
+	size *= 0.5;
 	m_shape = new btBoxShape(size);
 	if(mass)
 		m_shape->calculateLocalInertia( mass, localInertia );
@@ -60,6 +61,5 @@ void PhysicObject::onPhysicUpdate()
 	btScalar matrix[16];
 	m_motion->m_graphicsWorldTrans.getOpenGLMatrix(matrix);
 	node()->moveTo(Vector3d(matrix[12],matrix[13],matrix[14]));
-	debug("PHYSIC",matrix[12] << matrix[13] << matrix[14]);
 }
 

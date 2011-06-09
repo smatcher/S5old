@@ -141,10 +141,9 @@ void RenderManager::render(double elapsed_time, SceneGraph* sg)
 		for(int i=0 ; i<sg->childCount() ; i++) {
 			sg->child(i)->drawDebug(m_context,true);
 		}
+		PHYSICS_MANAGER.debugDraw();
 		glEnable(GL_TEXTURE_2D);
 		glEnable(GL_LIGHTING);
-		glLoadIdentity();
-		PHYSICS_MANAGER.debugDraw();
 	}
 
 	m_context->swapBuffers();

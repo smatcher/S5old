@@ -37,7 +37,7 @@ public:
 	PropertySet& properties();
 	const PropertySet& properties() const;
 
-	Matrix4d globalTransform();
+	Matrix4d globalTransform(bool with_scale=true);
 
 	void addProperty(IProperty* property);
 

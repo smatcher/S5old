@@ -140,21 +140,23 @@ int main(int argc, char *argv[])
 
 	nSand->moveTo(Vector3d(0,-0.5,0));
 	nSand->rotate(Vector3d(1,0,0),270);
-	nSand->setScale(Vector3d(10,10,10));
+	nSand->setScale(Vector3d(10,10,0.1));
 	nWall->moveTo(Vector3d(0,0,-5));
 	nWall->setScale(Vector3d(10,1,1));
 	nBall->moveTo(Vector3d(0,5,0));
 	nGarg->moveTo(Vector3d(-3,0,-5));
 	nGarg->setScale(Vector3d(2,1,2));
-	nDuck->rotate(Vector3d(0,1,0),137);
+	nDuck->moveTo(Vector3d(0,2,0.8));
+	nDuck->rotate(Vector3d(0,1,0),-27);
 	nDuckGrid->rotate(Vector3d(1,0,0),270);
 
 	nBall->addProperty(new PhysicObject(0.3));
+	nDuck->addProperty(new PhysicObject(0.3));
 	nSand->addProperty(new PhysicObject(0.0));
 
 	// Beurk ! Mais je peux le faire alors je me prive pas ^^
 	//RENDER_MANAGER.setCurrentCamera(static_cast<Camera*>(nCamFollow->properties().child("Camera")));
-	RENDER_MANAGER.setCurrentCamera(static_cast<Camera*>(nCam->properties().child("Camera")));
+	RENDER_MANAGER.setCurrentCamera(static_cast<Camera*>(nCamFollow->properties().child("Camera")));
 	RenderManager::Background background;
 	background.type = RenderManager::SKYBOX;
 	background.color = Vector3f(1,1,0);
