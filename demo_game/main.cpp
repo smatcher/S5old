@@ -69,15 +69,15 @@ int main(int argc, char *argv[])
 	Node* nGarg = new Node("Gargoyle");
 	Node* nWall = new Node("Wall");
 	Node* nDuck = new Node("Duck");
-	Node* nDuckGrid = new Node("Grid");
+	//Node* nDuckGrid = new Node("Grid");
 	Node* nSand = new Node("Sand");
 	Node* nTerrain = new Node("Terrain");
 
 	nRot->addProperty(new IProperty());
 //	nRot->addProperty(new DummyUpdatable());
 //	nQt->addProperty(new QtLogo(engine.getGLW_TEMPORARY()));
-	nQt->addProperty(new Grid(1.0f, 1.0f, 40, 40));
-	nDuckGrid->addProperty(new Grid(1.0f, 1.0f, 40, 40));
+//	nQt->addProperty(new Grid(1.0f, 1.0f, 40, 40));
+	//nDuckGrid->addProperty(new Grid(1.0f, 1.0f, 40, 40));
 	nCam->addProperty(new Camera(70,1,200));
 	nCamFollow->addProperty(new Camera(90,1,200));
 	nHead->addProperty(new DummyUpdatable());
@@ -85,7 +85,7 @@ int main(int argc, char *argv[])
 	//nLight2->addProperty(new Light());
 
 	Texture heightmap = TEXTURE_MANAGER.get("heightmap.bmp");
-	nTerrain->addProperty(new TerrainRenderer(heightmap));
+	nTerrain->addProperty(new TerrainRenderer(heightmap, 10.0f));
 
 	Mesh plane = MESH_MANAGER.get("Plane");
 	Mesh cube = MESH_MANAGER.get("Cube");
@@ -104,13 +104,13 @@ int main(int argc, char *argv[])
 	nBall->addProperty(new MeshRenderer(sphere,ball));
 	//nUni->addProperty(new MeshRenderer(cube,unicorn));
 	nGarg->addProperty(new MeshRenderer(cube,gargoyle));
-	nWall->addProperty(new MeshRenderer(plane,gargoyle));
-	nSand->addProperty(new MeshRenderer(plane,sand));
+	nWall->addProperty(new MeshRenderer(cube,gargoyle));
+	nSand->addProperty(new MeshRenderer(cube,sand));
 	nDuck->addProperty(new DummyControlable());
 	nDuck->addProperty(new SoundEmitter(sample));
 	nDuck->link(nCamFollow);
 	nDuck->link(nHead);
-	nDuck->link(nDuckGrid);
+	//nDuck->link(nDuckGrid);
 
 	nHead->link(nStar);
 	nHead->link(nLight);
@@ -154,7 +154,7 @@ int main(int argc, char *argv[])
 	nGarg->setScale(Vector3f(2,1,2));
 	nDuck->moveTo(Vector3f(0,0.5,-1.8));
 	nDuck->rotate(Vector3f(0,1,0),127);
-	nDuckGrid->rotate(Vector3f(1,0,0),270);
+	//nDuckGrid->rotate(Vector3f(1,0,0),270);
 
 	PhysicObject::Properties prop;
 	nSand->addProperty(new PhysicObject(prop));
@@ -163,7 +163,7 @@ int main(int argc, char *argv[])
 	nDuck->addProperty(new PhysicObject(prop));
 
 	prop.is_kinematic = false;
-	prop.mass = 0.3;
+	prop.mass = 1.0;
 	prop.restitution = 0.85;
 	prop.shape = PhysicObject::SPHERE;
 	nBall->addProperty(new PhysicObject(prop));

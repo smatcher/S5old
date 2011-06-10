@@ -46,7 +46,7 @@ void PhysicObject::onLinked(PropertySet*)
 
 	switch(m_properties.shape) {
 		case SPHERE:
-			m_shape = new btSphereShape(size.length());
+			m_shape = new btSphereShape(nodeScale.x/2);
 			break;
 		case MESH:
 		default :

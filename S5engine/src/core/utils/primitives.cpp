@@ -68,7 +68,7 @@ PrimitiveMesh* PrimitiveMesh::buildCube()
 		 0, 1, 0,  0, 1, 0,  0, 1, 0,  0, 1, 0  // v4-v7-v6-v5
 	};
 
-// texcoord array
+	// texcoord array
 	const GLfloat texcoords[] = {
 		 1, 1,  0, 1,  0, 0,  1, 0, // v0-v1-v2-v3
 		 0, 1,  0, 0,  1, 0,  1, 1, // v0-v3-v4-v5
