@@ -45,7 +45,6 @@ int main(int argc, char *argv[])
 	Node* nBall = new Node("Ball");
 	Node* nLight = new Node("Light");
 
-	Node* nTerrain = new Node("Terrain");
 
 	nRot->addProperty(new IProperty());
 	nRot->addProperty(new DummyUpdatable());
@@ -54,8 +53,6 @@ int main(int argc, char *argv[])
 	nCam->addProperty(new Camera(70,1,200));
 	nLight->addProperty(new Light());
 
-	Texture heightmap = TEXTURE_MANAGER.get("heightmap");
-	nTerrain->addProperty(new TerrainRenderer(heightmap));
 
 	Mesh sphere = MESH_MANAGER.get("Sphere_16_32");
 	Material ball = MATERIAL_MANAGER.get("ball");

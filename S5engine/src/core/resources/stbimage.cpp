@@ -109,8 +109,11 @@ void StbImage::buildGLTexture()
 
 		m_hasgltex = true;
 
+		/*TODO: supprimer l'image ou en fonction d'un flag, en attendant on la garde :D */
+		/*
 		stbi_image_free(m_data);
 		m_data = NULL;
+		*/
 	}
 }
 

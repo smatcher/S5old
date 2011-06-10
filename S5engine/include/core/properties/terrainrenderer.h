@@ -12,7 +12,9 @@ public:
 	bool isTransparent() {return false;}
 
 private:
-	float* heightmap;
+	float* m_heightmap;
+	int m_height;
+	int m_width;
 };
 
 #endif // TERRAIN_H

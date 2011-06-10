@@ -11,6 +11,7 @@
 #include "core/properties/camera.h"
 #include "core/properties/light.h"
 #include "core/properties/soundemitter.h"
+#include "core/properties/terrainrenderer.h"
 #include "core/managers/rendermanager.h"
 #include "core/properties/grid.h"
 #ifdef Q_WS_X11
@@ -70,6 +71,7 @@ int main(int argc, char *argv[])
 	Node* nDuck = new Node("Duck");
 	Node* nDuckGrid = new Node("Grid");
 	Node* nSand = new Node("Sand");
+	Node* nTerrain = new Node("Terrain");
 
 	nRot->addProperty(new IProperty());
 //	nRot->addProperty(new DummyUpdatable());
@@ -81,6 +83,9 @@ int main(int argc, char *argv[])
 	nHead->addProperty(new DummyUpdatable());
 	nLight->addProperty(new Light());
 	//nLight2->addProperty(new Light());
+
+	Texture heightmap = TEXTURE_MANAGER.get("heightmap.bmp");
+	nTerrain->addProperty(new TerrainRenderer(heightmap));
 
 	Mesh plane = MESH_MANAGER.get("Plane");
 	Mesh cube = MESH_MANAGER.get("Cube");
@@ -119,6 +124,7 @@ int main(int argc, char *argv[])
 	sg->link(nGarg);
 	sg->link(nWall);
 	sg->link(nSand);
+	sg->link(nTerrain);
 	nRot->link(nCam);
 
 	nRot->moveTo(Vector3f(0,0,0));

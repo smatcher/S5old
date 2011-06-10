@@ -56,7 +56,7 @@ void Node::setGlobalTransform(Transformf transform)
 {
 	if(parent() != NULL && parent()->type() == ParentOfNode::NODE)
 	{
-		Node* parentNode = static_cast<const Node*>(parent());
+		Node* parentNode = static_cast<Node*>(parent());
 		Transformf parent_trans(parentNode->getGlobalTransform(false));
 		parent_trans.invert();
 		transform *= parent_trans;
