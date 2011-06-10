@@ -53,11 +53,14 @@ void RenderManager::setupProjection()
 		}
 		else
 		{
+			/*
 			#ifdef QT_OPENGL_ES_1
 				glOrthof(-5, +5, -5, +5, 1.0, 50.0);
 			#else
 				glOrtho(-5, +5, -5, +5, 1.0, 50.0);
 			#endif
+			*/
+			gluPerspective(70,1,1.0,1000);
 		}
 
 		glMatrixMode(GL_MODELVIEW);

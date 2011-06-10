@@ -78,6 +78,8 @@ int Engine::start()
 	renderManager->init(m_window.getGLW_TEMPORARY());
 
 	QDateTime lastTime = QDateTime::currentDateTime();
+	QDateTime lastFpsTime = QDateTime::currentDateTime();
+	int nb_frames = 0;
 
 	int i=0;
 	while(m_running)
@@ -91,6 +93,14 @@ int Engine::start()
 		lastTime = time;
 
 		i++;
+		nb_frames++;
+
+		if(lastFpsTime.msecsTo(time) > 1000)
+		{
+			m_window.setWindowTitle("S5 - Engine : " + QString().setNum(nb_frames) + " FPS");
+			lastFpsTime = time;
+			nb_frames = 0;
+		}
 
 		#ifdef WITH_TOOLS
 			if(i%10 == 0) {
