@@ -17,7 +17,7 @@ TOOLS_HEADER_DIR = 'include/tools'
 engineEnv = env.Clone()
 engineEnv.Append(CPPPATH = [PROJECT_DIR+'/include'])
 
-VariantDir(BUILD_DIR,PROJECT_DIR, duplicate=1)
+VariantDir(BUILD_DIR,PROJECT_DIR, duplicate=0)
 
 # Read all sources
 all_src_list	= map(lambda x: BUILD_DIR + '/' + x, getSourcesListFromFile(PROJECT_DIR+'/S5engine.files'))
