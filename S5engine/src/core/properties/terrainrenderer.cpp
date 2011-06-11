@@ -43,6 +43,19 @@ TerrainRenderer::TerrainRenderer(Texture& hm, float vscale): IRenderable("Terrai
 	m_vertices.allocate(vertices, m_height * m_width * 3 * sizeof(GLfloat));
 
 	/**** NORMALS ****/
+	normals = new GLfloat[m_height * m_width * 3]();
+	for(int x = 0; x<m_height; x++) {;
+		for(int z = 0; z<m_width; z++) {
+			index = (x + z*m_width);
+			normals[index*3] = 0.0f;
+			normals[index*3 + 1] = 1.0f;
+			normals[index*3 + 2] = 0.0f;
+		}
+	}
+	m_normals.create();
+	m_normals.bind();
+	m_normals.setUsagePattern(QGLBuffer::StaticDraw);
+	m_normals.allocate(normals, m_height * m_width * 3 * sizeof(GLfloat));
 
 	/**** TANGENT ****/
 
@@ -58,12 +71,12 @@ TerrainRenderer::TerrainRenderer(Texture& hm, float vscale): IRenderable("Terrai
 
 			/* Triangle 1 */
 			indices[index]	 = (x+z*m_width);
-			indices[index+1] = ((x+1)+z*m_width);
-			indices[index+2] = (x+(z+1)*m_width);
+			indices[index+1] = (x+(z+1)*m_width);
+			indices[index+2] = ((x+1)+z*m_width);
 			/* Triangle 2 */
 			indices[index+3] = (x+(z+1)*m_width);
-			indices[index+4] = ((x+1)+z*m_width);
-			indices[index+5] = ((x+1)+(z+1)*m_width);
+			indices[index+4] = ((x+1)+(z+1)*m_width);
+			indices[index+5] = ((x+1)+z*m_width);
 		}
 	}
 	m_indices.create();
@@ -81,21 +94,6 @@ TerrainRenderer::TerrainRenderer(Texture& hm, float vscale): IRenderable("Terrai
 void TerrainRenderer::render(double elapsed_time, GLWidget* context) {
 
 	node()->getGlobalTransform().glMultf();
-
-	glBegin(GL_LINES);
-	for(int x = 0; x<m_height; x++) {;
-		for(int y = 0; y<m_width; y++) {
-			if(y<m_width-1) {
-				glVertex3f((float)x,m_heightmap[x + y*m_width],(float)y);
-				glVertex3f((float)x,m_heightmap[x + (y+1)*m_width],(float)y+1.0f);
-			}
-			if(x<m_height-1) {
-				glVertex3f((float)x,m_heightmap[x + y*m_width],(float)y);
-				glVertex3f((float)x + 1.0f,m_heightmap[x + 1 + y*m_width],(float)y);
-			}
-		}
-	}
-	glEnd();
 
 	if(!m_vertices.isCreated() || !m_indices.isCreated()) {
 		return;
