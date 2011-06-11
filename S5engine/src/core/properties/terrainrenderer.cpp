@@ -1,7 +1,11 @@
 #include <core/properties/terrainrenderer.h>
 #include <core/resources/stbimage.h>
 
-TerrainRenderer::TerrainRenderer(Texture& hm, float vscale): IRenderable("TerrainRenderer") {
+#include "core/scenegraph/node.h"
+
+#include <QtOpenGL>
+
+TerrainRenderer::TerrainRenderer(Texture& hm, float vscale): IRenderable("TerrainRenderer"), m_indices(QGLBuffer::IndexBuffer) {
 
 	/* Pas terrible, vue que la Texture n'est pas FORCEMENT une StbImage, à améliorer donc... */
 	stbi_uc* image = ((StbImage*)*hm)->getData();
@@ -9,20 +13,20 @@ TerrainRenderer::TerrainRenderer(Texture& hm, float vscale): IRenderable("Terrai
 
 	GLfloat* vertices;
 	GLfloat* normals;
-	GLshort* indices;
+	GLint* indices;
 	int index;
 
 	m_height = hm->getHeight();
 	m_width = hm->getWidth();
 
 	logInfo( "Creating terrain from " << hm->name() );
-/*
+
 	m_heightmap = new float[m_height * m_width];
 
 	for(int i = 0; i<m_height * m_width; i++) {
 		m_heightmap[i] = ((float)image[i*comp]*20.0f)/255.0f;
 	}
-*/
+
 	/**** VERTICES ****/
 	vertices = new GLfloat[m_height * m_width * 3]();
 	for(int x = 0; x<m_height; x++) {;
@@ -47,7 +51,7 @@ TerrainRenderer::TerrainRenderer(Texture& hm, float vscale): IRenderable("Terrai
 	/**** TEXCOORD ****/
 
 	/**** INDICES ****/
-	indices = new GLshort[3*((m_height-1)*(m_width-1)*2)]();
+	indices = new GLint[3*((m_height-1)*(m_width-1)*2)]();
 	for(int x = 0; x<m_height-1; x++) {
 		for(int z = 0; z<m_width-1; z++) {
 			index = (x + z*m_width)*6;
@@ -65,8 +69,9 @@ TerrainRenderer::TerrainRenderer(Texture& hm, float vscale): IRenderable("Terrai
 	m_indices.create();
 	m_indices.bind();
 	m_indices.setUsagePattern(QGLBuffer::StaticDraw);
-	m_indices.allocate(indices, 3*((m_height-1)*(m_width-1)*2)*sizeof(GLshort));
+	m_indices.allocate(indices, 3*((m_height-1)*(m_width-1)*2)*sizeof(GLint));
 
+	m_vertices.release();
 	m_indices.release();
 
 	delete[] indices;
@@ -74,7 +79,9 @@ TerrainRenderer::TerrainRenderer(Texture& hm, float vscale): IRenderable("Terrai
 }
 
 void TerrainRenderer::render(double elapsed_time, GLWidget* context) {
-	/*
+
+	node()->getGlobalTransform().glMultf();
+
 	glBegin(GL_LINES);
 	for(int x = 0; x<m_height; x++) {;
 		for(int y = 0; y<m_width; y++) {
@@ -89,12 +96,11 @@ void TerrainRenderer::render(double elapsed_time, GLWidget* context) {
 		}
 	}
 	glEnd();
-	*/
+
 	if(!m_vertices.isCreated() || !m_indices.isCreated()) {
 		return;
 	}
 
-/*
 	if(m_colors.isCreated())
 	{
 		glEnable(GL_COLOR_MATERIAL);
@@ -119,7 +125,6 @@ void TerrainRenderer::render(double elapsed_time, GLWidget* context) {
 	{
 		glDisable(GL_LIGHTING);
 	}
-*/
 
 	glEnableClientState(GL_VERTEX_ARRAY);
 	m_vertices.bind();
@@ -127,9 +132,9 @@ void TerrainRenderer::render(double elapsed_time, GLWidget* context) {
 
 	glEnableClientState(GL_INDEX_ARRAY);
 	m_indices.bind();
-	glIndexPointer(GL_SHORT, 0, NULL);
+	glIndexPointer(GL_INT, 0, NULL);
 
-	glDrawElements(GL_TRIANGLES, 3*((m_height-1)*(m_width-1)*2), GL_UNSIGNED_SHORT, NULL);
+	glDrawElements(GL_TRIANGLES, 3*((m_height-1)*(m_width-1)*2), GL_UNSIGNED_INT, NULL);
 
 	m_indices.release();
 	m_vertices.release();
