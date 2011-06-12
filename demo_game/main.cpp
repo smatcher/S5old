@@ -77,7 +77,7 @@ int main(int argc, char *argv[])
 	for(int i=0 ; i<4 ; i++) {
 		walls.push_back(new Node("Wall" + QString().setNum(i+1)));
 	}
-	for(int i=0 ; i<50 ; i++) {
+	for(int i=0 ; i<150 ; i++) {
 		balls.push_back(new Node("Ball" + QString().setNum(i+1)));
 	}
 
@@ -92,8 +92,8 @@ int main(int argc, char *argv[])
 	nLight->addProperty(new Light());
 	//nLight2->addProperty(new Light());
 
-	Texture heightmap = TEXTURE_MANAGER.get("heightmap.bmp");
-	nTerrain->addProperty(new TerrainRenderer(heightmap, 10.0f));
+	Texture heightmap = TEXTURE_MANAGER.get("heightmap2.jpg");
+	nTerrain->addProperty(new TerrainRenderer(heightmap, 3.0f, 0.5f));
 
 	Mesh plane = MESH_MANAGER.get("Plane");
 	Mesh cube = MESH_MANAGER.get("Cube");
@@ -173,7 +173,7 @@ int main(int argc, char *argv[])
 	nDuck->moveTo(Vector3f(0,0,-1.8));
 	nDuck->rotate(Vector3f(0,1,0),127);
 	//nDuckGrid->rotate(Vector3f(1,0,0),270);
-	nTerrain->moveTo(Vector3f(0,-10,0));
+	nTerrain->moveTo(Vector3f(0,-2,0));
 
 	PhysicObject::Properties prop;
 	nSand->addProperty(new PhysicObject(prop));
@@ -186,7 +186,7 @@ int main(int argc, char *argv[])
 	nGarg->addProperty(new PhysicObject(prop));
 
 	prop.is_kinematic = false;
-	prop.mass = 1.0;
+	prop.mass = 10.0;
 	prop.restitution = 0.85;
 	prop.shape = PhysicObject::SPHERE;
 	for(QVector<Node*>::iterator it=balls.begin() ; it != balls.end() ; it++) {

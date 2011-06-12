@@ -7,7 +7,7 @@
 class TerrainRenderer : public IRenderable
 {
 public:
-	TerrainRenderer(Texture& hm, float vscale);
+	TerrainRenderer(Texture& hm, float yscale, float scale);
 	void render(double elapsed_time, GLWidget* context);
 	bool isTransparent() {return false;}
 
@@ -15,6 +15,8 @@ private:
 	float* m_heightmap;
 	int m_height;
 	int m_width;
+	float m_yscale;
+	float m_scale;
 
 	/* VBO Data */
 	QGLBuffer m_vertices;
