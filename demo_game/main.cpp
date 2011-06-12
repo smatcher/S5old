@@ -65,16 +65,24 @@ int main(int argc, char *argv[])
 	Node* nLight = new Node("Light");
 	Node* nLight2 = new Node("Light2");
 	Node* nUni = new Node("Unicorn");
-	Node* nBall = new Node("Ball");
 	Node* nGarg = new Node("Gargoyle");
-	Node* nWall = new Node("Wall");
 	Node* nDuck = new Node("Duck");
 	//Node* nDuckGrid = new Node("Grid");
 	Node* nSand = new Node("Sand");
 	Node* nTerrain = new Node("Terrain");
 
+	QVector<Node*> balls;
+	QVector<Node*> walls;
+
+	for(int i=0 ; i<4 ; i++) {
+		walls.push_back(new Node("Wall" + QString().setNum(i+1)));
+	}
+	for(int i=0 ; i<50 ; i++) {
+		balls.push_back(new Node("Ball" + QString().setNum(i+1)));
+	}
+
 	nRot->addProperty(new IProperty());
-//	nRot->addProperty(new DummyUpdatable());
+	nRot->addProperty(new DummyUpdatable());
 //	nQt->addProperty(new QtLogo(engine.getGLW_TEMPORARY()));
 //	nQt->addProperty(new Grid(1.0f, 1.0f, 40, 40));
 	//nDuckGrid->addProperty(new Grid(1.0f, 1.0f, 40, 40));
@@ -101,10 +109,8 @@ int main(int argc, char *argv[])
 
 	nDuck->addProperty(new MeshRenderer(mesh,duck));
 	nStar->addProperty(new MeshRenderer(plane,star));
-	nBall->addProperty(new MeshRenderer(sphere,ball));
 	//nUni->addProperty(new MeshRenderer(cube,unicorn));
 	nGarg->addProperty(new MeshRenderer(cube,gargoyle));
-	nWall->addProperty(new MeshRenderer(cube,gargoyle));
 	nSand->addProperty(new MeshRenderer(cube,sand));
 	nDuck->addProperty(new DummyControlable());
 	nDuck->addProperty(new SoundEmitter(sample));
@@ -120,12 +126,16 @@ int main(int argc, char *argv[])
 	sg->link(nDuck);
 	sg->link(nRot);
 	sg->link(nQt);
-	sg->link(nBall);
-	sg->link(nGarg);
-	sg->link(nWall);
 	sg->link(nSand);
 	sg->link(nTerrain);
+	for(QVector<Node*>::iterator it = walls.begin() ; it != walls.end() ; it++) {
+		sg->link(*it);
+	}
+	for(QVector<Node*>::iterator it = balls.begin() ; it != balls.end() ; it++) {
+		sg->link(*it);
+	}
 	nRot->link(nCam);
+	nRot->link(nGarg);
 
 	nRot->moveTo(Vector3f(0,0,0));
 	nQt->moveTo(Vector3f(0,-0.5,0));
@@ -147,26 +157,42 @@ int main(int argc, char *argv[])
 	nSand->moveTo(Vector3f(0,-0.5,0));
 	nSand->rotate(Vector3f(1,0,0),270);
 	nSand->setScale(Vector3f(10,10,0.01));
-	nWall->moveTo(Vector3f(0,0,-5));
-	nWall->setScale(Vector3f(10,1,0.01));
-	nBall->moveTo(Vector3f(0,5,0));
-	nGarg->moveTo(Vector3f(-3,0,-5));
-	nGarg->setScale(Vector3f(2,1,2));
-	nDuck->moveTo(Vector3f(0,0.5,-1.8));
+	walls[0]->moveTo(Vector3f(0,1,-5));
+	walls[0]->setScale(Vector3f(10,3,0.01));
+	walls[1]->moveTo(Vector3f(0,1, 5));
+	walls[1]->setScale(Vector3f(10,3,0.01));
+	walls[2]->moveTo(Vector3f( 5,1,0));
+	walls[2]->setScale(Vector3f(0.01,3,10));
+	walls[3]->moveTo(Vector3f(-5,1,0));
+	walls[3]->setScale(Vector3f(0.01,3,10));
+	for(int i=0 ; i<balls.size() ; i++) {
+		balls[i]->moveTo(Vector3f(0,4+2*i,0));
+	}
+	nGarg->moveTo(Vector3f(-3,1,-3));
+	nGarg->setScale(Vector3f(1,3,1));
+	nDuck->moveTo(Vector3f(0,0,-1.8));
 	nDuck->rotate(Vector3f(0,1,0),127);
 	//nDuckGrid->rotate(Vector3f(1,0,0),270);
+	nTerrain->moveTo(Vector3f(0,-10,0));
 
 	PhysicObject::Properties prop;
 	nSand->addProperty(new PhysicObject(prop));
-	nWall->addProperty(new PhysicObject(prop));
+	for(QVector<Node*>::iterator it=walls.begin() ; it != walls.end() ; it++) {
+		(*it)->addProperty(new PhysicObject(prop));
+		(*it)->addProperty(new MeshRenderer(cube,gargoyle));
+	}
 	prop.is_kinematic = true;
 	nDuck->addProperty(new PhysicObject(prop));
+	nGarg->addProperty(new PhysicObject(prop));
 
 	prop.is_kinematic = false;
 	prop.mass = 1.0;
 	prop.restitution = 0.85;
 	prop.shape = PhysicObject::SPHERE;
-	nBall->addProperty(new PhysicObject(prop));
+	for(QVector<Node*>::iterator it=balls.begin() ; it != balls.end() ; it++) {
+		(*it)->addProperty(new PhysicObject(prop));
+		(*it)->addProperty(new MeshRenderer(sphere,ball));
+	}
 
 	// Beurk ! Mais je peux le faire alors je me prive pas ^^
 	//RENDER_MANAGER.setCurrentCamera(static_cast<Camera*>(nCamFollow->properties().child("Camera")));
