@@ -42,8 +42,14 @@ int main(int argc, char *argv[])
 
 	Node* nTerrain = new Node("Terrain");
 
-	Texture heightmap = TEXTURE_MANAGER.get("heightmap2.jpg");
-	nTerrain->addProperty(new TerrainRenderer(heightmap, 3.0f, 0.5f,1.0f));
+	Texture heightmap;
+
+	if(argc>1)
+		heightmap = TEXTURE_MANAGER.get(argv[1]);
+	else
+		heightmap = TEXTURE_MANAGER.get("heightmap2.jpg");
+
+	nTerrain->addProperty(new TerrainRenderer(heightmap, 8.0f, 0.5f,1.0f));
 
 	sg->link(nTerrain);
 	RenderManager::Background background;
