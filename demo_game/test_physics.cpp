@@ -75,12 +75,12 @@ int main(int argc, char *argv[])
 	for(int i=0 ; i<4 ; i++) {
 		walls.push_back(new Node("Wall" + QString().setNum(i+1)));
 	}
-	for(int i=0 ; i<150 ; i++) {
+	for(int i=0 ; i<500 ; i++) {
 		balls.push_back(new Node("Ball" + QString().setNum(i+1)));
 	}
 
 	nRot->addProperty(new IProperty());
-	nRot->addProperty(new DummyUpdatable());
+	//nRot->addProperty(new DummyUpdatable());
 //	nQt->addProperty(new QtLogo(engine.getGLW_TEMPORARY()));
 //	nQt->addProperty(new Grid(1.0f, 1.0f, 40, 40));
 	//nDuckGrid->addProperty(new Grid(1.0f, 1.0f, 40, 40));
@@ -89,8 +89,6 @@ int main(int argc, char *argv[])
 	nHead->addProperty(new DummyUpdatable());
 	nLight->addProperty(new Light());
 	//nLight2->addProperty(new Light());
-
-	Texture heightmap = TEXTURE_MANAGER.get("heightmap2.jpg");
 
 	Mesh plane = MESH_MANAGER.get("Plane");
 	Mesh cube = MESH_MANAGER.get("Cube");
@@ -181,11 +179,12 @@ int main(int argc, char *argv[])
 	nGarg->addProperty(new PhysicObject(prop));
 
 	prop.is_kinematic = false;
-	prop.mass = 10.0;
-	prop.restitution = 0.1;
+	prop.mass = 100.0;
+	prop.restitution = 1.0;
 	prop.shape = PhysicObject::SPHERE;
 	for(QVector<Node*>::iterator it=balls.begin() ; it != balls.end() ; it++) {
 		(*it)->addProperty(new PhysicObject(prop));
+		prop.mass += 2.0;
 		(*it)->addProperty(new MeshRenderer(sphere,ball));
 	}
 

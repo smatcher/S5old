@@ -5,7 +5,7 @@
 
 #include <QtOpenGL>
 
-TerrainRenderer::TerrainRenderer(Texture& hm, float yscale, float scale): IRenderable("TerrainRenderer"), m_indices(QGLBuffer::IndexBuffer) {
+TerrainRenderer::TerrainRenderer(Texture& hm, float yscale, float scale, float tscale): IRenderable("TerrainRenderer"), m_indices(QGLBuffer::IndexBuffer) {
 
 	/* Pas terrible, vue que la Texture n'est pas FORCEMENT une StbImage, à améliorer donc... */
 	stbi_uc* image = ((StbImage*)*hm)->getData();
@@ -13,6 +13,7 @@ TerrainRenderer::TerrainRenderer(Texture& hm, float yscale, float scale): IRende
 
 	GLfloat* vertices;
 	GLfloat* normals;
+	GLfloat* texcoords;
 	GLint* indices;
 	int index;
 
@@ -20,6 +21,7 @@ TerrainRenderer::TerrainRenderer(Texture& hm, float yscale, float scale): IRende
 	m_width = hm->getWidth();
 	m_yscale = yscale;
 	m_scale = scale;
+	m_tscale = tscale;
 
 	logInfo( "Creating terrain from " << hm->name() );
 /*
@@ -117,6 +119,19 @@ TerrainRenderer::TerrainRenderer(Texture& hm, float yscale, float scale): IRende
 	/**** BITENGENT ****/
 
 	/**** TEXCOORD ****/
+	texcoords = new GLfloat[m_height * m_width * 2]();
+	for(int x = 0; x<m_height; x++) {
+		for(int z = 0; z<m_width; z++) {
+			index = (x + z*m_height)*2;
+
+			texcoords[index]     = ((float)x)/m_tscale; // u
+			texcoords[index + 1] = ((float)z)/m_tscale; // v
+		}
+	}
+	m_texcoords.create();
+	m_texcoords.bind();
+	m_texcoords.setUsagePattern(QGLBuffer::StaticDraw);
+	m_texcoords.allocate(texcoords, m_height * m_width * 2);
 
 	/**** INDICES ****/
 	indices = new GLint[3*((m_height-1)*(m_width-1)*2)]();
@@ -139,7 +154,7 @@ TerrainRenderer::TerrainRenderer(Texture& hm, float yscale, float scale): IRende
 	m_indices.setUsagePattern(QGLBuffer::StaticDraw);
 	m_indices.allocate(indices, 3*((m_height-1)*(m_width-1)*2)*sizeof(GLint));
 
-	m_vertices.release();
+	m_texcoords.release();
 	m_indices.release();
 
 	delete[] indices;

@@ -18,13 +18,13 @@ void DummyControlable::update(double elapsed_time)
 	if(manager.getButtonStatus(m_control_forward) == InputManager::Held)
 	{
 		Node* parentNode = this->node();
-		Vector3f move = parentNode->getRotation() * Vector3f(0.0, 0.0, -elapsed_time);
+		Vector3f move = parentNode->getRotation() * Vector3f(0.0, 0.0, -elapsed_time*2);
 		parentNode->move(move);
 	}
 	if(manager.getButtonStatus(m_control_backward) == InputManager::Held)
 	{
 		Node* parentNode = this->node();
-		Vector3f move = parentNode->getRotation() * Vector3f(0.0, 0.0, elapsed_time);
+		Vector3f move = parentNode->getRotation() * Vector3f(0.0, 0.0, elapsed_time*2);
 		parentNode->move(move);
 	}
 	if(manager.getButtonStatus(m_control_left) == InputManager::Held)
