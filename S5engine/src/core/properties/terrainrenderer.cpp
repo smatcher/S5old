@@ -194,11 +194,18 @@ void TerrainRenderer::render(double elapsed_time, GLWidget* context) {
 		debug( "RENDERING" , "TerrainRenderer : no material to apply for " << node()->getName());
 	}
 
-	if(m_texcoords.isCreated())
+	if(m_texcoords.isCreated() && m_stexcoords.isCreated())
 	{
 		glEnable(GL_TEXTURE_2D);
 		glEnableClientState(GL_TEXTURE_COORD_ARRAY);
+		glClientActiveTexture(GL_TEXTURE0);
 		m_texcoords.bind();
+		glTexCoordPointer(2, GL_FLOAT, 0, NULL);
+
+		glEnable(GL_TEXTURE_2D);
+		glEnableClientState(GL_TEXTURE_COORD_ARRAY);
+		glClientActiveTexture(GL_TEXTURE1);
+		m_stexcoords.bind();
 		glTexCoordPointer(2, GL_FLOAT, 0, NULL);
 	}
 	else

@@ -49,20 +49,20 @@ int main(int argc, char *argv[])
 	else
 		heightmap = TEXTURE_MANAGER.get("heightmap2.jpg");
 
-	Material sand = MATERIAL_MANAGER.get("unicorn");
+	Material sand = MATERIAL_MANAGER.get("grass");
 
-	nTerrain->addProperty(new TerrainRenderer(heightmap, sand, 8.0f, 0.5f,50.0f));
+	nTerrain->addProperty(new TerrainRenderer(heightmap, sand, 8.0f, 0.5f,1.0f));
 
 	sg->link(nTerrain);
 	RenderManager::Background background;
 	background.type = RenderManager::SKYBOX;
 	background.color = Vector3f(1,1,0);
-	background.textures[0] = TEXTURE_MANAGER.get("stormy_front.tga");
-	background.textures[1] = TEXTURE_MANAGER.get("stormy_left.tga");
-	background.textures[2] = TEXTURE_MANAGER.get("stormy_back.tga");
-	background.textures[3] = TEXTURE_MANAGER.get("stormy_right.tga");
-	background.textures[4] = TEXTURE_MANAGER.get("stormy_top.tga");
-	background.textures[5] = TEXTURE_MANAGER.get("stormy_bottom.tga");
+	background.textures[0] = TEXTURE_MANAGER.get("interstellar_lf.tga");
+	background.textures[1] = TEXTURE_MANAGER.get("interstellar_ft.tga");
+	background.textures[2] = TEXTURE_MANAGER.get("interstellar_rt.tga");
+	background.textures[3] = TEXTURE_MANAGER.get("interstellar_bk.tga");
+	background.textures[4] = TEXTURE_MANAGER.get("interstellar_up.tga");
+	background.textures[5] = TEXTURE_MANAGER.get("interstellar_dn.tga");
 	RENDER_MANAGER.setBackground(background);
 
 	int ret = engine.start();
