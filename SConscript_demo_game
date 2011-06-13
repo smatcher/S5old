@@ -1,6 +1,7 @@
 # SConscript_demo_game
 
 from scons_common import *
+import os
 
 Import('env')
 
@@ -12,7 +13,7 @@ PROJECT_DIR = PROJECT_NAME
 BUILD_DIR = 'bin/demo_game/' + getObjectFilesDir()
 ENGINE_BUILD_DIR = 'bin/S5engine/' + getObjectFilesDir()
 
-MAIN_CPP  = BUILD_DIR + '/src/main.cpp'
+MAIN_CPP  = BUILD_DIR + '/test_'
 
 gameEnv = env.Clone()
 gameEnv.Append(CPPPATH = [ENGINE_DIR+'/include',PROJECT_DIR+'/include'])
@@ -31,7 +32,7 @@ main_src_list   = []	# - main.cpp for the game
 others_src_list = []	# - all other sources
 
 for s in all_src_list:
-	if s == MAIN_CPP:
+	if s.startswith(MAIN_CPP):
 		main_src_list.append(s)
 	else:
 		others_src_list.append(s)
@@ -74,5 +75,8 @@ others_obj_list = gameEnv.Object(others_src_list + others_moc_list)
 #else:
 #	tools_obj_list =  []
 
-gameEnv.Program(BUILD_DIR + '/' + EXE_NAME,main_obj_list + others_obj_list)
+for main_obj in main_obj_list :
+	program = os.path.splitext(str(main_obj))[0]
+	gameEnv.Program(program,[main_obj] + others_obj_list)
+	#gameEnv.Program(BUILD_DIR + '/' + EXE_NAME,[main_obj] + others_obj_list)
 

@@ -11,7 +11,6 @@
 #include "core/properties/camera.h"
 #include "core/properties/light.h"
 #include "core/properties/soundemitter.h"
-#include "core/properties/terrainrenderer.h"
 #include "core/managers/rendermanager.h"
 #include "core/properties/grid.h"
 #ifdef Q_WS_X11
@@ -69,7 +68,6 @@ int main(int argc, char *argv[])
 	Node* nDuck = new Node("Duck");
 	//Node* nDuckGrid = new Node("Grid");
 	Node* nSand = new Node("Sand");
-	Node* nTerrain = new Node("Terrain");
 
 	QVector<Node*> balls;
 	QVector<Node*> walls;
@@ -93,7 +91,6 @@ int main(int argc, char *argv[])
 	//nLight2->addProperty(new Light());
 
 	Texture heightmap = TEXTURE_MANAGER.get("heightmap2.jpg");
-	nTerrain->addProperty(new TerrainRenderer(heightmap, 3.0f, 0.5f));
 
 	Mesh plane = MESH_MANAGER.get("Plane");
 	Mesh cube = MESH_MANAGER.get("Cube");
@@ -127,7 +124,6 @@ int main(int argc, char *argv[])
 	sg->link(nRot);
 	sg->link(nQt);
 	sg->link(nSand);
-	sg->link(nTerrain);
 	for(QVector<Node*>::iterator it = walls.begin() ; it != walls.end() ; it++) {
 		sg->link(*it);
 	}
@@ -173,7 +169,6 @@ int main(int argc, char *argv[])
 	nDuck->moveTo(Vector3f(0,0,-1.8));
 	nDuck->rotate(Vector3f(0,1,0),127);
 	//nDuckGrid->rotate(Vector3f(1,0,0),270);
-	nTerrain->moveTo(Vector3f(0,-2,0));
 
 	PhysicObject::Properties prop;
 	nSand->addProperty(new PhysicObject(prop));
@@ -187,7 +182,7 @@ int main(int argc, char *argv[])
 
 	prop.is_kinematic = false;
 	prop.mass = 10.0;
-	prop.restitution = 0.85;
+	prop.restitution = 0.1;
 	prop.shape = PhysicObject::SPHERE;
 	for(QVector<Node*>::iterator it=balls.begin() ; it != balls.end() ; it++) {
 		(*it)->addProperty(new PhysicObject(prop));
