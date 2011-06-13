@@ -49,7 +49,9 @@ int main(int argc, char *argv[])
 	else
 		heightmap = TEXTURE_MANAGER.get("heightmap2.jpg");
 
-	nTerrain->addProperty(new TerrainRenderer(heightmap, 8.0f, 0.5f,1.0f));
+	Material sand = MATERIAL_MANAGER.get("unicorn");
+
+	nTerrain->addProperty(new TerrainRenderer(heightmap, sand, 8.0f, 0.5f,50.0f));
 
 	sg->link(nTerrain);
 	RenderManager::Background background;

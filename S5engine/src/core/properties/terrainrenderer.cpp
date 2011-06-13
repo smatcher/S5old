@@ -5,32 +5,29 @@
 
 #include <QtOpenGL>
 
-TerrainRenderer::TerrainRenderer(Texture& hm, float yscale, float scale, float tscale): IRenderable("TerrainRenderer"), m_indices(QGLBuffer::IndexBuffer) {
+TerrainRenderer::TerrainRenderer(Texture& hm, Material& mat, float yscale, float scale, float tscale): IRenderable("TerrainRenderer"),
+	m_indices(QGLBuffer::IndexBuffer),
+	m_height(hm->getHeight()),
+	m_width(hm->getWidth()),
+	m_yscale(yscale),
+	m_scale(scale),
+	m_tscale(tscale),
+	m_material(mat){
 
 	/* Pas terrible, vue que la Texture n'est pas FORCEMENT une StbImage, à améliorer donc... */
 	stbi_uc* image = ((StbImage*)*hm)->getData();
-	int comp = ((StbImage*)*hm)->getComp();
 
 	GLfloat* vertices;
 	GLfloat* normals;
 	GLfloat* texcoords;
+	GLfloat* stexcoords;
 	GLint* indices;
-	int index;
 
-	m_height = hm->getHeight();
-	m_width = hm->getWidth();
-	m_yscale = yscale;
-	m_scale = scale;
-	m_tscale = tscale;
+	int index;
+	int comp = ((StbImage*)*hm)->getComp();
 
 	logInfo( "Creating terrain from " << hm->name() );
-/*
-	m_heightmap = new float[m_height * m_width];
 
-	for(int i = 0; i<m_height * m_width; i++) {
-		m_heightmap[i] = ((float)image[i*comp]*20.0f)/255.0f;
-	}
-*/
 	/**** VERTICES ****/
 	vertices = new GLfloat[m_height * m_width * 3]();
 	for(int x = 0; x<m_height; x++) {;
@@ -131,7 +128,23 @@ TerrainRenderer::TerrainRenderer(Texture& hm, float yscale, float scale, float t
 	m_texcoords.create();
 	m_texcoords.bind();
 	m_texcoords.setUsagePattern(QGLBuffer::StaticDraw);
-	m_texcoords.allocate(texcoords, m_height * m_width * 2);
+	m_texcoords.allocate(texcoords, m_height * m_width * 2 * sizeof(float));
+
+	/**** STEXCOORD ****/
+	stexcoords = new GLfloat[m_height * m_width * 2]();
+
+	for(int x = 0; x<m_height; x++) {
+		for(int z = 0; z<m_width; z++) {
+			index = (x + z*m_height)*2;
+
+			stexcoords[index]     = (float)x/(float)m_height; // u
+			stexcoords[index + 1] = (float)z/(float)m_width; // v
+		}
+	}
+	m_stexcoords.create();
+	m_stexcoords.bind();
+	m_stexcoords.setUsagePattern(QGLBuffer::StaticDraw);
+	m_stexcoords.allocate(stexcoords, m_height * m_width * 2 * sizeof(float));
 
 	/**** INDICES ****/
 	indices = new GLint[3*((m_height-1)*(m_width-1)*2)]();
@@ -154,7 +167,7 @@ TerrainRenderer::TerrainRenderer(Texture& hm, float yscale, float scale, float t
 	m_indices.setUsagePattern(QGLBuffer::StaticDraw);
 	m_indices.allocate(indices, 3*((m_height-1)*(m_width-1)*2)*sizeof(GLint));
 
-	m_texcoords.release();
+	m_stexcoords.release();
 	m_indices.release();
 
 	delete[] indices;
@@ -163,10 +176,34 @@ TerrainRenderer::TerrainRenderer(Texture& hm, float yscale, float scale, float t
 
 void TerrainRenderer::render(double elapsed_time, GLWidget* context) {
 
+	QGLShaderProgram* program = NULL;
 	node()->getGlobalTransform().glMultf();
 
 	if(!m_vertices.isCreated() || !m_indices.isCreated()) {
 		return;
+	}
+
+	/* Application du Material */
+	if(m_material.isValid())
+	{
+		m_material->apply();
+		program = m_material->program();
+	}
+	else
+	{
+		debug( "RENDERING" , "TerrainRenderer : no material to apply for " << node()->getName());
+	}
+
+	if(m_texcoords.isCreated())
+	{
+		glEnable(GL_TEXTURE_2D);
+		glEnableClientState(GL_TEXTURE_COORD_ARRAY);
+		m_texcoords.bind();
+		glTexCoordPointer(2, GL_FLOAT, 0, NULL);
+	}
+	else
+	{
+		glDisable(GL_TEXTURE_2D);
 	}
 
 	if(m_colors.isCreated())
@@ -212,4 +249,10 @@ void TerrainRenderer::render(double elapsed_time, GLWidget* context) {
 	glDisableClientState(GL_COLOR_ARRAY);
 	glDisableClientState(GL_TEXTURE_COORD_ARRAY);
 	glDisableClientState(GL_INDEX_ARRAY);
+
+	/* Désactivation du material */
+	if(m_material.isValid())
+	{
+		m_material->unset();
+	}
 }
