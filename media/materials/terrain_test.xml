@@ -1,0 +1,6 @@
+<material>
+	<texture texunit="0">splatting_texture.tga</texture>
+	<texture texunit="1">grass.tga</texture>
+	<texture texunit="2">rock.tga</texture>
+	<program>terrain</program>
+</material>
