@@ -49,7 +49,9 @@ SOURCES += \
 	src/core/utils/primitives.cpp \
 	src/core/resources/xmlmaterial.cpp \
     src/core/resources/glslshader.cpp \
-    src/core/properties/terrainrenderer.cpp
+    src/core/properties/terrainrenderer.cpp \
+    src/tools/widgets/soundemitterwidget.cpp \
+    src/tools/widgets/terrainwidget.cpp
 
 HEADERS  += \
 	include/core/properties/qtlogo.h \
@@ -124,7 +126,9 @@ HEADERS  += \
 	include/core/utils/primitives.h \
 	include/core/resources/xmlmaterial.h \
     include/core/resources/glslshader.h \
-    include/core/properties/terrainrenderer.h
+    include/core/properties/terrainrenderer.h \
+    include/tools/widgets/soundemitterwidget.h \
+    include/tools/widgets/terrainwidget.h
 
 INCLUDEPATH += \
 	include \

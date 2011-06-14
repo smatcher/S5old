@@ -119,6 +119,7 @@ src/tools/widgets/foldablegroup.cpp
 src/tools/widgets/renderwidget.cpp
 src/tools/widgets/meshrendererwidget.cpp
 src/tools/widgets/soundemitterwidget.cpp
+src/tools/widgets/terrainwidget.cpp
 src/tools/toolswindow.cpp
 include/tools/scenegraphmodel.h
 include/tools/scenegraphview.h
@@ -131,6 +132,7 @@ include/tools/widgets/renderwidget.h
 include/tools/widgets/cameraradiobutton.h
 include/tools/widgets/meshrendererwidget.h
 include/tools/widgets/soundemitterwidget.h
+include/tools/widgets/terrainwidget.h
 include/tools/toolswindow.h
 include/core/properties/light.h
 include/core/managers/lightingmanager.h

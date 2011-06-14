@@ -88,10 +88,10 @@ void SoundEmitter::setVelocity(Vector3d velocity)
 
 PropertyWidget* SoundEmitter::getWidget()
 {
-        if(m_widget == NULL)
-                m_widget = new SoundEmitterWidget(this);
+	if(m_widget == NULL)
+		m_widget = new SoundEmitterWidget(this);
 
-        return m_widget;
+	return m_widget;
 }
 
 #endif

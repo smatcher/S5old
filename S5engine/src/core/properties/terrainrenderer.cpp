@@ -12,7 +12,8 @@ TerrainRenderer::TerrainRenderer(Texture& hm, Material& mat, float yscale, float
 	m_yscale(yscale),
 	m_scale(scale),
 	m_tscale(tscale),
-	m_material(mat){
+	m_material(mat),
+	m_wireframe(false){
 
 	logInfo( "Creating terrain from " << hm->name() );
 
@@ -248,8 +249,15 @@ void TerrainRenderer::render(double elapsed_time, GLWidget* context) {
 	m_indices.bind();
 	glIndexPointer(GL_INT, 0, NULL);
 
+	if(m_wireframe) {
+		glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+	}
+
 	glDrawElements(GL_TRIANGLES, 3*((m_height-1)*(m_width-1)*2), GL_UNSIGNED_INT, NULL);
 
+	if(m_wireframe) {
+		glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+	}
 	m_indices.release();
 	m_vertices.release();
 
@@ -265,3 +273,15 @@ void TerrainRenderer::render(double elapsed_time, GLWidget* context) {
 		m_material->unset();
 	}
 }
+
+#ifdef WITH_TOOLS
+
+PropertyWidget* TerrainRenderer::getWidget()
+{
+	if(m_widget == NULL)
+		m_widget = new TerrainWidget(this);
+
+	return m_widget;
+}
+
+#endif
