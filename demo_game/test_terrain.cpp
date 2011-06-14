@@ -46,10 +46,11 @@ int main(int argc, char *argv[])
 
 	Texture heightmap;
 
-	if(argc>1)
+	if(argc>1) {
 		heightmap = TEXTURE_MANAGER.get(argv[1]);
-	else
-		heightmap = TEXTURE_MANAGER.get("heightmap2.jpg");
+	 } else {
+		heightmap = TEXTURE_MANAGER.get("heightmap.tga");
+	}
 
 	Material terrain = MATERIAL_MANAGER.get("terrain_test");
 

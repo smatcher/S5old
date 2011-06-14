@@ -14,6 +14,8 @@ TerrainRenderer::TerrainRenderer(Texture& hm, Material& mat, float yscale, float
 	m_tscale(tscale),
 	m_material(mat){
 
+	logInfo( "Creating terrain from " << hm->name() );
+
 	/* Pas terrible, vue que la Texture n'est pas FORCEMENT une StbImage, à améliorer donc... */
 	stbi_uc* image = ((StbImage*)*hm)->getData();
 
@@ -26,7 +28,7 @@ TerrainRenderer::TerrainRenderer(Texture& hm, Material& mat, float yscale, float
 	int index;
 	int comp = ((StbImage*)*hm)->getComp();
 
-	logInfo( "Creating terrain from " << hm->name() );
+
 
 	/**** VERTICES ****/
 	vertices = new GLfloat[m_height * m_width * 3]();
