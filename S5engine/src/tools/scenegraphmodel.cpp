@@ -91,7 +91,8 @@ bool SceneGraphModel::event(QEvent* evt)
 {
 	if(evt->type() == UPDATED_EVENT::type())
 	{
-		emit dataChanged(QModelIndex(), QModelIndex());
+		//emit dataChanged(QModelIndex(), QModelIndex());
+		emit layoutChanged();
 		return true;
 	}
 	else
