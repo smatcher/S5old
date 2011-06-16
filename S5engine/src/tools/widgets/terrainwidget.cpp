@@ -12,7 +12,7 @@ TerrainWidget::TerrainWidget(TerrainRenderer* property) : PropertyWidget(propert
 		layout->setMargin(0);
 		m_box->setLayout(layout);
 
-		layout->addWidget(m_heightmap);
+		//layout->addWidget(m_heightmap);
 		layout->addWidget(m_wireframe);
 }
 

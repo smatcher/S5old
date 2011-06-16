@@ -6,6 +6,43 @@
 
 #include <QtOpenGL>
 
+TerrainPatch::TerrainPatch(int start_x, int start_y, int end_x, int end_y, int lod, int theight, int twidth) :
+	m_indices(QGLBuffer::IndexBuffer),
+	m_offsetx(start_x),
+	m_offsety(start_y),
+	m_dim(end_x - start_x),
+	m_lod(lod) {
+
+	/* On saute 2^lod vertex*/
+	int increment = 1<<lod;
+	int x;
+	int y;
+	int index;
+	GLint indices[6*((m_dim/increment)*(m_dim/increment))];
+
+	for(x=start_x; x<end_x; x+=increment) {
+		for(y=start_y; y<end_y; y+=increment) {
+			index = (x + y*(m_dim/increment))*6;
+
+			/* Triangle 1 */
+			indices[index]	 = (x+y*theight);
+			indices[index+1] = (x+(y+increment)*theight);
+			indices[index+2] = ((x+increment)+y*theight);
+			/* Triangle 2 */
+			indices[index+3] = (x+(y+increment)*theight);
+			indices[index+4] = ((x+increment)+(y+increment)*theight);
+			indices[index+5] = ((x+increment)+y*theight);
+		}
+	}
+
+	m_indices.create();
+	m_indices.bind();
+	m_indices.setUsagePattern(QGLBuffer::StaticDraw);
+	m_indices.allocate(indices, 6*((m_dim/increment)*(m_dim/increment))*sizeof(GLint));
+
+	m_indices.release();
+}
+
 TerrainRenderer::TerrainRenderer(Texture& hm, Material& mat, float yscale, float scale, float tscale): IRenderable("TerrainRenderer"),
 	m_indices(QGLBuffer::IndexBuffer),
 	m_height(hm->getHeight()),

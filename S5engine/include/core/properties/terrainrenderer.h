@@ -9,16 +9,39 @@
 	#include "tools/widgets/terrainwidget.h"
 #endif
 
+#include "core/utils/quadtree.h"
+
+class TerrainPatch {
+public:
+	TerrainPatch(int start_x, int start_y, int end_x, int end_y, int lod, int theight, int twidth);
+private:
+	QGLBuffer m_indices;
+
+	/* Position du patch dans le terrain */
+	int m_offsetx;
+	int m_offsety;
+
+	/* Dimension du path (on concidère que les patchs sont carrés, parce que fuck*/
+	int m_dim;
+
+	/* Niveau de détail du patch */
+	int m_lod;
+};
 
 class TerrainRenderer : public IRenderable
 {
 	friend class TerrainWidget;
+
 public:
+	typedef QuadTree<TerrainPatch> TerrainNode;
 	TerrainRenderer(Texture& hm, Material& mat, float yscale, float scale, float tscale);
 	void render(double elapsed_time, GLWidget* context);
 	bool isTransparent() {return false;}
 
 protected:
+
+	void buildQuadTree(int max_lod);
+
 	float* m_heightmap;
 	int m_height;
 	int m_width;
@@ -27,6 +50,8 @@ protected:
 	float m_tscale;
 
 	bool m_wireframe;
+
+	TerrainNode* m_quadtree;
 
 	Material m_material;
 
