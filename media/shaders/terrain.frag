@@ -13,9 +13,10 @@ void main (void)
 	vec4 c2 = texture2D(tex2, gl_TexCoord[0].st);
 	vec4 c3 = texture2D(tex3, gl_TexCoord[0].st);
 	vec4 splatting = texture2D(alpha_map, gl_TexCoord[1].st);
-	color.r = splatting.r*c1.r + splatting.g*c2.r + splatting.b*c3.r;
-	color.g = splatting.r*c1.g + splatting.g*c2.g + splatting.b*c3.g;
-	color.b = splatting.r*c1.b + splatting.g*c2.b + splatting.b*c3.b;
+	float sum = splatting.r + splatting.g + splatting.b;
+	color.r = (splatting.r*c1.r + splatting.g*c2.r + splatting.b*c3.r)/sum;
+	color.g = (splatting.r*c1.g + splatting.g*c2.g + splatting.b*c3.g)/sum;
+	color.b = (splatting.r*c1.b + splatting.g*c2.b + splatting.b*c3.b)/sum;
 	color.a = 1.0f;
 	
 //	color = vec4(1.0f, 1.0f, 1.0f, 1.0f);

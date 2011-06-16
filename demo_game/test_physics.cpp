@@ -75,12 +75,12 @@ int main(int argc, char *argv[])
 	for(int i=0 ; i<4 ; i++) {
 		walls.push_back(new Node("Wall" + QString().setNum(i+1)));
 	}
-	for(int i=0 ; i<500 ; i++) {
+	for(int i=0 ; i<100 ; i++) {
 		balls.push_back(new Node("Ball" + QString().setNum(i+1)));
 	}
 
 	nRot->addProperty(new IProperty());
-	//nRot->addProperty(new DummyUpdatable());
+	nRot->addProperty(new DummyUpdatable());
 //	nQt->addProperty(new QtLogo(engine.getGLW_TEMPORARY()));
 //	nQt->addProperty(new Grid(1.0f, 1.0f, 40, 40));
 	//nDuckGrid->addProperty(new Grid(1.0f, 1.0f, 40, 40));
@@ -180,7 +180,7 @@ int main(int argc, char *argv[])
 
 	prop.is_kinematic = false;
 	prop.mass = 100.0;
-	prop.restitution = 1.0;
+	prop.restitution = 0.1;
 	prop.shape = PhysicObject::SPHERE;
 	for(QVector<Node*>::iterator it=balls.begin() ; it != balls.end() ; it++) {
 		(*it)->addProperty(new PhysicObject(prop));

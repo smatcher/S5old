@@ -58,12 +58,13 @@ int main(int argc, char *argv[])
 	nTerrain->move(Vector3f(-256.f, -100.f, -256.f));
 
 	nLight->addProperty(new Light());
-	nLight->moveTo(Vector3f(4.0f, 4.0f, 0.0f));
+	nLight->moveTo(Vector3f(200.0f, 50.0f, 200.0f));
 
-	nRot->addProperty(new DummyUpdatable());
+	////nRot->addProperty(new DummyUpdatable());
 	nRot->setScale(Vector3f(20.0f, 20.0f, 20.0f));
 	sg->link(nTerrain);
-	nRot->link(nLight);
+	//nRot->link(nLight);
+	sg->link(nLight);
 	sg->link(nRot);
 
 	RenderManager::Background background;
