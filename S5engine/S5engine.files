@@ -148,3 +148,5 @@ src/core/utils/GLDebugFont.cpp
 include/core/utils/GLDebugFont.h
 include/core/properties/terrainrenderer.h
 src/core/properties/terrainrenderer.cpp
+include/core/utils/quadtree.h
+include/core/utils/quadtree.hpp

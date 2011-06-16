@@ -2,6 +2,7 @@
 #include <core/resources/stbimage.h>
 
 #include "core/scenegraph/node.h"
+#include "core/utils/quadtree.h"
 
 #include <QtOpenGL>
 

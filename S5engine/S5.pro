@@ -128,7 +128,9 @@ HEADERS  += \
     include/core/resources/glslshader.h \
     include/core/properties/terrainrenderer.h \
     include/tools/widgets/soundemitterwidget.h \
-    include/tools/widgets/terrainwidget.h
+    include/tools/widgets/terrainwidget.h \
+    include/core/utils/quadtree.h \
+    include/core/utils/quadtree.hpp
 
 INCLUDEPATH += \
 	include \
