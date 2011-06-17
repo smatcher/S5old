@@ -3,7 +3,7 @@
 #include "quadtree.h"
 
 template<class T>
-QuadTree<T>::QuadTree(T& value, QuadNode* parent = 0, POSITION position = ROOT) :
+QuadTree<T>::QuadTree(T* value, QuadNode* parent = 0, POSITION position = ROOT) :
 m_value(value), m_parent(parent), m_position(position) {
 
 	m_children[0] = 0;
@@ -34,7 +34,7 @@ QuadTree<T>* QuadTree<T>::child(POSITION position) {
 }
 
 template<class T>
-void QuadTree<T>::addChild(POSITION position, T& value) {
+void QuadTree<T>::addChild(POSITION position, T* value) {
 	m_children[position] = new QuadNode(value, this, position);
 }
 
@@ -46,4 +46,9 @@ bool QuadTree<T>::isRoot() {
 template<class T>
 bool QuadTree<T>::isLeaf() {
 	return (m_children[0]==0)&&(m_children[1]==0)&&(m_children[2]==0)&&(m_children[3]==0);
+}
+
+template<class T>
+T* QuadTree<T>::getValue() {
+	return m_value;
 }

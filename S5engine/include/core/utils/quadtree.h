@@ -4,6 +4,7 @@
 template<class T>
 class QuadTree
 {
+public:
 	enum POSITION{
 		SOUTH_EAST,
 		SOUTH_WEST,
@@ -11,22 +12,23 @@ class QuadTree
 		NORTH_WEST,
 		ROOT
 	};
-public:
 	typedef QuadTree<T> QuadNode;
 
-	QuadTree(T& value, QuadNode* parent, POSITION position);
+	QuadTree(T* value, QuadNode* parent, POSITION position);
 	~QuadTree();
 
 	QuadNode* parent();
 	QuadNode* child(POSITION position);
 
-	void addChild(POSITION position, T& value);
+	void addChild(POSITION position, T* value);
 
 	bool isRoot();
 	bool isLeaf();
 
+	T* getValue();
+
 private:
-	T& m_value;
+	T* m_value;
 
 	POSITION m_position;
 	QuadNode* m_parent;

@@ -16,7 +16,6 @@ public :
 	virtual void updateData();
 
 private :
-	QLineEdit *m_heightmap;
 	QCheckBox *m_wireframe;
 };
 

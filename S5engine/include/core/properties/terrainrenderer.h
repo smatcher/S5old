@@ -13,8 +13,9 @@
 
 class TerrainPatch {
 public:
-	TerrainPatch(int start_x, int start_y, int end_x, int end_y, int lod, int theight, int twidth);
-private:
+	TerrainPatch(int start_x, int start_y, int dim, int lod, int theight, int twidth);
+	void render();
+
 	QGLBuffer m_indices;
 
 	/* Position du patch dans le terrain */
@@ -38,9 +39,12 @@ public:
 	void render(double elapsed_time, GLWidget* context);
 	bool isTransparent() {return false;}
 
+
 protected:
 
 	void buildQuadTree(int max_lod);
+	void _buildQuadTree(TerrainNode* node, int theight, int twidth);
+	void renderQuadTree(TerrainNode* node);
 
 	float* m_heightmap;
 	int m_height;

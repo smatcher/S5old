@@ -63,9 +63,9 @@ int main(int argc, char *argv[])
 
 	nLight->addProperty(new Light());
 	nLight->addProperty(new MeshRenderer(sphere,mat));
-	nLight->moveTo(Vector3f(512.0f, 0.0f, 0.0f));
+	nLight->moveTo(Vector3f(0, 0.0f, -512.0f));
 
-	nRot->addProperty(new DummyUpdatable());
+	//nRot->addProperty(new DummyUpdatable());
 
 	nBase->rotate(Vector3f(1,0,0),90);
 	nBase->rotate(Vector3f(0,1,0),-45);

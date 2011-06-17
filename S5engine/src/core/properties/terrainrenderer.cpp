@@ -6,32 +6,37 @@
 
 #include <QtOpenGL>
 
-TerrainPatch::TerrainPatch(int start_x, int start_y, int end_x, int end_y, int lod, int theight, int twidth) :
+TerrainPatch::TerrainPatch(int start_x, int start_y, int dim, int lod, int theight, int twidth) :
 	m_indices(QGLBuffer::IndexBuffer),
 	m_offsetx(start_x),
 	m_offsety(start_y),
-	m_dim(end_x - start_x),
+	m_dim(dim),
 	m_lod(lod) {
 
+	logInfo("Creating terrain patch with LOD="<<lod<<" at ("<<start_x<<","<<start_y<<")");
+
 	/* On saute 2^lod vertex*/
-	int increment = 1<<lod;
+	int increment = 1<<m_lod;
 	int x;
+	int nx;
 	int y;
-	int index;
+	int ny;
+	int index = 0;
 	GLint indices[6*((m_dim/increment)*(m_dim/increment))];
 
-	for(x=start_x; x<end_x; x+=increment) {
-		for(y=start_y; y<end_y; y+=increment) {
-			index = (x + y*(m_dim/increment))*6;
-
+	for(x=0; x<m_dim/increment; x++) {
+		for(y=0; y<m_dim/increment; y++) {
+			nx = x*increment + start_x;
+			ny = y*increment + start_y;
 			/* Triangle 1 */
-			indices[index]	 = (x+y*theight);
-			indices[index+1] = (x+(y+increment)*theight);
-			indices[index+2] = ((x+increment)+y*theight);
+			indices[index]	 = (nx+ny*theight);
+			indices[index+1] = (nx+(ny+increment)*theight);
+			indices[index+2] = ((nx+increment)+ny*theight);
 			/* Triangle 2 */
-			indices[index+3] = (x+(y+increment)*theight);
-			indices[index+4] = ((x+increment)+(y+increment)*theight);
-			indices[index+5] = ((x+increment)+y*theight);
+			indices[index+3] = (nx+(ny+increment)*theight);
+			indices[index+4] = ((nx+increment)+(ny+increment)*theight);
+			indices[index+5] = ((nx+increment)+ny*theight);
+			index += 6;
 		}
 	}
 
@@ -40,6 +45,15 @@ TerrainPatch::TerrainPatch(int start_x, int start_y, int end_x, int end_y, int l
 	m_indices.setUsagePattern(QGLBuffer::StaticDraw);
 	m_indices.allocate(indices, 6*((m_dim/increment)*(m_dim/increment))*sizeof(GLint));
 
+	m_indices.release();
+}
+
+void TerrainPatch::render() {
+	int increment = 1<<m_lod;
+	glEnableClientState(GL_INDEX_ARRAY);
+	m_indices.bind();
+	glIndexPointer(GL_INT, 0, NULL);
+	glDrawElements(GL_TRIANGLES, 6*((m_dim/increment)*(m_dim/increment)), GL_UNSIGNED_INT, NULL);
 	m_indices.release();
 }
 
@@ -213,6 +227,8 @@ TerrainRenderer::TerrainRenderer(Texture& hm, Material& mat, float yscale, float
 
 	delete[] indices;
 
+	buildQuadTree(5);
+
 }
 
 void TerrainRenderer::render(double elapsed_time, GLWidget* context) {
@@ -283,20 +299,16 @@ void TerrainRenderer::render(double elapsed_time, GLWidget* context) {
 	m_vertices.bind();
 	glVertexPointer(3, GL_FLOAT, 0, NULL);
 
-	glEnableClientState(GL_INDEX_ARRAY);
-	m_indices.bind();
-	glIndexPointer(GL_INT, 0, NULL);
-
 	if(m_wireframe) {
 		glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 	}
 
-	glDrawElements(GL_TRIANGLES, 3*((m_height-1)*(m_width-1)*2), GL_UNSIGNED_INT, NULL);
-
+	//m_quadtree->getValue()->render();
+	renderQuadTree(m_quadtree);
 	if(m_wireframe) {
 		glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 	}
-	m_indices.release();
+
 	m_vertices.release();
 
 	glDisableClientState(GL_VERTEX_ARRAY);
@@ -309,6 +321,55 @@ void TerrainRenderer::render(double elapsed_time, GLWidget* context) {
 	if(m_material.isValid())
 	{
 		m_material->unset();
+	}
+}
+
+void TerrainRenderer::buildQuadTree(int max_lod) {
+	m_quadtree = new TerrainNode(new TerrainPatch(0,0,m_height,max_lod,m_height,m_width), 0, TerrainNode::ROOT);
+	_buildQuadTree(m_quadtree, m_height, m_width);
+}
+
+void TerrainRenderer::_buildQuadTree(TerrainNode* node, int theight, int twidth) {
+	if(node->getValue()->m_lod > 0) {
+		node->addChild(TerrainNode::NORTH_WEST, new TerrainPatch(node->getValue()->m_offsetx,
+							     node->getValue()->m_offsety + node->getValue()->m_dim/2,
+							     node->getValue()->m_dim/2,
+							     node->getValue()->m_lod-1,
+							     theight, twidth));
+		node->addChild(TerrainNode::SOUTH_WEST, new TerrainPatch(node->getValue()->m_offsetx,
+							     node->getValue()->m_offsety,
+							     node->getValue()->m_dim/2,
+							     node->getValue()->m_lod-1,
+							     theight, twidth));
+		node->addChild(TerrainNode::NORTH_EAST, new TerrainPatch(node->getValue()->m_offsetx + node->getValue()->m_dim/2,
+							     node->getValue()->m_offsety + node->getValue()->m_dim/2,
+							     node->getValue()->m_dim/2,
+							     node->getValue()->m_lod-1,
+							     theight, twidth));
+		node->addChild(TerrainNode::SOUTH_EAST, new TerrainPatch(node->getValue()->m_offsetx  + node->getValue()->m_dim/2,
+							     node->getValue()->m_offsety,
+							     node->getValue()->m_dim/2,
+							     node->getValue()->m_lod-1,
+							     theight, twidth));
+		_buildQuadTree(node->child(TerrainNode::NORTH_WEST),theight, twidth);
+		_buildQuadTree(node->child(TerrainNode::SOUTH_WEST),theight, twidth);
+		_buildQuadTree(node->child(TerrainNode::NORTH_EAST),theight, twidth);
+		_buildQuadTree(node->child(TerrainNode::SOUTH_EAST),theight, twidth);
+	}
+
+}
+
+void TerrainRenderer::renderQuadTree(TerrainNode* node) {
+	if((node->getValue()->m_lod*50*node->getValue()->m_lod*50 > (node->getValue()->m_offsetx+(node->getValue()->m_dim/2)-256)*(node->getValue()->m_offsetx+(node->getValue()->m_dim/2)-256) +
+								    (node->getValue()->m_offsety+(node->getValue()->m_dim/2)-256)*(node->getValue()->m_offsety+(node->getValue()->m_dim/2)-256)) && node->getValue()->m_lod>0) {
+		renderQuadTree(node->child(TerrainNode::NORTH_WEST));
+		renderQuadTree(node->child(TerrainNode::SOUTH_WEST));
+		renderQuadTree(node->child(TerrainNode::NORTH_EAST));
+		renderQuadTree(node->child(TerrainNode::SOUTH_EAST));
+
+	}
+	else {
+		node->getValue()->render();
 	}
 }
 
