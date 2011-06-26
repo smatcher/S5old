@@ -5,6 +5,7 @@
 #include "core/managers/managee.h"
 #include "core/managers/physicsmanager.h"
 #include "btBulletDynamicsCommon.h"
+#include "BulletCollision/CollisionShapes/btShapeHull.h"
 
 class PhysicObject : public IProperty, public Managee<PhysicsManager>, public btMotionState
 {
@@ -22,6 +23,7 @@ public:
 		float mass;
 		float restitution;
 		ColliderShape shape;
+		QString mesh_name;
 		bool is_kinematic;
 
 		Properties() :
@@ -43,6 +45,7 @@ public:
 private:
 	btRigidBody*          m_body;
 	btCollisionShape*     m_shape;
+	btShapeHull*          m_cached_shape;
 
 	PhysicObject::Properties m_properties;
 

@@ -4,6 +4,8 @@
 #include <assimp.h>
 #include <aiMesh.h>
 
+#include <core/managers/physicsmanager.h>
+
 AssimpMesh::AssimpMesh(const QString& name, const QString& path, IResourceFactory* factory, const aiMesh* mesh) :
 	MeshData(name,path,factory),
 	m_mesh(mesh),
@@ -16,6 +18,11 @@ AssimpMesh::AssimpMesh(const QString& name, const QString& path, IResourceFactor
 	m_indices(QGLBuffer::IndexBuffer),
 	m_nbFaces(0)
 {
+	GLfloat* array = new GLfloat[3 * m_mesh->mNumVertices]();
+		for(unsigned int i=0 ; i < m_mesh->mNumVertices ; i++) {
+			memcpy(&(array[3*i]),&m_mesh->mVertices[i].x,3 * sizeof(GLfloat));
+		}
+	PHYSICS_MANAGER.buildConvexCollider(name,array,mesh->mNumVertices);
 	buildVBO();
 }
 

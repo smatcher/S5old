@@ -9,10 +9,16 @@
 PhysicObject::PhysicObject(PhysicObject::Properties properties, const QString& name) : IProperty(name), Managee<PhysicsManager>()
 {
 	m_properties = properties;
+	m_cached_shape = NULL;
+	m_shape = NULL;
 }
 
 PhysicObject::~PhysicObject()
 {
+	if(m_cached_shape != NULL)
+		delete m_cached_shape;
+	if(m_shape != NULL)
+		delete m_shape;
 }
 
 btRigidBody* PhysicObject::getRigidBody()
@@ -22,6 +28,19 @@ btRigidBody* PhysicObject::getRigidBody()
 
 void PhysicObject::drawDebug(const GLWidget*) const
 {
+	if(m_cached_shape != NULL) {
+		const unsigned int* indices = m_cached_shape->getIndexPointer();
+		const btVector3* vertices = m_cached_shape->getVertexPointer();
+		unsigned int num_indices = m_cached_shape->numIndices();
+		glColor3f(1,1,1);
+		for(int i=0 ; i+2< num_indices ; i+=3) {
+			glBegin(GL_LINE_STRIP);
+				glVertex3fv(vertices[indices[i]]);
+				glVertex3fv(vertices[indices[i+1]]);
+				glVertex3fv(vertices[indices[i+2]]);
+			glEnd();
+		}
+	}
 }
 
 void PhysicObject::onLinked(PropertySet*)
@@ -43,12 +62,20 @@ void PhysicObject::onLinked(PropertySet*)
 	Vector3f nodeScale = node()->getScale();
 	btVector3 size(nodeScale.x,nodeScale.y,nodeScale.z);
 	size *= 0.5;
+	btConvexShape* shape;
 
 	switch(m_properties.shape) {
 		case SPHERE:
 			m_shape = new btSphereShape(nodeScale.x/2);
 			break;
 		case MESH:
+			shape = dynamic_cast<btConvexShape*>(PHYSICS_MANAGER.getCollider(m_properties.mesh_name));
+			if(shape != NULL) {
+				m_shape = new btUniformScalingShape(shape,nodeScale.x);
+				m_cached_shape = new btShapeHull(shape);
+				m_cached_shape->buildHull(m_shape->getMargin());
+			}
+			break;
 		default :
 			m_shape = new btBoxShape(size);
 	}

@@ -75,12 +75,12 @@ int main(int argc, char *argv[])
 	for(int i=0 ; i<4 ; i++) {
 		walls.push_back(new Node("Wall" + QString().setNum(i+1)));
 	}
-	for(int i=0 ; i<100 ; i++) {
+	for(int i=0 ; i<200 ; i++) {
 		balls.push_back(new Node("Ball" + QString().setNum(i+1)));
 	}
 
 	nRot->addProperty(new IProperty());
-	nRot->addProperty(new DummyUpdatable());
+//	nRot->addProperty(new DummyUpdatable());
 //	nQt->addProperty(new QtLogo(engine.getGLW_TEMPORARY()));
 //	nQt->addProperty(new Grid(1.0f, 1.0f, 40, 40));
 	//nDuckGrid->addProperty(new Grid(1.0f, 1.0f, 40, 40));
@@ -134,8 +134,8 @@ int main(int argc, char *argv[])
 	nRot->moveTo(Vector3f(0,0,0));
 	nQt->moveTo(Vector3f(0,-0.5,0));
 	nQt->rotate(Vector3f(1,0,0),90);
-	nCam->moveTo(Vector3f(0,1.0,1.6));
-	nCam->rotate(Vector3f(1,0,0),330);
+	nCam->moveTo(Vector3f(0,10.0,0));
+	nCam->rotate(Vector3f(1,0,0),270);
 	nCamFollow->moveTo(Vector3f(0,2,3));
 	nCamFollow->rotate(Vector3f(1,0,0),345);
 
@@ -151,20 +151,25 @@ int main(int argc, char *argv[])
 	nSand->moveTo(Vector3f(0,-0.5,0));
 	nSand->rotate(Vector3f(1,0,0),270);
 	nSand->setScale(Vector3f(10,10,0.01));
-	walls[0]->moveTo(Vector3f(0,1,-5));
+	walls[0]->moveTo(Vector3f(0,1,-2));
+	//walls[0]->moveTo(Vector3f(0,1,-5));
 	walls[0]->setScale(Vector3f(10,3,0.01));
-	walls[1]->moveTo(Vector3f(0,1, 5));
+	walls[1]->moveTo(Vector3f(0,1, 2));
+	//walls[1]->moveTo(Vector3f(0,1, 5));
 	walls[1]->setScale(Vector3f(10,3,0.01));
-	walls[2]->moveTo(Vector3f( 5,1,0));
+	walls[2]->moveTo(Vector3f( 2,1,0));
+	//walls[2]->moveTo(Vector3f( 5,1,0));
 	walls[2]->setScale(Vector3f(0.01,3,10));
-	walls[3]->moveTo(Vector3f(-5,1,0));
+	walls[3]->moveTo(Vector3f(-2,1,0));
+	//walls[3]->moveTo(Vector3f(-5,1,0));
 	walls[3]->setScale(Vector3f(0.01,3,10));
 	for(int i=0 ; i<balls.size() ; i++) {
 		balls[i]->moveTo(Vector3f(0,4+2*i,0));
+		balls[i]->setScale(Vector3f(0.3,0.3,0.3));
 	}
 	nGarg->moveTo(Vector3f(-3,1,-3));
 	nGarg->setScale(Vector3f(1,3,1));
-	nDuck->moveTo(Vector3f(0,0,-1.8));
+	nDuck->moveTo(Vector3f(0,-0.5,-1.8));
 	nDuck->rotate(Vector3f(0,1,0),127);
 	//nDuckGrid->rotate(Vector3f(1,0,0),270);
 
@@ -172,11 +177,13 @@ int main(int argc, char *argv[])
 	nSand->addProperty(new PhysicObject(prop));
 	for(QVector<Node*>::iterator it=walls.begin() ; it != walls.end() ; it++) {
 		(*it)->addProperty(new PhysicObject(prop));
-		(*it)->addProperty(new MeshRenderer(cube,gargoyle));
+		//(*it)->addProperty(new MeshRenderer(cube,gargoyle));
 	}
 	prop.is_kinematic = true;
-	nDuck->addProperty(new PhysicObject(prop));
 	nGarg->addProperty(new PhysicObject(prop));
+	prop.shape = PhysicObject::MESH;
+	prop.mesh_name = "duckmesh";
+	nDuck->addProperty(new PhysicObject(prop));
 
 	prop.is_kinematic = false;
 	prop.mass = 100.0;

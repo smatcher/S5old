@@ -4,9 +4,13 @@
 #include "core/managers/manager.h"
 #include "core/utils/singleton.h"
 
+#include <QMap>
+#include <QString>
+
 class PhysicObject;
 class btDiscreteDynamicsWorld;
 class btBroadphaseInterface;
+class btCollisionShape;
 class btCollisionDispatcher;
 class btCollisionConfiguration;
 class btSequentialImpulseConstraintSolver;
@@ -27,6 +31,11 @@ public:
 
 	void debugDraw();
 
+	void buildConvexCollider(QString name, float* vertices, int nb_vertices);
+	//void buildConcaveCollider(QString name, float* vertices);
+
+	btCollisionShape* getCollider(QString name);
+
 private:
 	btDiscreteDynamicsWorld*             m_discreteDynamicsWorld;
 	btBroadphaseInterface*               m_broadphaseInterface;
@@ -35,6 +44,8 @@ private:
 	btSequentialImpulseConstraintSolver* m_sequentialImpulseConstraintSolver;
 
 	GLDebugDrawer* m_debug;
+
+	QMap<QString,btCollisionShape*> m_colliders;
 };
 
 typedef Singleton<PhysicsManager> SingletonPhysicsManager;
