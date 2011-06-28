@@ -62,6 +62,7 @@ void PhysicObject::onLinked(PropertySet*)
 	Vector3f nodeScale = node()->getScale();
 	btVector3 size(nodeScale.x,nodeScale.y,nodeScale.z);
 	btConvexShape* shape;
+	btCompoundShape* cmpd_shape;
 	btVector3 pos(0,0,0);
 	btScalar radi = 0.5;
 
@@ -75,7 +76,9 @@ void PhysicObject::onLinked(PropertySet*)
 			if(shape != NULL) {
 				m_cached_shape = new btShapeHull(shape);
 				m_cached_shape->buildHull(shape->getMargin());
-				m_shape = new btUniformScalingShape(shape,1);
+				cmpd_shape = new btCompoundShape();
+				cmpd_shape->addChildShape(btTransform::getIdentity(),shape);
+				m_shape = cmpd_shape;
 				m_shape->setLocalScaling(size);
 			}
 			break;
