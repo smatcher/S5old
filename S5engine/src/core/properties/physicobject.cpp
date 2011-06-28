@@ -61,23 +61,26 @@ void PhysicObject::onLinked(PropertySet*)
 	myTransform.setFromOpenGLMatrix(mat);
 	Vector3f nodeScale = node()->getScale();
 	btVector3 size(nodeScale.x,nodeScale.y,nodeScale.z);
-	size *= 0.5;
 	btConvexShape* shape;
+	btVector3 pos(0,0,0);
+	btScalar radi = 0.5;
 
 	switch(m_properties.shape) {
 		case SPHERE:
-			m_shape = new btSphereShape(nodeScale.x/2);
+			m_shape = new btMultiSphereShape(&pos,&radi,1);
+			m_shape->setLocalScaling(size);
 			break;
 		case MESH:
 			shape = dynamic_cast<btConvexShape*>(PHYSICS_MANAGER.getCollider(m_properties.mesh_name));
 			if(shape != NULL) {
-				m_shape = new btUniformScalingShape(shape,nodeScale.x);
 				m_cached_shape = new btShapeHull(shape);
-				m_cached_shape->buildHull(m_shape->getMargin());
+				m_cached_shape->buildHull(shape->getMargin());
+				m_shape = new btUniformScalingShape(shape,1);
+				m_shape->setLocalScaling(size);
 			}
 			break;
 		default :
-			m_shape = new btBoxShape(size);
+			m_shape = new btBoxShape(size * 0.5);
 	}
 	if(mass)
 	{

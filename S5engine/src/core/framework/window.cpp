@@ -10,11 +10,6 @@
 
 #include <iostream>
 
-void saveWrapper(const QPixmap& pix, const QString& path)
-{
-	pix.save(path);
-}
-
 AppWindow::AppWindow(Engine* engine)
 {
 	m_engine = engine;
@@ -34,10 +29,7 @@ void AppWindow::keyPressEvent(QKeyEvent *e)
 	if (e->key() == Qt::Key_Escape) {
 		close();
 	} else if(e->key() == Qt::Key_F12) {
-		QImage screen = m_glWidget->grabFrameBuffer();
-		QPixmap shot = QPixmap::fromImage(screen);
-		QtConcurrent::run(&saveWrapper,shot,QString("screen.png"));
-		logInfo("Screenshot saved to screen.png");
+		m_glWidget->takeScreenshot();
 	}
 }
 

@@ -7,9 +7,16 @@
 #include <QGLFormat>
 #include <iostream>
 
+#include <QtConcurrentRun>
+
 #ifndef GL_MULTISAMPLE
 #define GL_MULTISAMPLE  0x809D
 #endif
+
+void saveWrapper(const QPixmap& pix, const QString& path)
+{
+	pix.save(path);
+}
 
 GLWidget::GLWidget(QWidget *parent)
 		: QGLWidget(parent)
@@ -27,6 +34,14 @@ GLWidget::GLWidget(QWidget *parent)
 
 GLWidget::~GLWidget()
 {
+}
+
+void GLWidget::takeScreenshot(QString path)
+{
+	QImage screen = grabFrameBuffer();
+	QPixmap shot = QPixmap::fromImage(screen);
+	QtConcurrent::run(&saveWrapper,shot,path);
+	logInfo("Screenshot saved to " + path);
 }
 
 QSize GLWidget::minimumSizeHint() const
@@ -153,6 +168,10 @@ void GLWidget::keyPressEvent(QKeyEvent *e)
 						break;
 				}
 			#endif
+
+			if(e->key() == Qt::Key_F12) {
+				takeScreenshot();
+			}
 		}
 		else
 		{
@@ -194,6 +213,7 @@ void GLWidget::keyReleaseEvent(QKeyEvent *e)
 						break;
 				}
 			#endif
+
 		}
 		else
 		{

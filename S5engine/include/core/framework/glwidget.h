@@ -17,6 +17,8 @@ public:
 	GLWidget(QWidget *parent = 0);
 	virtual ~GLWidget();
 
+	void takeScreenshot(QString path = "screen.png");
+
 	QSize minimumSizeHint() const;
 	QSize sizeHint() const;
 

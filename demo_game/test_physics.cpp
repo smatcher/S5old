@@ -75,7 +75,7 @@ int main(int argc, char *argv[])
 	for(int i=0 ; i<4 ; i++) {
 		walls.push_back(new Node("Wall" + QString().setNum(i+1)));
 	}
-	for(int i=0 ; i<200 ; i++) {
+	for(int i=0 ; i<30 ; i++) {
 		balls.push_back(new Node("Ball" + QString().setNum(i+1)));
 	}
 
@@ -165,7 +165,7 @@ int main(int argc, char *argv[])
 	walls[3]->setScale(Vector3f(0.01,3,10));
 	for(int i=0 ; i<balls.size() ; i++) {
 		balls[i]->moveTo(Vector3f(0,4+2*i,0));
-		balls[i]->setScale(Vector3f(0.3,0.3,0.3));
+		balls[i]->setScale(Vector3f(0.3,0.5,0.3));
 	}
 	nGarg->moveTo(Vector3f(-3,1,-3));
 	nGarg->setScale(Vector3f(1,3,1));
@@ -188,11 +188,12 @@ int main(int argc, char *argv[])
 	prop.is_kinematic = false;
 	prop.mass = 100.0;
 	prop.restitution = 0.1;
-	prop.shape = PhysicObject::SPHERE;
+	//prop.shape = PhysicObject::SPHERE;
 	for(QVector<Node*>::iterator it=balls.begin() ; it != balls.end() ; it++) {
 		(*it)->addProperty(new PhysicObject(prop));
 		prop.mass += 2.0;
-		(*it)->addProperty(new MeshRenderer(sphere,ball));
+		//(*it)->addProperty(new MeshRenderer(sphere,ball));
+		(*it)->addProperty(new MeshRenderer(mesh,duck));
 	}
 
 	// Beurk ! Mais je peux le faire alors je me prive pas ^^
