@@ -1,4 +1,11 @@
 test_physics.cpp
 test_terrain.cpp
 media/materials/duck.xml
+media/materials/nyan.xml
+media/materials/rainbow.xml
 media/textures/skybox/stormy/rules.db
+test_nyan.cpp
+dummyjumper.h
+dummyjumper.cpp
+trailrenderer.h
+trailrenderer.cpp

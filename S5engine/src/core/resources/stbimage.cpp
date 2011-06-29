@@ -9,11 +9,12 @@
 
   */
 
-StbImage::StbImage(const QString& name, const QString& path, IResourceFactory* factory, stbi_uc* data, bool mipmap, bool wrap_s, bool wrap_t, int comp) :
+StbImage::StbImage(const QString& name, const QString& path, IResourceFactory* factory, stbi_uc* data, bool mipmap, bool filtering, bool wrap_s, bool wrap_t, int comp) :
 	TextureData(name, path, factory),
 	m_data(data),
 	m_comp(comp),
 	m_mipmap(mipmap),
+	m_filtering(filtering),
 	m_wrap_s(wrap_s),
 	m_wrap_t(wrap_t)
 {
@@ -70,10 +71,21 @@ void StbImage::buildGLTexture()
 
 		glTexEnvi(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
 
-		if(m_mipmap)
-			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_NEAREST);
+		if(m_filtering)
+		{
+			if(m_mipmap) {
+				glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_NEAREST);
+				glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+			} else {
+				glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+				glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+			}
+		}
 		else
+		{
 			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+		}
 
 		if(m_wrap_s)
 			glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_WRAP_S, GL_REPEAT);
@@ -169,18 +181,21 @@ void StbImageFactory::parseFile(const QString &path, QList<ResourceData *> &cont
 		debug( "RESOURCE PARSING" , "StbImage found " << name);
 		int comp = 3;
 		bool mipmap = true;
+		bool filtering = true;
 		bool wrap_s = true;
 		bool wrap_t = true;
 		if(rules.contains("alpha") && rules.find("alpha").value() == "true")
 			comp = 4;
 		if(rules.contains("mipmap") && rules.find("mipmap").value() == "false")
 			mipmap = false;
+		if(rules.contains("filtering") && rules.find("filtering").value() == "false")
+			filtering = false;
 		if(rules.contains("wrap_s") && rules.find("wrap_s").value() == "false")
 			wrap_s = false;
 		if(rules.contains("wrap_t") && rules.find("wrap_t").value() == "false")
 			wrap_t = false;
 
-		StbImage* image = new StbImage(name,path,this,NULL,mipmap,wrap_s,wrap_t,comp);
+		StbImage* image = new StbImage(name,path,this,NULL,mipmap,filtering,wrap_s,wrap_t,comp);
 		content.push_back(image);
 	}
 	else

@@ -46,7 +46,7 @@ tools_h_list  = []	# - Editor tools headers
 others_h_list = []	# - all other headers
 
 for h in all_h_list:
-	if h.startswith(TOOLS_HEADER_DIR):
+	if False: #h.startswith(TOOLS_HEADER_DIR):
 		if isMocable(PROJECT_DIR + '/' + h):
 			tools_h_list.append(BUILD_DIR + '/' + h)
 	else:

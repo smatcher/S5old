@@ -1,0 +1,10 @@
+<rules>
+	<file name="nyan.tga">
+		<rule name="mipmap" value="false"/>
+		<rule name="filtering" value="false"/>
+	</file>
+	<file name="rainbow.tga">
+		<rule name="mipmap" value="false"/>
+		<rule name="filtering" value="false"/>
+	</file>
+</rules>

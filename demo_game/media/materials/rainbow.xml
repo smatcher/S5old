@@ -1,0 +1,8 @@
+<material>
+	<texture texunit="0">rainbow.tga</texture>
+	<diffuse>1.0 1.0 1.0 1.0</diffuse>
+	<specular>0.0 0.0 0.0 1.0</specular>
+	<ambient>0.0 0.0 0.0 1.0</ambient>
+	<emission>1.0 1.0 1.0 1.0</emission>
+	<shininess>0.1</shininess>
+</material>

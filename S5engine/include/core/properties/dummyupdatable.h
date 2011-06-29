@@ -6,11 +6,12 @@
 class DummyUpdatable : public IUpdatable
 {
 public:
-    DummyUpdatable();
-    void update(double elapsed_time);
+	DummyUpdatable(double speed = 0.1);
+	void update(double elapsed_time);
 
 private:
-    double angle;
+	double angle;
+	double speed;
 
 };
 
