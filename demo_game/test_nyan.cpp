@@ -43,8 +43,7 @@ int main(int argc, char *argv[])
 	nLight->addProperty(new Light());
 	nNyan->addProperty(new MeshRenderer(nyan_mesh,nyan_material));
 	nTrailer->addProperty(new TrailRenderer(rainbow_material));
-	nRot->addProperty(new DummyUpdatable(-0.04));
-	//nRot->addProperty(new DummyUpdatable(-0.4));
+	nRot->addProperty(new DummyUpdatable(-0.4));
 	nJumpy->addProperty(new DummyJumper(1, 0.7));
 
 	sg->link(nRot);
@@ -60,7 +59,7 @@ int main(int argc, char *argv[])
 	nTrailer->setScale(Vector3f(1.0,0.8,1.0));
 
 	nCamFollow->moveTo(Vector3f(-2,0,0));
-	//nCamFollow->rotate(Vector3f(1,0,0),345);
+	nCamFollow->rotate(Vector3f(0,0,1),-5);
 	nCamFollow->rotate(Vector3f(0,1,0),90);
 
 	nLight->moveTo(Vector3f(4,0,-1));

@@ -1,7 +1,7 @@
 #include "trailrenderer.h"
 #include <core/scenegraph/node.h>
 
-#define TRAIL_MAX_FACES 5
+#define TRAIL_MAX_QUADS 50
 
 TrailRenderer::TrailRenderer(Material material) :
 	m_material(material),
@@ -10,11 +10,12 @@ TrailRenderer::TrailRenderer(Material material) :
 	m_colors(),
 	m_texcoords(),
 	m_indices(QGLBuffer::IndexBuffer),
-	m_nbFaces(-1),
-	m_currentFace(-1)
+	m_nbQuads(-1),
+	m_vertexOffset(-1),
+	m_quadOffset(-1)
 {
-	const int nb_vertices = (TRAIL_MAX_FACES+1)*2;
-	const int nb_faces = TRAIL_MAX_FACES;
+	const int nb_vertices = (TRAIL_MAX_QUADS+1)*2;
+	const int nb_faces = TRAIL_MAX_QUADS;
 
 	GLfloat* texcoords = new GLfloat[nb_vertices*2];
 	for(int i=0 ; i<nb_vertices ; i++) {
@@ -68,25 +69,27 @@ void TrailRenderer::render(double time_elapsed, GLWidget*)
 		Vector4f dn = thisTransform*Vector4f(0,-0.5,0,1);
 
 		// Add those in the VBO
-		if(m_nbFaces < TRAIL_MAX_FACES) {
-			m_nbFaces++;
+		if(m_nbQuads < TRAIL_MAX_QUADS) {
+			m_nbQuads++;
 		}
-		int oldFace = m_currentFace;
-		m_currentFace = (m_currentFace+1)%(TRAIL_MAX_FACES+1);
+		int oldVertexOffset = m_vertexOffset;
+		m_vertexOffset = (m_vertexOffset+1)%(TRAIL_MAX_QUADS+1);
+		m_quadOffset = (m_quadOffset+1)%(TRAIL_MAX_QUADS);
 		m_vertices.bind();
 		GLfloat vertex[6] = {up[0],up[1],up[2],dn[0],dn[1],dn[2]};
-		debug("TL_gen","vertex at" << m_currentFace*6 << "[" << vertex[0] << vertex[1] << vertex[2] << vertex[3] << vertex[4] << vertex[5] << "]");
-		m_vertices.write(m_currentFace*6*sizeof(GLfloat),vertex,6*sizeof(GLfloat));
-		if(m_nbFaces >= TRAIL_MAX_FACES && m_currentFace < TRAIL_MAX_FACES) {
-			GLshort indices[6] = {2*oldFace,2*oldFace+1,2*m_currentFace,2*m_currentFace,2*oldFace+1,2*m_currentFace+1};
+		m_vertices.write(m_vertexOffset*6*sizeof(GLfloat),vertex,6*sizeof(GLfloat));
+		if(m_nbQuads >= TRAIL_MAX_QUADS) {
+			GLshort indices[6] = {
+									2*oldVertexOffset,2*oldVertexOffset+1,2*m_vertexOffset,
+									2*m_vertexOffset,2*oldVertexOffset+1,2*m_vertexOffset+1
+								 };
 			m_indices.bind();
-			m_indices.write(m_currentFace*6*sizeof(GLshort),indices,6*sizeof(GLshort));
-			debug("TL_gen","indices at" << m_currentFace*6 << "[" << indices[0] << indices[1] << indices[2] << indices[3] << indices[4] << indices[5] << "]");
+			m_indices.write(m_quadOffset*6*sizeof(GLshort),indices,6*sizeof(GLshort));
 		}
 	}
 
 	// Render
-	if(m_nbFaces > 0) {
+	if(m_nbQuads > 0) {
 
 		if(m_material.isValid())
 		{
@@ -144,7 +147,7 @@ void TrailRenderer::render(double time_elapsed, GLWidget*)
 		m_indices.bind();
 		glIndexPointer(GL_SHORT, 0, NULL);
 
-		glDrawElements(GL_TRIANGLES, 6*m_nbFaces, GL_UNSIGNED_SHORT, NULL);
+		glDrawElements(GL_TRIANGLES, 6*m_nbQuads, GL_UNSIGNED_SHORT, NULL);
 
 		m_indices.release();
 		m_vertices.release();

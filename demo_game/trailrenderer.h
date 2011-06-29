@@ -22,8 +22,9 @@ private:
 	QGLBuffer m_colors;
 	QGLBuffer m_texcoords;
 	QGLBuffer m_indices;
-	int m_nbFaces;
-	int m_currentFace;
+	int m_nbQuads;
+	int m_vertexOffset;
+	int m_quadOffset;
 };
 
 #endif //TRAIL_RENDERER_H
