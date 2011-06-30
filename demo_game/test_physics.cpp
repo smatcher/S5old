@@ -165,7 +165,11 @@ int main(int argc, char *argv[])
 	walls[3]->setScale(Vector3f(0.01,3,10));
 	for(int i=0 ; i<balls.size() ; i++) {
 		balls[i]->moveTo(Vector3f(0,4+2*i,0));
-		balls[i]->setScale(Vector3f(0.2,1.0,1.0));
+
+		float s1 = 0.1+(qrand() % 900)/1000.0;
+		float s2 = 0.1+(qrand() % 900)/1000.0;
+		float s3 = 0.1+(qrand() % 900)/1000.0;
+		balls[i]->setScale(Vector3f(s1,s2,s3));
 	}
 	nGarg->moveTo(Vector3f(-3,1,-3));
 	nGarg->setScale(Vector3f(1,3,1));

@@ -24,6 +24,7 @@ AssimpMesh::AssimpMesh(const QString& name, const QString& path, IResourceFactor
 		}
 	PHYSICS_MANAGER.buildConvexCollider(name,array,mesh->mNumVertices);
 	buildVBO();
+	m_state = STATE_LOADED;
 }
 
 bool AssimpMesh::unload()

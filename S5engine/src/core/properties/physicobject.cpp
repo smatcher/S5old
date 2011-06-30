@@ -76,9 +76,10 @@ void PhysicObject::onLinked(PropertySet*)
 			if(shape != NULL) {
 				m_cached_shape = new btShapeHull(shape);
 				m_cached_shape->buildHull(shape->getMargin());
-				cmpd_shape = new btCompoundShape();
-				cmpd_shape->addChildShape(btTransform::getIdentity(),shape);
-				m_shape = cmpd_shape;
+	//			cmpd_shape = new btCompoundShape();
+	//			cmpd_shape->addChildShape(btTransform::getIdentity(),shape);
+	//			m_shape = cmpd_shape;
+				m_shape = shape;
 				m_shape->setLocalScaling(size);
 			}
 			break;

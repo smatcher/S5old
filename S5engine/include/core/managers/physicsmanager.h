@@ -13,6 +13,7 @@ class btBroadphaseInterface;
 class btCollisionShape;
 class btCollisionDispatcher;
 class btCollisionConfiguration;
+class btConvexPointCloudShape;
 class btSequentialImpulseConstraintSolver;
 class GLDebugDrawer;
 
@@ -45,7 +46,8 @@ private:
 
 	GLDebugDrawer* m_debug;
 
-	QMap<QString,btCollisionShape*> m_colliders;
+	QMap<QString,btCollisionShape*> m_concave_colliders;
+	QMap<QString,btConvexPointCloudShape*> m_convex_colliders;
 };
 
 typedef Singleton<PhysicsManager> SingletonPhysicsManager;
