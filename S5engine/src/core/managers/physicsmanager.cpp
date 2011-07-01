@@ -50,6 +50,7 @@ void PhysicsManager::buildConvexCollider(QString name, float* vertices, int nb_v
 	float collisionMargin = 0.04f;
 
 	btConvexHullShape* tmp_shape = new btConvexHullShape(vertices, nb_vertices, 3*sizeof(float));
+	tmp_shape->setMargin(0);
 	btShapeHull* tmp_shape_hull = new btShapeHull(tmp_shape);
 	tmp_shape_hull->buildHull(0);
 
@@ -67,14 +68,14 @@ void PhysicsManager::buildConvexCollider(QString name, float* vertices, int nb_v
 	for (int p=0;p<planeEquations.size();p++)
 	{
 			btVector3 plane = planeEquations[p];
-			plane[3] += 3*collisionMargin;
+			plane[3] += collisionMargin;
 			shiftedPlaneEquations.push_back(plane);
 	}
 	btAlignedObjectArray<btVector3> shiftedVertices;
 	btGeometryUtil::getVerticesFromPlaneEquations(shiftedPlaneEquations,shiftedVertices);
 
 	btConvexHullShape* old_shape = new btConvexHullShape(&(shiftedVertices[0].getX()),shiftedVertices.size());
-	old_shape->setMargin(collisionMargin);
+	old_shape->setMargin(0);
 	btConvexPointCloudShape* shape;
 	//shape->setMargin(0);
 
