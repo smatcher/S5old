@@ -14,10 +14,10 @@ class MaterialData : public ResourceData
 
 public:
 	MaterialData(const QString& name, const QString& path, IResourceFactory* factory) : ResourceData(name,path,factory) {}
-	virtual void apply() = 0;
-	virtual void unset() = 0;
-	virtual QGLShaderProgram* program() = 0;
-	virtual bool isTransparent() = 0;
+	virtual void apply(unsigned int layer) = 0;
+	virtual void unset(unsigned int layer) = 0;
+	virtual QGLShaderProgram* program(unsigned int layer) = 0;
+	virtual bool isTransparent(unsigned int layer) = 0;
 };
 
 class Material : public ResourceHandle<MaterialData>

@@ -16,10 +16,15 @@ Handle ResourceManager<Resource, Handle>::get(const QString& name)
 		return Handle();
 
 	Resource* res = it.value();
-	if(res != NULL)
-		return Handle(*res);
-	else
+	if(res != NULL) {
+		Handle ret(*res);
+		if(ret->state() == Resource::STATE_UNLOADED) {
+			ret->load();
+		}
+		return ret;
+	} else {
 		return Handle();
+	}
 }
 
 

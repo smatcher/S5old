@@ -19,28 +19,30 @@ void MeshRenderer::render(double elapsed_time, GLWidget* context)
 
 	node()->getGlobalTransform().glMultf();
 
-	if(m_material.isValid())
-	{
-		m_material->apply();
-		program = m_material->program();
-	}
-	else
+	if(!m_material.isValid())
 	{
 		debug( "RENDERING" , "MeshRenderer : no material to apply for " << node()->getName());
 	}
 
 	if(m_mesh.isValid())
 	{
-		m_mesh->draw(program);
+		for(unsigned int i=0 ; i<m_mesh->nbSubmeshes() ; i++) {
+
+			if(m_material.isValid()) {
+				m_material->apply(i);
+				program = m_material->program(i);
+			}
+
+			m_mesh->draw(i,program);
+
+			if(m_material.isValid()) {
+				m_material->unset(i);
+			}
+		}
 	}
 	else
 	{
 		debug( "RENDERING" , "MeshRenderer : no mesh to draw for " << node()->getName());
-	}
-
-	if(m_material.isValid())
-	{
-		m_material->unset();
 	}
 }
 
@@ -49,7 +51,14 @@ bool MeshRenderer::isTransparent()
 	bool ret = false;
 
 	if(m_material.isValid())
-		ret = m_material->isTransparent();
+	{
+		for(unsigned int i=0 ; i<m_mesh->nbSubmeshes() ; i++) {
+			if(m_material->isTransparent(i)) {
+				ret = true;
+				break;
+			}
+		}
+	}
 
 	return ret;
 }

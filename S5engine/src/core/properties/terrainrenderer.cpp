@@ -243,8 +243,8 @@ void TerrainRenderer::render(double elapsed_time, GLWidget* context) {
 	/* Application du Material */
 	if(m_material.isValid())
 	{
-		m_material->apply();
-		program = m_material->program();
+		m_material->apply(0);
+		program = m_material->program(0);
 	}
 	else
 	{
@@ -320,7 +320,7 @@ void TerrainRenderer::render(double elapsed_time, GLWidget* context) {
 	/* Désactivation du material */
 	if(m_material.isValid())
 	{
-		m_material->unset();
+		m_material->unset(0);
 	}
 }
 
@@ -332,25 +332,25 @@ void TerrainRenderer::buildQuadTree(int max_lod) {
 void TerrainRenderer::_buildQuadTree(TerrainNode* node, int theight, int twidth) {
 	if(node->getValue()->m_lod > 0) {
 		node->addChild(TerrainNode::NORTH_WEST, new TerrainPatch(node->getValue()->m_offsetx,
-							     node->getValue()->m_offsety + node->getValue()->m_dim/2,
-							     node->getValue()->m_dim/2,
-							     node->getValue()->m_lod-1,
-							     theight, twidth));
+								 node->getValue()->m_offsety + node->getValue()->m_dim/2,
+								 node->getValue()->m_dim/2,
+								 node->getValue()->m_lod-1,
+								 theight, twidth));
 		node->addChild(TerrainNode::SOUTH_WEST, new TerrainPatch(node->getValue()->m_offsetx,
-							     node->getValue()->m_offsety,
-							     node->getValue()->m_dim/2,
-							     node->getValue()->m_lod-1,
-							     theight, twidth));
+								 node->getValue()->m_offsety,
+								 node->getValue()->m_dim/2,
+								 node->getValue()->m_lod-1,
+								 theight, twidth));
 		node->addChild(TerrainNode::NORTH_EAST, new TerrainPatch(node->getValue()->m_offsetx + node->getValue()->m_dim/2,
-							     node->getValue()->m_offsety + node->getValue()->m_dim/2,
-							     node->getValue()->m_dim/2,
-							     node->getValue()->m_lod-1,
-							     theight, twidth));
+								 node->getValue()->m_offsety + node->getValue()->m_dim/2,
+								 node->getValue()->m_dim/2,
+								 node->getValue()->m_lod-1,
+								 theight, twidth));
 		node->addChild(TerrainNode::SOUTH_EAST, new TerrainPatch(node->getValue()->m_offsetx  + node->getValue()->m_dim/2,
-							     node->getValue()->m_offsety,
-							     node->getValue()->m_dim/2,
-							     node->getValue()->m_lod-1,
-							     theight, twidth));
+								 node->getValue()->m_offsety,
+								 node->getValue()->m_dim/2,
+								 node->getValue()->m_lod-1,
+								 theight, twidth));
 		_buildQuadTree(node->child(TerrainNode::NORTH_WEST),theight, twidth);
 		_buildQuadTree(node->child(TerrainNode::SOUTH_WEST),theight, twidth);
 		_buildQuadTree(node->child(TerrainNode::NORTH_EAST),theight, twidth);
@@ -361,7 +361,7 @@ void TerrainRenderer::_buildQuadTree(TerrainNode* node, int theight, int twidth)
 
 void TerrainRenderer::renderQuadTree(TerrainNode* node) {
 	if((node->getValue()->m_lod*50*node->getValue()->m_lod*50 > (node->getValue()->m_offsetx+(node->getValue()->m_dim/2)-256)*(node->getValue()->m_offsetx+(node->getValue()->m_dim/2)-256) +
-								    (node->getValue()->m_offsety+(node->getValue()->m_dim/2)-256)*(node->getValue()->m_offsety+(node->getValue()->m_dim/2)-256)) && node->getValue()->m_lod>0) {
+									(node->getValue()->m_offsety+(node->getValue()->m_dim/2)-256)*(node->getValue()->m_offsety+(node->getValue()->m_dim/2)-256)) && node->getValue()->m_lod>0) {
 		renderQuadTree(node->child(TerrainNode::NORTH_WEST));
 		renderQuadTree(node->child(TerrainNode::SOUTH_WEST));
 		renderQuadTree(node->child(TerrainNode::NORTH_EAST));

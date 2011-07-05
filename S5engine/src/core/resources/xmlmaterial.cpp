@@ -1,48 +1,50 @@
 #include "core/resources/xmlmaterial.h"
 #include <QtXml>
-
+#include <QVector>
 #include "core/resources/managers.h"
 
 XmlMaterial::XmlMaterial(const QString& name, const QString& path, IResourceFactory* factory) :
-	MaterialData(name, path, factory),
-	m_diffuse(0.7,0.7,0.7,1.0),
-	m_specular(0.7,0.7,0.7,1.0),
-	m_ambient(0.7,0.7,0.7,1.0),
-	m_emission(0.0,0.0,0.0,0.0),
-	m_shininess(0.7),
-	m_transparent(false)
-{}
+	MaterialData(name, path, factory)
+{
+}
 
 XmlMaterial::~XmlMaterial()
 {
+	/*
 	for(int i=0 ; i<m_uniforms.length() ; i++)
 	{
 		delete m_uniforms[i];
 	}
+	*/
 }
 
-void XmlMaterial::apply()
+void XmlMaterial::apply(unsigned int layer)
 {
-	glMaterialfv(GL_FRONT_AND_BACK, GL_DIFFUSE,  m_diffuse.coords);
-	glMaterialfv(GL_FRONT_AND_BACK, GL_SPECULAR, m_specular.coords);
-	glMaterialfv(GL_FRONT_AND_BACK, GL_AMBIENT,  m_ambient.coords);
-	glMaterialfv(GL_FRONT_AND_BACK, GL_EMISSION, m_emission.coords);
-	glMaterialf(GL_FRONT_AND_BACK, GL_SHININESS, m_shininess);
+	MaterialAttributes* target;
 
-	/*
-	for(int i=0 ; i<m_textures.size() ; i++) {
-		if(m_textures[i].isValid())
-			m_textures[i]->bind(i);
+	if(m_layers.size() <= layer) {
+		target = &m_default_attributes;
+	} else {
+		target = &m_layers[layer];
 	}
-	*/
 
-	if(m_textures.length() > 0)
+	glMaterialfv(GL_FRONT_AND_BACK, GL_DIFFUSE,  target->m_diffuse.coords);
+	glMaterialfv(GL_FRONT_AND_BACK, GL_SPECULAR, target->m_specular.coords);
+	glMaterialfv(GL_FRONT_AND_BACK, GL_AMBIENT,  target->m_ambient.coords);
+	glMaterialfv(GL_FRONT_AND_BACK, GL_EMISSION, target->m_emission.coords);
+	glMaterialf(GL_FRONT_AND_BACK, GL_SHININESS, target->m_shininess);
+
+	if(target->m_doublesided) {
+		glDisable(GL_CULL_FACE);
+	}
+
+	if(target->m_textures.length() > 0)
 	{
 		glEnable(GL_TEXTURE_2D);
-		for(int i = 0 ; i< m_textures.length() ; i++)
+		for(int i = 0 ; i< target->m_textures.length() ; i++)
 		{
-			if(m_textures[i].isValid())
-				m_textures[i]->bind(i);
+			if(target->m_textures[i].isValid())
+				target->m_textures[i]->bind(i);
 		}
 	}
 	else
@@ -50,26 +52,38 @@ void XmlMaterial::apply()
 		glDisable(GL_TEXTURE_2D);
 	}
 
-	if(m_program.isValid())
+	if(target->m_program.isValid())
 	{
-		m_program->use();
-		int nb_uniforms = m_program->nbUniforms();
+		target->m_program->use();
+		int nb_uniforms = target->m_program->nbUniforms();
 		for(int i=0 ; i<nb_uniforms ; i++)
 		{
-			m_program->setUniform(m_program->uniform(i));
+			target->m_program->setUniform(target->m_program->uniform(i));
 		}
 	}
 }
 
-void XmlMaterial::unset()
+void XmlMaterial::unset(unsigned int layer)
 {
-	if(m_program.isValid())
-		m_program->unset();
+	MaterialAttributes* target;
 
-	for(int i = 0 ; i< m_textures.length() ; i++)
+	if(m_layers.size() <= layer) {
+		target = &m_default_attributes;
+	} else {
+		target = &m_layers[layer];
+	}
+
+	if(target->m_doublesided) {
+		glEnable(GL_CULL_FACE);
+	}
+
+	if(target->m_program.isValid())
+		target->m_program->unset();
+
+	for(int i = 0 ; i< target->m_textures.length() ; i++)
 	{
-		if(m_textures[i].isValid())
-			m_textures[i]->release(i);
+		if(target->m_textures[i].isValid())
+			target->m_textures[i]->release(i);
 	}
 }
 
@@ -106,126 +120,171 @@ void XmlMaterialFactory::load(ResourceData* resource)
 	}
 
 	QDomNodeList nodes = materials.at(0).childNodes();
-
+	QDomNode layersNode;
+	// Parse default attributes
 	for(int i=0 ; i < nodes.length() ; i++)
 	{
-		QString tag = nodes.at(i).nodeName();
+		QDomNode node = nodes.at(i);
+		QString tag = node.nodeName();
 
-		if(tag == "texture")
-		{
-			QDomNodeList content = nodes.at(i).childNodes();
-			Texture tex = TEXTURE_MANAGER.get(content.at(0).nodeValue());
-			if(tex.isValid())
-			{
-				xmlresource->m_textures.push_back(tex);
+		if(tag != "layers") {
+			parseTag(tag, &node, xmlresource);
+		} else {
+			layersNode = node;
+		}
+	}
+	// Parse layer attributes
+	if(!layersNode.isNull()) {
+		QDomNodeList layersNodes = layersNode.childNodes();
+		for(int i=0 ; i< layersNodes.length() ; i++) {
+			if(layersNodes.at(i).nodeName() == "layer") {
+				QDomNodeList nodes = layersNodes.at(i).childNodes();
+				int layer = layersNodes.at(i).attributes().namedItem("id").nodeValue().toInt();
+				for(int j=0 ; j < nodes.length() ; j++) {
+					QDomNode node = nodes.at(j);
+					QString tag = node.nodeName();
+					parseTag(tag, &node, xmlresource,layer);
+				}
 			}
-			else
-			{
-				logError("Check texture tag" << nodes.at(i).lineNumber());
-			}
-		}
-		else if(tag == "diffuse")
-		{
-			QDomNodeList content = nodes.at(i).childNodes();
-			QStringList txtlist = content.at(0).nodeValue().split(" ",QString::SkipEmptyParts);
-			for(int i=0 ; i<4 && i<txtlist.length() ; i++)
-			{
-				bool ok;
-				float val = txtlist.at(i).toFloat(&ok);
-				if(ok)
-					xmlresource->m_diffuse[i] = val;
-				else
-					logWarn("format is 1.2 3.4 5.6 7.8 while reading" << content.at(0).nodeValue() << "in file" << xmlresource->m_path);
-			}
-		}
-		else if(tag == "specular")
-		{
-			QDomNodeList content = nodes.at(i).childNodes();
-			QStringList txtlist = content.at(0).nodeValue().split(" ",QString::SkipEmptyParts);
-			for(int i=0 ; i<4 && i<txtlist.length() ; i++)
-			{
-				bool ok;
-				float val = txtlist.at(i).toFloat(&ok);
-				if(ok)
-					xmlresource->m_specular[i] = val;
-				else
-					logWarn("format is 1.2 3.4 5.6 7.8 while reading" << content.at(0).nodeValue() << "in file" << xmlresource->m_path);
-			}
-		}
-		else if(tag == "ambient")
-		{
-			QDomNodeList content = nodes.at(i).childNodes();
-			QStringList txtlist = content.at(0).nodeValue().split(" ",QString::SkipEmptyParts);
-			for(int i=0 ; i<4 && i<txtlist.length() ; i++)
-			{
-				bool ok;
-				float val = txtlist.at(i).toFloat(&ok);
-				if(ok)
-					xmlresource->m_ambient[i] = val;
-				else
-					logWarn("format is 1.2 3.4 5.6 7.8 while reading" << content.at(0).nodeValue() << "in file" << xmlresource->m_path);
-			}
-		}
-		else if(tag == "emission")
-		{
-			QDomNodeList content = nodes.at(i).childNodes();
-			QStringList txtlist = content.at(0).nodeValue().split(" ",QString::SkipEmptyParts);
-			for(int i=0 ; i<4 && i<txtlist.length() ; i++)
-			{
-				bool ok;
-				float val = txtlist.at(i).toFloat(&ok);
-				if(ok)
-					xmlresource->m_emission[i] = val;
-				else
-					logWarn("format is 1.2 3.4 5.6 7.8 while reading" << content.at(0).nodeValue() << "in file" << xmlresource->m_path);
-			}
-		}
-		else if(tag == "shininess")
-		{
-			QDomNodeList content = nodes.at(i).childNodes();
-			bool ok;
-			float val = content.at(0).nodeValue().toFloat(&ok);
-			if(ok)
-				xmlresource->m_shininess= val;
-			else
-				logWarn("expected float for shininess" << "in file" << xmlresource->m_path);
-		}
-		else if(tag == "transparent")
-		{
-			QDomNodeList content = nodes.at(i).childNodes();
-			bool val = content.at(0).nodeValue() == "true" ||
-					   content.at(0).nodeValue() == "1";
-			xmlresource->m_transparent= val;
-		}
-		else if(tag == "program")
-		{
-			QDomNodeList content = nodes.at(i).childNodes();
-			QString program_name = content.at(0).nodeValue();
-
-			ShaderProgram prog = SHADER_PROGRAM_MANAGER.get(program_name);
-
-			if(prog.isValid())
-			{
-				xmlresource->m_program = prog;
-			}
-			else
-			{
-				logError("In file" << xmlresource->m_path << "require program" << program_name << "which can't be found");
-			}
-		}
-		else if(tag == "uniform")
-		{
-
-		}
-		else
-		{
-			logWarn("In file" << xmlresource->m_path << "Unknown tag" << tag);
 		}
 	}
 
 	xmlresource->m_state = XmlMaterial::STATE_LOADED;
 
 	logInfo("XmlMaterial loaded" << xmlresource->name());
+}
+
+void XmlMaterialFactory::parseTag(const QString& tag, QDomNode* node, XmlMaterial* xmlresource, int layer)
+{
+	XmlMaterial::MaterialAttributes* target;
+
+	if(layer < 0) {
+		target = &xmlresource->m_default_attributes;
+	} else {
+		while(layer >= xmlresource->m_layers.size()) {
+			xmlresource->m_layers.push_back(xmlresource->m_default_attributes);
+		}
+		target = &xmlresource->m_layers[layer];
+	}
+
+	if(tag == "texture")
+	{
+		QDomNodeList content = node->childNodes();
+		Texture tex = TEXTURE_MANAGER.get(content.at(0).nodeValue());
+		if(tex.isValid())
+		{
+			target->m_textures.push_back(tex);
+		}
+		else
+		{
+			logError("Check texture tag" << node->lineNumber());
+		}
+	}
+	else if(tag == "diffuse")
+	{
+		QDomNodeList content = node->childNodes();
+		QStringList txtlist = content.at(0).nodeValue().split(" ",QString::SkipEmptyParts);
+		for(int i=0 ; i<4 && i<txtlist.length() ; i++)
+		{
+			bool ok;
+			float val = txtlist.at(i).toFloat(&ok);
+			if(ok)
+				target->m_diffuse[i] = val;
+			else
+				logWarn("format is 1.2 3.4 5.6 7.8 while reading" << content.at(0).nodeValue() << "in file" << xmlresource->m_path);
+		}
+	}
+	else if(tag == "specular")
+	{
+		QDomNodeList content = node->childNodes();
+		QStringList txtlist = content.at(0).nodeValue().split(" ",QString::SkipEmptyParts);
+		for(int i=0 ; i<4 && i<txtlist.length() ; i++)
+		{
+			bool ok;
+			float val = txtlist.at(i).toFloat(&ok);
+			if(ok)
+				target->m_specular[i] = val;
+			else
+				logWarn("format is 1.2 3.4 5.6 7.8 while reading" << content.at(0).nodeValue() << "in file" << xmlresource->m_path);
+		}
+	}
+	else if(tag == "ambient")
+	{
+		QDomNodeList content = node->childNodes();
+		QStringList txtlist = content.at(0).nodeValue().split(" ",QString::SkipEmptyParts);
+		for(int i=0 ; i<4 && i<txtlist.length() ; i++)
+		{
+			bool ok;
+			float val = txtlist.at(i).toFloat(&ok);
+			if(ok)
+				target->m_ambient[i] = val;
+			else
+				logWarn("format is 1.2 3.4 5.6 7.8 while reading" << content.at(0).nodeValue() << "in file" << xmlresource->m_path);
+		}
+	}
+	else if(tag == "emission")
+	{
+		QDomNodeList content = node->childNodes();
+		QStringList txtlist = content.at(0).nodeValue().split(" ",QString::SkipEmptyParts);
+		for(int i=0 ; i<4 && i<txtlist.length() ; i++)
+		{
+			bool ok;
+			float val = txtlist.at(i).toFloat(&ok);
+			if(ok)
+				target->m_emission[i] = val;
+			else
+				logWarn("format is 1.2 3.4 5.6 7.8 while reading" << content.at(0).nodeValue() << "in file" << xmlresource->m_path);
+		}
+	}
+	else if(tag == "shininess")
+	{
+		QDomNodeList content = node->childNodes();
+		bool ok;
+		float val = content.at(0).nodeValue().toFloat(&ok);
+		if(ok)
+			target->m_shininess= val;
+		else
+			logWarn("expected float for shininess" << "in file" << xmlresource->m_path);
+	}
+	else if(tag == "transparent")
+	{
+		QDomNodeList content = node->childNodes();
+		bool val = content.at(0).nodeValue() == "true" ||
+				   content.at(0).nodeValue() == "1";
+		target->m_transparent= val;
+	}
+	else if(tag == "doublesided")
+	{
+		QDomNodeList content = node->childNodes();
+		bool val = content.at(0).nodeValue() == "true" ||
+				   content.at(0).nodeValue() == "1";
+		target->m_doublesided= val;
+	}
+	else if(tag == "program")
+	{
+		QDomNodeList content = node->childNodes();
+		QString program_name = content.at(0).nodeValue();
+
+		ShaderProgram prog = SHADER_PROGRAM_MANAGER.get(program_name);
+
+		if(prog.isValid())
+		{
+			target->m_program = prog;
+		}
+		else
+		{
+			logError("In file" << xmlresource->m_path << "require program" << program_name << "which can't be found");
+		}
+	}
+	else if(tag == "uniform")
+	{
+
+	}
+	else
+	{
+		logWarn("In file" << xmlresource->m_path << "Unknown tag" << tag);
+	}
+
 }
 
 void XmlMaterialFactory::parseFile(const QString &path, QList<ResourceData *> &content, const QHash<QString,QString>&)
@@ -253,15 +312,30 @@ void XmlMaterialFactory::parseFile(const QString &path, QList<ResourceData *> &c
 	}
 }
 
-QGLShaderProgram* XmlMaterial::program()
+QGLShaderProgram* XmlMaterial::program(unsigned int layer)
 {
-	if(m_program.isValid())
-		return m_program->program();
+	MaterialAttributes* target;
+
+	if(m_layers.size() <= layer) {
+		target = &m_default_attributes;
+	} else {
+		target = &m_layers[layer];
+	}
+
+	if(target->m_program.isValid())
+		return target->m_program->program();
 	else
 		return NULL;
 }
 
-bool XmlMaterial::isTransparent()
+bool XmlMaterial::isTransparent(unsigned int layer)
 {
-	return m_transparent;
+	MaterialAttributes* target;
+
+	if(m_layers.size() <= layer) {
+		target = &m_default_attributes;
+	} else {
+		target = &m_layers[layer];
+	}
+	return target->m_transparent;
 }

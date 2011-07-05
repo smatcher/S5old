@@ -5,4 +5,5 @@
 	<ambient>0.0 0.0 0.0 1.0</ambient>
 	<emission>1.0 1.0 1.0 1.0</emission>
 	<shininess>0.1</shininess>
+	<doublesided>true</doublesided>
 </material>

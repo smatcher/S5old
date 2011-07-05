@@ -11,7 +11,8 @@ public:
 	RawMesh(const QString& name, const QString& path, IResourceFactory* factory);
 	virtual bool unload();
 
-	virtual void draw(QGLShaderProgram* program = NULL);
+	virtual void draw(unsigned int submesh, QGLShaderProgram* program = NULL);
+	virtual unsigned int nbSubmeshes();
 
 protected:
 

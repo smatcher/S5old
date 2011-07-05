@@ -5,6 +5,8 @@
 #include "core/graphics/mesh.h"
 #include <assimp.hpp>
 
+class aiNode;
+
 class AssimpFactory : public IResourceFactory
 {
 public:
@@ -15,6 +17,8 @@ protected:
 
 private:
 	Assimp::Importer m_importer;
+
+	QString findMeshName(unsigned int meshNumber, aiNode* node);
 };
 
 #endif // ASSIMPFACTORY_H

@@ -93,7 +93,7 @@ void TrailRenderer::render(double time_elapsed, GLWidget*)
 
 		if(m_material.isValid())
 		{
-			m_material->apply();
+			m_material->apply(0);
 	//		program = m_material->program();
 		}
 		else
@@ -162,7 +162,7 @@ void TrailRenderer::render(double time_elapsed, GLWidget*)
 
 		if(m_material.isValid())
 		{
-			m_material->unset();
+			m_material->unset(0);
 		}
 	}
 }

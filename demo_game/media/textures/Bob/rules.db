@@ -1,0 +1,8 @@
+<rules>
+	<file name="iron_grill.png">
+		<rule name="alpha" value="true"/>
+	</file>
+	<file name="round_grill.png">
+		<rule name="alpha" value="true"/>
+	</file>
+</rules>

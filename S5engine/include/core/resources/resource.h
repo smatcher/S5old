@@ -47,6 +47,8 @@ public:
 	const QString& path() {return m_path;}
 	State state()         {return m_state;}
 
+	virtual void load()   {m_factory->load(this);}
+
 protected:
 	IResourceFactory* m_factory;
 	QString m_name;
@@ -59,9 +61,7 @@ protected:
 	void decRef()  {m_ref--; if(m_ref < 0) { logWarn( m_name << "reference count is negative"); }}
 	int refCount() {return m_ref;}
 
-	virtual void load()   {m_factory->load(this);}
 	virtual bool unload() = 0;
-
 };
 
 #include "resource.hpp"

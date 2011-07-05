@@ -56,7 +56,7 @@ inline void initResourceManagers(QString spec_dir = "")
 
 	MESH_MANAGER.parseDir(base_dir + "models",true);
 	if(spec_dir != "") MESH_MANAGER.parseDir(spec_dir + "models",true);
-	MESH_MANAGER.loadAll();
+//	MESH_MANAGER.loadAll();
 
 	time = QDateTime::currentDateTime();
 	debug("LOADING TIMING","Loading meshes" << double(lastTime.msecsTo(time))/1000.0 << "seconds")
@@ -64,7 +64,7 @@ inline void initResourceManagers(QString spec_dir = "")
 
 	TEXTURE_MANAGER.parseDir(base_dir + "textures",true);
 	if(spec_dir != "") TEXTURE_MANAGER.parseDir(spec_dir + "textures",true);
-	TEXTURE_MANAGER.loadAll();
+//	TEXTURE_MANAGER.loadAll();
 
 	time = QDateTime::currentDateTime();
 	debug("LOADING TIMING","Loading textures" << double(lastTime.msecsTo(time))/1000.0 << "seconds")
@@ -72,7 +72,7 @@ inline void initResourceManagers(QString spec_dir = "")
 
 	SAMPLE_MANAGER.parseDir(base_dir + "sounds",true);
 	if(spec_dir != "") SAMPLE_MANAGER.parseDir(spec_dir + "sounds",true);
-	SAMPLE_MANAGER.loadAll();
+//	SAMPLE_MANAGER.loadAll();
 
 	time = QDateTime::currentDateTime();
 	debug("LOADING TIMING","Loading samples" << double(lastTime.msecsTo(time))/1000.0 << "seconds")
@@ -80,7 +80,7 @@ inline void initResourceManagers(QString spec_dir = "")
 
 	SHADER_MANAGER.parseDir(base_dir + "shaders",true);
 	if(spec_dir != "") SHADER_MANAGER.parseDir(spec_dir + "shaders",true);
-	SHADER_MANAGER.loadAll();
+//	SHADER_MANAGER.loadAll();
 
 	time = QDateTime::currentDateTime();
 	debug("LOADING TIMING","Loading shaders" << double(lastTime.msecsTo(time))/1000.0 << "seconds")
@@ -88,7 +88,7 @@ inline void initResourceManagers(QString spec_dir = "")
 
 	SHADER_PROGRAM_MANAGER.parseDir(base_dir + "shaders",true);
 	if(spec_dir != "") SHADER_PROGRAM_MANAGER.parseDir(spec_dir + "shaders",true);
-	SHADER_PROGRAM_MANAGER.loadAll();
+//	SHADER_PROGRAM_MANAGER.loadAll();
 
 	time = QDateTime::currentDateTime();
 	debug("LOADING TIMING","Loading shader programs" << double(lastTime.msecsTo(time))/1000.0 << "seconds")
@@ -96,7 +96,7 @@ inline void initResourceManagers(QString spec_dir = "")
 
 	MATERIAL_MANAGER.parseDir(base_dir + "materials",true);
 	if(spec_dir != "") MATERIAL_MANAGER.parseDir(spec_dir + "materials",true);
-	MATERIAL_MANAGER.loadAll();
+//	MATERIAL_MANAGER.loadAll();
 
 	time = QDateTime::currentDateTime();
 	debug("LOADING TIMING","Loading materials" << double(lastTime.msecsTo(time))/1000.0 << "seconds")

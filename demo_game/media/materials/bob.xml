@@ -1,0 +1,33 @@
+<material>
+	<diffuse>1.0 1.0 1.0 1.0</diffuse>
+	<specular>0.1 0.1 0.1 1.0</specular>
+	<ambient>0.5 0.5 0.5 1.0</ambient>
+	<emission>0.0 0.0 0.0 1.0</emission>
+	<shininess>0.1</shininess>
+	<program>phong</program>
+	<layers>
+		<layer id="0">
+			<texture texunit="0">guard1_body.png</texture>
+		</layer>
+		<layer id="1">
+			<texture texunit="0">guard1_face.png</texture>
+		</layer>
+		<layer id="2">
+			<texture texunit="0">guard1_helmet.png</texture>
+			<doublesided>true</doublesided>
+		</layer>
+		<layer id="3">
+			<texture texunit="0">iron_grill.png</texture>
+			<transparent>true</transparent>
+			<doublesided>true</doublesided>
+		</layer>
+		<layer id="4">
+			<texture texunit="0">round_grill.png</texture>
+			<transparent>true</transparent>
+			<doublesided>true</doublesided>
+		</layer>
+		<layer id="5">
+			<texture texunit="0">guard1_body.png</texture>
+		</layer>
+	</layers>
+</material>

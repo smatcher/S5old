@@ -29,7 +29,7 @@ bool RawMesh::unload()
 	return true;
 }
 
-void RawMesh::draw(QGLShaderProgram* program)
+void RawMesh::draw(unsigned int, QGLShaderProgram* program)
 {
 	if(!m_vertices.isCreated() || !m_indices.isCreated())
 		return;
@@ -110,3 +110,9 @@ void RawMesh::draw(QGLShaderProgram* program)
 
 	debugGL("while rendering" << name());
 };
+
+unsigned int RawMesh::nbSubmeshes()
+{
+	return 1;
+}
+

@@ -93,7 +93,7 @@ int main(int argc, char *argv[])
 	Mesh plane = MESH_MANAGER.get("Plane");
 	Mesh cube = MESH_MANAGER.get("Cube");
 	Mesh sphere = MESH_MANAGER.get("Sphere_16_32");
-	Mesh mesh = MESH_MANAGER.get("duckmesh");
+	Mesh mesh = MESH_MANAGER.get("duck");
 	Material duck = MATERIAL_MANAGER.get("duck");
 	Material unicorn = MATERIAL_MANAGER.get("unicorn");
 	Material star = MATERIAL_MANAGER.get("star");
@@ -186,7 +186,7 @@ int main(int argc, char *argv[])
 	prop.is_kinematic = true;
 	nGarg->addProperty(new PhysicObject(prop));
 	prop.shape = PhysicObject::MESH;
-	prop.mesh_name = "duckmesh";
+	prop.mesh_name = "duck";
 	nDuck->addProperty(new PhysicObject(prop));
 
 	prop.is_kinematic = false;

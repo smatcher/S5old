@@ -5,27 +5,51 @@
 #include <QtOpenGL>
 
 class aiMesh;
+class AssimpFactory;
+
 class AssimpMesh : public MeshData
 {
-private:
-	const aiMesh* m_mesh;
+	friend class AssimpFactory;
 
-	QGLBuffer m_vertices;
-	QGLBuffer m_normals;
-	QGLBuffer m_colors;
-	QGLBuffer m_texcoords;
-	QGLBuffer m_tangents;
-	QGLBuffer m_bitangents;
-	QGLBuffer m_indices;
-	int m_nbFaces;
+private:
+
+	struct Submesh {
+		const aiMesh* m_mesh;
+
+		QGLBuffer m_vertices;
+		QGLBuffer m_normals;
+		QGLBuffer m_colors;
+		QGLBuffer m_texcoords;
+		QGLBuffer m_tangents;
+		QGLBuffer m_bitangents;
+		QGLBuffer m_indices;
+		int m_nbFaces;
+
+		Submesh(const aiMesh* mesh):
+		m_mesh(mesh),
+		m_vertices(),
+		m_normals(),
+		m_colors(),
+		m_texcoords(),
+		m_tangents(),
+		m_bitangents(),
+		m_indices(QGLBuffer::IndexBuffer),
+		m_nbFaces(0) {}
+
+		void buildVBO(QString name);
+		void draw(QGLShaderProgram* program);
+	};
+
+	QVector<Submesh*> m_submeshes;
 
 public :
-	AssimpMesh(const QString& name, const QString& path, IResourceFactory* factory, const aiMesh* mesh);
+	AssimpMesh(const QString& name, const QString& path, IResourceFactory* factory);
 
-	void buildVBO();
+	void buildVBOs();
 	virtual bool unload();
 
-	virtual void draw(QGLShaderProgram* program = NULL);
+	virtual void draw(unsigned int submesh, QGLShaderProgram* program = NULL);
+	virtual unsigned int nbSubmeshes();
 };
 
 

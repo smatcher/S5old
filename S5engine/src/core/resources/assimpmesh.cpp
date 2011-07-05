@@ -4,35 +4,26 @@
 #include <assimp.h>
 #include <aiMesh.h>
 
-#include <core/managers/physicsmanager.h>
-
-AssimpMesh::AssimpMesh(const QString& name, const QString& path, IResourceFactory* factory, const aiMesh* mesh) :
-	MeshData(name,path,factory),
-	m_mesh(mesh),
-	m_vertices(),
-	m_normals(),
-	m_colors(),
-	m_texcoords(),
-	m_tangents(),
-	m_bitangents(),
-	m_indices(QGLBuffer::IndexBuffer),
-	m_nbFaces(0)
+AssimpMesh::AssimpMesh(const QString& name, const QString& path, IResourceFactory* factory) :
+	MeshData(name,path,factory)
 {
-	GLfloat* array = new GLfloat[3 * m_mesh->mNumVertices]();
-		for(unsigned int i=0 ; i < m_mesh->mNumVertices ; i++) {
-			memcpy(&(array[3*i]),&m_mesh->mVertices[i].x,3 * sizeof(GLfloat));
-		}
-	PHYSICS_MANAGER.buildConvexCollider(name,array,mesh->mNumVertices);
-	buildVBO();
-	m_state = STATE_LOADED;
+	m_state = STATE_UNLOADED;
 }
+
 
 bool AssimpMesh::unload()
 {
 	return false;
 }
 
-void AssimpMesh::buildVBO()
+void AssimpMesh::buildVBOs()
+{
+	for(int i=0 ; i<m_submeshes.size() ; i++) {
+		m_submeshes[i]->buildVBO(name());
+	}
+}
+
+void AssimpMesh::Submesh::buildVBO(QString name)
 {
 	m_nbFaces = 0;
 
@@ -52,7 +43,7 @@ void AssimpMesh::buildVBO()
 		}
 	}
 	if(error) {
-		logError("Assimp Mesh" << name() << "contains faces that are neither triangles or quad, thay will not display");
+		logError("Assimp Mesh" << name << "contains faces that are neither triangles or quad, thay will not display");
 	}
 
 	if(m_mesh->mVertices != NULL) {
@@ -166,7 +157,16 @@ void AssimpMesh::buildVBO()
 	//QGLBuffer(QGLBuffer::IndexBuffer).bind();
 }
 
-void AssimpMesh::draw(QGLShaderProgram* program)
+void AssimpMesh::draw(unsigned int submesh, QGLShaderProgram* program)
+{
+	if(submesh < m_submeshes.size()) {
+		m_submeshes[submesh]->draw(program);
+	}
+
+	debugGL("while rendering" << name());
+}
+
+void AssimpMesh::Submesh::draw(QGLShaderProgram* program)
 {
 	if(!m_vertices.isCreated() || !m_indices.isCreated())
 		return;
@@ -244,6 +244,9 @@ void AssimpMesh::draw(QGLShaderProgram* program)
 	glDisableClientState(GL_COLOR_ARRAY);
 	glDisableClientState(GL_TEXTURE_COORD_ARRAY);
 	glDisableClientState(GL_INDEX_ARRAY);
+}
 
-	debugGL("while rendering" << name());
+unsigned int AssimpMesh::nbSubmeshes()
+{
+	return m_submeshes.size();
 }
