@@ -1,4 +1,5 @@
 <material>
 	<texture texunit="0">star.tga</texture>
 	<transparent>true</transparent>
+	<doublesided>true</doublesided>
 </material>

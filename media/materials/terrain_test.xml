@@ -1,4 +1,6 @@
 <material>
+	<texture texunit="0">splatting_texture.tga</texture>
+	<texture texunit="1">grass.tga</texture>
 	<texture texunit="2">rock.tga</texture>
 	<texture texunit="3">snow.jpg</texture>
 	<diffuse>1.0 1.0 1.0 1.0</diffuse>
@@ -6,4 +8,5 @@
 	<ambient>0.0 0.0 0.0 1.0</ambient>
 	<emission>0.0 0.0 0.0 1.0</emission>
 	<shininess>0.7</shininess>
+	<program>terrain</program>
 </material>
