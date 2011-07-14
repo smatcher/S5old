@@ -60,7 +60,7 @@ void RenderManager::setupProjection()
 				glOrtho(-5, +5, -5, +5, 1.0, 50.0);
 			#endif
 			*/
-			gluPerspective(70,1,1.0,1000);
+			gluPerspective(70,1,0.01,1000);
 		}
 
 		glMatrixMode(GL_MODELVIEW);

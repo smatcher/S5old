@@ -39,6 +39,13 @@ Transform<T>::~Transform()
 {
 }
 
+template <class T>
+template <class T_scalar>
+void Transform<T>::copy(const Transform<T_scalar>& ref)
+{
+	*this=ref;
+}
+
 // Redefined operators
 template <class T>
 template <class T_scalar>
@@ -46,6 +53,7 @@ Transform<T>& Transform<T>::operator=(const Transform<T_scalar>& ref)
 {
 	this->rotation=ref.rotation;
 	this->position=ref.position;
+	this->scale_vector=ref.scale;
 	return *this;
 }
 

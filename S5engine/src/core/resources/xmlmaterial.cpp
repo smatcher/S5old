@@ -139,7 +139,18 @@ void XmlMaterialFactory::load(ResourceData* resource)
 		for(int i=0 ; i< layersNodes.length() ; i++) {
 			if(layersNodes.at(i).nodeName() == "layer") {
 				QDomNodeList nodes = layersNodes.at(i).childNodes();
-				int layer = layersNodes.at(i).attributes().namedItem("id").nodeValue().toInt();
+				int layer = xmlresource->m_layers.size();
+
+				if(layersNodes.at(i).attributes().contains("id")) {
+					QString value = layersNodes.at(i).attributes().namedItem("id").nodeValue();
+					bool ok;
+					int read = value.toInt(&ok);
+					if(ok) {
+						layer = read;
+					} else {
+						logWarn("failed to parse" << value << "as int in " << xmlresource->m_path);
+					}
+				}
 				for(int j=0 ; j < nodes.length() ; j++) {
 					QDomNode node = nodes.at(j);
 					QString tag = node.nodeName();

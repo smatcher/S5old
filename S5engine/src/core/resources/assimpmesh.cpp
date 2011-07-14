@@ -5,7 +5,8 @@
 #include <aiMesh.h>
 
 AssimpMesh::AssimpMesh(const QString& name, const QString& path, IResourceFactory* factory) :
-	MeshData(name,path,factory)
+	MeshData(name,path,factory),
+	m_skeleton(NULL)
 {
 	m_state = STATE_UNLOADED;
 }
@@ -249,4 +250,9 @@ void AssimpMesh::Submesh::draw(QGLShaderProgram* program)
 unsigned int AssimpMesh::nbSubmeshes()
 {
 	return m_submeshes.size();
+}
+
+Skeleton* AssimpMesh::getSkeleton()
+{
+	return m_skeleton;
 }

@@ -44,6 +44,9 @@ public:
 
 	virtual ~Transform();
 
+	template <class T_scalar>
+	void copy(const Transform<T_scalar>& ref);
+
 	// Redefined operators
 	template <class T_scalar>
 	Transform<T>& operator=(const Transform<T_scalar>& ref);

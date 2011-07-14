@@ -8,6 +8,7 @@
 #include "core/properties/camera.h"
 #include "core/properties/light.h"
 #include "core/managers/rendermanager.h"
+#include "core/animation/skeleton.h"
 #ifdef Q_WS_X11
 	#include <X11/Xlib.h>
 #endif
@@ -43,14 +44,24 @@ int main(int argc, char *argv[])
 	nCam->moveTo(Vector3f(2,0,0));
 	nCam->rotate(Vector3f(0,1,0),90);
 
-	nActor->setScale(Vector3f(0.04,0.04,0.04));
+	nActor->setScale(Vector3f(0.03,0.03,0.03));
+	nActor->rotate(Vector3f(0,1,0),-90);
 
 	nLight->moveTo(Vector3f(2,0,-1));
 
+	Mesh bob = MESH_MANAGER.get("dwarf");
+	Material material = MATERIAL_MANAGER.get("dwarf");
+	/*
 	Mesh bob = MESH_MANAGER.get("Bob");
 	Material material = MATERIAL_MANAGER.get("bob");
+	*/
 
 	nBody->addProperty(new MeshRenderer(bob, material));
+
+	Skeleton* skeleton = bob->getSkeleton();
+	if(skeleton != NULL) {
+		nActor->link(skeleton->buildSkeleton());
+	}
 
 	// Beurk ! Mais je peux le faire alors je me prive pas ^^
 	RENDER_MANAGER.setCurrentCamera(static_cast<Camera*>(nCam->properties().child("Camera")));
@@ -59,6 +70,10 @@ int main(int argc, char *argv[])
 	background.color = Vector3f(0.2,0.2,0.2);
 
 	RENDER_MANAGER.setBackground(background);
+
+	GLint maxVertexuniforms;
+	glGetIntegerv(GL_MAX_VERTEX_UNIFORM_COMPONENTS,&maxVertexuniforms);
+	logInfo(maxVertexuniforms << "maximum vertex uniforms");
 
 	int ret = engine.start();
 

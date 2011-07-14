@@ -5,6 +5,7 @@
 #include <QtOpenGL>
 
 class Mesh;
+class Skeleton;
 template <class R, class H> class ResourceManager;
 
 class MeshData : public ResourceData
@@ -16,6 +17,8 @@ public:
 	MeshData(const QString& name, const QString& path, IResourceFactory* factory) : ResourceData(name,path,factory) {}
 	virtual void draw(unsigned int submesh, QGLShaderProgram* program = NULL) = 0;
 	virtual unsigned int nbSubmeshes() = 0;
+
+	virtual Skeleton* getSkeleton() {return NULL;}
 };
 
 class Mesh : public ResourceHandle<MeshData>

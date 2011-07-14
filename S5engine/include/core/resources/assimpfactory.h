@@ -6,6 +6,7 @@
 #include <assimp.hpp>
 
 class aiNode;
+class Skeleton;
 
 class AssimpFactory : public IResourceFactory
 {
@@ -18,7 +19,10 @@ protected:
 private:
 	Assimp::Importer m_importer;
 
+	Skeleton* buildSkeleton(aiNode* node);
+
 	QString findMeshName(unsigned int meshNumber, aiNode* node);
+	aiNode* findBone(QString name, aiNode* node);
 };
 
 #endif // ASSIMPFACTORY_H

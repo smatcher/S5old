@@ -1,4 +1,4 @@
-#include "trailrenderer.h"
+#include <core/properties/trailrenderer.h>
 #include <core/scenegraph/node.h>
 
 #define TRAIL_MAX_QUADS 50

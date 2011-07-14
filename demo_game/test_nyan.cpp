@@ -16,7 +16,7 @@
 #include "core/properties/meshrenderer.h"
 
 #include "dummyjumper.h"
-#include "trailrenderer.h"
+#include <core/properties/trailrenderer.h>
 
 int main(int argc, char *argv[])
 {

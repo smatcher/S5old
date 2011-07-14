@@ -150,3 +150,9 @@ include/core/properties/terrainrenderer.h
 src/core/properties/terrainrenderer.cpp
 include/core/utils/quadtree.h
 include/core/utils/quadtree.hpp
+include/core/properties/trailrenderer.h
+src/core/properties/trailrenderer.cpp
+include/core/animation/animation.h
+include/core/animation/skeleton.h
+src/core/animation/animation.cpp
+src/core/animation/skeleton.cpp

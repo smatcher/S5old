@@ -6,6 +6,7 @@
 
 class aiMesh;
 class AssimpFactory;
+class Skeleton;
 
 class AssimpMesh : public MeshData
 {
@@ -41,6 +42,7 @@ private:
 	};
 
 	QVector<Submesh*> m_submeshes;
+	Skeleton* m_skeleton;
 
 public :
 	AssimpMesh(const QString& name, const QString& path, IResourceFactory* factory);
@@ -50,6 +52,8 @@ public :
 
 	virtual void draw(unsigned int submesh, QGLShaderProgram* program = NULL);
 	virtual unsigned int nbSubmeshes();
+
+	virtual Skeleton* getSkeleton();
 };
 
 
