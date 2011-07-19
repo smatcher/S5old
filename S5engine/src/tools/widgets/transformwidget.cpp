@@ -25,6 +25,14 @@ TransformWidget::TransformWidget(Transformf &transform) : QGroupBox(tr("Transfor
 	m_rz = new QLineEdit(QString().setNum(rot.z,'g',3));
 	m_rz->setDisabled(true);
 
+	Vector3f scale = m_transform.getScale();
+	m_sx = new QLineEdit(QString().setNum(scale.x,'g',3));
+	m_sx->setDisabled(true);
+	m_sy = new QLineEdit(QString().setNum(scale.y,'g',3));
+	m_sy->setDisabled(true);
+	m_sz = new QLineEdit(QString().setNum(scale.z,'g',3));
+	m_sz->setDisabled(true);
+
 	QGroupBox* posgroup = new QGroupBox(tr("position"));
 	QLayout* posgroup_layout = new QHBoxLayout();
 	posgroup_layout->addWidget(m_x);
@@ -39,8 +47,16 @@ TransformWidget::TransformWidget(Transformf &transform) : QGroupBox(tr("Transfor
 	rotgroup_layout->addWidget(m_rz);
 	rotgroup->setLayout(rotgroup_layout);
 
+	QGroupBox* scgroup = new QGroupBox(tr("scaling"));
+	QLayout* scgroup_layout = new QHBoxLayout();
+	scgroup_layout->addWidget(m_sx);
+	scgroup_layout->addWidget(m_sy);
+	scgroup_layout->addWidget(m_sz);
+	scgroup->setLayout(scgroup_layout);
+
 	layout->addWidget(posgroup);
 	layout->addWidget(rotgroup);
+	layout->addWidget(scgroup);
 	setLayout(layout);
 }
 

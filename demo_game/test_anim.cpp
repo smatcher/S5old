@@ -49,12 +49,14 @@ int main(int argc, char *argv[])
 
 	nLight->moveTo(Vector3f(2,0,-1));
 
+	#define USE_DWARF
+	#ifdef USE_DWARF
 	Mesh bob = MESH_MANAGER.get("dwarf");
 	Material material = MATERIAL_MANAGER.get("dwarf");
-	/*
+	#else
 	Mesh bob = MESH_MANAGER.get("Bob");
 	Material material = MATERIAL_MANAGER.get("bob");
-	*/
+	#endif
 
 	nBody->addProperty(new MeshRenderer(bob, material));
 

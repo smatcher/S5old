@@ -22,6 +22,7 @@ private :
 
 	QLineEdit *m_x,  *m_y,  *m_z;
 	QLineEdit *m_rx, *m_ry, *m_rz;
+	QLineEdit *m_sx, *m_sy, *m_sz;
 };
 
 #endif // TRANSFORMWIDGET_H
