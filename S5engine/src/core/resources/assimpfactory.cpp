@@ -25,31 +25,16 @@ void AssimpFactory::load(ResourceData* resource)
 
 		if(scene != NULL)
 		{
-			debug("ASSIMPLOADER",scene->mNumAnimations << "animations");
-			for(int i=0 ; i< scene->mNumAnimations ; i++) {
-				debug("ASSIMPLOADER",scene->mAnimations[i]->mName.data << "animations" << scene->mAnimations[i]->mNumChannels << " channels");
-				for(int j=0 ; j<scene->mAnimations[i]->mNumChannels ; j++) {
-					debug("ASSIMPLOADER",scene->mAnimations[i]->mChannels[j]->mNodeName.data <<
-						  scene->mAnimations[i]->mChannels[j]->mNumPositionKeys <<
-						  scene->mAnimations[i]->mChannels[j]->mNumScalingKeys <<
-						  scene->mAnimations[i]->mChannels[j]->mNumRotationKeys
-						  );
-				}
-			}
-
 			unsigned int numVertices = 0;
 			for(unsigned i=0 ; i<scene->mNumMeshes ; i++)
 			{
 				const aiMesh* aimesh = scene->mMeshes[i];
-				debug("ASSIMPLOADER",aimesh->mNumBones << "bones for submesh" << i);
 				for(int j=0 ; j<aimesh->mNumBones ; j++) {
 					QString bone_name = aimesh->mBones[j]->mName.data;
-					debug("ASSIMPLOADER", bone_name);
 					if(!bones.contains(bone_name)) {
 						aiNode* bone = findBone(bone_name, scene->mRootNode);
 						if(bone != NULL) {
 							bones.insert(bone_name, findBone(bone_name, bone));
-							debug("ASSIMPLOADER", "inserted");
 						}
 					}
 				}
@@ -67,6 +52,51 @@ void AssimpFactory::load(ResourceData* resource)
 
 			if(bones.size() != 0) {
 				meshresource->m_skeleton = buildSkeleton(scene->mRootNode);
+
+				for(int i=0 ; i< scene->mNumAnimations ; i++) {
+					Animation anim;
+					anim.m_name = scene->mAnimations[i]->mName.data;
+					anim.m_duration = scene->mAnimations[i]->mDuration;
+
+					for(int j=0 ; j<scene->mAnimations[i]->mNumChannels ; j++) {
+						aiNodeAnim* ai_channel = scene->mAnimations[i]->mChannels[j];
+						Animation::AnimChannel chanel;
+						chanel.m_name = ai_channel->mNodeName.data;
+						for(int k=0 ; k<ai_channel->mNumPositionKeys ; k++) {
+							Animation::AnimKey<Vector3f> key;
+							key.time = ai_channel->mPositionKeys[k].mTime;
+							key.value.x = ai_channel->mPositionKeys[k].mValue.x;
+							key.value.y = ai_channel->mPositionKeys[k].mValue.y;
+							key.value.z = ai_channel->mPositionKeys[k].mValue.z;
+							chanel.m_translation_keys.push_back(key);
+						}
+						for(int k=0 ; k<ai_channel->mNumScalingKeys ; k++) {
+							Animation::AnimKey<Vector3f> key;
+							key.time = ai_channel->mScalingKeys[k].mTime;
+							key.value.x = ai_channel->mScalingKeys[k].mValue.x;
+							key.value.y = ai_channel->mScalingKeys[k].mValue.y;
+							key.value.z = ai_channel->mScalingKeys[k].mValue.z;
+							chanel.m_scaling_keys.push_back(key);
+						}
+						for(int k=0 ; k<ai_channel->mNumRotationKeys ; k++) {
+							Animation::AnimKey<Matrix3f> key;
+							key.time = ai_channel->mRotationKeys[k].mTime;
+							aiMatrix3x3 rotmat = ai_channel->mRotationKeys[k].mValue.GetMatrix();
+							key.value[0] = rotmat.a1;
+							key.value[1] = rotmat.a2;
+							key.value[2] = rotmat.a3;
+							key.value[3] = rotmat.b1;
+							key.value[4] = rotmat.b2;
+							key.value[5] = rotmat.b3;
+							key.value[6] = rotmat.c1;
+							key.value[7] = rotmat.c2;
+							key.value[8] = rotmat.c3;
+							chanel.m_rotation_keys.push_back(key);
+						}
+						anim.m_channels.push_back(chanel);
+					}
+					meshresource->m_skeleton->TMP_animations.push_back(anim);
+				}
 			}
 
 			meshresource->buildVBOs();

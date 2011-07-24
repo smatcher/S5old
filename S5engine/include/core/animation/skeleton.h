@@ -6,6 +6,8 @@
 #include <QVector>
 #include <QString>
 
+#include "core/animation/animation.h"
+
 class AssimpFactory;
 
 class BoneNode : public Node
@@ -31,10 +33,13 @@ public:
 	};
 
 	Node* buildSkeleton();
+	Skeleton::Bone* getRootBone();
+	Animation* getAnimation();
 
 protected:
 
 	Bone m_root_bone;
+	QVector<Animation> TMP_animations;
 };
 
 #endif //SKELETON_H

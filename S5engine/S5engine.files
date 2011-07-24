@@ -156,3 +156,5 @@ include/core/animation/animation.h
 include/core/animation/skeleton.h
 src/core/animation/animation.cpp
 src/core/animation/skeleton.cpp
+include/core/animation/skeletonanimator.h
+src/core/animation/skeletonanimator.cpp

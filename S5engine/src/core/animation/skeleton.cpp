@@ -53,3 +53,13 @@ void BoneNode::drawDebug(const GLWidget* widget, bool recursive) const
 		}
 	glPopMatrix();
 }
+
+Skeleton::Bone* Skeleton::getRootBone()
+{
+	return &m_root_bone;
+}
+
+Animation* Skeleton::getAnimation()
+{
+	return &TMP_animations[0];
+}

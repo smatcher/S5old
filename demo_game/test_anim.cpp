@@ -9,6 +9,7 @@
 #include "core/properties/light.h"
 #include "core/managers/rendermanager.h"
 #include "core/animation/skeleton.h"
+#include "core/animation/skeletonanimator.h"
 #ifdef Q_WS_X11
 	#include <X11/Xlib.h>
 #endif
@@ -63,6 +64,10 @@ int main(int argc, char *argv[])
 	Skeleton* skeleton = bob->getSkeleton();
 	if(skeleton != NULL) {
 		nActor->link(skeleton->buildSkeleton());
+
+		SkeletonAnimator* animator = new SkeletonAnimator(skeleton);
+		nActor->addProperty(animator);
+		animator->createLinks();
 	}
 
 	// Beurk ! Mais je peux le faire alors je me prive pas ^^
