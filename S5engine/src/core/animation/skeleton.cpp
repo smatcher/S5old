@@ -1,4 +1,5 @@
 #include <core/animation/skeleton.h>
+#include <QColor>
 
 Node* Skeleton::Bone::buildNodes(bool isRoot)
 {
@@ -28,7 +29,24 @@ void BoneNode::drawDebug(const GLWidget* widget, bool recursive) const
 	glPushMatrix();
 	glDisable(GL_DEPTH_TEST);
 		this->glMultd();
-		widget->qglColor(Qt::white);
+		widget->qglColor(Qt::red);
+		glBegin(GL_LINES);
+			glVertex3d(0,0,0);
+			glVertex3d(1,0,0);
+		glEnd();
+		widget->qglColor(Qt::green);
+		glBegin(GL_LINES);
+			glVertex3d(0,0,0);
+			glVertex3d(0,1,0);
+		glEnd();
+		widget->qglColor(Qt::blue);
+		glBegin(GL_LINES);
+			glVertex3d(0,0,0);
+			glVertex3d(0,0,1);
+		glEnd();
+		QColor color = Qt::white;
+		color.setAlpha(200);
+		widget->qglColor(color);
 		for(int i=0 ; i<childCount() ; i++) {
 			glBegin(GL_LINES);
 				glVertex3d(0,0,0);

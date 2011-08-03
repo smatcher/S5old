@@ -21,7 +21,7 @@ public:
 	struct AnimChannel {
 		QString m_name;
 		QVector< AnimKey<Vector3f> > m_translation_keys;
-		QVector< AnimKey<Matrix3f> > m_rotation_keys;
+		QVector< AnimKey<Vector4f> > m_rotation_keys;
 		QVector< AnimKey<Vector3f> > m_scaling_keys;
 	};
 

@@ -79,18 +79,12 @@ void AssimpFactory::load(ResourceData* resource)
 							chanel.m_scaling_keys.push_back(key);
 						}
 						for(int k=0 ; k<ai_channel->mNumRotationKeys ; k++) {
-							Animation::AnimKey<Matrix3f> key;
+							Animation::AnimKey<Vector4f> key;
 							key.time = ai_channel->mRotationKeys[k].mTime;
-							aiMatrix3x3 rotmat = ai_channel->mRotationKeys[k].mValue.GetMatrix();
-							key.value[0] = rotmat.a1;
-							key.value[1] = rotmat.a2;
-							key.value[2] = rotmat.a3;
-							key.value[3] = rotmat.b1;
-							key.value[4] = rotmat.b2;
-							key.value[5] = rotmat.b3;
-							key.value[6] = rotmat.c1;
-							key.value[7] = rotmat.c2;
-							key.value[8] = rotmat.c3;
+							key.value.x = ai_channel->mRotationKeys[k].mValue.x;
+							key.value.y = ai_channel->mRotationKeys[k].mValue.y;
+							key.value.z = ai_channel->mRotationKeys[k].mValue.z;
+							key.value.w = ai_channel->mRotationKeys[k].mValue.w;
 							chanel.m_rotation_keys.push_back(key);
 						}
 						anim.m_channels.push_back(chanel);
@@ -186,16 +180,17 @@ void buildBone(Skeleton::Bone* bone, aiNode* node)
 	node->mTransformation.Decompose(scaling, rotation, position);
 	aiMatrix3x3 rotmat = rotation.GetMatrix();
 
-	Matrix3f _rotation;
+	Matrix3f _rotation; // Assimp is row major, S5 is column major
 	_rotation[0] = rotmat.a1;
-	_rotation[1] = rotmat.a2;
-	_rotation[2] = rotmat.a3;
-	_rotation[3] = rotmat.b1;
+	_rotation[1] = rotmat.b1;
+	_rotation[2] = rotmat.c1;
+	_rotation[3] = rotmat.a2;
 	_rotation[4] = rotmat.b2;
-	_rotation[5] = rotmat.b3;
-	_rotation[6] = rotmat.c1;
-	_rotation[7] = rotmat.c2;
+	_rotation[5] = rotmat.c2;
+	_rotation[6] = rotmat.a3;
+	_rotation[7] = rotmat.b3;
 	_rotation[8] = rotmat.c3;
+
 	Vector3f _position(position.x, position.y, position.z);
 	Vector3f _scaling(scaling.x, scaling.y, scaling.z);
 

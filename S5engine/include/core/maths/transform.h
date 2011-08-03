@@ -36,6 +36,9 @@ public:
 	template <class T_scalar, class T_scalar2, class T_scalar3>
 	Transform(const Matrix3<T_scalar> rotation, const Vector3<T_scalar2> position, Vector3<T_scalar3> scale);
 
+	template <class T_scalar, class T_scalar2, class T_scalar3>
+	Transform(const Vector4<T_scalar> quaternion, const Vector3<T_scalar2> position, Vector3<T_scalar3> scale);
+
 	template <class T_scalar>
 	Transform(const Matrix4<T_scalar>& mat);
 

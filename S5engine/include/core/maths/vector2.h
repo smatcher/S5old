@@ -101,6 +101,9 @@ public:
 
 	// Rotation du vecteur
 	inline void rotate(double angle);
+
+	// Interpolation
+	static Vector2<T> lerp(double factor, const Vector2<T>& vec1, const Vector2<T>& vec2);
 };
 
 // Multiplication par un scalaire (s * v)

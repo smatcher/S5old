@@ -5,6 +5,7 @@
 
 #include <iostream>
 #include "core/maths/vector3.h"
+#include "core/maths/vector4.h"
 
 template <class T>
 class Matrix3
@@ -26,6 +27,10 @@ public:
 	// Constructeur à partir d'un tableau
 	template <class T_scalar>
 	Matrix3(T_scalar* values, bool transpose=false);
+
+	// Constructeur à partir d'un quaternion
+	template <class T_scalar>
+	Matrix3(const Vector4<T_scalar>& quaternion);
 
 	// Constructeur de copie
 	template <class T_scalar>

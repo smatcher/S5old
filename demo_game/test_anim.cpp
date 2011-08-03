@@ -45,8 +45,11 @@ int main(int argc, char *argv[])
 	nCam->moveTo(Vector3f(2,0,0));
 	nCam->rotate(Vector3f(0,1,0),90);
 
+	nActor->setScale(Vector3f(0.1,0.1,0.1));
+	/*
 	nActor->setScale(Vector3f(0.03,0.03,0.03));
 	nActor->rotate(Vector3f(0,1,0),-90);
+	*/
 
 	nLight->moveTo(Vector3f(2,0,-1));
 
@@ -65,13 +68,16 @@ int main(int argc, char *argv[])
 	if(skeleton != NULL) {
 		nActor->link(skeleton->buildSkeleton());
 
+		#define ANIMATE
+		#ifdef ANIMATE
 		SkeletonAnimator* animator = new SkeletonAnimator(skeleton);
 		nActor->addProperty(animator);
 		animator->createLinks();
+		#endif
 	}
 
-	// Beurk ! Mais je peux le faire alors je me prive pas ^^
-	RENDER_MANAGER.setCurrentCamera(static_cast<Camera*>(nCam->properties().child("Camera")));
+	RENDER_MANAGER.setDrawDebug(true);
+	//RENDER_MANAGER.setCurrentCamera(static_cast<Camera*>(nCam->properties().child("Camera")));
 	RenderManager::Background background;
 	background.type = RenderManager::COLOR;
 	background.color = Vector3f(0.2,0.2,0.2);

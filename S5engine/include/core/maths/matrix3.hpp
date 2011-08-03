@@ -39,6 +39,27 @@ Matrix3<T>::Matrix3(T_scalar* values, bool transpose)
 		this->transpose();
 }
 
+// Constructeur à partir d'un quaternion
+template <class T>
+template <class T_scalar>
+Matrix3<T>::Matrix3(const Vector4<T_scalar>& quaternion)
+{
+	T_scalar x = quaternion.x;
+	T_scalar y = quaternion.y;
+	T_scalar z = quaternion.z;
+	T_scalar w = quaternion.w;
+
+	this->values[0] = 1.0f - 2.0f * (y * y + z * z);
+	this->values[1] = 2.0f * (x * y + z * w);
+	this->values[2] = 2.0f * (x * z - y * w);
+	this->values[3] = 2.0f * (x * y - z * w);
+	this->values[4] = 1.0f - 2.0f * (x * x + z * z);
+	this->values[5] = 2.0f * (y * z + x * w);
+	this->values[6] = 2.0f * (x * z + y * w);
+	this->values[7] = 2.0f * (y * z - x * w);
+	this->values[8] = 1.0f - 2.0f * (x * x + y * y);
+}
+
 // Constructeur de copie
 template <class T>
 template <class T_scalar>
@@ -285,26 +306,26 @@ Matrix3<T> Matrix3<T>::getInverseTranspose()
 template <class T>
 void Matrix3<T>::invert()
 {
-    *this = getInverse();
+	*this = getInverse();
 }
 
 // Renvoi de la transposée de l'inverse de la matrice
 template <class T>
 Matrix3<T> Matrix3<T>::getInverse()
 {
-    T& m11=values[0];
-    T& m21=values[1];
-    T& m31=values[2];
+	T& m11=values[0];
+	T& m21=values[1];
+	T& m31=values[2];
 
-    T& m12=values[3];
-    T& m22=values[4];
-    T& m32=values[5];
+	T& m12=values[3];
+	T& m22=values[4];
+	T& m32=values[5];
 
-    T& m13=values[6];
-    T& m23=values[7];
-    T& m33=values[8];
+	T& m13=values[6];
+	T& m23=values[7];
+	T& m33=values[8];
 
-    Matrix3<T> result(
+	Matrix3<T> result(
 		Vector3<T>((m22*m33 - m23*m32), -(m12*m33 - m13*m32),  (m12*m23 - m13*m22)),
 		Vector3<T>(-(m21*m33 - m23*m31),  (m11*m33 - m13*m31), -(m11*m23 - m13*m21)),
 		Vector3<T>((m21*m32 - m22*m31), -(m11*m32 - m12*m31),  (m11*m22 - m12*m21)),false);

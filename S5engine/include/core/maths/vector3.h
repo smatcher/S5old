@@ -105,6 +105,9 @@ public:
 
 	// Calcul de la norme au carré (plus rapide)
 	inline T squaredNorm() const;
+
+	// Interpolation
+	static Vector3<T> lerp(double factor, const Vector3<T>& vec1, const Vector3<T>& vec2);
 };
 
 // Multiplication par un scalaire (s * v)

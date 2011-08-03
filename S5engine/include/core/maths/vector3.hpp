@@ -234,3 +234,12 @@ Vector3<T> operator/(const T_scalar& s, const Vector3<T>& v)
 {
 	return Vector3<T>(v.x / s, v.y / s, v.z / s);
 }
+
+// Interpolation
+template<class T>
+Vector3<T> Vector3<T>::lerp(double factor, const Vector3<T>& vec1, const Vector3<T>& vec2)
+{
+	return (1-factor)*vec1 + factor*vec2;
+}
+
+

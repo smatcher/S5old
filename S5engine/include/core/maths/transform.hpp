@@ -20,6 +20,14 @@ Transform<T>::Transform(const Matrix3<T_scalar> rotation, const Vector3<T_scalar
 	this->scale_vector=scale;
 }
 
+template<class T>
+template <class T_scalar, class T_scalar2, class T_scalar3>
+Transform<T>::Transform(const Vector4<T_scalar> quaternion, const Vector3<T_scalar2> position, Vector3<T_scalar3> scale) :
+	rotation(quaternion),
+	position(position),
+	scale_vector(scale)
+{}
+
 template <class T>
 template <class T_scalar>
 Transform<T>::Transform(const Matrix4<T_scalar>& mat)
@@ -281,9 +289,9 @@ template <class T>
 Vector3<T> Transform<T>::toEuler() const
 {
 	Vector3<T> ret;
-	ret.x =  360*atan2(rotation.get(2,0),rotation.get(2,1))/2*M_PI;
+	ret.x = 360*atan2(rotation.get(2,0),rotation.get(2,1))/(2*M_PI);
 	ret.y =  fastAcos(rotation.get(2,2));
-	ret.z = -360*atan2(rotation.get(0,2),rotation.get(1,2))/2*M_PI;
+	ret.z = -360*atan2(rotation.get(0,2),rotation.get(1,2))/(2*M_PI);
 	return ret;
 }
 
