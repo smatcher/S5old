@@ -44,10 +44,12 @@ template <class T>
 template <class T_scalar>
 Matrix3<T>::Matrix3(const Vector4<T_scalar>& quaternion)
 {
-	T_scalar x = quaternion.x;
-	T_scalar y = quaternion.y;
-	T_scalar z = quaternion.z;
-	T_scalar w = quaternion.w;
+	Vector4<T_scalar> _quaternion = quaternion;
+	_quaternion.normalize();
+	T_scalar x = _quaternion.x;
+	T_scalar y = _quaternion.y;
+	T_scalar z = _quaternion.z;
+	T_scalar w = _quaternion.w;
 
 	this->values[0] = 1.0f - 2.0f * (y * y + z * z);
 	this->values[1] = 2.0f * (x * y + z * w);
