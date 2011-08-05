@@ -169,6 +169,9 @@ void AssimpMesh::draw(unsigned int submesh, QGLShaderProgram* program)
 
 void AssimpMesh::Submesh::draw(QGLShaderProgram* program)
 {
+	glPushMatrix();
+	m_transform.glMultf();
+
 	if(!m_vertices.isCreated() || !m_indices.isCreated())
 		return;
 
@@ -245,6 +248,8 @@ void AssimpMesh::Submesh::draw(QGLShaderProgram* program)
 	glDisableClientState(GL_COLOR_ARRAY);
 	glDisableClientState(GL_TEXTURE_COORD_ARRAY);
 	glDisableClientState(GL_INDEX_ARRAY);
+
+	glPopMatrix();
 }
 
 unsigned int AssimpMesh::nbSubmeshes()

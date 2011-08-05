@@ -53,10 +53,8 @@ int main(int argc, char *argv[])
 
 	nLight->moveTo(Vector3f(2,0,-1));
 
-	/*
-	#define USE_DWARF
+	//#define USE_DWARF
 	#define USE_PWIPS
-	*/
 	#ifdef USE_DWARF
 	Mesh bob = MESH_MANAGER.get("dwarf");
 	Material material = MATERIAL_MANAGER.get("dwarf");

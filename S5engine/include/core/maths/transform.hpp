@@ -141,14 +141,11 @@ template <class T>
 template <class T_scalar>
 Transform<T> Transform<T>::operator*(const Transform<T_scalar>& ref) const
 {
-
 	Transform<T> result=*this;
-	result.position+=this->rotation*ref.position;
+	result.position+=(this->rotation*ref.position).scaled(this->scale_vector);
+	result.scale_vector = result.scale_vector.scaled(ref.scale_vector);
 	result.rotation*=ref.rotation;
 	return result;
-
-	//Matrix4<T> m_result = (Matrix4<T>)(*this) * (Matrix4<T>)ref;
-	//return m_result;
 }
 
 template <class T>

@@ -7,7 +7,7 @@ SceneGraphView::SceneGraphView(SceneGraph* item)
 	setModel(m_item->getDebugModel());
 	setHeaderHidden(true);
 
-	setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Minimum);
+	setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Minimum);
 }
 
 SceneGraphView::~SceneGraphView()
@@ -17,6 +17,6 @@ SceneGraphView::~SceneGraphView()
 
 QSize SceneGraphView::sizeHint() const
 {
-    return QSize(240,200);
+	return QSize(240,300);
 }
 

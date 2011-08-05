@@ -14,6 +14,28 @@
 
 #include <core/managers/physicsmanager.h>
 
+void AssimpFactory::buildSubMeshes(QVector<AssimpMesh::Submesh*>& submeshes, const aiNode* node, const aiScene* scene, Transformf parent_transform)
+{
+	aiVector3D scaling;
+	aiQuaternion rotation;
+	aiVector3D position;
+	node->mTransformation.Decompose(scaling, rotation, position);
+	Vector4f _rotation(rotation.x, rotation.y, rotation.z, rotation.w);
+	Vector3f _position(position.x, position.y, position.z);
+	Vector3f _scaling(scaling.x, scaling.y, scaling.z);
+
+	Transformf transform = parent_transform * Transformf(_rotation, _position, _scaling);
+
+	for(int i=0 ; i<node->mNumMeshes ; i++) {
+		const aiMesh* aimesh = scene->mMeshes[node->mMeshes[i]];
+		submeshes.push_back(new AssimpMesh::Submesh(aimesh,transform));
+	}
+
+	for(int i=0 ; i<node->mNumChildren ; i++) {
+		buildSubMeshes(submeshes, node->mChildren[i], scene, transform);
+	}
+}
+
 void AssimpFactory::load(ResourceData* resource)
 {
 	AssimpMesh* meshresource = static_cast<AssimpMesh*>(resource);
@@ -25,7 +47,10 @@ void AssimpFactory::load(ResourceData* resource)
 
 		if(scene != NULL)
 		{
-			unsigned int numVertices = 0;
+			// Build submeshes
+			buildSubMeshes(meshresource->m_submeshes, scene->mRootNode , scene);
+
+			// Link bones
 			for(unsigned i=0 ; i<scene->mNumMeshes ; i++)
 			{
 				const aiMesh* aimesh = scene->mMeshes[i];
@@ -38,10 +63,13 @@ void AssimpFactory::load(ResourceData* resource)
 						}
 					}
 				}
-				numVertices += aimesh->mNumVertices;
-				meshresource->m_submeshes.push_back(new AssimpMesh::Submesh(aimesh));
 			}
 
+			// Build collider  TODO : consider submeshes and tranforms
+			unsigned int numVertices = 0;
+			for(unsigned i=0 ; i<scene->mNumMeshes ; i++) {
+				numVertices += scene->mMeshes[i]->mNumVertices;
+			}
 			GLfloat* array = new GLfloat[3 * numVertices]();
 			for(unsigned int i=0 ; i<meshresource->m_submeshes.size() ; i++) {
 				for(unsigned int j=0 ; j < meshresource->m_submeshes[i]->m_mesh->mNumVertices ; j++) {
@@ -50,6 +78,7 @@ void AssimpFactory::load(ResourceData* resource)
 			}
 			PHYSICS_MANAGER.buildConvexCollider(resource->name(),array,numVertices);
 
+			// Build skeleton
 			if(bones.size() != 0) {
 				meshresource->m_skeleton = buildSkeleton(scene->mRootNode);
 
@@ -178,19 +207,7 @@ void buildBone(Skeleton::Bone* bone, aiNode* node)
 	aiQuaternion rotation;
 	aiVector3D position;
 	node->mTransformation.Decompose(scaling, rotation, position);
-	aiMatrix3x3 rotmat = rotation.GetMatrix();
-
-	Matrix3f _rotation; // Assimp is row major, S5 is column major
-	_rotation[0] = rotmat.a1;
-	_rotation[1] = rotmat.b1;
-	_rotation[2] = rotmat.c1;
-	_rotation[3] = rotmat.a2;
-	_rotation[4] = rotmat.b2;
-	_rotation[5] = rotmat.c2;
-	_rotation[6] = rotmat.a3;
-	_rotation[7] = rotmat.b3;
-	_rotation[8] = rotmat.c3;
-
+	Vector4f _rotation(rotation.x, rotation.y, rotation.z, rotation.w);
 	Vector3f _position(position.x, position.y, position.z);
 	Vector3f _scaling(scaling.x, scaling.y, scaling.z);
 

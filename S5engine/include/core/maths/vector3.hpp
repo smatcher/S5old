@@ -195,6 +195,13 @@ T Vector3<T>::operator*(const Vector3<T>& v) const
 	return this->x * v.x + this->y * v.y + this->z * v.z;
 }
 
+template <class T>
+template <class T_scalar>
+Vector3<T> Vector3<T>::scaled(const Vector3<T_scalar>& scale) const
+{
+	return Vector3<T>(this->x*scale.x, this->y*scale.y, this->z*scale.z);
+}
+
 // Normalisation + renvoi de la valeur de la norme
 template <class T>
 double Vector3<T>::normalize()

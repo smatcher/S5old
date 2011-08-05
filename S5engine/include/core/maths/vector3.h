@@ -97,6 +97,10 @@ public:
 	// Produit scalaire
 	inline T operator*(const Vector3<T>& v) const;
 
+	// Produit membre a membre
+	template <class T_scalar>
+	inline Vector3<T> scaled(const Vector3<T_scalar>& scale) const;
+
 	// Normalisation + renvoi de la valeur de la norme
 	inline double normalize();
 

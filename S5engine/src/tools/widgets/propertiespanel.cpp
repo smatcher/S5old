@@ -5,7 +5,7 @@ PropertiesPanel::PropertiesPanel()
 {
 	m_widget = NULL;
 
-	setSizePolicy(QSizePolicy::Fixed,QSizePolicy::Minimum);
+	setSizePolicy(QSizePolicy::Minimum,QSizePolicy::Minimum);
 }
 
 PropertiesPanel::~PropertiesPanel()
@@ -18,23 +18,23 @@ void PropertiesPanel::selectionChanged(const QItemSelection& selected, const QIt
 
 	Node* n = static_cast<Node*>(sel.first().internalPointer());
 
-    NodeWidget* widget = n->getWidget();
+	NodeWidget* widget = n->getWidget();
 
-    if(m_widget != widget)
-    {
-        if(m_widget != NULL)
-        {
-            delete m_widget;
-        }
+	if(m_widget != widget)
+	{
+		if(m_widget != NULL)
+		{
+			delete m_widget;
+		}
 
-        m_widget = widget;
-        setWidget(m_widget);
-    }
+		m_widget = widget;
+		setWidget(m_widget);
+	}
 }
 
 QSize PropertiesPanel::sizeHint() const
 {
-    return QSize(240, 200);
+	return QSize(240, 300);
 }
 
 void PropertiesPanel::updateData()

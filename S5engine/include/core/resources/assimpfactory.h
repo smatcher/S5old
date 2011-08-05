@@ -3,7 +3,9 @@
 
 #include "core/resources/iresourcefactory.h"
 #include "core/graphics/mesh.h"
+#include "core/maths/transform.h"
 #include <assimp.hpp>
+#include "core/resources/assimpmesh.h"
 
 class aiNode;
 class Skeleton;
@@ -23,6 +25,7 @@ private:
 
 	QString findMeshName(unsigned int meshNumber, aiNode* node);
 	aiNode* findBone(QString name, aiNode* node);
+	void buildSubMeshes(QVector<AssimpMesh::Submesh*>& submeshes, const aiNode* node, const aiScene* scene, Transformf parent_transform = Transformf());
 };
 
 #endif // ASSIMPFACTORY_H

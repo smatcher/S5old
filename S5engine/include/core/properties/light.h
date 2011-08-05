@@ -10,6 +10,7 @@ class Light : public IProperty, public Managee<LightingManager>
 public:
 	Light();
 	void sendParameters(int lightid);
+	virtual void drawDebug(const GLWidget* widget) const;
 };
 
 #endif // LIGHT_H

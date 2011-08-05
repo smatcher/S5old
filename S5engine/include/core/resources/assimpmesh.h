@@ -2,6 +2,7 @@
 #define ASSIMPMESH_H
 
 #include "core/graphics/mesh.h"
+#include "core/maths/transform.h"
 #include <QtOpenGL>
 
 class aiMesh;
@@ -25,8 +26,9 @@ private:
 		QGLBuffer m_bitangents;
 		QGLBuffer m_indices;
 		int m_nbFaces;
+		Transformf m_transform;
 
-		Submesh(const aiMesh* mesh):
+		Submesh(const aiMesh* mesh, const Transformf& transform):
 		m_mesh(mesh),
 		m_vertices(),
 		m_normals(),
@@ -35,7 +37,8 @@ private:
 		m_tangents(),
 		m_bitangents(),
 		m_indices(QGLBuffer::IndexBuffer),
-		m_nbFaces(0) {}
+		m_nbFaces(0),
+		m_transform(transform) {}
 
 		void buildVBO(QString name);
 		void draw(QGLShaderProgram* program);
