@@ -16,6 +16,7 @@
 
 #include "core/resources/managers.h"
 #include "core/properties/meshrenderer.h"
+#include "core/properties/skinnedmeshrenderer.h"
 
 int main(int argc, char *argv[])
 {
@@ -29,23 +30,26 @@ int main(int argc, char *argv[])
 
 	Node* nCam = new Node("Camera");
 	Node* nLight = new Node("Light");
-	Node* nActor = new Node("Actor");
-	Node* nBody = new Node("Body");
+	Node* nActor = new Node("Actor1");
+	Node* nActor2 = new Node("Actor2");
+	Node* nActor3 = new Node("Actor3");
 
 	nCam->addProperty(new Camera(70,1,200));
 	nLight->addProperty(new Light());
 
 	sg->link(nActor);
+	sg->link(nActor2);
+	sg->link(nActor3);
 	sg->link(nCam);
-
-	nActor->link(nBody);
 
 	sg->link(nLight);
 
 	nCam->moveTo(Vector3f(2,0,0));
 	nCam->rotate(Vector3f(0,1,0),90);
 
-	nActor->setScale(Vector3f(0.1,0.1,0.1));
+	nActor2->move(Vector3f(10,0,0));
+	nActor3->move(Vector3f(-10,0,0));
+	//nActor->setScale(Vector3f(0.1,0.1,0.1));
 	/*
 	nActor->setScale(Vector3f(0.03,0.03,0.03));
 	nActor->rotate(Vector3f(0,1,0),-90);
@@ -53,34 +57,78 @@ int main(int argc, char *argv[])
 
 	nLight->moveTo(Vector3f(2,0,-1));
 
-	//#define USE_DWARF
-	#define USE_PWIPS
-	#ifdef USE_DWARF
-	Mesh bob = MESH_MANAGER.get("dwarf");
-	Material material = MATERIAL_MANAGER.get("dwarf");
-	#else
-		#ifdef USE_PWIPS
-			Mesh bob = MESH_MANAGER.get("pwips");
-			Material material = MATERIAL_MANAGER.get("pwips");
-		#else
-			Mesh bob = MESH_MANAGER.get("Bob");
-			Material material = MATERIAL_MANAGER.get("bob");
-		#endif
-	#endif
+	#define ANIMATE
 
-	nBody->addProperty(new MeshRenderer(bob, material));
+	SkinnedMeshRenderer* meshrenderer;
+	Skeleton* skeleton;
 
-	Skeleton* skeleton = bob->getSkeleton();
+//#define USE_DWARF
+//#define USE_PWIPS
+#define USE_BOB
+
+#ifdef USE_BOB
+	Mesh bob_mesh = MESH_MANAGER.get("Bob");
+	Material bob_material = MATERIAL_MANAGER.get("bob");
+	meshrenderer = new SkinnedMeshRenderer(bob_mesh, bob_material);
+	nActor->addProperty(meshrenderer);
+	skeleton = bob_mesh->getSkeleton();
 	if(skeleton != NULL) {
 		nActor->link(skeleton->buildSkeleton());
+		meshrenderer->createLinks();
 
-		#define ANIMATE
+		Node* lamp = nActor->find("SKELETON_lamp");
+		if(lamp != NULL) {
+			lamp->link(nLight);
+			nLight->moveTo(Vector3f(0,1,0));
+		}
+
 		#ifdef ANIMATE
 		SkeletonAnimator* animator = new SkeletonAnimator(skeleton);
 		nActor->addProperty(animator);
 		animator->createLinks();
 		#endif
 	}
+#endif
+
+#ifdef USE_PWIPS
+	Mesh pwips_mesh = MESH_MANAGER.get("pwips");
+	Material pwips_material = MATERIAL_MANAGER.get("pwips");
+	meshrenderer = new SkinnedMeshRenderer(pwips_mesh, pwips_material);
+	nActor2->addProperty(meshrenderer);
+	skeleton = pwips_mesh->getSkeleton();
+	if(skeleton != NULL) {
+		nActor2->link(skeleton->buildSkeleton());
+		meshrenderer->createLinks();
+
+		#ifdef ANIMATE
+		SkeletonAnimator* animator = new SkeletonAnimator(skeleton);
+		nActor2->addProperty(animator);
+		animator->createLinks();
+		#endif
+
+		nActor2->setScale(Vector3f(0.2,0.2,0.2));
+	}
+#endif
+
+#ifdef USE_DWARF
+	Mesh dwarf_mesh = MESH_MANAGER.get("dwarf");
+	Material dwarf_material = MATERIAL_MANAGER.get("dwarf");
+	meshrenderer = new SkinnedMeshRenderer(dwarf_mesh, dwarf_material);
+	nActor3->addProperty(meshrenderer);
+	skeleton = dwarf_mesh->getSkeleton();
+	if(skeleton != NULL) {
+		nActor3->link(skeleton->buildSkeleton());
+		meshrenderer->createLinks();
+
+		#ifdef ANIMATE
+		SkeletonAnimator* animator = new SkeletonAnimator(skeleton);
+		nActor3->addProperty(animator);
+		animator->createLinks();
+		#endif
+
+		nActor3->setScale(Vector3f(0.2,0.2,0.2));
+	}
+#endif
 
 	RENDER_MANAGER.setDrawDebug(true);
 	//RENDER_MANAGER.setCurrentCamera(static_cast<Camera*>(nCam->properties().child("Camera")));

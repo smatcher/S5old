@@ -48,33 +48,44 @@ void AssimpMesh::Submesh::buildVBO(QString name)
 	}
 
 	if(m_mesh->mVertices != NULL) {
-		m_vertices.create();
-		m_vertices.bind();
-		m_vertices.setUsagePattern(QGLBuffer::StaticDraw);
 		GLfloat* array = new GLfloat[3 * m_mesh->mNumVertices]();
 		for(unsigned int i=0 ; i < m_mesh->mNumVertices ; i++) {
 			memcpy(&(array[3*i]),&m_mesh->mVertices[i].x,3 * sizeof(GLfloat));
 		}
+
+		m_vertices.create();
+		m_vertices.bind();
+		m_vertices.setUsagePattern(QGLBuffer::StaticDraw);
 		m_vertices.allocate(array,3 * sizeof(GLfloat) * m_mesh->mNumVertices);
+
+		m_skinned_vertices.create();
+		m_skinned_vertices.bind();
+		m_skinned_vertices.setUsagePattern(QGLBuffer::DynamicDraw);
+		m_skinned_vertices.allocate(array,3 * sizeof(GLfloat) * m_mesh->mNumVertices);
+
 		delete[] array;
 	}
 
 	if(m_mesh->mNormals != NULL) {
-		m_normals.create();
-		m_normals.bind();
-		m_normals.setUsagePattern(QGLBuffer::StaticDraw);
 		GLfloat* array = new GLfloat[3 * m_mesh->mNumVertices]();
 		for(unsigned int i=0 ; i < m_mesh->mNumVertices ; i++) {
 			memcpy(&(array[3*i]),&m_mesh->mNormals[i].x,3 * sizeof(GLfloat));
 		}
+
+		m_normals.create();
+		m_normals.bind();
+		m_normals.setUsagePattern(QGLBuffer::StaticDraw);
 		m_normals.allocate(array,3 * sizeof(GLfloat) * m_mesh->mNumVertices);
+
+		m_skinned_normals.create();
+		m_skinned_normals.bind();
+		m_skinned_normals.setUsagePattern(QGLBuffer::DynamicDraw);
+		m_skinned_normals.allocate(array,3 * sizeof(GLfloat) * m_mesh->mNumVertices);
+
 		delete[] array;
 	}
 
 	if(m_mesh->mColors[0] != NULL) {
-		m_colors.create();
-		m_colors.bind();
-		m_colors.setUsagePattern(QGLBuffer::StaticDraw);
 		GLfloat* array = new GLfloat[4 * m_mesh->mNumVertices]();
 		for(unsigned int i=0 ; i < m_mesh->mNumVertices ; i++) {
 			array[0 + 4*i] = m_mesh->mColors[0][i].r;
@@ -82,43 +93,64 @@ void AssimpMesh::Submesh::buildVBO(QString name)
 			array[0 + 4*i] = m_mesh->mColors[0][i].b;
 			array[0 + 4*i] = m_mesh->mColors[0][i].a;
 		}
+
+		m_colors.create();
+		m_colors.bind();
+		m_colors.setUsagePattern(QGLBuffer::StaticDraw);
 		m_colors.allocate(array,4 * sizeof(GLfloat) * m_mesh->mNumVertices);
+
 		delete[] array;
 	}
 
 	if(m_mesh->mTextureCoords[0] != NULL) {
-		m_texcoords.create();
-		m_texcoords.bind();
-		m_texcoords.setUsagePattern(QGLBuffer::StaticDraw);
 		GLfloat* array = new GLfloat[2 * m_mesh->mNumVertices]();
 		for(unsigned int i=0 ; i < m_mesh->mNumVertices ; i++) {
 			memcpy(&(array[2*i]),&m_mesh->mTextureCoords[0][i].x,2 * sizeof(GLfloat));
 		}
+
+		m_texcoords.create();
+		m_texcoords.bind();
+		m_texcoords.setUsagePattern(QGLBuffer::StaticDraw);
 		m_texcoords.allocate(array,2 * sizeof(GLfloat) * m_mesh->mNumVertices);
+
 		delete[] array;
 	}
 
 	if(m_mesh->mTangents != NULL) {
-		m_tangents.create();
-		m_tangents.bind();
-		m_tangents.setUsagePattern(QGLBuffer::StaticDraw);
 		GLfloat* array = new GLfloat[3 * m_mesh->mNumVertices]();
 		for(unsigned int i=0 ; i < m_mesh->mNumVertices ; i++) {
 			memcpy(&(array[3*i]),&m_mesh->mTangents[i].x,3 * sizeof(GLfloat));
 		}
+
+		m_tangents.create();
+		m_tangents.bind();
+		m_tangents.setUsagePattern(QGLBuffer::StaticDraw);
 		m_tangents.allocate(array,3 * sizeof(GLfloat) * m_mesh->mNumVertices);
+
+		m_skinned_tangents.create();
+		m_skinned_tangents.bind();
+		m_skinned_tangents.setUsagePattern(QGLBuffer::DynamicDraw);
+		m_skinned_tangents.allocate(array,3 * sizeof(GLfloat) * m_mesh->mNumVertices);
+
 		delete[] array;
 	}
 
 	if(m_mesh->mBitangents != NULL) {
-		m_bitangents.create();
-		m_bitangents.bind();
-		m_bitangents.setUsagePattern(QGLBuffer::StaticDraw);
 		GLfloat* array = new GLfloat[3 * m_mesh->mNumVertices]();
 		for(unsigned int i=0 ; i < m_mesh->mNumVertices ; i++) {
 			memcpy(&(array[3*i]),&m_mesh->mBitangents[i].x,3 * sizeof(GLfloat));
 		}
+
+		m_bitangents.create();
+		m_bitangents.bind();
+		m_bitangents.setUsagePattern(QGLBuffer::StaticDraw);
 		m_bitangents.allocate(array,3 * sizeof(GLfloat) * m_mesh->mNumVertices);
+
+		m_skinned_bitangents.create();
+		m_skinned_bitangents.bind();
+		m_skinned_bitangents.setUsagePattern(QGLBuffer::DynamicDraw);
+		m_skinned_bitangents.allocate(array,3 * sizeof(GLfloat) * m_mesh->mNumVertices);
+
 		delete[] array;
 	}
 
@@ -152,28 +184,39 @@ void AssimpMesh::Submesh::buildVBO(QString name)
 	m_indices.setUsagePattern(QGLBuffer::StaticDraw);
 	m_indices.allocate(indices,3 * sizeof(GLshort) * m_nbFaces);
 	delete[] indices;
-
-	// Unbind buffers (binding to a non created buffer does the trick)
-	//QGLBuffer().bind();
-	//QGLBuffer(QGLBuffer::IndexBuffer).bind();
 }
 
 void AssimpMesh::draw(unsigned int submesh, QGLShaderProgram* program)
 {
 	if(submesh < m_submeshes.size()) {
-		m_submeshes[submesh]->draw(program);
+		m_submeshes[submesh]->draw(program,false);
 	}
 
 	debugGL("while rendering" << name());
 }
 
-void AssimpMesh::Submesh::draw(QGLShaderProgram* program)
+void AssimpMesh::draw(unsigned int submesh, const QMap<QString, Matrix4f>& matrix_palette, QGLShaderProgram *program)
+{
+	if(submesh < m_submeshes.size()) {
+		m_submeshes[submesh]->skin(matrix_palette);
+		m_submeshes[submesh]->draw(program,true);
+	}
+
+	debugGL("while rendering" << name());
+}
+
+void AssimpMesh::Submesh::draw(QGLShaderProgram* program, bool skinned)
 {
 	glPushMatrix();
 	m_transform.glMultf();
 
-	if(!m_vertices.isCreated() || !m_indices.isCreated())
-		return;
+	if(!skinned) {
+		if(!m_vertices.isCreated() || !m_indices.isCreated())
+			return;
+	} else {
+		if(!m_skinned_vertices.isCreated() || !m_indices.isCreated())
+			return;
+	}
 
 	if(m_texcoords.isCreated())
 	{
@@ -199,17 +242,32 @@ void AssimpMesh::Submesh::draw(QGLShaderProgram* program)
 		glDisable(GL_COLOR_MATERIAL);
 	}
 
-	if(m_normals.isCreated())
-	{
-		glEnable(GL_LIGHTING);
-		glShadeModel(GL_SMOOTH);
-		glEnableClientState(GL_NORMAL_ARRAY);
-		m_normals.bind();
-		glNormalPointer(GL_FLOAT, 0, NULL);
-	}
-	else
-	{
-		glDisable(GL_LIGHTING);
+	if(!skinned) {
+		if(m_normals.isCreated())
+		{
+			glEnable(GL_LIGHTING);
+			glShadeModel(GL_SMOOTH);
+			glEnableClientState(GL_NORMAL_ARRAY);
+			m_normals.bind();
+			glNormalPointer(GL_FLOAT, 0, NULL);
+		}
+		else
+		{
+			glDisable(GL_LIGHTING);
+		}
+	} else {
+		if(m_skinned_normals.isCreated())
+		{
+			glEnable(GL_LIGHTING);
+			glShadeModel(GL_SMOOTH);
+			glEnableClientState(GL_NORMAL_ARRAY);
+			m_skinned_normals.bind();
+			glNormalPointer(GL_FLOAT, 0, NULL);
+		}
+		else
+		{
+			glDisable(GL_LIGHTING);
+		}
 	}
 
 	if(program != NULL)
@@ -217,21 +275,33 @@ void AssimpMesh::Submesh::draw(QGLShaderProgram* program)
 		int location = program->attributeLocation("tangent");
 		if(location != -1)
 		{
-			m_tangents.bind();
+			if(!skinned) {
+				m_tangents.bind();
+			} else {
+				m_skinned_tangents.bind();
+			}
 			program->enableAttributeArray(location);
 			program->setAttributeBuffer(location,GL_FLOAT,0,3);
 		}
 		location = program->attributeLocation("bitangent");
 		if(location != -1)
 		{
-			m_bitangents.bind();
+			if(!skinned) {
+				m_bitangents.bind();
+			} else {
+				m_skinned_bitangents.bind();
+			}
 			program->enableAttributeArray(location);
 			program->setAttributeBuffer(location,GL_FLOAT,0,3);
 		}
 	}
 
 	glEnableClientState(GL_VERTEX_ARRAY);
-	m_vertices.bind();
+	if(!skinned) {
+		m_vertices.bind();
+	} else {
+		m_skinned_vertices.bind();
+	}
 	glVertexPointer(3, GL_FLOAT, 0, NULL);
 
 	glEnableClientState(GL_INDEX_ARRAY);
@@ -241,7 +311,11 @@ void AssimpMesh::Submesh::draw(QGLShaderProgram* program)
 	glDrawElements(GL_TRIANGLES, 3*m_nbFaces, GL_UNSIGNED_SHORT, NULL);
 
 	m_indices.release();
-	m_vertices.release();
+	if(!skinned) {
+		m_vertices.release();
+	} else {
+		m_skinned_vertices.release();
+	}
 
 	glDisableClientState(GL_VERTEX_ARRAY);
 	glDisableClientState(GL_NORMAL_ARRAY);
@@ -250,6 +324,140 @@ void AssimpMesh::Submesh::draw(QGLShaderProgram* program)
 	glDisableClientState(GL_INDEX_ARRAY);
 
 	glPopMatrix();
+}
+
+void AssimpMesh::Submesh::skin(const QMap<QString, Matrix4f>& matrix_palette)
+{
+	Matrix4f transform = (Matrix4f)m_transform;
+	Matrix4f inverted_transform = transform.getInverse();
+
+	GLfloat* array = new GLfloat[3 * m_mesh->mNumVertices]();
+
+	if(m_mesh->mVertices != NULL) {
+		for(unsigned int i=0 ; i < m_mesh->mNumVertices ; i++) {
+			array[3*i] = 0.0;
+			array[3*i+1] = 0.0;
+			array[3*i+2] = 0.0;
+		}
+
+		for(int i=0 ; i < m_mesh->mNumBones ; i++) {
+			aiBone* bone = m_mesh->mBones[i];
+			QString bone_name(bone->mName.data);
+			Matrix4f matrix = inverted_transform * matrix_palette.find(bone_name).value() * transform;
+			for(int j=0 ; j < bone->mNumWeights ; j++) {
+				aiVertexWeight* weight = &bone->mWeights[j];
+				int vertexid = weight->mVertexId;
+
+				Vector4f displacement(m_mesh->mVertices[vertexid].x,
+									  m_mesh->mVertices[vertexid].y,
+									  m_mesh->mVertices[vertexid].z,1);
+				displacement = matrix * displacement;
+				displacement = displacement * weight->mWeight;
+
+				array[3*vertexid] += displacement.x;
+				array[3*vertexid+1] += displacement.y;
+				array[3*vertexid+2] += displacement.z;
+			}
+		}
+
+		m_skinned_vertices.bind();
+		m_skinned_vertices.write(0,array,3 * sizeof(GLfloat) * m_mesh->mNumVertices);
+	}
+
+	if(m_mesh->mNormals != NULL) {
+		for(unsigned int i=0 ; i < m_mesh->mNumVertices ; i++) {
+			array[3*i] = 0.0;
+			array[3*i+1] = 0.0;
+			array[3*i+2] = 0.0;
+		}
+
+		for(int i=0 ; i < m_mesh->mNumBones ; i++) {
+			aiBone* bone = m_mesh->mBones[i];
+			QString bone_name(bone->mName.data);
+			Matrix4f matrix = inverted_transform * matrix_palette.find(bone_name).value() * transform;
+			for(int j=0 ; j < bone->mNumWeights ; j++) {
+				aiVertexWeight* weight = &bone->mWeights[j];
+				int vertexid = weight->mVertexId;
+
+				Vector4f displacement(m_mesh->mNormals[vertexid].x,
+									  m_mesh->mNormals[vertexid].y,
+									  m_mesh->mNormals[vertexid].z,0);
+				displacement = matrix * displacement;
+				displacement = displacement * weight->mWeight;
+
+				array[3*vertexid] += displacement.x;
+				array[3*vertexid+1] += displacement.y;
+				array[3*vertexid+2] += displacement.z;
+			}
+		}
+
+		m_skinned_normals.bind();
+		m_skinned_normals.write(0, array,3 * sizeof(GLfloat) * m_mesh->mNumVertices);
+	}
+
+	if(m_mesh->mTangents != NULL) {
+		for(unsigned int i=0 ; i < m_mesh->mNumVertices ; i++) {
+			array[3*i] = 0.0;
+			array[3*i+1] = 0.0;
+			array[3*i+2] = 0.0;
+		}
+
+		for(int i=0 ; i < m_mesh->mNumBones ; i++) {
+			aiBone* bone = m_mesh->mBones[i];
+			QString bone_name(bone->mName.data);
+			Matrix4f matrix = inverted_transform * matrix_palette.find(bone_name).value() * transform;
+			for(int j=0 ; j < bone->mNumWeights ; j++) {
+				aiVertexWeight* weight = &bone->mWeights[j];
+				int vertexid = weight->mVertexId;
+
+				Vector4f displacement(m_mesh->mTangents[vertexid].x,
+									  m_mesh->mTangents[vertexid].y,
+									  m_mesh->mTangents[vertexid].z,0);
+				displacement = matrix * displacement;
+				displacement = displacement * weight->mWeight;
+
+				array[3*vertexid] += displacement.x;
+				array[3*vertexid+1] += displacement.y;
+				array[3*vertexid+2] += displacement.z;
+			}
+		}
+
+		m_skinned_tangents.bind();
+		m_skinned_tangents.write(0, array,3 * sizeof(GLfloat) * m_mesh->mNumVertices);
+	}
+
+		if(m_mesh->mBitangents != NULL) {
+		for(unsigned int i=0 ; i < m_mesh->mNumVertices ; i++) {
+			array[3*i] = 0.0;
+			array[3*i+1] = 0.0;
+			array[3*i+2] = 0.0;
+		}
+
+		for(int i=0 ; i < m_mesh->mNumBones ; i++) {
+			aiBone* bone = m_mesh->mBones[i];
+			QString bone_name(bone->mName.data);
+			Matrix4f matrix = inverted_transform * matrix_palette.find(bone_name).value() * transform;
+			for(int j=0 ; j < bone->mNumWeights ; j++) {
+				aiVertexWeight* weight = &bone->mWeights[j];
+				int vertexid = weight->mVertexId;
+
+				Vector4f displacement(m_mesh->mBitangents[vertexid].x,
+									  m_mesh->mBitangents[vertexid].y,
+									  m_mesh->mBitangents[vertexid].z,0);
+				displacement = matrix * displacement;
+				displacement = displacement * weight->mWeight;
+
+				array[3*vertexid] += displacement.x;
+				array[3*vertexid+1] += displacement.y;
+				array[3*vertexid+2] += displacement.z;
+			}
+		}
+
+		m_skinned_bitangents.bind();
+		m_skinned_bitangents.write(0, array,3 * sizeof(GLfloat) * m_mesh->mNumVertices);
+	}
+
+	delete[] array;
 }
 
 unsigned int AssimpMesh::nbSubmeshes()

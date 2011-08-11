@@ -158,3 +158,5 @@ src/core/animation/animation.cpp
 src/core/animation/skeleton.cpp
 include/core/animation/skeletonanimator.h
 src/core/animation/skeletonanimator.cpp
+include/core/properties/skinnedmeshrenderer.h
+src/core/properties/skinnedmeshrenderer.cpp

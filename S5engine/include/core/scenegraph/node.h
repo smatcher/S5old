@@ -42,6 +42,9 @@ public:
 
 	void addProperty(IProperty* property);
 
+	/// Recursivly find the first child node with this name
+	Node* find(QString name);
+
 	// Debug
 	virtual void drawDebug(const GLWidget* widget, bool recursive) const;
 

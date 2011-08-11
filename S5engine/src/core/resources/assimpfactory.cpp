@@ -224,5 +224,6 @@ Skeleton* AssimpFactory::buildSkeleton(aiNode* node)
 {
 	Skeleton* ret = new Skeleton();
 	buildBone(&ret->m_root_bone,node);
+	ret->computeInversedGlobalPoses();
 	return ret;
 }

@@ -19,6 +19,16 @@ Node* Skeleton::Bone::buildNodes(bool isRoot)
 	return ret;
 }
 
+void Skeleton::Bone::computeInversedGlobalPose(Matrix4f parent_transform)
+{
+	Matrix4f global_transform = parent_transform * (Matrix4f)m_bind_pose;
+	m_inverted_global_pose = global_transform.getInverse();
+
+	for(QVector<Bone>::iterator it = m_childrens.begin() ; it != m_childrens.end() ; it++) {
+		it->computeInversedGlobalPose(global_transform);
+	}
+}
+
 Node* Skeleton::buildSkeleton()
 {
 	return m_root_bone.buildNodes(true);
@@ -72,6 +82,11 @@ void BoneNode::drawDebug(const GLWidget* widget, bool recursive) const
 	glPopMatrix();
 }
 
+void Skeleton::computeInversedGlobalPoses()
+{
+	m_root_bone.computeInversedGlobalPose(Matrix4f());
+}
+
 Skeleton::Bone* Skeleton::getRootBone()
 {
 	return &m_root_bone;
@@ -81,3 +96,4 @@ Animation* Skeleton::getAnimation()
 {
 	return &TMP_animations[0];
 }
+

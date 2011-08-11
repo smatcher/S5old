@@ -2,6 +2,7 @@
 #define SKELETON_H
 
 #include <core/maths/transform.h>
+#include <core/maths/matrix4.h>
 #include <core/scenegraph/node.h>
 #include <QVector>
 #include <QString>
@@ -28,8 +29,10 @@ public:
 		QString m_name;
 		QVector<Bone> m_childrens;
 		Transformf m_bind_pose;
+		Matrix4f m_inverted_global_pose;
 
 		Node* buildNodes(bool isRoot);
+		void computeInversedGlobalPose(Matrix4f parent_transform);
 	};
 
 	Node* buildSkeleton();
@@ -40,6 +43,8 @@ protected:
 
 	Bone m_root_bone;
 	QVector<Animation> TMP_animations;
+
+	void computeInversedGlobalPoses();
 };
 
 #endif //SKELETON_H

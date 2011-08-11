@@ -12,6 +12,7 @@ public:
 	virtual bool unload();
 
 	virtual void draw(unsigned int submesh, QGLShaderProgram* program = NULL);
+	virtual void draw(unsigned int submesh, const QMap<QString, Matrix4f>& matrix_palette, QGLShaderProgram* program = NULL);
 	virtual unsigned int nbSubmeshes();
 
 protected:

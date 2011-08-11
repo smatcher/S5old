@@ -111,6 +111,11 @@ void RawMesh::draw(unsigned int, QGLShaderProgram* program)
 	debugGL("while rendering" << name());
 };
 
+void RawMesh::draw(unsigned int submesh, const QMap<QString, Matrix4f>& matrix_palette, QGLShaderProgram *program)
+{
+	draw(submesh, program);
+}
+
 unsigned int RawMesh::nbSubmeshes()
 {
 	return 1;

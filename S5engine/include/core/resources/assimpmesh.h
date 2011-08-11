@@ -25,6 +25,12 @@ private:
 		QGLBuffer m_tangents;
 		QGLBuffer m_bitangents;
 		QGLBuffer m_indices;
+
+		QGLBuffer m_skinned_vertices;
+		QGLBuffer m_skinned_normals;
+		QGLBuffer m_skinned_tangents;
+		QGLBuffer m_skinned_bitangents;
+
 		int m_nbFaces;
 		Transformf m_transform;
 
@@ -37,15 +43,21 @@ private:
 		m_tangents(),
 		m_bitangents(),
 		m_indices(QGLBuffer::IndexBuffer),
+		m_skinned_vertices(),
+		m_skinned_normals(),
+		m_skinned_tangents(),
+		m_skinned_bitangents(),
 		m_nbFaces(0),
 		m_transform(transform) {}
 
 		void buildVBO(QString name);
-		void draw(QGLShaderProgram* program);
+		void draw(QGLShaderProgram* program, bool skinned);
+		void skin(const QMap<QString, Matrix4f>& matrix_palette);
 	};
 
 	QVector<Submesh*> m_submeshes;
 	Skeleton* m_skeleton;
+
 
 public :
 	AssimpMesh(const QString& name, const QString& path, IResourceFactory* factory);
@@ -54,6 +66,7 @@ public :
 	virtual bool unload();
 
 	virtual void draw(unsigned int submesh, QGLShaderProgram* program = NULL);
+	virtual void draw(unsigned int submesh, const QMap<QString, Matrix4f>& matrix_palette, QGLShaderProgram* program = NULL);
 	virtual unsigned int nbSubmeshes();
 
 	virtual Skeleton* getSkeleton();

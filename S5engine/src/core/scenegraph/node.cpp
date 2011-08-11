@@ -111,6 +111,21 @@ void Node::drawDebug(const GLWidget* widget, bool recursive) const
 	glPopMatrix();
 }
 
+Node* Node::find(QString name)
+{
+	Node* ret = child(name);
+
+	if(ret == NULL) {
+		for(int i=0 ; i< childCount() ; i++) {
+			ret = child(i)->find(name);
+			if(ret != NULL)
+				break;
+		}
+	}
+
+	return ret;
+}
+
 PropertySet& Node::properties()
 {
 	return m_properties;

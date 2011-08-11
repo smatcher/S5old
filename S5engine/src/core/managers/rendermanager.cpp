@@ -171,6 +171,10 @@ void RenderManager::setCurrentCamera(Camera* cam)
 void RenderManager::setDrawDebug(bool draw)
 {
 	m_drawDebug = draw;
+
+	#ifdef WITH_TOOLS
+		CAMERA_MANAGER.getDebugView()->setDrawDebug(draw);
+	#endif
 }
 
 const Camera* RenderManager::getCurrentCamera()

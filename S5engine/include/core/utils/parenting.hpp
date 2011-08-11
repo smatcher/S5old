@@ -190,6 +190,10 @@ void ChildOf<Parent>::unlinkFromParent(bool justForgetParent)
 template<class Parent>
 void ChildOf<Parent>::setParent(Parent* parent)
 {
+	if(m_parent != NULL) {
+		unlinkFromParent();
+	}
+
 	m_parent = static_cast<Parent*>(parent);
 	onLinked(m_parent);
 }

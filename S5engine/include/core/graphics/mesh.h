@@ -2,7 +2,10 @@
 #define MESH_H
 
 #include "core/resources/resource.h"
+#include "core/maths/matrix4.h"
+
 #include <QtOpenGL>
+#include <QMap>
 
 class Mesh;
 class Skeleton;
@@ -16,6 +19,7 @@ class MeshData : public ResourceData
 public:
 	MeshData(const QString& name, const QString& path, IResourceFactory* factory) : ResourceData(name,path,factory) {}
 	virtual void draw(unsigned int submesh, QGLShaderProgram* program = NULL) = 0;
+	virtual void draw(unsigned int submesh, const QMap<QString, Matrix4f>& matrix_palette, QGLShaderProgram* program = NULL) = 0;
 	virtual unsigned int nbSubmeshes() = 0;
 
 	virtual Skeleton* getSkeleton() {return NULL;}

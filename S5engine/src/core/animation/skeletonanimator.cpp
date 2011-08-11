@@ -16,11 +16,8 @@ void SkeletonAnimator::update(double elapsed)
 	Animation* anim = m_skeleton->getAnimation();
 	while(m_animationtime > anim->m_duration) {
 		m_animationtime -= anim->m_duration;
-
-		debug("ANIMATION", "loop");
 	}
 
-	//debug("ANIMATION", "time" << m_animationtime);
 	for(int i=0 ; i<anim->m_channels.count() ; i++) {
 		QMap<QString, QPair<Skeleton::Bone*, Node*> >::iterator link;
 		link = m_links.find(anim->m_channels[i].m_name);
@@ -34,7 +31,6 @@ void SkeletonAnimator::update(double elapsed)
 			) {
 			j++;
 		}
-		//if(i == 3) {debug("ANIMATION","rotation " << j);}
 		Vector4f quat;
 		double factor;
 		if(j > 0) {
@@ -44,21 +40,14 @@ void SkeletonAnimator::update(double elapsed)
 		}
 		if(j==0) {
 			quat = anim->m_channels[i].m_rotation_keys[j].value;
-			/*
-			Vector4f quat1 = bone->m_bind_pose.getRotation();
-			Vector4f quat2 = anim->m_channels[i].m_rotation_keys[j].value;
-			quat = Vector4f::lerp(factor,quat1,quat2);
-			*/
 		} else if(j==anim->m_channels[i].m_rotation_keys.count()-1) {
 			Vector4f quat1 = anim->m_channels[i].m_rotation_keys[j-1].value;
 			Vector4f quat2 = anim->m_channels[i].m_rotation_keys[j].value;
 			quat = Vector4f::lerp(factor,quat1,quat2);
-			//quat = anim->m_channels[i].m_rotation_keys[j].value;
 		} else {
 			Vector4f quat1 = anim->m_channels[i].m_rotation_keys[j-1].value;
 			Vector4f quat2 = anim->m_channels[i].m_rotation_keys[j].value;
 			quat = Vector4f::lerp(factor,quat1,quat2);
-			//quat = anim->m_channels[i].m_rotation_keys[j].value;
 		}
 		Matrix3f rot(quat);
 		j=0;
@@ -76,23 +65,15 @@ void SkeletonAnimator::update(double elapsed)
 		Vector3f scale;
 		if(j==0) {
 			scale = anim->m_channels[i].m_scaling_keys[j].value;
-			/*
-			Vector4f quat1 = bone->m_bind_pose.getRotation();
-			Vector4f quat2 = anim->m_channels[i].m_rotation_keys[j].value;
-			quat = Vector4f::lerp(factor,quat1,quat2);
-			*/
 		} else if(j==anim->m_channels[i].m_scaling_keys.count()-1) {
 			Vector3f scale1 = anim->m_channels[i].m_scaling_keys[j-1].value;
 			Vector3f scale2 = anim->m_channels[i].m_scaling_keys[j].value;
 			scale = Vector3f::lerp(factor,scale1,scale2);
-			//quat = anim->m_channels[i].m_rotation_keys[j].value;
 		} else {
 			Vector3f scale1 = anim->m_channels[i].m_scaling_keys[j-1].value;
 			Vector3f scale2 = anim->m_channels[i].m_scaling_keys[j].value;
 			scale = Vector3f::lerp(factor,scale1,scale2);
-			//quat = anim->m_channels[i].m_rotation_keys[j].value;
 		}
-		//if(i == 3) {debug("ANIMATION","scale " << j << scale);}
 		j=0;
 		while(
 			(j+1)<anim->m_channels[i].m_translation_keys.count() &&
@@ -108,23 +89,15 @@ void SkeletonAnimator::update(double elapsed)
 		Vector3f pos;
 		if(j==0) {
 			pos = anim->m_channels[i].m_translation_keys[j].value;
-			/*
-			Vector4f quat1 = bone->m_bind_pose.getRotation();
-			Vector4f quat2 = anim->m_channels[i].m_rotation_keys[j].value;
-			quat = Vector4f::lerp(factor,quat1,quat2);
-			*/
 		} else if(j==anim->m_channels[i].m_translation_keys.count()-1) {
 			Vector3f pos1 = anim->m_channels[i].m_translation_keys[j-1].value;
 			Vector3f pos2 = anim->m_channels[i].m_translation_keys[j].value;
 			pos = Vector3f::lerp(factor,pos1,pos2);
-			//quat = anim->m_channels[i].m_rotation_keys[j].value;
 		} else {
 			Vector3f pos1 = anim->m_channels[i].m_translation_keys[j-1].value;
 			Vector3f pos2 = anim->m_channels[i].m_translation_keys[j].value;
 			pos = Vector3f::lerp(factor,pos1,pos2);
-			//quat = anim->m_channels[i].m_rotation_keys[j].value;
 		}
-		//if(i == 3) {debug("ANIMATION","pos " << j << pos);}
 
 		Transformf trans(rot,pos,scale);
 		node->copy(trans);

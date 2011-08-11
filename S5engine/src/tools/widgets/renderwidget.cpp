@@ -5,29 +5,29 @@
 
 RenderWidget::RenderWidget()
 {
-    QCheckBox* drawDebug = new QCheckBox("Draw debug info");
-    QGroupBox* cameraBox = new QGroupBox("Rendered from camera");
+	m_draw_debug_radio = new QCheckBox("Draw debug info");
+	QGroupBox* cameraBox = new QGroupBox("Rendered from camera");
 
-    QVBoxLayout* layout = new QVBoxLayout;
-    layout->addWidget(drawDebug);
-    layout->addWidget(cameraBox);
+	QVBoxLayout* layout = new QVBoxLayout;
+	layout->addWidget(m_draw_debug_radio);
+	layout->addWidget(cameraBox);
 	layout->addStretch(1);
 	setLayout(layout);
 
-    camerasLayout = new QVBoxLayout;
-    cameraBox->setLayout(camerasLayout);
-    editorCam = new CameraRadioButton(NULL);
-    camerasLayout->addWidget(editorCam);
+	camerasLayout = new QVBoxLayout;
+	cameraBox->setLayout(camerasLayout);
+	editorCam = new CameraRadioButton(NULL);
+	camerasLayout->addWidget(editorCam);
 	const QVector<Camera*>& cameras = CAMERA_MANAGER.managees();
-    for(int i=0 ; i<cameras.count() ; i++)
-    {
-        CameraRadioButton* cam = new CameraRadioButton(cameras.at(i));
-        camerasLayout->addWidget(cam);
-    }
-    //camerasLayout->addStretch(1);
+	for(int i=0 ; i<cameras.count() ; i++)
+	{
+		CameraRadioButton* cam = new CameraRadioButton(cameras.at(i));
+		camerasLayout->addWidget(cam);
+	}
+	//camerasLayout->addStretch(1);
 
 	setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Maximum);
-    connect(drawDebug, SIGNAL(stateChanged(int)), this, SLOT(drawDebugChanged(int)));
+	connect(m_draw_debug_radio, SIGNAL(stateChanged(int)), this, SLOT(drawDebugChanged(int)));
 }
 
 RenderWidget::~RenderWidget()
@@ -37,8 +37,8 @@ RenderWidget::~RenderWidget()
 
 void RenderWidget::cameraAdded(Camera *cam)
 {
-    CameraRadioButton* radio = new CameraRadioButton(cam);
-    camerasLayout->addWidget(radio);
+	CameraRadioButton* radio = new CameraRadioButton(cam);
+	camerasLayout->addWidget(radio);
 }
 
 void RenderWidget::cameraRemoved(CameraRadioButton *radio)
@@ -49,39 +49,44 @@ void RenderWidget::cameraRemoved(CameraRadioButton *radio)
 
 void RenderWidget::activeCameraChanged(Camera* cam)
 {
-    if(cam == NULL)
-    {
-        if(! editorCam->isChecked())
-            editorCam->setChecked(true);
-    }
-    else
-    {
-        CameraRadioButton* radio = cam->getRadioButton();
+	if(cam == NULL)
+	{
+		if(! editorCam->isChecked())
+			editorCam->setChecked(true);
+	}
+	else
+	{
+		CameraRadioButton* radio = cam->getRadioButton();
 
-        if(radio != NULL)
-        {
-            if(! radio->isChecked())
-                radio->setChecked(true);
-        }
-    }
+		if(radio != NULL)
+		{
+			if(! radio->isChecked())
+				radio->setChecked(true);
+		}
+	}
+}
+
+void RenderWidget::setDrawDebug(bool draw)
+{
+	m_draw_debug_radio->setChecked(draw);
 }
 
 void RenderWidget::drawDebugChanged(int state)
 {
-    switch(state)
-    {
-        case Qt::Checked :
+	switch(state)
+	{
+		case Qt::Checked :
 			RENDER_MANAGER.setDrawDebug(true);
-            break;
-        case Qt::Unchecked :
+			break;
+		case Qt::Unchecked :
 			RENDER_MANAGER.setDrawDebug(false);
-            break;
-        default :
-            break;
-    }
+			break;
+		default :
+			break;
+	}
 }
 
 QSize RenderWidget::sizeHint() const
 {
-    return QSize(240,200);
+	return QSize(240,200);
 }
