@@ -47,13 +47,8 @@ int main(int argc, char *argv[])
 	nCam->moveTo(Vector3f(2,0,0));
 	nCam->rotate(Vector3f(0,1,0),90);
 
-	nActor2->move(Vector3f(10,0,0));
-	nActor3->move(Vector3f(-10,0,0));
-	//nActor->setScale(Vector3f(0.1,0.1,0.1));
-	/*
-	nActor->setScale(Vector3f(0.03,0.03,0.03));
-	nActor->rotate(Vector3f(0,1,0),-90);
-	*/
+	nActor2->move(Vector3f(4,0,0));
+	nActor3->move(Vector3f(-4,0,0));
 
 	nLight->moveTo(Vector3f(2,0,-1));
 
@@ -62,8 +57,8 @@ int main(int argc, char *argv[])
 	SkinnedMeshRenderer* meshrenderer;
 	Skeleton* skeleton;
 
-//#define USE_DWARF
-//#define USE_PWIPS
+#define USE_DWARF
+#define USE_PWIPS
 #define USE_BOB
 
 #ifdef USE_BOB
@@ -106,7 +101,8 @@ int main(int argc, char *argv[])
 		animator->createLinks();
 		#endif
 
-		nActor2->setScale(Vector3f(0.2,0.2,0.2));
+		nActor2->setScale(Vector3f(0.12,0.12,0.12));
+		nActor2->move(Vector3f(0.0,4.0,0.0));
 	}
 #endif
 
@@ -126,7 +122,8 @@ int main(int argc, char *argv[])
 		animator->createLinks();
 		#endif
 
-		nActor3->setScale(Vector3f(0.2,0.2,0.2));
+		nActor3->setScale(Vector3f(0.1,0.1,0.1));
+		nActor3->rotate(Vector3f(0.0,1.0,0.0),180);
 	}
 #endif
 

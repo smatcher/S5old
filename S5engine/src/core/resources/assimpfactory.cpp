@@ -123,6 +123,11 @@ void AssimpFactory::load(ResourceData* resource)
 			}
 
 			meshresource->buildVBOs();
+
+			// Give scene ownership to the resource
+			scene = m_importer.GetOrphanedScene();
+			meshresource->m_scene = scene;
+
 			meshresource->m_state = ResourceData::STATE_LOADED;
 		}
 		else

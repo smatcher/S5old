@@ -6,6 +6,7 @@
 #include <QtOpenGL>
 
 class aiMesh;
+class aiScene;
 class AssimpFactory;
 class Skeleton;
 
@@ -57,6 +58,7 @@ private:
 
 	QVector<Submesh*> m_submeshes;
 	Skeleton* m_skeleton;
+	const aiScene* m_scene;
 
 
 public :
