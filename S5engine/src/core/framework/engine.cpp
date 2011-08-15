@@ -103,11 +103,9 @@ int Engine::start()
 		}
 
 		#ifdef WITH_TOOLS
-			if(i%10 == 0) {
-				// Debug update
-				QCoreApplication::postEvent(m_scene.getDebugModel(),new UPDATED_EVENT());
-				QCoreApplication::postEvent(&(m_toolswindow),new UPDATED_EVENT());
-			}
+			// Debug update
+			QCoreApplication::postEvent(m_scene.getDebugModel(),new UPDATED_EVENT());
+			QCoreApplication::postEvent(&(m_toolswindow),new UPDATED_EVENT());
 		#endif
 
 		QCoreApplication::processEvents();

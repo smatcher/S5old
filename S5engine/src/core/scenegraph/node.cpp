@@ -136,6 +136,18 @@ const PropertySet& Node::properties() const
 	return m_properties;
 }
 
+void Node::onLinked(Node * to)
+{
+	#ifdef WITH_TOOLS
+	#endif
+}
+
+void Node::onUnlinked(Node * from)
+{
+	#ifdef WITH_TOOLS
+	#endif
+}
+
 #ifdef WITH_TOOLS
 
 	NodeWidget* Node::getWidget()

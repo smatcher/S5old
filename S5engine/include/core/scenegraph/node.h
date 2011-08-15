@@ -45,6 +45,9 @@ public:
 	/// Recursivly find the first child node with this name
 	Node* find(QString name);
 
+	virtual void onLinked(Node * to);
+	virtual void onUnlinked(Node * from);
+
 	// Debug
 	virtual void drawDebug(const GLWidget* widget, bool recursive) const;
 
