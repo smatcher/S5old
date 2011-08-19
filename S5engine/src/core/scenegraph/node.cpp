@@ -2,13 +2,16 @@
 #include "QtOpenGL"
 #include <QColor>
 
+#include "core/utils/customevents.h"
+
 #include "core/log/log.h"
 
 #ifdef WITH_TOOLS
+	#include "tools/scenegraphmodel.h"
 	#include "tools/widgets/nodewidget.h"
 #endif
 
-Node::Node(const QString& name) : ChildOf<ParentOfNode>(name), Transform<float>(), m_properties(this)
+Node::Node(const QString& name) : ChildOf<ParentOfNode>(name), Transform<float>(), m_scene(NULL), m_properties(this)
 {
 	#ifdef WITH_TOOLS
 		m_widget = NULL;
@@ -136,16 +139,45 @@ const PropertySet& Node::properties() const
 	return m_properties;
 }
 
-void Node::onLinked(Node * to)
+void Node::changedScenegraph(SceneGraph* scene)
 {
+	if(scene != m_scene) {
+		m_scene = scene;
+
+		for(int i=0 ; i < childCount() ; i++) {
+			child(i)->changedScenegraph(scene);
+		}
+	}
+}
+
+void Node::onLinked(ParentOfNode * to)
+{
+	SceneGraph* scene;
+
+	if(to->type() == ParentOfNode::SCENEGRAPH) {
+		scene = static_cast<SceneGraph*>(to);
+	} else {
+		scene = static_cast<Node*>(to)->m_scene;
+	}
+
+	changedScenegraph(scene);
+
 	#ifdef WITH_TOOLS
+		if(m_scene != NULL) {
+			QCoreApplication::postEvent(m_scene->getDebugModel(),new UPDATED_EVENT());
+		}
 	#endif
 }
 
-void Node::onUnlinked(Node * from)
+void Node::onUnlinked(ParentOfNode * from)
 {
 	#ifdef WITH_TOOLS
+		if(m_scene != NULL) {
+			QCoreApplication::postEvent(m_scene->getDebugModel(),new UPDATED_EVENT());
+		}
 	#endif
+
+	changedScenegraph(NULL);
 }
 
 #ifdef WITH_TOOLS

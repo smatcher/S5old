@@ -9,6 +9,7 @@
 #include "core/scenegraph/parentofnode.h"
 
 class GLWidget;
+class SceneGraph;
 
 #ifdef WITH_TOOLS
 	class NodeWidget;
@@ -21,8 +22,11 @@ class Node : public ParentOfNode, public ChildOf< ParentOfNode >, public Transfo
 	#endif
 
 private :
+	SceneGraph* m_scene;
 	PropertySet m_properties;
 	BoundingVolume* m_bounding;
+
+	void changedScenegraph(SceneGraph* scene);
 
 	#ifdef WITH_TOOLS
 		NodeWidget* m_widget;
@@ -45,8 +49,8 @@ public:
 	/// Recursivly find the first child node with this name
 	Node* find(QString name);
 
-	virtual void onLinked(Node * to);
-	virtual void onUnlinked(Node * from);
+	virtual void onLinked(ParentOfNode * to);
+	virtual void onUnlinked(ParentOfNode * from);
 
 	// Debug
 	virtual void drawDebug(const GLWidget* widget, bool recursive) const;

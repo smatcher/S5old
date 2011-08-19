@@ -104,7 +104,6 @@ int Engine::start()
 
 		#ifdef WITH_TOOLS
 			// Debug update
-			QCoreApplication::postEvent(m_scene.getDebugModel(),new UPDATED_EVENT());
 			QCoreApplication::postEvent(&(m_toolswindow),new UPDATED_EVENT());
 		#endif
 
