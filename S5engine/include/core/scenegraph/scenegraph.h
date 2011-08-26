@@ -8,6 +8,7 @@
 #ifdef WITH_TOOLS
 	class SceneGraphModel;
 	class SceneGraphView;
+	class Manipulator;
 #endif
 
 class SceneGraph : public ParentOfNode
@@ -22,9 +23,13 @@ public:
 		SceneGraphModel* getDebugModel();
 		void clearDebug();
 
+		void setManipulator(Manipulator* manip);
+		Manipulator* getManipulator();
+
 	private :
 		SceneGraphView* m_debugView;
 		SceneGraphModel* m_debugModel;
+		Manipulator* m_manipulator;
 #endif
 };
 

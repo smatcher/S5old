@@ -138,6 +138,7 @@ int main(int argc, char *argv[])
 	GLint maxVertexuniforms;
 	glGetIntegerv(GL_MAX_VERTEX_UNIFORM_COMPONENTS,&maxVertexuniforms);
 	logInfo(maxVertexuniforms << "maximum vertex uniforms");
+	logInfo(GL_PROJECTION_STACK_DEPTH << "maximum projections");
 
 	int ret = engine.start();
 

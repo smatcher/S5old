@@ -160,3 +160,5 @@ include/core/animation/skeletonanimator.h
 src/core/animation/skeletonanimator.cpp
 include/core/properties/skinnedmeshrenderer.h
 src/core/properties/skinnedmeshrenderer.cpp
+include/tools/3D/manipulator.h
+src/tools/3D/manipulator.cpp

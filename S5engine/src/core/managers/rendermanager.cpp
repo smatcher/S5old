@@ -14,6 +14,7 @@
 
 #ifdef WITH_TOOLS
 	#include "tools/widgets/renderwidget.h"
+	#include "tools/3D/manipulator.h"
 #endif
 
 #ifndef GL_MULTISAMPLE
@@ -148,6 +149,10 @@ void RenderManager::render(double elapsed_time, SceneGraph* sg)
 		glEnable(GL_TEXTURE_2D);
 		glEnable(GL_LIGHTING);
 	}
+
+	#ifdef WITH_TOOLS
+		sg->getManipulator()->draw(m_context);
+	#endif
 
 	m_context->swapBuffers();
 

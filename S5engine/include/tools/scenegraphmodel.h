@@ -15,8 +15,6 @@ class SceneGraphModel : public QAbstractItemModel
 
 private :
 	SceneGraph* m_item;
-
-	Node* getNode(const QModelIndex &index) const;
 public :
 	SceneGraphModel(SceneGraph* item);
 	virtual ~SceneGraphModel();
@@ -27,6 +25,8 @@ public :
 	int columnCount(const QModelIndex&) const;
 	QVariant data(const QModelIndex&, int role) const;
 	virtual bool event(QEvent* evt);
+
+	Node* getNode(const QModelIndex &index) const;
 };
 
 #endif // SCENEGRAPHMODEL_H

@@ -14,5 +14,5 @@ template <class Manager>
 Managee<Manager>::~Managee()
 {
 	Manager* manager = &(Singleton<Manager>::getInstance());
-        manager->remove((typename Manager::ManagedType*)this);
+	manager->remove((typename Manager::ManagedType*)this);
 }

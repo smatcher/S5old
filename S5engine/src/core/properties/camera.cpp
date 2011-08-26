@@ -156,14 +156,22 @@ void Camera::setRadioButton(CameraRadioButton* radio)
 
 void Camera::onLinked(PropertySet *)
 {
+	CameraManager* manager = &(Singleton<CameraManager>::getInstance());
+	manager->getDebugView()->cameraAdded(this);
+
+	/*
 	if(m_radiobutton != NULL)
 		QCoreApplication::postEvent(m_radiobutton,new UPDATED_EVENT());
+	*/
 }
 
 void Camera::onUnlinked(PropertySet *)
 {
+	//CameraManager::getDebugView()->cameraRemoved(m_radiobutton);
+/*
 	if(m_radiobutton != NULL)
 		QCoreApplication::postEvent(m_radiobutton,new UPDATED_EVENT());
+*/
 }
 
 #endif

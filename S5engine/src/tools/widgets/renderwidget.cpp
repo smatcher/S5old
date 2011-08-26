@@ -6,10 +6,12 @@
 RenderWidget::RenderWidget()
 {
 	m_draw_debug_radio = new QCheckBox("Draw debug info");
+	m_cameras_combo = new QComboBox();
 	QGroupBox* cameraBox = new QGroupBox("Rendered from camera");
 
 	QVBoxLayout* layout = new QVBoxLayout;
 	layout->addWidget(m_draw_debug_radio);
+	layout->addWidget(m_cameras_combo);
 	layout->addWidget(cameraBox);
 	layout->addStretch(1);
 	setLayout(layout);
@@ -39,6 +41,12 @@ void RenderWidget::cameraAdded(Camera *cam)
 {
 	CameraRadioButton* radio = new CameraRadioButton(cam);
 	camerasLayout->addWidget(radio);
+
+	Node* node = cam->node();
+
+	if(node != NULL) {
+		m_cameras_combo->insertItem(0,node->getName());
+	}
 }
 
 void RenderWidget::cameraRemoved(CameraRadioButton *radio)

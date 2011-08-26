@@ -47,4 +47,14 @@ void SceneGraph::clearDebug()
 	m_debugModel = NULL;
 }
 
+void SceneGraph::setManipulator(Manipulator* manip)
+{
+	m_manipulator = manip;
+}
+
+Manipulator* SceneGraph::getManipulator()
+{
+	return m_manipulator;
+}
+
 #endif

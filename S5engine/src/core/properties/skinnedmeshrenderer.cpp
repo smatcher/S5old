@@ -4,6 +4,7 @@
 #include "core/log/log.h"
 
 #include <QtOpenGL>
+#include <QColor>
 
 SkinnedMeshRenderer::SkinnedMeshRenderer(Mesh& mesh, Material& material) : IRenderable("SkinnedMeshRenderer")
 {
@@ -38,6 +39,19 @@ void SkinnedMeshRenderer::render(double elapsed_time, GLWidget *context)
 		// Render
 		for(unsigned int i=0 ; i<m_mesh->nbSubmeshes() ; i++) {
 
+			#ifdef WITH_TOOLS
+				if(node() != NULL && node()->isSelected()) {
+					glClearStencil(0);
+					glClear( GL_STENCIL_BUFFER_BIT );
+					glEnable( GL_STENCIL_TEST );
+					// Set the stencil buffer to write a 1 in every time
+					// a pixel is written to the screen
+
+					glStencilFunc( GL_ALWAYS, 1, 0xFFFF );
+					glStencilOp( GL_KEEP, GL_KEEP, GL_REPLACE );
+				 }
+			#endif
+
 			if(m_material.isValid()) {
 				m_material->apply(i);
 				program = m_material->program(i);
@@ -48,6 +62,24 @@ void SkinnedMeshRenderer::render(double elapsed_time, GLWidget *context)
 			if(m_material.isValid()) {
 				m_material->unset(i);
 			}
+
+			#ifdef WITH_TOOLS
+				if(node() != NULL && node()->isSelected()) {
+					// Set the stencil buffer to only allow writing
+					// to the screen when the value of the
+					// stencil buffer is not 1
+					glStencilFunc( GL_NOTEQUAL, 1, 0xFFFF );
+					glStencilOp( GL_KEEP, GL_KEEP, GL_REPLACE );
+					// Draw the object with thick lines
+					context->qglColor(Qt::white);
+					glLineWidth(3.0);
+
+					m_mesh->draw(i,matrix_palette,program, true);
+
+					glLineWidth(1.0);
+					glDisable(GL_STENCIL_TEST);
+				}
+			#endif
 		}
 	}
 	else

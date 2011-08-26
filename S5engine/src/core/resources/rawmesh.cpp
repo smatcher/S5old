@@ -29,12 +29,16 @@ bool RawMesh::unload()
 	return true;
 }
 
-void RawMesh::draw(unsigned int, QGLShaderProgram* program)
+void RawMesh::draw(unsigned int, QGLShaderProgram* program, bool wireframe)
 {
+	if(wireframe) {
+		glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+	}
+
 	if(!m_vertices.isCreated() || !m_indices.isCreated())
 		return;
 
-	if(m_texcoords.isCreated())
+	if(m_texcoords.isCreated() && !wireframe)
 	{
 		glEnable(GL_TEXTURE_2D);
 		glEnableClientState(GL_TEXTURE_COORD_ARRAY);
@@ -58,7 +62,7 @@ void RawMesh::draw(unsigned int, QGLShaderProgram* program)
 		glDisable(GL_COLOR_MATERIAL);
 	}
 
-	if(m_normals.isCreated())
+	if(m_normals.isCreated() && !wireframe)
 	{
 		glEnable(GL_LIGHTING);
 		glShadeModel(GL_SMOOTH);
@@ -71,7 +75,7 @@ void RawMesh::draw(unsigned int, QGLShaderProgram* program)
 		glDisable(GL_LIGHTING);
 	}
 
-	if(program != NULL)
+	if(program != NULL && !wireframe)
 	{
 		int location = program->attributeLocation("tangent");
 		if(location != -1)
@@ -108,12 +112,16 @@ void RawMesh::draw(unsigned int, QGLShaderProgram* program)
 	glDisableClientState(GL_TEXTURE_COORD_ARRAY);
 	glDisableClientState(GL_INDEX_ARRAY);
 
-	debugGL("while rendering" << name());
-};
+	if(wireframe) {
+		glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+	}
 
-void RawMesh::draw(unsigned int submesh, const QMap<QString, Matrix4f>& matrix_palette, QGLShaderProgram *program)
+	debugGL("while rendering" << name());
+}
+
+void RawMesh::draw(unsigned int submesh, const QMap<QString, Matrix4f>& matrix_palette, QGLShaderProgram *program, bool wireframe)
 {
-	draw(submesh, program);
+	draw(submesh, program, wireframe);
 }
 
 unsigned int RawMesh::nbSubmeshes()

@@ -15,6 +15,7 @@ Node::Node(const QString& name) : ChildOf<ParentOfNode>(name), Transform<float>(
 {
 	#ifdef WITH_TOOLS
 		m_widget = NULL;
+		m_selected = false;
 	#endif
 }
 
@@ -178,6 +179,16 @@ void Node::onUnlinked(ParentOfNode * from)
 	#endif
 
 	changedScenegraph(NULL);
+}
+
+void Node::setSelected(bool selected)
+{
+	m_selected = selected;
+}
+
+bool Node::isSelected()
+{
+	return m_selected;
 }
 
 #ifdef WITH_TOOLS

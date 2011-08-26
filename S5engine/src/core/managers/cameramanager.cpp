@@ -19,8 +19,10 @@ CameraManager::~CameraManager()
 
 void CameraManager::onManageeAdded(Camera *managee)
 {
+	/*
 	if(m_widget != NULL)
 		m_widget->cameraAdded(managee);
+	*/
 }
 
 RenderWidget* CameraManager::getDebugView()

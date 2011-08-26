@@ -1,4 +1,5 @@
 #include <core/animation/skeleton.h>
+#include <core/maths/trigo.h>
 #include <QColor>
 
 Node* Skeleton::Bone::buildNodes(bool isRoot)
@@ -39,6 +40,7 @@ void BoneNode::drawDebug(const GLWidget* widget, bool recursive) const
 	glPushMatrix();
 	glDisable(GL_DEPTH_TEST);
 		this->glMultd();
+/*
 		widget->qglColor(Qt::red);
 		glBegin(GL_LINES);
 			glVertex3d(0,0,0);
@@ -54,6 +56,8 @@ void BoneNode::drawDebug(const GLWidget* widget, bool recursive) const
 			glVertex3d(0,0,0);
 			glVertex3d(0,0,1);
 		glEnd();
+*/
+
 		QColor color = Qt::white;
 		color.setAlpha(200);
 		widget->qglColor(color);

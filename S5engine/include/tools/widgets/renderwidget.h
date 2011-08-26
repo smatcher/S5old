@@ -4,6 +4,7 @@
 #include <QWidget>
 #include <QLayout>
 #include <QCheckBox>
+#include <QComboBox>
 
 class Camera;
 class CameraRadioButton;
@@ -27,6 +28,7 @@ public slots :
 	void drawDebugChanged(int state);
 
 private:
+	QComboBox* m_cameras_combo;
 	QVBoxLayout* camerasLayout;
 	CameraRadioButton* editorCam;
 	QCheckBox* m_draw_debug_radio;

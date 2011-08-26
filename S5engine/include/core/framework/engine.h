@@ -8,6 +8,7 @@
 
 #ifdef WITH_TOOLS
 	#include "tools/toolswindow.h"
+	#include "tools/3D/manipulator.h"
 #endif
 
 class Engine
@@ -20,6 +21,7 @@ private :
 
 	#ifdef WITH_TOOLS
 		ToolsWindow m_toolswindow;
+		Manipulator m_manipulator;
 	#endif
 
 	bool m_running;

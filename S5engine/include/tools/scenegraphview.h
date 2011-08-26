@@ -17,6 +17,9 @@ public :
 	virtual ~SceneGraphView();
 
 	QSize sizeHint() const;
+
+public slots:
+	virtual void selectionChanged(const QItemSelection &selected, const QItemSelection &deselected);
 };
 
 #endif // SCENEGRAPHVIEW_H

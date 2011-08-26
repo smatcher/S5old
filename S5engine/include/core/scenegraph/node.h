@@ -31,6 +31,8 @@ private :
 	#ifdef WITH_TOOLS
 		NodeWidget* m_widget;
 		void widgetDestroyed();
+
+		bool m_selected;
 	#endif
 
 public:
@@ -57,6 +59,9 @@ public:
 
 	#ifdef WITH_TOOLS
 		virtual NodeWidget* getWidget();
+
+		void setSelected(bool selected);
+		bool isSelected();
 	#endif
 };
 

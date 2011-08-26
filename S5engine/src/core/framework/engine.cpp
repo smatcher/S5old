@@ -14,6 +14,7 @@
 
 #ifdef WITH_TOOLS
 	#include "tools/scenegraphmodel.h"
+	#include "tools/3D/manipulator.h"
 #endif
 
 #include <AL/alut.h>
@@ -58,6 +59,7 @@ void Engine::init(int argc, char *argv[], QString mod_dir)
 
 	#ifdef WITH_TOOLS
 		m_toolswindow.show();
+		m_scene.setManipulator(&m_manipulator);
 	#endif
 
 	RENDER_MANAGER.setCurrentCamera(NULL);

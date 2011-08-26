@@ -186,29 +186,33 @@ void AssimpMesh::Submesh::buildVBO(QString name)
 	delete[] indices;
 }
 
-void AssimpMesh::draw(unsigned int submesh, QGLShaderProgram* program)
+void AssimpMesh::draw(unsigned int submesh, QGLShaderProgram* program, bool wireframe)
 {
 	if(submesh < m_submeshes.size()) {
-		m_submeshes[submesh]->draw(program,false);
+		m_submeshes[submesh]->draw(program,false, wireframe);
 	}
 
 	debugGL("while rendering" << name());
 }
 
-void AssimpMesh::draw(unsigned int submesh, const QMap<QString, Matrix4f>& matrix_palette, QGLShaderProgram *program)
+void AssimpMesh::draw(unsigned int submesh, const QMap<QString, Matrix4f>& matrix_palette, QGLShaderProgram *program, bool wireframe)
 {
 	if(submesh < m_submeshes.size()) {
 		m_submeshes[submesh]->skin(matrix_palette);
-		m_submeshes[submesh]->draw(program,true);
+		m_submeshes[submesh]->draw(program,true, wireframe);
 	}
 
 	debugGL("while rendering" << name());
 }
 
-void AssimpMesh::Submesh::draw(QGLShaderProgram* program, bool skinned)
+void AssimpMesh::Submesh::draw(QGLShaderProgram* program, bool skinned, bool wireframe)
 {
 	glPushMatrix();
 	m_transform.glMultf();
+
+	if(wireframe) {
+		glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+	}
 
 	if(!skinned) {
 		if(!m_vertices.isCreated() || !m_indices.isCreated())
@@ -218,7 +222,7 @@ void AssimpMesh::Submesh::draw(QGLShaderProgram* program, bool skinned)
 			return;
 	}
 
-	if(m_texcoords.isCreated())
+	if(m_texcoords.isCreated() && !wireframe)
 	{
 		glEnable(GL_TEXTURE_2D);
 		glEnableClientState(GL_TEXTURE_COORD_ARRAY);
@@ -243,7 +247,7 @@ void AssimpMesh::Submesh::draw(QGLShaderProgram* program, bool skinned)
 	}
 
 	if(!skinned) {
-		if(m_normals.isCreated())
+		if(m_normals.isCreated() && !wireframe)
 		{
 			glEnable(GL_LIGHTING);
 			glShadeModel(GL_SMOOTH);
@@ -256,7 +260,7 @@ void AssimpMesh::Submesh::draw(QGLShaderProgram* program, bool skinned)
 			glDisable(GL_LIGHTING);
 		}
 	} else {
-		if(m_skinned_normals.isCreated())
+		if(m_skinned_normals.isCreated() && !wireframe)
 		{
 			glEnable(GL_LIGHTING);
 			glShadeModel(GL_SMOOTH);
@@ -270,7 +274,7 @@ void AssimpMesh::Submesh::draw(QGLShaderProgram* program, bool skinned)
 		}
 	}
 
-	if(program != NULL)
+	if(program != NULL && !wireframe)
 	{
 		int location = program->attributeLocation("tangent");
 		if(location != -1)
@@ -323,6 +327,9 @@ void AssimpMesh::Submesh::draw(QGLShaderProgram* program, bool skinned)
 	glDisableClientState(GL_TEXTURE_COORD_ARRAY);
 	glDisableClientState(GL_INDEX_ARRAY);
 
+	if(wireframe) {
+		glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+	}
 	glPopMatrix();
 }
 
