@@ -11,8 +11,8 @@ public:
 	RawMesh(const QString& name, const QString& path, IResourceFactory* factory);
 	virtual bool unload();
 
-	virtual void draw(unsigned int submesh, QGLShaderProgram* program = NULL, bool wireframe = false);
-	virtual void draw(unsigned int submesh, const QMap<QString, Matrix4f>& matrix_palette, QGLShaderProgram* program = NULL, bool wireframe = false);
+	virtual void draw(unsigned int submesh, QGLShaderProgram* program = NULL, int flags = NONE);
+	virtual void draw(unsigned int submesh, const QMap<QString, Matrix4f>& matrix_palette, QGLShaderProgram* program = NULL, int flags = NONE);
 	virtual unsigned int nbSubmeshes();
 
 protected:

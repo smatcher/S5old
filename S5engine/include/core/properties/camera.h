@@ -5,9 +5,10 @@
 #include "core/managers/managee.h"
 #include "core/managers/cameramanager.h"
 #include "core/maths/matrix4.h"
+#include "core/graphics/rendertexture.h"
 
 #ifdef WITH_TOOLS
-    class CameraRadioButton;
+	class CameraRadioButton;
 #endif
 
 class Camera : public IProperty, public Managee<CameraManager>
@@ -21,15 +22,18 @@ public :
 	const Matrix4d& getProjection(double aspect);
 	void setProjection(double aspect);
 
-    void setParameters(double yfov, double znear, double zfar);
+	void setParameters(double yfov, double znear, double zfar);
 
-    void applyTransform();
-    void applyOnlyRotation();
+	void applyTransform();
+	void applyOnlyRotation();
 
-    #ifdef WITH_TOOLS
-        CameraRadioButton* getRadioButton();
-        void setRadioButton(CameraRadioButton* radio);
-    #endif
+	#ifdef WITH_TOOLS
+		CameraRadioButton* getRadioButton();
+		void setRadioButton(CameraRadioButton* radio);
+	#endif
+
+	void createTargetTexture(int height, int width);
+	Texture getTargetTexture();
 
 private :
 	bool m_needComputation;
@@ -38,21 +42,23 @@ private :
 	double m_zfar;
 	double m_lastAspect;
 
-    #ifdef WITH_TOOLS
-        CameraRadioButton* m_radiobutton;
-    #endif
+	RenderTexture* m_render_texture;
+
+	#ifdef WITH_TOOLS
+		CameraRadioButton* m_radiobutton;
+	#endif
 
 	Matrix4d m_projection;
 
-    void computeProjection();
+	void computeProjection();
 
-    /// Debug
-    virtual void drawDebug(const GLWidget*) const;
+	/// Debug
+	virtual void drawDebug(const GLWidget*) const;
 
-    #ifdef WITH_TOOLS
-        virtual void onLinked(PropertySet *);
-        virtual void onUnlinked(PropertySet *);
-    #endif
+	#ifdef WITH_TOOLS
+		virtual void onLinked(PropertySet *);
+		virtual void onUnlinked(PropertySet *);
+	#endif
 };
 
 #endif // CAMERA_H

@@ -17,9 +17,17 @@ class MeshData : public ResourceData
 	friend class ResourceManager<MeshData,Mesh>;
 
 public:
+
+	enum DrawFlags
+	{
+		NONE = 0x0,
+		WIREFRAME = 0x1,
+		SKINNED = 0x2,
+	};
+
 	MeshData(const QString& name, const QString& path, IResourceFactory* factory) : ResourceData(name,path,factory) {}
-	virtual void draw(unsigned int submesh, QGLShaderProgram* program = NULL, bool wireframe = false) = 0;
-	virtual void draw(unsigned int submesh, const QMap<QString, Matrix4f>& matrix_palette, QGLShaderProgram* program = NULL, bool wireframe = false) = 0;
+	virtual void draw(unsigned int submesh, QGLShaderProgram* program = NULL, int flags = NONE) = 0;
+	virtual void draw(unsigned int submesh, const QMap<QString, Matrix4f>& matrix_palette, QGLShaderProgram* program = NULL, int flags = NONE) = 0;
 	virtual unsigned int nbSubmeshes() = 0;
 
 	virtual Skeleton* getSkeleton() {return NULL;}

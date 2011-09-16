@@ -299,3 +299,13 @@ void RenderManager::applyBackground()
 
 	glDepthMask(true);
 }
+
+void RenderManager::addRTT(RenderTexture *rtt)
+{
+	if(rtt != NULL) {
+		m_rtts.push_back(rtt);
+	} else {
+		logWarn("tried to add NULL rtt target");
+	}
+}
+

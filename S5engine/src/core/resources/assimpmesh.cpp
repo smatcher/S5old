@@ -186,27 +186,30 @@ void AssimpMesh::Submesh::buildVBO(QString name)
 	delete[] indices;
 }
 
-void AssimpMesh::draw(unsigned int submesh, QGLShaderProgram* program, bool wireframe)
+void AssimpMesh::draw(unsigned int submesh, QGLShaderProgram* program, int flags)
 {
 	if(submesh < m_submeshes.size()) {
-		m_submeshes[submesh]->draw(program,false, wireframe);
+		m_submeshes[submesh]->draw(program,flags);
 	}
 
 	debugGL("while rendering" << name());
 }
 
-void AssimpMesh::draw(unsigned int submesh, const QMap<QString, Matrix4f>& matrix_palette, QGLShaderProgram *program, bool wireframe)
+void AssimpMesh::draw(unsigned int submesh, const QMap<QString, Matrix4f>& matrix_palette, QGLShaderProgram *program, int flags)
 {
 	if(submesh < m_submeshes.size()) {
 		m_submeshes[submesh]->skin(matrix_palette);
-		m_submeshes[submesh]->draw(program,true, wireframe);
+		m_submeshes[submesh]->draw(program,flags);
 	}
 
 	debugGL("while rendering" << name());
 }
 
-void AssimpMesh::Submesh::draw(QGLShaderProgram* program, bool skinned, bool wireframe)
+void AssimpMesh::Submesh::draw(QGLShaderProgram* program, int flags)
 {
+	bool wireframe = flags & WIREFRAME;
+	bool skinned = flags & SKINNED;
+
 	glPushMatrix();
 	m_transform.glMultf();
 

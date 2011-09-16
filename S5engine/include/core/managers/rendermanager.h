@@ -11,6 +11,7 @@ class IRenderable;
 class GLWidget;
 class Camera;
 class SceneGraph;
+class RenderTexture;
 
 class RenderManager : public Manager<IRenderable>
 {
@@ -43,6 +44,8 @@ private :
 	bool m_drawDebug;
 	Background m_defaultBackground;
 
+	QList<RenderTexture*> m_rtts;
+
 	void setupProjection();
 	void applyBackground();
 
@@ -58,6 +61,8 @@ public:
 	void setBackground(const Background& background);
 
 	const Camera* getCurrentCamera();
+
+	void addRTT(RenderTexture* rtt);
 };
 
 typedef Singleton<RenderManager> SingletonRenderManager;

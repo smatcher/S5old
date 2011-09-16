@@ -14,6 +14,8 @@ Camera::Camera(double yfov, double znear, double zfar) : IProperty("Camera"), Ma
 	m_zfar = zfar;
 	m_needComputation = true;
 	m_lastAspect = 0;
+
+	m_render_texture = NULL;
 }
 
 Camera::~Camera()
@@ -22,6 +24,22 @@ Camera::~Camera()
 		if(m_radiobutton != NULL)
 			QCoreApplication::postEvent(m_radiobutton,new DELETED_EVENT());
 	#endif
+}
+
+
+void Camera::createTargetTexture(int height, int width)
+{
+	if(node()) {
+		m_render_texture = new RenderTexture("RTT_"+getName(), height, width, this);
+		RENDER_MANAGER.addRTT(m_render_texture);
+	} else {
+		logError("Can't create RTT from unliked camera");
+	}
+}
+
+Texture Camera::getTargetTexture()
+{
+	return Texture(*m_render_texture);
 }
 
 const Matrix4d& Camera::getProjection(double aspect)

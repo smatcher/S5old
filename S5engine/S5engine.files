@@ -162,3 +162,5 @@ include/core/properties/skinnedmeshrenderer.h
 src/core/properties/skinnedmeshrenderer.cpp
 include/tools/3D/manipulator.h
 src/tools/3D/manipulator.cpp
+include/core/graphics/rendertexture.h
+src/core/graphics/rendertexture.cpp

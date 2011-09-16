@@ -29,8 +29,10 @@ bool RawMesh::unload()
 	return true;
 }
 
-void RawMesh::draw(unsigned int, QGLShaderProgram* program, bool wireframe)
+void RawMesh::draw(unsigned int, QGLShaderProgram* program, int flags)
 {
+	bool wireframe = flags & WIREFRAME;
+
 	if(wireframe) {
 		glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 	}
@@ -119,9 +121,9 @@ void RawMesh::draw(unsigned int, QGLShaderProgram* program, bool wireframe)
 	debugGL("while rendering" << name());
 }
 
-void RawMesh::draw(unsigned int submesh, const QMap<QString, Matrix4f>& matrix_palette, QGLShaderProgram *program, bool wireframe)
+void RawMesh::draw(unsigned int submesh, const QMap<QString, Matrix4f>& matrix_palette, QGLShaderProgram *program, int flags)
 {
-	draw(submesh, program, wireframe);
+	draw(submesh, program, flags);
 }
 
 unsigned int RawMesh::nbSubmeshes()

@@ -63,7 +63,7 @@ void MeshRenderer::render(double elapsed_time, GLWidget* context)
 					context->qglColor(Qt::white);
 					glLineWidth(3.0);
 
-					m_mesh->draw(i,program, true);
+					m_mesh->draw(i,program, MeshData::WIREFRAME);
 
 					glLineWidth(1.0);
 					glDisable(GL_STENCIL_TEST);

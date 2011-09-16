@@ -33,14 +33,17 @@ int main(int argc, char *argv[])
 	Node* nActor = new Node("Actor1");
 	Node* nActor2 = new Node("Actor2");
 	Node* nActor3 = new Node("Actor3");
+	Node* nRttCube = new Node("RTTCube");
 
-	nCam->addProperty(new Camera(70,1,200));
+	Camera* cam = new Camera(70,1,200);
+	nCam->addProperty(cam);
 	nLight->addProperty(new Light());
 
 	sg->link(nActor);
 	sg->link(nActor2);
 	sg->link(nActor3);
 	sg->link(nCam);
+	sg->link(nRttCube);
 
 	sg->link(nLight);
 
@@ -52,7 +55,14 @@ int main(int argc, char *argv[])
 
 	nLight->moveTo(Vector3f(2,0,-1));
 
+	nRttCube->moveTo(Vector3f(0,10,0));
+
 	#define ANIMATE
+
+	cam->createTargetTexture(512,512);
+	Mesh cube = MESH_MANAGER.get("Cube");
+	Material rtt = MATERIAL_MANAGER.get("rtt");
+	nRttCube->addProperty(new MeshRenderer(cube,rtt));
 
 	SkinnedMeshRenderer* meshrenderer;
 	Skeleton* skeleton;

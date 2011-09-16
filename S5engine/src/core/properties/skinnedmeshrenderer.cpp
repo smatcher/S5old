@@ -57,7 +57,7 @@ void SkinnedMeshRenderer::render(double elapsed_time, GLWidget *context)
 				program = m_material->program(i);
 			}
 
-			m_mesh->draw(i,matrix_palette,program);
+			m_mesh->draw(i,matrix_palette,program, MeshData::SKINNED);
 
 			if(m_material.isValid()) {
 				m_material->unset(i);
@@ -74,7 +74,7 @@ void SkinnedMeshRenderer::render(double elapsed_time, GLWidget *context)
 					context->qglColor(Qt::white);
 					glLineWidth(3.0);
 
-					m_mesh->draw(i,matrix_palette,program, true);
+					m_mesh->draw(i,program, MeshData::WIREFRAME | MeshData::SKINNED);
 
 					glLineWidth(1.0);
 					glDisable(GL_STENCIL_TEST);
