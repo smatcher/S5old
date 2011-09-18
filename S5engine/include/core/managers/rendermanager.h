@@ -46,8 +46,9 @@ private :
 
 	QList<RenderTexture*> m_rtts;
 
-	void setupProjection();
-	void applyBackground();
+	void renderFromCamera(Camera* camera, double elapsed_time, SceneGraph* sg);
+	void setupProjection(Camera* camera);
+	void applyBackground(Camera* camera);
 
 public:
 	virtual ~RenderManager();

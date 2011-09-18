@@ -30,7 +30,7 @@ RenderManager::~RenderManager()
 {
 }
 
-void RenderManager::setupProjection()
+void RenderManager::setupProjection(Camera* camera)
 {
 	QSize resizeTo;
 	bool needResize = m_context->needResize(&resizeTo);
@@ -46,11 +46,9 @@ void RenderManager::setupProjection()
 		glMatrixMode(GL_PROJECTION);
 		glLoadIdentity();
 
-		if(m_camera != NULL)
+		if(camera != NULL)
 		{
-//			Matrix4d mat = m_camera->getProjection((float)resizeTo.width() / (float)resizeTo.height());
-//			glLoadMatrixd(mat.values);
-			m_camera->setProjection(1); // Pas besoin de passer l'aspect, il a déjà été pris en compte dans le viewport
+			camera->setProjection(1); // Pas besoin de passer l'aspect, il a déjà été pris en compte dans le viewport
 		}
 		else
 		{
@@ -89,6 +87,29 @@ void RenderManager::init(GLWidget* context)
 
 void RenderManager::render(double elapsed_time, SceneGraph* sg)
 {
+	for(int i=0 ; i<m_rtts.length() ; i++) {
+		RenderTexture* rtt = m_rtts[i];
+
+		if(rtt != NULL && rtt->getCamera() != NULL) {
+			rtt->bindAsTarget();
+			renderFromCamera(rtt->getCamera(), elapsed_time, sg);
+			rtt->releaseAsTarget();
+		}
+	}
+
+	renderFromCamera(m_camera, elapsed_time, sg);
+	m_context->swapBuffers();
+
+	GLenum error = glGetError();
+	if(error != GL_NO_ERROR) {
+		const char* msg = (char*)gluErrorString(error);
+		logError( QString(msg) );
+	}
+
+}
+
+void RenderManager::renderFromCamera(Camera* camera, double elapsed_time, SceneGraph* sg)
+{
 	QList<IRenderable*> transparent_renderables;
 
 	if(m_context == NULL) {
@@ -96,18 +117,18 @@ void RenderManager::render(double elapsed_time, SceneGraph* sg)
 	}
 
 	if(m_defaultBackground.type == SKYBOX) {
-		setupProjection();
+		setupProjection(camera);
 		glLoadIdentity();
-		applyBackground();
+		applyBackground(camera);
 	} else {
 		glLoadIdentity();
-		applyBackground();
-		setupProjection();
+		applyBackground(camera);
+		setupProjection(camera);
 		glLoadIdentity();
 	}
 
-	if(m_camera != NULL) {
-		m_camera->applyTransform();
+	if(camera != NULL) {
+		camera->applyTransform();
 	} else {
 		m_context->applyCamera();
 	}
@@ -154,13 +175,6 @@ void RenderManager::render(double elapsed_time, SceneGraph* sg)
 		sg->getManipulator()->draw(m_context);
 	#endif
 
-	m_context->swapBuffers();
-
-	GLenum error = glGetError();
-	if(error != GL_NO_ERROR) {
-		const char* msg = (char*)gluErrorString(error);
-		logError( QString(msg) );
-	}
 }
 
 void RenderManager::setCurrentCamera(Camera* cam)
@@ -192,7 +206,7 @@ void RenderManager::setBackground(const Background &background)
 	m_defaultBackground = background;
 };
 
-void RenderManager::applyBackground()
+void RenderManager::applyBackground(Camera* camera)
 {
 	glClear(GL_DEPTH_BUFFER_BIT);
 	glDepthMask(false);
@@ -226,8 +240,8 @@ void RenderManager::applyBackground()
 			break;
 		case SKYBOX :
 			glPushMatrix();
-				if(m_camera != NULL)
-					m_camera->applyOnlyRotation();
+				if(camera != NULL)
+					camera->applyOnlyRotation();
 				else
 					m_context->applyCameraRotation();
 				glDisable(GL_LIGHTING);

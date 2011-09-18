@@ -14,11 +14,13 @@ public:
 	RenderTexture(QString name, int height, int width, Camera* camera);
 	virtual bool unload();
 
-	void makeCurrent();
+	void bindAsTarget();
+	void releaseAsTarget();
+
 	Camera* getCamera();
 
 private:
-	QGLPixelBuffer m_buffer;
+	QGLFramebufferObject m_buffer;
 	Camera* m_camera;
 };
 

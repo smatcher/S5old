@@ -47,15 +47,16 @@ int main(int argc, char *argv[])
 
 	sg->link(nLight);
 
-	nCam->moveTo(Vector3f(2,0,0));
-	nCam->rotate(Vector3f(0,1,0),90);
+	nCam->moveTo(Vector3f(0,5,-5));
+	nCam->rotate(Vector3f(0,1,0),180);
 
 	nActor2->move(Vector3f(4,0,0));
 	nActor3->move(Vector3f(-4,0,0));
 
 	nLight->moveTo(Vector3f(2,0,-1));
 
-	nRttCube->moveTo(Vector3f(0,10,0));
+	nRttCube->moveTo(Vector3f(0,7,4));
+	nRttCube->setScale(Vector3f(15,15,1));
 
 	#define ANIMATE
 
