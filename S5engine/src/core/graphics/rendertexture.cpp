@@ -1,7 +1,7 @@
 #include "core/graphics/rendertexture.h"
 #include "core/resources/managers.h"
 
-RenderTexture::RenderTexture(QString name, int height, int width, Camera *camera) : TextureData(name, "none", NULL), m_buffer(height, width)
+RenderTexture::RenderTexture(QString name, int height, int width, Camera *camera) : TextureData(name, "none", NULL), m_buffer(height, width, QGLFramebufferObject::CombinedDepthStencil)
 {
 	m_height = height;
 	m_width = width;
