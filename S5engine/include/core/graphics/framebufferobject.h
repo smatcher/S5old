@@ -7,7 +7,7 @@
 class FrameBufferObject
 {
 public:
-	FrameBufferObject(int width, int height, bool onscreen);
+	FrameBufferObject(int height, int width, bool onscreen);
 	virtual ~FrameBufferObject();
 
 	void bindAsTarget();

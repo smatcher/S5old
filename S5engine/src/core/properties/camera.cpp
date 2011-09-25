@@ -32,11 +32,17 @@ Camera::~Camera()
 void Camera::createTarget(int height, int width)
 {
 	if(node()) {
-		m_render_texture = new RenderTexture("RTT_"+getName(), height, width, GL_DEPTH_COMPONENT, GL_FLOAT);
+		m_render_texture = new RenderTexture("RTT_"+getName(), height, width, GL_RGBA, GL_UNSIGNED_BYTE);
+		RenderTexture* depth_texture = new RenderTexture("RTT2_"+getName(), height, width, GL_DEPTH_COMPONENT, GL_FLOAT);
+		//RenderTexture* stencil_texture = new RenderTexture("RTT3_"+getName(), height, width, GL_ALPHA, GL_FLOAT);
 		Texture tex(*m_render_texture);
-		FrameBufferObject* fbo = new FrameBufferObject(width, height, false);
-		fbo->attachTexture(tex, FrameBufferObject::DEPTH_ATTACHMENT);
-		RenderTarget* target = new RenderTarget(this, fbo);
+		Texture tex2(*depth_texture);
+		//Texture tex3(*stencil_texture);
+		FrameBufferObject* fbo = new FrameBufferObject(height, width, false);
+		fbo->attachTexture(tex, FrameBufferObject::COLOR_ATTACHMENT);
+		fbo->attachTexture(tex2, FrameBufferObject::DEPTH_ATTACHMENT);
+		//fbo->attachTexture(tex3, FrameBufferObject::STENCIL_ATTACHMENT);
+		RenderTarget* target = new RenderTarget(this, fbo, height, width, false);
 		RENDER_MANAGER.addRenderTarget(target);
 	} else {
 		logError("Can't create RTT from unliked camera");

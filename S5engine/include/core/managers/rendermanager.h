@@ -46,8 +46,8 @@ private :
 
 	QList<RenderTarget*> m_rts;
 
-	void renderFromCamera(Camera* camera, SceneGraph* sg, bool target_is_screen);
-	void setupProjection(Camera* camera);
+	void renderTarget(SceneGraph* sg, RenderTarget target);
+	void setupProjection(RenderTarget target);
 	void applyBackground(Camera* camera);
 
 public:

@@ -31,7 +31,36 @@ RenderManager::~RenderManager()
 {
 }
 
-void RenderManager::setupProjection(Camera* camera)
+void RenderManager::setupProjection(RenderTarget target)
+{
+	Camera* camera = target.getCamera();
+	QSize resizeTo;
+	bool needResize = m_context->needResize(&resizeTo);
+
+	if(target.isOnScreen()) {
+		int side = qMax(resizeTo.width(), resizeTo.height());
+		glViewport((resizeTo.width() - side) / 2, (resizeTo.height() - side) / 2, side, side);
+		m_context->isResized();
+	} else {
+		glViewport(0, 0, target.getWidth(), target.getHeight());
+	}
+
+	glMatrixMode(GL_PROJECTION);
+	glLoadIdentity();
+
+	if(camera != NULL)
+	{
+		camera->setProjection(1); // Pas besoin de passer l'aspect, il a déjà été pris en compte dans le viewport
+	}
+	else
+	{
+		gluPerspective(70,1,0.01,1000);
+	}
+
+	glMatrixMode(GL_MODELVIEW);
+}
+
+/*
 {
 	QSize resizeTo;
 	bool needResize = m_context->needResize(&resizeTo);
@@ -53,13 +82,6 @@ void RenderManager::setupProjection(Camera* camera)
 		}
 		else
 		{
-			/*
-			#ifdef QT_OPENGL_ES_1
-				glOrthof(-5, +5, -5, +5, 1.0, 50.0);
-			#else
-				glOrtho(-5, +5, -5, +5, 1.0, 50.0);
-			#endif
-			*/
 			gluPerspective(70,1,0.01,1000);
 		}
 
@@ -68,6 +90,7 @@ void RenderManager::setupProjection(Camera* camera)
 
 	m_cameraChanged = false;
 }
+*/
 
 void RenderManager::init(GLWidget* context)
 {
@@ -101,12 +124,14 @@ void RenderManager::render(double elapsed_time, SceneGraph* sg)
 
 		if(rt != NULL) {
 			rt->bindAsTarget();
-			renderFromCamera(rt->getCamera(), sg, false);
+			renderTarget(sg, *rt);
 			rt->releaseAsTarget();
 		}
 	}
 
-	renderFromCamera(m_camera, sg, true);
+	RenderTarget crt(m_camera, NULL, 0,0, true);
+	renderTarget(sg, crt);
+
 	m_context->swapBuffers();
 
 	// Frame End
@@ -125,8 +150,9 @@ void RenderManager::render(double elapsed_time, SceneGraph* sg)
 
 }
 
-void RenderManager::renderFromCamera(Camera* camera, SceneGraph* sg, bool target_is_screen)
+void RenderManager::renderTarget(SceneGraph* sg, RenderTarget target)
 {
+	Camera* camera = target.getCamera();
 	QList<IRenderable*> transparent_renderables;
 
 	if(m_context == NULL) {
@@ -134,13 +160,13 @@ void RenderManager::renderFromCamera(Camera* camera, SceneGraph* sg, bool target
 	}
 
 	if(m_defaultBackground.type == SKYBOX) {
-		setupProjection(camera);
+		setupProjection(target);
 		glLoadIdentity();
 		applyBackground(camera);
 	} else {
 		glLoadIdentity();
 		applyBackground(camera);
-		setupProjection(camera);
+		setupProjection(target);
 		glLoadIdentity();
 	}
 
@@ -177,7 +203,7 @@ void RenderManager::renderFromCamera(Camera* camera, SceneGraph* sg, bool target
 		glPopMatrix();
 	}
 
-	if(m_drawDebug && target_is_screen)	{
+	if(m_drawDebug && target.isOnScreen())	{
 		glDisable(GL_LIGHTING);
 		glDisable(GL_TEXTURE_2D);
 		for(int i=0 ; i<sg->childCount() ; i++) {

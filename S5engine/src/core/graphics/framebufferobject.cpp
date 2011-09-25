@@ -2,7 +2,7 @@
 
 #include <core/graphics/framebufferobject.h>
 
-FrameBufferObject::FrameBufferObject(int width, int height, bool onscreen)
+FrameBufferObject::FrameBufferObject(int height, int width, bool onscreen)
 {
 	m_height = height;
 	m_width = width;

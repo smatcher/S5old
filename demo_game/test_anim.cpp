@@ -29,23 +29,26 @@ int main(int argc, char *argv[])
 	SceneGraph* sg = engine.getScenegraph_TEMPORARY();
 
 	Node* nCam = new Node("Camera");
+	Node* nRot = new Node("Rot");
 	Node* nLight = new Node("Light");
 	Node* nActor = new Node("Actor1");
 	Node* nActor2 = new Node("Actor2");
 	Node* nActor3 = new Node("Actor3");
 	Node* nRttCube = new Node("RTTCube");
 
-	Camera* cam = new Camera(70,1,200);
+	Camera* cam = new Camera(100,1,200);
 	nCam->addProperty(cam);
 	nLight->addProperty(new Light());
+	nRot->addProperty(new DummyUpdatable(0.5));
 
 	sg->link(nActor);
 	sg->link(nActor2);
 	sg->link(nActor3);
-	sg->link(nCam);
+	sg->link(nRot);
 	sg->link(nRttCube);
 
 	sg->link(nLight);
+	nRot->link(nCam);
 
 	nCam->moveTo(Vector3f(0,5,-5));
 	nCam->rotate(Vector3f(0,1,0),180);
@@ -55,8 +58,8 @@ int main(int argc, char *argv[])
 
 	nLight->moveTo(Vector3f(2,0,-1));
 
-	nRttCube->moveTo(Vector3f(0,7,4));
-	nRttCube->setScale(Vector3f(15,15,1));
+	nRttCube->moveTo(Vector3f(0,7,6));
+	nRttCube->setScale(Vector3f(18,18,1));
 
 	#define ANIMATE
 
