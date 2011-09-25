@@ -1,4 +1,6 @@
 #include "core/properties/camera.h"
+#include <core/graphics/framebufferobject.h>
+#include <core/graphics/rendertarget.h>
 #include "core/framework/glwidget.h"
 #include "core/utils/customevents.h"
 #include <QtOpenGL>
@@ -27,11 +29,15 @@ Camera::~Camera()
 }
 
 
-void Camera::createTargetTexture(int height, int width)
+void Camera::createTarget(int height, int width)
 {
 	if(node()) {
-		m_render_texture = new RenderTexture("RTT_"+getName(), height, width, this);
-		RENDER_MANAGER.addRTT(m_render_texture);
+		m_render_texture = new RenderTexture("RTT_"+getName(), height, width, GL_DEPTH_COMPONENT, GL_FLOAT);
+		Texture tex(*m_render_texture);
+		FrameBufferObject* fbo = new FrameBufferObject(width, height, false);
+		fbo->attachTexture(tex, FrameBufferObject::DEPTH_ATTACHMENT);
+		RenderTarget* target = new RenderTarget(this, fbo);
+		RENDER_MANAGER.addRenderTarget(target);
 	} else {
 		logError("Can't create RTT from unliked camera");
 	}

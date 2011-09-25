@@ -12,7 +12,8 @@ class TrailRenderer : public IRenderable
 public:
 	TrailRenderer(Material mat);
 
-	void render(double elapsed_time, GLWidget*);
+	void frameBegin(double elapsed_time);
+	void render(GLWidget*);
 
 private:
 	Vector4f m_lastPosition;

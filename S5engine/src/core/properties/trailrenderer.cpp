@@ -54,7 +54,7 @@ TrailRenderer::TrailRenderer(Material material) :
 	delete[] indices;
 }
 
-void TrailRenderer::render(double time_elapsed, GLWidget*)
+void TrailRenderer::frameBegin(double elapsed_time)
 {
 	if(!m_vertices.isCreated() || !m_indices.isCreated())
 		return;
@@ -87,8 +87,13 @@ void TrailRenderer::render(double time_elapsed, GLWidget*)
 			m_indices.write(m_quadOffset*6*sizeof(GLshort),indices,6*sizeof(GLshort));
 		}
 	}
+}
 
-	// Render
+void TrailRenderer::render(GLWidget*)
+{
+	if(!m_vertices.isCreated() || !m_indices.isCreated())
+		return;
+
 	if(m_nbQuads > 0) {
 
 		if(m_material.isValid())

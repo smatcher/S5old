@@ -231,7 +231,7 @@ TerrainRenderer::TerrainRenderer(Texture& hm, Material& mat, float yscale, float
 
 }
 
-void TerrainRenderer::render(double elapsed_time, GLWidget* context) {
+void TerrainRenderer::render(GLWidget* context) {
 
 	QGLShaderProgram* program = NULL;
 	node()->getGlobalTransform().glMultf();

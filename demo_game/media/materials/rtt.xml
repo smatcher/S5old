@@ -1,9 +1,4 @@
 <material>
 	<texture texunit="0">RTT_Camera</texture>
-	<diffuse>1.0 1.0 1.0 1.0</diffuse>
-	<specular>0.1 0.1 0.1 1.0</specular>
-	<ambient>0.5 0.5 0.5 1.0</ambient>
-	<emission>0.0 0.0 0.0 1.0</emission>
-	<shininess>0.1</shininess>
-	<program>phong</program>
+	<program>flat</program>
 </material>

@@ -35,6 +35,8 @@ public:
 		glActiveTexture(GL_TEXTURE0 + i);
 		glBindTexture(GL_TEXTURE_2D , 0);
 	}
+
+	GLuint getGLId() {return m_gltexture;}
 	int getHeight() { return m_height; }
 	int getWidth() { return m_width; }
 };

@@ -1,3 +1,5 @@
+#include <GL/glew.h>
+
 #include "core/framework/engine.h"
 
 #include "core/scenegraph/scenegraph.h"
@@ -56,6 +58,8 @@ void Engine::init(int argc, char *argv[], QString mod_dir)
 
 	alutInit(&argc, argv);
 	m_window.getGLW_TEMPORARY()->makeCurrent();
+
+	glewInit();
 
 	#ifdef WITH_TOOLS
 		m_toolswindow.show();

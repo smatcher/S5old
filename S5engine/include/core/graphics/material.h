@@ -18,6 +18,8 @@ public:
 	virtual void unset(unsigned int layer) = 0;
 	virtual QGLShaderProgram* program(unsigned int layer) = 0;
 	virtual bool isTransparent(unsigned int layer) = 0;
+	virtual bool receivesShadows(unsigned int layer) = 0;
+	virtual bool castsShadows(unsigned int layer) = 0;
 };
 
 class Material : public ResourceHandle<MaterialData>

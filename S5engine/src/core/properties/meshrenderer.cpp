@@ -12,7 +12,7 @@ MeshRenderer::MeshRenderer(Mesh& mesh, Material& material) : IRenderable("MeshRe
 	m_material = material;
 }
 
-void MeshRenderer::render(double elapsed_time, GLWidget* context)
+void MeshRenderer::render(GLWidget* context)
 {
 	// The program is passed to the mesh in order to set the attributes
 	QGLShaderProgram* program = NULL;
@@ -85,6 +85,40 @@ bool MeshRenderer::isTransparent()
 	{
 		for(unsigned int i=0 ; i<m_mesh->nbSubmeshes() ; i++) {
 			if(m_material->isTransparent(i)) {
+				ret = true;
+				break;
+			}
+		}
+	}
+
+	return ret;
+}
+
+bool MeshRenderer::receivesShadows()
+{
+	bool ret = false;
+
+	if(m_material.isValid())
+	{
+		for(unsigned int i=0 ; i<m_mesh->nbSubmeshes() ; i++) {
+			if(m_material->receivesShadows(i)) {
+				ret = true;
+				break;
+			}
+		}
+	}
+
+	return ret;
+}
+
+bool MeshRenderer::castsShadows()
+{
+	bool ret = false;
+
+	if(m_material.isValid())
+	{
+		for(unsigned int i=0 ; i<m_mesh->nbSubmeshes() ; i++) {
+			if(m_material->castsShadows(i)) {
 				ret = true;
 				break;
 			}

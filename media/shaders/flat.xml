@@ -1,0 +1,4 @@
+<program>
+	<shader source="flat.vert"/>
+	<shader source="flat.frag"/>
+</program>

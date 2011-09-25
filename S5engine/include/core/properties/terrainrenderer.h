@@ -36,7 +36,7 @@ class TerrainRenderer : public IRenderable
 public:
 	typedef QuadTree<TerrainPatch> TerrainNode;
 	TerrainRenderer(Texture& hm, Material& mat, float yscale, float scale, float tscale);
-	void render(double elapsed_time, GLWidget* context);
+	void render(GLWidget* context);
 	bool isTransparent() {return false;}
 
 

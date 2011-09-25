@@ -5,23 +5,11 @@
 
 #include <QtOpenGL>
 
-class Camera;
-
 class RenderTexture : public TextureData
 {
 public:
-
-	RenderTexture(QString name, int height, int width, Camera* camera);
+	RenderTexture(QString name, int height, int width, GLenum format, GLenum type);
 	virtual bool unload();
-
-	void bindAsTarget();
-	void releaseAsTarget();
-
-	Camera* getCamera();
-
-private:
-	QGLFramebufferObject m_buffer;
-	Camera* m_camera;
 };
 
 #endif // RENDERTEXTURE_H

@@ -6,6 +6,7 @@
 #include "core/managers/lightingmanager.h"
 #include "core/managers/physicsmanager.h"
 #include "core/properties/light.h"
+#include <core/graphics/rendertarget.h>
 
 #include <QtOpenGL>
 #include <math.h>
@@ -87,19 +88,35 @@ void RenderManager::init(GLWidget* context)
 
 void RenderManager::render(double elapsed_time, SceneGraph* sg)
 {
-	for(int i=0 ; i<m_rtts.length() ; i++) {
-		RenderTexture* rtt = m_rtts[i];
+	// Frame Begin
+	for(QVector<IRenderable*>::iterator it = registeredManagees.begin();
+		it != registeredManagees.end();
+		it++) {
+		(*it)->frameBegin(elapsed_time);
+	}
 
-		if(rtt != NULL && rtt->getCamera() != NULL) {
-			rtt->bindAsTarget();
-			renderFromCamera(rtt->getCamera(), elapsed_time, sg);
-			rtt->releaseAsTarget();
+	// Render
+	for(int i=0 ; i<m_rts.length() ; i++) {
+		RenderTarget* rt = m_rts[i];
+
+		if(rt != NULL) {
+			rt->bindAsTarget();
+			renderFromCamera(rt->getCamera(), sg, false);
+			rt->releaseAsTarget();
 		}
 	}
 
-	renderFromCamera(m_camera, elapsed_time, sg);
+	renderFromCamera(m_camera, sg, true);
 	m_context->swapBuffers();
 
+	// Frame End
+	for(QVector<IRenderable*>::iterator it = registeredManagees.begin();
+		it != registeredManagees.end();
+		it++) {
+		(*it)->frameEnd();
+	}
+
+	// Debug errors
 	GLenum error = glGetError();
 	if(error != GL_NO_ERROR) {
 		const char* msg = (char*)gluErrorString(error);
@@ -108,7 +125,7 @@ void RenderManager::render(double elapsed_time, SceneGraph* sg)
 
 }
 
-void RenderManager::renderFromCamera(Camera* camera, double elapsed_time, SceneGraph* sg)
+void RenderManager::renderFromCamera(Camera* camera, SceneGraph* sg, bool target_is_screen)
 {
 	QList<IRenderable*> transparent_renderables;
 
@@ -147,7 +164,7 @@ void RenderManager::renderFromCamera(Camera* camera, double elapsed_time, SceneG
 		if((*it)->isTransparent()){
 			transparent_renderables.push_back(*it); // Transparent renderables are deferred for later rendering
 		} else {
-			(*it)->render(elapsed_time, m_context);
+			(*it)->render(m_context);
 		}
 		glPopMatrix();
 	}
@@ -156,11 +173,11 @@ void RenderManager::renderFromCamera(Camera* camera, double elapsed_time, SceneG
 		it != transparent_renderables.end();
 		it++) {
 		glPushMatrix();
-		(*it)->render(elapsed_time, m_context);
+		(*it)->render(m_context);
 		glPopMatrix();
 	}
 
-	if(m_drawDebug)	{
+	if(m_drawDebug && target_is_screen)	{
 		glDisable(GL_LIGHTING);
 		glDisable(GL_TEXTURE_2D);
 		for(int i=0 ; i<sg->childCount() ; i++) {
@@ -314,12 +331,12 @@ void RenderManager::applyBackground(Camera* camera)
 	glDepthMask(true);
 }
 
-void RenderManager::addRTT(RenderTexture *rtt)
+void RenderManager::addRenderTarget(RenderTarget *rt)
 {
-	if(rtt != NULL) {
-		m_rtts.push_back(rtt);
+	if(rt != NULL) {
+		m_rts.push_back(rt);
 	} else {
-		logWarn("tried to add NULL rtt target");
+		logWarn("tried to add NULL render target");
 	}
 }
 

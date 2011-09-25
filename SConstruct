@@ -65,7 +65,7 @@ env.Append(LIBS=['-lpthread','-lm'])
 # gui
 env.Append(LIBS=['-lXext','-lX11'])
 # opengl
-env.Append(LIBS=['-lGL','-lGLU'])
+env.Append(LIBS=['-lGL','-lGLU','-lGLEW'])
 # openal
 env.Append(LIBS=['-lopenal','-lalut'])
 # assimp

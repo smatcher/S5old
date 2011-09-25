@@ -25,6 +25,8 @@ protected:
 		Vector4f m_emission;
 		GLfloat  m_shininess;
 		bool     m_transparent;
+		bool     m_receive_shadow;
+		bool     m_cast_shadow;
 		bool     m_doublesided;
 		ShaderProgram m_program;
 		QList<ShaderProgramData::UniformBase*> m_uniforms;
@@ -36,6 +38,8 @@ protected:
 			m_emission(0.0,0.0,0.0,0.0),
 			m_shininess(0.7),
 			m_transparent(false),
+			m_receive_shadow(true),
+			m_cast_shadow(true),
 			m_doublesided(false) {}
 /*
 		MaterialAttributes(const MaterialAttributes& ref) :
@@ -63,6 +67,8 @@ public:
 	virtual bool unload();
 	virtual QGLShaderProgram* program(unsigned int layer);
 	virtual bool isTransparent(unsigned int layer);
+	virtual bool receivesShadows(unsigned int layer);
+	virtual bool castsShadows(unsigned int layer);
 };
 
 class XmlMaterialFactory : public IResourceFactory

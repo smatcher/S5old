@@ -32,7 +32,7 @@ public :
 		void setRadioButton(CameraRadioButton* radio);
 	#endif
 
-	void createTargetTexture(int height, int width);
+	void createTarget(int height, int width);
 	Texture getTargetTexture();
 
 private :

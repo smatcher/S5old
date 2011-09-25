@@ -14,8 +14,10 @@ class MeshRenderer : public IRenderable
 
 public:
 	MeshRenderer(Mesh& mesh, Material& material);
-	void render(double elapsed_time, GLWidget* context);
+	void render(GLWidget* context);
 	bool isTransparent();
+	bool receivesShadows();
+	bool castsShadows();
 
 	#ifdef WITH_TOOLS
 		virtual PropertyWidget* getWidget();

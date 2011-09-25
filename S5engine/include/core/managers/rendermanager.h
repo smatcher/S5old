@@ -11,7 +11,7 @@ class IRenderable;
 class GLWidget;
 class Camera;
 class SceneGraph;
-class RenderTexture;
+class RenderTarget;
 
 class RenderManager : public Manager<IRenderable>
 {
@@ -44,9 +44,9 @@ private :
 	bool m_drawDebug;
 	Background m_defaultBackground;
 
-	QList<RenderTexture*> m_rtts;
+	QList<RenderTarget*> m_rts;
 
-	void renderFromCamera(Camera* camera, double elapsed_time, SceneGraph* sg);
+	void renderFromCamera(Camera* camera, SceneGraph* sg, bool target_is_screen);
 	void setupProjection(Camera* camera);
 	void applyBackground(Camera* camera);
 
@@ -63,7 +63,7 @@ public:
 
 	const Camera* getCurrentCamera();
 
-	void addRTT(RenderTexture* rtt);
+	void addRenderTarget(RenderTarget* rt);
 };
 
 typedef Singleton<RenderManager> SingletonRenderManager;

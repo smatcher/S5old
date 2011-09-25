@@ -15,8 +15,13 @@ public:
 	/// Destructor
 	virtual ~IRenderable();
 
-	virtual void render(double elapsed_time, GLWidget* context) = 0;
+	virtual void frameBegin(double elapsed_time) {}
+	virtual void render(GLWidget* context) = 0;
+	virtual void frameEnd() {}
+
 	virtual bool isTransparent() {return false;}
+	virtual bool receivesShadows() {return false;}
+	virtual bool castsShadows() {return false;}
 };
 
 #endif // IRENDERABLE_H

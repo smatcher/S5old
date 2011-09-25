@@ -164,3 +164,6 @@ include/tools/3D/manipulator.h
 src/tools/3D/manipulator.cpp
 include/core/graphics/rendertexture.h
 src/core/graphics/rendertexture.cpp
+include/core/graphics/framebufferobject.h
+src/core/graphics/framebufferobject.cpp
+include/core/graphics/rendertarget.h

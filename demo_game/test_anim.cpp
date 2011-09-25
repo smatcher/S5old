@@ -60,7 +60,7 @@ int main(int argc, char *argv[])
 
 	#define ANIMATE
 
-	cam->createTargetTexture(512,512);
+	cam->createTarget(512,512);
 	Mesh cube = MESH_MANAGER.get("Cube");
 	Material rtt = MATERIAL_MANAGER.get("rtt");
 	nRttCube->addProperty(new MeshRenderer(cube,rtt));

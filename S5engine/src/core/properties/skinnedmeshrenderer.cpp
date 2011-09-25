@@ -16,7 +16,7 @@ SkinnedMeshRenderer::~SkinnedMeshRenderer()
 {
 }
 
-void SkinnedMeshRenderer::render(double elapsed_time, GLWidget *context)
+void SkinnedMeshRenderer::render(GLWidget *context)
 {
 	// The program is passed to the mesh in order to set the attributes
 	QGLShaderProgram* program = NULL;
@@ -96,6 +96,40 @@ bool SkinnedMeshRenderer::isTransparent()
 	{
 		for(unsigned int i=0 ; i<m_mesh->nbSubmeshes() ; i++) {
 			if(m_material->isTransparent(i)) {
+				ret = true;
+				break;
+			}
+		}
+	}
+
+	return ret;
+}
+
+bool SkinnedMeshRenderer::receivesShadows()
+{
+	bool ret = false;
+
+	if(m_material.isValid())
+	{
+		for(unsigned int i=0 ; i<m_mesh->nbSubmeshes() ; i++) {
+			if(m_material->receivesShadows(i)) {
+				ret = true;
+				break;
+			}
+		}
+	}
+
+	return ret;
+}
+
+bool SkinnedMeshRenderer::castsShadows()
+{
+	bool ret = false;
+
+	if(m_material.isValid())
+	{
+		for(unsigned int i=0 ; i<m_mesh->nbSubmeshes() ; i++) {
+			if(m_material->castsShadows(i)) {
 				ret = true;
 				break;
 			}

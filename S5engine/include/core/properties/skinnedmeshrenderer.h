@@ -17,8 +17,11 @@ public:
 	/// Destructor
 	virtual ~SkinnedMeshRenderer();
 
-	virtual void render(double elapsed_time, GLWidget* context);
+	virtual void render(GLWidget* context);
 	bool isTransparent();
+	bool receivesShadows();
+	bool castsShadows();
+
 	void createLinks();
 
 private:

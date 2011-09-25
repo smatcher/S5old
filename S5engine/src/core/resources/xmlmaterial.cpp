@@ -264,6 +264,20 @@ void XmlMaterialFactory::parseTag(const QString& tag, QDomNode* node, XmlMateria
 				   content.at(0).nodeValue() == "1";
 		target->m_transparent= val;
 	}
+	else if(tag == "receive_shadow")
+	{
+		QDomNodeList content = node->childNodes();
+		bool val = content.at(0).nodeValue() == "true" ||
+				   content.at(0).nodeValue() == "1";
+		target->m_receive_shadow= val;
+	}
+	else if(tag == "cast_shadow")
+	{
+		QDomNodeList content = node->childNodes();
+		bool val = content.at(0).nodeValue() == "true" ||
+				   content.at(0).nodeValue() == "1";
+		target->m_cast_shadow= val;
+	}
 	else if(tag == "doublesided")
 	{
 		QDomNodeList content = node->childNodes();
@@ -349,4 +363,28 @@ bool XmlMaterial::isTransparent(unsigned int layer)
 		target = &m_layers[layer];
 	}
 	return target->m_transparent;
+}
+
+bool XmlMaterial::receivesShadows(unsigned int layer)
+{
+	MaterialAttributes* target;
+
+	if(m_layers.size() <= layer) {
+		target = &m_default_attributes;
+	} else {
+		target = &m_layers[layer];
+	}
+	return target->m_receive_shadow;
+}
+
+bool XmlMaterial::castsShadows(unsigned int layer)
+{
+	MaterialAttributes* target;
+
+	if(m_layers.size() <= layer) {
+		target = &m_default_attributes;
+	} else {
+		target = &m_layers[layer];
+	}
+	return target->m_cast_shadow;
 }
