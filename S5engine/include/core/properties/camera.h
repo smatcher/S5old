@@ -6,12 +6,13 @@
 #include "core/managers/cameramanager.h"
 #include "core/maths/matrix4.h"
 #include "core/graphics/rendertexture.h"
+#include "core/graphics/viewpoint.h"
 
 #ifdef WITH_TOOLS
 	class CameraRadioButton;
 #endif
 
-class Camera : public IProperty, public Managee<CameraManager>
+class Camera : public IProperty, public Managee<CameraManager>, public Viewpoint
 {
 public :
 	/// Constructror
@@ -19,13 +20,15 @@ public :
 	/// Destructor
 	virtual ~Camera();
 
-	const Matrix4d& getProjection(double aspect);
-	void setProjection(double aspect);
+	virtual int getNbProjections() {return 1;}
+
+	virtual const Matrix4d& getProjection(double aspect, int projection_nb);
+	virtual void setProjection(double aspect, int projection_nb);
 
 	void setParameters(double yfov, double znear, double zfar);
 
-	void applyTransform();
-	void applyOnlyRotation();
+	virtual void applyTransform(int projection_nb);
+	virtual void applyOnlyRotation(int projection_nb);
 
 	#ifdef WITH_TOOLS
 		CameraRadioButton* getRadioButton();

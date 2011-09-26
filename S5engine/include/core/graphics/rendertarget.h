@@ -2,24 +2,24 @@
 #define RENDERTARGET_H
 
 #include <core/graphics/framebufferobject.h>
-#include <core/properties/camera.h>
+#include <core/graphics/viewpoint.h>
 
 class RenderTarget {
 
 public:
-	RenderTarget(Camera* camera, FrameBufferObject* buffer, int height, int width, bool on_screen) : m_camera(camera), m_buffer(buffer), m_height(height), m_width(width), m_on_screen(on_screen) {}
+	RenderTarget(Viewpoint* viewpoint, FrameBufferObject* buffer, int height, int width, bool on_screen) : m_viewpoint(viewpoint), m_buffer(buffer), m_height(height), m_width(width), m_on_screen(on_screen) {}
 	virtual ~RenderTarget() {}
 
-	Camera* getCamera() {return m_camera;}
+	Viewpoint* getViewpoint() {return m_viewpoint;}
 	void bindAsTarget() {m_buffer->bindAsTarget();}
 	void releaseAsTarget() {m_buffer->releaseAsTarget();}
 
-	int getHeight() {return m_height;}
-	int getWidth() {return m_width;}
-	bool isOnScreen() {return m_on_screen;}
+	int getHeight() const {return m_height;}
+	int getWidth() const {return m_width;}
+	bool isOnScreen() const {return m_on_screen;}
 
 private:
-	Camera* m_camera;
+	Viewpoint* m_viewpoint;
 	FrameBufferObject* m_buffer;
 	int m_height;
 	int m_width;

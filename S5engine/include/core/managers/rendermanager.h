@@ -9,6 +9,7 @@
 
 class IRenderable;
 class GLWidget;
+class Viewpoint;
 class Camera;
 class SceneGraph;
 class RenderTarget;
@@ -46,9 +47,9 @@ private :
 
 	QList<RenderTarget*> m_rts;
 
-	void renderTarget(SceneGraph* sg, RenderTarget target);
-	void setupProjection(RenderTarget target);
-	void applyBackground(Camera* camera);
+	void renderTarget(SceneGraph* sg, RenderTarget& target);
+	void setupProjection(RenderTarget& target, int projection_nb);
+	void applyBackground(RenderTarget& target, int projection_nb);
 
 public:
 	virtual ~RenderManager();

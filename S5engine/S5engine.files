@@ -167,3 +167,4 @@ src/core/graphics/rendertexture.cpp
 include/core/graphics/framebufferobject.h
 src/core/graphics/framebufferobject.cpp
 include/core/graphics/rendertarget.h
+include/core/graphics/viewpoint.h

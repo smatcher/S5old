@@ -33,15 +33,9 @@ void Camera::createTarget(int height, int width)
 {
 	if(node()) {
 		m_render_texture = new RenderTexture("RTT_"+getName(), height, width, GL_RGBA, GL_UNSIGNED_BYTE);
-		RenderTexture* depth_texture = new RenderTexture("RTT2_"+getName(), height, width, GL_DEPTH_COMPONENT, GL_FLOAT);
-		//RenderTexture* stencil_texture = new RenderTexture("RTT3_"+getName(), height, width, GL_ALPHA, GL_FLOAT);
 		Texture tex(*m_render_texture);
-		Texture tex2(*depth_texture);
-		//Texture tex3(*stencil_texture);
-		FrameBufferObject* fbo = new FrameBufferObject(height, width, false);
+		FrameBufferObject* fbo = new FrameBufferObject(height, width, false, true);
 		fbo->attachTexture(tex, FrameBufferObject::COLOR_ATTACHMENT);
-		fbo->attachTexture(tex2, FrameBufferObject::DEPTH_ATTACHMENT);
-		//fbo->attachTexture(tex3, FrameBufferObject::STENCIL_ATTACHMENT);
 		RenderTarget* target = new RenderTarget(this, fbo, height, width, false);
 		RENDER_MANAGER.addRenderTarget(target);
 	} else {
@@ -54,7 +48,7 @@ Texture Camera::getTargetTexture()
 	return Texture(*m_render_texture);
 }
 
-const Matrix4d& Camera::getProjection(double aspect)
+const Matrix4d& Camera::getProjection(double aspect, int projection_nb)
 {
 	if(m_lastAspect != aspect || m_needComputation)
 	{
@@ -64,10 +58,10 @@ const Matrix4d& Camera::getProjection(double aspect)
 	return m_projection;
 }
 
-void Camera::setProjection(double aspect)
+void Camera::setProjection(double aspect, int projection_nb)
 {
 //	gluPerspective(m_yfov,aspect,m_znear,m_zfar);
-	glLoadMatrixd(getProjection(aspect));
+	glLoadMatrixd(getProjection(aspect, projection_nb));
 }
 
 void Camera::setParameters(double yfov, double znear, double zfar)
@@ -159,12 +153,12 @@ void Camera::drawDebug(const GLWidget* widget) const
 	glPopMatrix();
 }
 
-void Camera::applyTransform()
+void Camera::applyTransform(int projection_nb)
 {
 	node()->getGlobalTransform().getInverse().glMultd();
 }
 
-void Camera::applyOnlyRotation()
+void Camera::applyOnlyRotation(int projection_nb)
 {
 	Transformf trans(node()->getGlobalTransform());
 	Matrix3d rotation = trans.getRotation();

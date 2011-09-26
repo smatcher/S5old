@@ -2,23 +2,41 @@
 
 #include <core/graphics/framebufferobject.h>
 
-FrameBufferObject::FrameBufferObject(int height, int width, bool onscreen)
+FrameBufferObject::FrameBufferObject(int height, int width, bool onscreen, bool add_depth_stencil_renderbuffer)
 {
 	m_height = height;
 	m_width = width;
 	m_on_screen = onscreen;
 
-	glGenFramebuffers(1,&m_buffer);
+	glGenFramebuffers(1,&m_framebuffer);
+
+	if(add_depth_stencil_renderbuffer) {
+		glGenRenderbuffers(1,&m_renderbuffer);
+		glBindRenderbuffer(GL_RENDERBUFFER_EXT, m_renderbuffer);
+		glRenderbufferStorage(GL_RENDERBUFFER_EXT, GL_DEPTH_STENCIL, width, height);
+		glBindRenderbuffer(GL_RENDERBUFFER_EXT, 0);
+
+		glBindFramebuffer(GL_FRAMEBUFFER, m_framebuffer);
+		glFramebufferRenderbufferEXT(GL_FRAMEBUFFER_EXT, GL_DEPTH_ATTACHMENT_EXT, GL_RENDERBUFFER_EXT, m_renderbuffer);
+		glFramebufferRenderbufferEXT(GL_FRAMEBUFFER_EXT, GL_STENCIL_ATTACHMENT_EXT, GL_RENDERBUFFER_EXT, m_renderbuffer);
+		glBindFramebuffer(GL_FRAMEBUFFER, 0);
+	} else {
+		m_renderbuffer = -1;
+	}
 }
 
 FrameBufferObject::~FrameBufferObject()
 {
-	glDeleteFramebuffers(1,&m_buffer);
+	glDeleteFramebuffers(1,&m_framebuffer);
+
+	if(m_renderbuffer >= 0) {
+		glDeleteRenderbuffers(1,&m_renderbuffer);
+	}
 }
 
 void FrameBufferObject::bindAsTarget()
 {
-	glBindFramebuffer(GL_FRAMEBUFFER, m_buffer);
+	glBindFramebuffer(GL_FRAMEBUFFER, m_framebuffer);
 }
 
 void FrameBufferObject::releaseAsTarget()
@@ -43,7 +61,7 @@ void FrameBufferObject::attachTexture(Texture tex, AttachmentPoint attachment)
 		return;
 	}
 
-	glBindFramebuffer(GL_FRAMEBUFFER, m_buffer);
+	glBindFramebuffer(GL_FRAMEBUFFER, m_framebuffer);
 
 	// attach the texture to FBO depth attachment point
 	glFramebufferTexture2D(GL_FRAMEBUFFER, attachment, GL_TEXTURE_2D, tex->getGLId(),0);

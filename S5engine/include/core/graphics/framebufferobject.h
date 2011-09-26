@@ -7,7 +7,7 @@
 class FrameBufferObject
 {
 public:
-	FrameBufferObject(int height, int width, bool onscreen);
+	FrameBufferObject(int height, int width, bool onscreen, bool add_depth_stencil_renderbuffer);
 	virtual ~FrameBufferObject();
 
 	void bindAsTarget();
@@ -22,7 +22,8 @@ public:
 	void attachTexture(Texture tex, AttachmentPoint attachment);
 
 private:
-	GLuint m_buffer;
+	GLuint m_framebuffer;
+	GLuint m_renderbuffer;
 	int m_width;
 	int m_height;
 	bool m_on_screen;

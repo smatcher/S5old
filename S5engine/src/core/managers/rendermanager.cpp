@@ -31,9 +31,9 @@ RenderManager::~RenderManager()
 {
 }
 
-void RenderManager::setupProjection(RenderTarget target)
+void RenderManager::setupProjection(RenderTarget& target, int projection_nb)
 {
-	Camera* camera = target.getCamera();
+	Viewpoint* viewpoint = target.getViewpoint();
 	QSize resizeTo;
 	bool needResize = m_context->needResize(&resizeTo);
 
@@ -48,9 +48,9 @@ void RenderManager::setupProjection(RenderTarget target)
 	glMatrixMode(GL_PROJECTION);
 	glLoadIdentity();
 
-	if(camera != NULL)
+	if(viewpoint != NULL)
 	{
-		camera->setProjection(1); // Pas besoin de passer l'aspect, il a déjà été pris en compte dans le viewport
+		viewpoint->setProjection(1,projection_nb); // Pas besoin de passer l'aspect, il a déjà été pris en compte dans le viewport
 	}
 	else
 	{
@@ -150,9 +150,9 @@ void RenderManager::render(double elapsed_time, SceneGraph* sg)
 
 }
 
-void RenderManager::renderTarget(SceneGraph* sg, RenderTarget target)
+void RenderManager::renderTarget(SceneGraph* sg, RenderTarget& target)
 {
-	Camera* camera = target.getCamera();
+	Viewpoint* viewpoint = target.getViewpoint();
 	QList<IRenderable*> transparent_renderables;
 
 	if(m_context == NULL) {
@@ -160,18 +160,18 @@ void RenderManager::renderTarget(SceneGraph* sg, RenderTarget target)
 	}
 
 	if(m_defaultBackground.type == SKYBOX) {
-		setupProjection(target);
+		setupProjection(target,1);
 		glLoadIdentity();
-		applyBackground(camera);
+		applyBackground(target,1);
 	} else {
 		glLoadIdentity();
-		applyBackground(camera);
-		setupProjection(target);
+		applyBackground(target,1);
+		setupProjection(target,1);
 		glLoadIdentity();
 	}
 
-	if(camera != NULL) {
-		camera->applyTransform();
+	if(viewpoint != NULL) {
+		viewpoint->applyTransform(1);
 	} else {
 		m_context->applyCamera();
 	}
@@ -249,8 +249,10 @@ void RenderManager::setBackground(const Background &background)
 	m_defaultBackground = background;
 };
 
-void RenderManager::applyBackground(Camera* camera)
+void RenderManager::applyBackground(RenderTarget& target, int projection_nb)
 {
+	Viewpoint* viewpoint = target.getViewpoint();
+
 	glClear(GL_DEPTH_BUFFER_BIT);
 	glDepthMask(false);
 
@@ -283,8 +285,8 @@ void RenderManager::applyBackground(Camera* camera)
 			break;
 		case SKYBOX :
 			glPushMatrix();
-				if(camera != NULL)
-					camera->applyOnlyRotation();
+				if(viewpoint != NULL)
+					viewpoint->applyOnlyRotation(projection_nb);
 				else
 					m_context->applyCameraRotation();
 				glDisable(GL_LIGHTING);
