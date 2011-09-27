@@ -80,10 +80,10 @@ void FrameBufferObject::attachTexture(RenderTexture* tex, AttachmentPoint attach
 	}
 
 	if(!valid) {
-		if(tex.isValid()) {
-			logError("Could not attach texture to FBO, dimensions don't match");
-		} else {
+		if(tex == NULL) {
 			logError("Could not attach texture to FBO texture is not valid");
+		} else {
+			logError("Could not attach texture to FBO, dimensions don't match");
 		}
 		return;
 	}
