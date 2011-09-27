@@ -1,5 +1,6 @@
 #include "tools/3D/debugcamera.h"
 #include "core/maths/transform.h"
+#include "core/log/log.h"
 
 #include <QDateTime>
 
@@ -67,8 +68,25 @@ void DebugCamera::updateMouse(bool left_pressed, bool right_pressed, bool middle
 	}
 }
 
+int DebugCamera::getNbProjections()
+{
+	return 1;
+}
+
+const Matrix4d& DebugCamera::getProjection(double aspect, int projection_nb)
+{
+	logWarn("Not implemented");
+	Matrix4d mat;
+	return mat;
+}
+
+void DebugCamera::setProjection(double aspect, int projection_nb)
+{
+	gluPerspective(70,aspect,0.01,1000);
+}
+
 // Mise à jour de la matrice modelview
-void DebugCamera::lookAt()
+void DebugCamera::applyTransform(int projection_nb)
 {
 	// Compute elapsed time
 	static QDateTime lastTime = QDateTime::currentDateTime();
@@ -101,7 +119,7 @@ void DebugCamera::lookAt()
 
 }
 
-void DebugCamera::rotateOnly()
+void DebugCamera::applyOnlyRotation(int projection_nb)
 {
 	glRotated(rotation_x, 1.0, 0.0, 0.0);
 	glRotated(rotation_y, 0.0, 1.0, 0.0);

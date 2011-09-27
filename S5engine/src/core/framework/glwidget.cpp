@@ -54,17 +54,12 @@ QSize GLWidget::sizeHint() const
 	return QSize(640, 480);
 }
 
-void GLWidget::applyCamera()
+Viewpoint* GLWidget::getViewpoint()
 {
 	#ifdef WITH_TOOLS
-		m_camera.lookAt();
-	#endif
-}
-
-void GLWidget::applyCameraRotation()
-{
-	#ifdef WITH_TOOLS
-		m_camera.rotateOnly();
+		return &m_camera;
+	#else
+		return NULL;
 	#endif
 }
 

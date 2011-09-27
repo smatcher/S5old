@@ -1,6 +1,8 @@
 #ifndef VIEWPOINT_H
 #define VIEWPOINT_H
 
+#include "core/maths/matrix4.h"
+
 class Viewpoint {
 public:
 	Viewpoint() {}

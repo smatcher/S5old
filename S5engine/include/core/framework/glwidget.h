@@ -25,8 +25,7 @@ public:
 	bool needResize(QSize* size);
 	void isResized();
 
-	void applyCamera();
-	void applyCameraRotation();
+	Viewpoint* getViewpoint();
 
 protected:
 	bool event(QEvent * e);

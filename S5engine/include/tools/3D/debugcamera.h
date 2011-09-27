@@ -4,7 +4,9 @@
 #include "core/maths/vector2.h"
 #include "core/maths/vector3.h"
 
-class DebugCamera
+#include "core/graphics/viewpoint.h"
+
+class DebugCamera : public Viewpoint
 {
 public :
 
@@ -62,8 +64,12 @@ public:
 	void updateKeyboard(Key key, bool pressed);
 
 	// Mise à jour de la matrice modelview
-	void lookAt();
-	void rotateOnly();
+	virtual int getNbProjections();
+	virtual const Matrix4d& getProjection(double aspect, int projection_nb);
+	virtual void setProjection(double aspect, int projection_nb);
+
+	virtual void applyTransform(int projection_nb);
+	virtual void applyOnlyRotation(int projection_nb);
 
 	// Retour aux valeurs par défaut
 	void reset();
