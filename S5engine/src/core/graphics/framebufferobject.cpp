@@ -37,34 +37,13 @@ FrameBufferObject::~FrameBufferObject()
 void FrameBufferObject::bindAsTarget()
 {
 	glBindFramebuffer(GL_FRAMEBUFFER, m_framebuffer);
-}
 
-void FrameBufferObject::releaseAsTarget()
-{
-	glBindFramebuffer(GL_FRAMEBUFFER, 0);
-}
-
-void FrameBufferObject::attachTexture(Texture tex, AttachmentPoint attachment)
-{
-	bool valid = false;
-
-	if(tex.isValid()) {
-		valid = tex->getWidth() == m_width && tex->getHeight() == m_height;
+	// attach the textures to FBO depth attachment point
+	for(int i=0 ; i<m_textures.size() ; i++) {
+		RenderTexture* tex = m_textures[i].first;
+		AttachmentPoint attachment = m_textures[i].second;
+		glFramebufferTexture2D(GL_FRAMEBUFFER, attachment, GL_TEXTURE_2D, tex->getRenderTextureId(),0);
 	}
-
-	if(!valid) {
-		if(tex.isValid()) {
-			logError("Could not attach texture to FBO, dimensions don't match");
-		} else {
-			logError("Could not attach texture to FBO texture is not valid");
-		}
-		return;
-	}
-
-	glBindFramebuffer(GL_FRAMEBUFFER, m_framebuffer);
-
-	// attach the texture to FBO depth attachment point
-	glFramebufferTexture2D(GL_FRAMEBUFFER, attachment, GL_TEXTURE_2D, tex->getGLId(),0);
 
 	GLenum status = glCheckFramebufferStatus(GL_FRAMEBUFFER_EXT);
 	if(status != GL_FRAMEBUFFER_COMPLETE_EXT) {
@@ -80,6 +59,34 @@ void FrameBufferObject::attachTexture(Texture tex, AttachmentPoint attachment)
 			logError("FBO status other");
 		}
 	}
+}
 
+void FrameBufferObject::releaseAsTarget()
+{
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
+
+	for(int i=0 ; i<m_textures.size() ; i++) {
+		RenderTexture* tex = m_textures[i].first;
+		tex->swap();
+	}
+}
+
+void FrameBufferObject::attachTexture(RenderTexture* tex, AttachmentPoint attachment)
+{
+	bool valid = false;
+
+	if(tex != NULL) {
+		valid = tex->getWidth() == m_width && tex->getHeight() == m_height;
+	}
+
+	if(!valid) {
+		if(tex.isValid()) {
+			logError("Could not attach texture to FBO, dimensions don't match");
+		} else {
+			logError("Could not attach texture to FBO texture is not valid");
+		}
+		return;
+	}
+
+	m_textures.push_back(QPair<RenderTexture*, AttachmentPoint>(tex,attachment));
 }

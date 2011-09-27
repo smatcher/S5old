@@ -1,0 +1,6 @@
+<program>
+	<shader source="flat.vert"/>
+	<shader source="flat_disto.frag"/>
+	<uniform name="color_map" value="0" type="int"/>
+	<uniform name="disto_map" value="1" type="int"/>
+</program>

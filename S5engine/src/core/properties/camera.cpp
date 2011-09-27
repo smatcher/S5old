@@ -33,9 +33,8 @@ void Camera::createTarget(int height, int width)
 {
 	if(node()) {
 		m_render_texture = new RenderTexture("RTT_"+getName(), height, width, GL_RGBA, GL_UNSIGNED_BYTE);
-		Texture tex(*m_render_texture);
 		FrameBufferObject* fbo = new FrameBufferObject(height, width, false, true);
-		fbo->attachTexture(tex, FrameBufferObject::COLOR_ATTACHMENT);
+		fbo->attachTexture(m_render_texture, FrameBufferObject::COLOR_ATTACHMENT);
 		RenderTarget* target = new RenderTarget(this, fbo, height, width, false);
 		RENDER_MANAGER.addRenderTarget(target);
 	} else {

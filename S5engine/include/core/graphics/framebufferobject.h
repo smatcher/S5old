@@ -1,8 +1,9 @@
 #ifndef FRAMEBUFFEROBJECT_H
 #define FRAMEBUFFEROBJECT_H
 
-#include <core/graphics/texture.h>
+#include <core/graphics/rendertexture.h>
 #include <QtOpenGL>
+#include <QPair>
 
 class FrameBufferObject
 {
@@ -19,7 +20,7 @@ public:
 		STENCIL_ATTACHMENT = GL_STENCIL_ATTACHMENT
 	};
 
-	void attachTexture(Texture tex, AttachmentPoint attachment);
+	void attachTexture(RenderTexture* tex, AttachmentPoint attachment);
 
 private:
 	GLuint m_framebuffer;
@@ -27,6 +28,8 @@ private:
 	int m_width;
 	int m_height;
 	bool m_on_screen;
+
+	QList< QPair<RenderTexture*, AttachmentPoint> > m_textures;
 };
 
 #endif // FRAMEBUFFEROBJECT_H

@@ -1,4 +1,5 @@
 <material>
 	<texture texunit="0">RTT_Camera</texture>
-	<program>flat</program>
+	<texture texunit="1">normalmap_sand.tga</texture>
+	<program>flat_disto</program>
 </material>
