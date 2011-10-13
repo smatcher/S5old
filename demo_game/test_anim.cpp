@@ -39,11 +39,6 @@ int main(int argc, char *argv[])
 	Node* nActor3 = new Node("Actor3");
 	Node* nRttCube = new Node("RTTCube");
 	Node* nRttL0 = new Node("RTTLight0");
-	Node* nRttL1 = new Node("RTTLight1");
-	Node* nRttL2 = new Node("RTTLight2");
-	Node* nRttL3 = new Node("RTTLight3");
-	Node* nRttL4 = new Node("RTTLight4");
-	Node* nRttL5 = new Node("RTTLight5");
 
 	Camera* cam = new Camera(100,1,200);
 	nCam->addProperty(cam);
@@ -55,12 +50,7 @@ int main(int argc, char *argv[])
 	sg->link(nActor3);
 	sg->link(nRot);
 	sg->link(nRttCube);
-	sg->link(nRttL0);
-	sg->link(nRttL1);
-	sg->link(nRttL2);
-	sg->link(nRttL3);
-	sg->link(nRttL4);
-	sg->link(nRttL5);
+	nLight->link(nRttL0);
 
 	sg->link(nLight);
 	nRot->link(nCam);
@@ -76,24 +66,6 @@ int main(int argc, char *argv[])
 	nRttCube->moveTo(Vector3f(0,7,6));
 	nRttCube->setScale(Vector3f(18,18,1));
 
-	/*
-	nRttL0->moveTo(Vector3f(-5,20,6));
-	nRttL0->setScale(Vector3f(2,2,1));
-	*/
-	nRttL0->moveTo(Vector3f(5,20,6));
-	nRttL0->setScale(Vector3f(5,5,5));
-
-	nRttL1->moveTo(Vector3f(-3,20,6));
-	nRttL1->setScale(Vector3f(2,2,1));
-	nRttL2->moveTo(Vector3f(-1,20,6));
-	nRttL2->setScale(Vector3f(2,2,1));
-	nRttL3->moveTo(Vector3f( 1,20,6));
-	nRttL3->setScale(Vector3f(2,2,1));
-	nRttL4->moveTo(Vector3f( 3,20,6));
-	nRttL4->setScale(Vector3f(2,2,1));
-	nRttL5->moveTo(Vector3f( 5,20,6));
-	nRttL5->setScale(Vector3f(2,2,1));
-
 	for(int i=0 ; i< 1 ; i++) {
 	//for(int i=0 ; i< 6 ; i++) {
 		QString name("RTT_Light");
@@ -108,18 +80,8 @@ int main(int argc, char *argv[])
 	Mesh sphere = MESH_MANAGER.get("Sphere_16_32");
 	Material rtt = MATERIAL_MANAGER.get("rtt");
 	Material rtt0 = MATERIAL_MANAGER.get("rtt_light0_cube");
-	//Material rtt1 = MATERIAL_MANAGER.get("rtt_light1");
-	//Material rtt2 = MATERIAL_MANAGER.get("rtt_light2");
-	//Material rtt3 = MATERIAL_MANAGER.get("rtt_light3");
-	//Material rtt4 = MATERIAL_MANAGER.get("rtt_light4");
-	//Material rtt5 = MATERIAL_MANAGER.get("rtt_light5");
 	nRttCube->addProperty(new MeshRenderer(cube,rtt));
 	nRttL0->addProperty(new MeshRenderer(sphere,rtt0));
-	//nRttL1->addProperty(new MeshRenderer(cube,rtt1));
-	//nRttL2->addProperty(new MeshRenderer(cube,rtt2));
-	//nRttL3->addProperty(new MeshRenderer(cube,rtt3));
-	//nRttL4->addProperty(new MeshRenderer(cube,rtt4));
-	//nRttL5->addProperty(new MeshRenderer(cube,rtt5));
 
 	SkinnedMeshRenderer* meshrenderer;
 	Skeleton* skeleton;

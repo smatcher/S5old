@@ -172,3 +172,5 @@ include/core/graphics/rtcubemap.h
 src/core/graphics/rtcubemap.cpp
 include/core/graphics/rt2d.h
 src/core/graphics/rt2d.cpp
+src/core/properties/cubemapcamera.cpp
+include/core/properties/cubemapcamera.h
