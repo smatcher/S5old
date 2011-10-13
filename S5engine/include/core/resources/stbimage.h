@@ -27,6 +27,8 @@ public:
 
 	void buildGLTexture();
 
+	virtual bool isCubemap() {return false;}
+
 	stbi_uc* getData();
 	int getComp();
 };

@@ -1,0 +1,4 @@
+<material>
+	<texture texunit="0">RTT_Light0</texture>
+	<program>flat</program>
+</material>

@@ -7,6 +7,10 @@
 #include "core/managers/physicsmanager.h"
 #include "core/properties/light.h"
 #include <core/graphics/rendertarget.h>
+#include <core/graphics/rt2d.h>
+#include <core/graphics/rtcubemap.h>
+
+#include <core/resources/managers.h>
 
 #include <QtOpenGL>
 #include <math.h>
@@ -120,6 +124,55 @@ void RenderManager::render(double elapsed_time, SceneGraph* sg)
 		(*it)->frameBegin(elapsed_time);
 	}
 
+	// Render shadowmap
+	for(int i = 0 ; i<LIGHTING_MANAGER.managees().count() ; i++) {
+		Light* light = LIGHTING_MANAGER.managees().at(i);
+		FrameBufferObject fbo(512, 512, false, false);
+		RenderTarget srt(light, &fbo, 512,512, false);
+
+		QString name("RTT_Light");
+		name += QString().setNum(i);
+
+		Texture tex = TEXTURE_MANAGER.get(name);
+
+		RenderTexture* rt;
+		if(tex.isValid()) {
+			rt = static_cast<RenderTexture*>(*tex);
+		} else {
+			rt = new RenderTexture2D(name, 512, 512, GL_DEPTH_COMPONENT, GL_FLOAT);
+		}
+
+		glEnable(GL_TEXTURE_CUBE_MAP);
+		for(int j=0 ; j< light->getNbProjections() ; j++) {
+		//for(int j=0 ; j< 1 /*light->getNbProjections()*/ ; j++) {
+			fbo.attachTexture(rt, FrameBufferObject::COLOR_ATTACHMENT, cubemap_targets[j]);
+			//fbo.attachTexture(rt, FrameBufferObject::DEPTH_ATTACHMENT, cubemap_targets[j]);
+			srt.bindAsTarget();
+			renderTarget(sg, srt, j);
+		}
+		srt.releaseAsTarget();
+/*
+		for(int i=0 ; i< light->getNbProjections() ; i++) {
+			QString name("RTT_Light");
+			name += QString().setNum(i);
+
+			Texture tex = TEXTURE_MANAGER.get(name);
+
+			RenderTexture* rt;
+			if(tex.isValid()) {
+				rt = static_cast<RenderTexture*>(*tex);
+			} else {
+				rt = new RenderTexture2D(name, 512, 512, GL_DEPTH_COMPONENT, GL_FLOAT);
+			}
+
+			fbo.attachTexture(rt, FrameBufferObject::DEPTH_ATTACHMENT);
+			srt.bindAsTarget();
+			renderTarget(sg, srt, i);
+			srt.releaseAsTarget();
+		}
+*/
+	}
+
 	// Render
 	for(int i=0 ; i<m_rts.length() ; i++) {
 		RenderTarget* rt = m_rts[i];
@@ -156,7 +209,7 @@ void RenderManager::render(double elapsed_time, SceneGraph* sg)
 
 }
 
-void RenderManager::renderTarget(SceneGraph* sg, RenderTarget& target)
+void RenderManager::renderTarget(SceneGraph* sg, RenderTarget& target, int projection_nb)
 {
 	Viewpoint* viewpoint = target.getViewpoint();
 
@@ -172,17 +225,17 @@ void RenderManager::renderTarget(SceneGraph* sg, RenderTarget& target)
 	}
 
 	if(m_defaultBackground.type == SKYBOX) {
-		setupProjection(target,1);
+		setupProjection(target,projection_nb);
 		glLoadIdentity();
-		applyBackground(target,1);
+		applyBackground(target,projection_nb);
 	} else {
 		glLoadIdentity();
-		applyBackground(target,1);
-		setupProjection(target,1);
+		applyBackground(target,projection_nb);
+		setupProjection(target,projection_nb);
 		glLoadIdentity();
 	}
 
-	viewpoint->applyTransform(1);
+	viewpoint->applyTransform(projection_nb);
 
 	//std::cout<< registeredManagees.count() << " Renderable nodes to render." << std::endl;
 
@@ -223,7 +276,9 @@ void RenderManager::renderTarget(SceneGraph* sg, RenderTarget& target)
 	}
 
 	#ifdef WITH_TOOLS
-		sg->getManipulator()->draw(m_context);
+		if(target.isOnScreen()) {
+			sg->getManipulator()->draw(m_context);
+		}
 	#endif
 
 }

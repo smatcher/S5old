@@ -36,13 +36,23 @@ FrameBufferObject::~FrameBufferObject()
 
 void FrameBufferObject::bindAsTarget()
 {
+	bool has_color = false;
+
 	glBindFramebuffer(GL_FRAMEBUFFER, m_framebuffer);
 
 	// attach the textures to FBO depth attachment point
 	for(int i=0 ; i<m_textures.size() ; i++) {
-		RenderTexture* tex = m_textures[i].first;
-		AttachmentPoint attachment = m_textures[i].second;
-		glFramebufferTexture2D(GL_FRAMEBUFFER, attachment, GL_TEXTURE_2D, tex->getRenderTextureId(),0);
+		RenderTexture* tex = m_textures[i].tex;
+		AttachmentPoint attachment = m_textures[i].ap;
+		has_color = has_color || attachment == COLOR_ATTACHMENT;
+		glFramebufferTexture2D(GL_FRAMEBUFFER, attachment, m_textures[i].textarget, tex->getRenderTextureId(),0);
+		debugGL("attaching");
+	}
+
+	if(has_color) {
+	} else {
+		glDrawBuffer(GL_NONE);
+		glReadBuffer(GL_NONE);
 	}
 
 	GLenum status = glCheckFramebufferStatus(GL_FRAMEBUFFER_EXT);
@@ -66,12 +76,12 @@ void FrameBufferObject::releaseAsTarget()
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
 	for(int i=0 ; i<m_textures.size() ; i++) {
-		RenderTexture* tex = m_textures[i].first;
+		RenderTexture* tex = m_textures[i].tex;
 		tex->swap();
 	}
 }
 
-void FrameBufferObject::attachTexture(RenderTexture* tex, AttachmentPoint attachment)
+void FrameBufferObject::attachTexture(RenderTexture* tex, AttachmentPoint attachment, GLenum textarget)
 {
 	bool valid = false;
 
@@ -88,5 +98,11 @@ void FrameBufferObject::attachTexture(RenderTexture* tex, AttachmentPoint attach
 		return;
 	}
 
-	m_textures.push_back(QPair<RenderTexture*, AttachmentPoint>(tex,attachment));
+	for(int i=0 ; i< m_textures.count() ; i++) {
+		if(m_textures[i].ap == attachment) {
+			m_textures.removeAt(i);
+		}
+	}
+	Attachment at = {tex,attachment,textarget};
+	m_textures.push_back(at);
 }

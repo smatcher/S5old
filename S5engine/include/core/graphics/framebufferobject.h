@@ -20,7 +20,7 @@ public:
 		STENCIL_ATTACHMENT = GL_STENCIL_ATTACHMENT
 	};
 
-	void attachTexture(RenderTexture* tex, AttachmentPoint attachment);
+	void attachTexture(RenderTexture* tex, AttachmentPoint attachment, GLenum textarget = GL_TEXTURE_2D);
 
 private:
 	GLuint m_framebuffer;
@@ -29,7 +29,12 @@ private:
 	int m_height;
 	bool m_on_screen;
 
-	QList< QPair<RenderTexture*, AttachmentPoint> > m_textures;
+	struct Attachment {
+		RenderTexture* tex;
+		AttachmentPoint ap;
+		GLenum textarget;
+	};
+	QList<Attachment> m_textures;
 };
 
 #endif // FRAMEBUFFEROBJECT_H

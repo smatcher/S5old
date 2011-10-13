@@ -17,6 +17,9 @@
 #include "core/resources/managers.h"
 #include "core/properties/meshrenderer.h"
 #include "core/properties/skinnedmeshrenderer.h"
+#include <core/graphics/rendertexture.h>
+#include <core/graphics/rt2d.h>
+#include <core/graphics/rtcubemap.h>
 
 int main(int argc, char *argv[])
 {
@@ -35,6 +38,12 @@ int main(int argc, char *argv[])
 	Node* nActor2 = new Node("Actor2");
 	Node* nActor3 = new Node("Actor3");
 	Node* nRttCube = new Node("RTTCube");
+	Node* nRttL0 = new Node("RTTLight0");
+	Node* nRttL1 = new Node("RTTLight1");
+	Node* nRttL2 = new Node("RTTLight2");
+	Node* nRttL3 = new Node("RTTLight3");
+	Node* nRttL4 = new Node("RTTLight4");
+	Node* nRttL5 = new Node("RTTLight5");
 
 	Camera* cam = new Camera(100,1,200);
 	nCam->addProperty(cam);
@@ -46,6 +55,12 @@ int main(int argc, char *argv[])
 	sg->link(nActor3);
 	sg->link(nRot);
 	sg->link(nRttCube);
+	sg->link(nRttL0);
+	sg->link(nRttL1);
+	sg->link(nRttL2);
+	sg->link(nRttL3);
+	sg->link(nRttL4);
+	sg->link(nRttL5);
 
 	sg->link(nLight);
 	nRot->link(nCam);
@@ -61,18 +76,57 @@ int main(int argc, char *argv[])
 	nRttCube->moveTo(Vector3f(0,7,6));
 	nRttCube->setScale(Vector3f(18,18,1));
 
-	#define ANIMATE
+	/*
+	nRttL0->moveTo(Vector3f(-5,20,6));
+	nRttL0->setScale(Vector3f(2,2,1));
+	*/
+	nRttL0->moveTo(Vector3f(5,20,6));
+	nRttL0->setScale(Vector3f(5,5,5));
+
+	nRttL1->moveTo(Vector3f(-3,20,6));
+	nRttL1->setScale(Vector3f(2,2,1));
+	nRttL2->moveTo(Vector3f(-1,20,6));
+	nRttL2->setScale(Vector3f(2,2,1));
+	nRttL3->moveTo(Vector3f( 1,20,6));
+	nRttL3->setScale(Vector3f(2,2,1));
+	nRttL4->moveTo(Vector3f( 3,20,6));
+	nRttL4->setScale(Vector3f(2,2,1));
+	nRttL5->moveTo(Vector3f( 5,20,6));
+	nRttL5->setScale(Vector3f(2,2,1));
+
+	for(int i=0 ; i< 1 ; i++) {
+	//for(int i=0 ; i< 6 ; i++) {
+		QString name("RTT_Light");
+		name += QString().setNum(i);
+		//new RenderTexture2D(name, 512, 512, GL_DEPTH_COMPONENT, GL_FLOAT);
+		//new RenderTextureCubemap(name, 512, 512, GL_DEPTH_COMPONENT, GL_UNSIGNED_BYTE);
+		new RenderTextureCubemap(name, 512, 512, GL_RGBA, GL_UNSIGNED_BYTE);
+	}
 
 	cam->createTarget(512,512);
 	Mesh cube = MESH_MANAGER.get("Cube");
+	Mesh sphere = MESH_MANAGER.get("Sphere_16_32");
 	Material rtt = MATERIAL_MANAGER.get("rtt");
+	Material rtt0 = MATERIAL_MANAGER.get("rtt_light0_cube");
+	//Material rtt1 = MATERIAL_MANAGER.get("rtt_light1");
+	//Material rtt2 = MATERIAL_MANAGER.get("rtt_light2");
+	//Material rtt3 = MATERIAL_MANAGER.get("rtt_light3");
+	//Material rtt4 = MATERIAL_MANAGER.get("rtt_light4");
+	//Material rtt5 = MATERIAL_MANAGER.get("rtt_light5");
 	nRttCube->addProperty(new MeshRenderer(cube,rtt));
+	nRttL0->addProperty(new MeshRenderer(sphere,rtt0));
+	//nRttL1->addProperty(new MeshRenderer(cube,rtt1));
+	//nRttL2->addProperty(new MeshRenderer(cube,rtt2));
+	//nRttL3->addProperty(new MeshRenderer(cube,rtt3));
+	//nRttL4->addProperty(new MeshRenderer(cube,rtt4));
+	//nRttL5->addProperty(new MeshRenderer(cube,rtt5));
 
 	SkinnedMeshRenderer* meshrenderer;
 	Skeleton* skeleton;
 
-#define USE_DWARF
-#define USE_PWIPS
+#define ANIMATE
+//#define USE_DWARF
+//#define USE_PWIPS
 #define USE_BOB
 
 #ifdef USE_BOB
@@ -85,11 +139,13 @@ int main(int argc, char *argv[])
 		nActor->link(skeleton->buildSkeleton());
 		meshrenderer->createLinks();
 
+		/*
 		Node* lamp = nActor->find("SKELETON_lamp");
 		if(lamp != NULL) {
 			lamp->link(nLight);
 			nLight->moveTo(Vector3f(0,1,0));
 		}
+		*/
 
 		#ifdef ANIMATE
 		SkeletonAnimator* animator = new SkeletonAnimator(skeleton);
@@ -144,9 +200,13 @@ int main(int argc, char *argv[])
 	RENDER_MANAGER.setDrawDebug(true);
 	//RENDER_MANAGER.setCurrentCamera(static_cast<Camera*>(nCam->properties().child("Camera")));
 	RenderManager::Background background;
-	background.type = RenderManager::COLOR;
-	background.color = Vector3f(0.2,0.2,0.2);
-
+	background.type = RenderManager::SKYBOX;
+	background.textures[0] = TEXTURE_MANAGER.get("stormy_front.tga");
+	background.textures[1] = TEXTURE_MANAGER.get("stormy_left.tga");
+	background.textures[2] = TEXTURE_MANAGER.get("stormy_back.tga");
+	background.textures[3] = TEXTURE_MANAGER.get("stormy_right.tga");
+	background.textures[4] = TEXTURE_MANAGER.get("stormy_top.tga");
+	background.textures[5] = TEXTURE_MANAGER.get("stormy_bottom.tga");
 	RENDER_MANAGER.setBackground(background);
 
 	GLint maxVertexuniforms;

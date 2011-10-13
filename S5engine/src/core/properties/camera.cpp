@@ -1,6 +1,7 @@
 #include "core/properties/camera.h"
 #include <core/graphics/framebufferobject.h>
 #include <core/graphics/rendertarget.h>
+#include <core/graphics/rt2d.h>
 #include "core/framework/glwidget.h"
 #include "core/utils/customevents.h"
 #include <QtOpenGL>
@@ -32,7 +33,7 @@ Camera::~Camera()
 void Camera::createTarget(int height, int width)
 {
 	if(node()) {
-		m_render_texture = new RenderTexture("RTT_"+getName(), height, width, GL_RGBA, GL_UNSIGNED_BYTE);
+		m_render_texture = new RenderTexture2D("RTT_"+getName(), height, width, GL_RGBA, GL_UNSIGNED_BYTE);
 		FrameBufferObject* fbo = new FrameBufferObject(height, width, false, true);
 		fbo->attachTexture(m_render_texture, FrameBufferObject::COLOR_ATTACHMENT);
 		RenderTarget* target = new RenderTarget(this, fbo, height, width, false);

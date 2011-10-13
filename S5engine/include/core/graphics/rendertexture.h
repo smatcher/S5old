@@ -8,14 +8,11 @@
 class RenderTexture : public TextureData
 {
 public:
-	RenderTexture(QString name, int height, int width, GLenum format, GLenum type);
-	virtual bool unload();
+	RenderTexture(QString name, int height, int width);
+	virtual bool unload() = 0;
 
-	GLuint getRenderTextureId();
-	void swap();
-
-private:
-	GLuint m_render_texture;
+	virtual GLuint getRenderTextureId(int i= 0) = 0;
+	virtual void swap() = 0;
 };
 
 #endif // RENDERTEXTURE_H

@@ -10,7 +10,6 @@ public:
 
 	virtual int getNbProjections() = 0;
 
-	virtual const Matrix4d& getProjection(double aspect, int projection_nb) = 0 ;
 	virtual void setProjection(double aspect, int projection_nb) = 0;
 
 	virtual void applyTransform(int projection_nb) = 0;

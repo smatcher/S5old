@@ -1,0 +1,4 @@
+<program>
+	<shader source="phong.vert"/>
+	<shader source="color_phong.frag"/>
+</program>

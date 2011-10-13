@@ -20,7 +20,7 @@ protected:
 
 public:
 	TextureData(const QString& name, const QString& path, IResourceFactory* factory) : ResourceData(name,path,factory), m_hasgltex(false) {}
-	void bind(int i=0)
+	virtual void bind(int i=0)
 	{
 		if(m_hasgltex)
 		{
@@ -30,12 +30,13 @@ public:
 		}
 	}
 
-	void release(int i=0)
+	virtual void release(int i=0)
 	{
 		glActiveTexture(GL_TEXTURE0 + i);
 		glBindTexture(GL_TEXTURE_2D , 0);
 	}
 
+	virtual bool isCubemap() = 0;
 	GLuint getGLId() {return m_gltexture;}
 	int getHeight() { return m_height; }
 	int getWidth() { return m_width; }
