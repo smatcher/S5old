@@ -134,15 +134,15 @@ void RenderManager::render(double elapsed_time, SceneGraph* sg)
 
 		Texture tex = TEXTURE_MANAGER.get(name);
 
-		RenderTexture* rt;
 		if(tex.isValid()) {
+			RenderTexture* rt;
 			rt = static_cast<RenderTexture*>(*tex);
+			RenderTarget srt(light, &fbo, rt, FrameBufferObject::COLOR_ATTACHMENT, false);
+			renderTarget(sg, srt);
 		} else {
-			rt = new RenderTexture2D(name, 512, 512, GL_DEPTH_COMPONENT, GL_FLOAT);
+			//rt = new RenderTexture2D(name, 512, 512, GL_DEPTH_COMPONENT, GL_FLOAT);
 		}
 
-		RenderTarget srt(light, &fbo, rt, false);
-		renderTarget(sg, srt);
 	}
 
 	// Render
@@ -157,7 +157,7 @@ void RenderManager::render(double elapsed_time, SceneGraph* sg)
 	if(m_camera == NULL) {
 		viewpoint = m_context->getViewpoint();
 	}
-	RenderTarget crt(viewpoint, NULL, NULL, true);
+	RenderTarget crt(viewpoint);
 	renderTarget(sg, crt);
 
 	m_context->swapBuffers();

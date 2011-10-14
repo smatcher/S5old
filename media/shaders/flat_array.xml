@@ -1,0 +1,10 @@
+<program>
+	<shader source="flat_array.vert"/>
+	<shader source="flat_array.frag"/>
+	<uniform name="map0" value="0" type="int"/>
+	<uniform name="map1" value="1" type="int"/>
+	<uniform name="map2" value="2" type="int"/>
+	<uniform name="map3" value="3" type="int"/>
+	<uniform name="map4" value="4" type="int"/>
+	<uniform name="map5" value="5" type="int"/>
+</program>

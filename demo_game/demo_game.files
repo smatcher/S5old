@@ -1,6 +1,7 @@
 test_physics.cpp
 test_terrain.cpp
 test_anim.cpp
+test_rtt.cpp
 media/materials/duck.xml
 media/materials/nyan.xml
 media/materials/rainbow.xml

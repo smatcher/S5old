@@ -70,7 +70,7 @@ void FrameBufferObject::attachTexture(RenderTexture* tex, AttachmentPoint attach
 	m_textures.push_back(at);
 }
 
-void FrameBufferObject::commitTextures()
+void FrameBufferObject::commitTextures(int passNb)
 {
 	bool has_color = false;
 
@@ -79,7 +79,7 @@ void FrameBufferObject::commitTextures()
 		RenderTexture* tex = m_textures[i].tex;
 		AttachmentPoint attachment = m_textures[i].ap;
 		has_color = has_color || attachment == COLOR_ATTACHMENT;
-		glFramebufferTexture2D(GL_FRAMEBUFFER, attachment, m_textures[i].textarget, tex->getRenderTextureId(),0);
+		glFramebufferTexture2D(GL_FRAMEBUFFER, attachment, m_textures[i].textarget, tex->getRenderTextureId(passNb),0);
 		debugGL("attaching");
 	}
 

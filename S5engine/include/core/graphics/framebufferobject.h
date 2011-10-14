@@ -3,13 +3,15 @@
 
 #include <core/graphics/rendertexture.h>
 #include <QtOpenGL>
-#include <QPair>
 
 class FrameBufferObject
 {
 public:
 	FrameBufferObject(int height, int width, bool onscreen, bool add_depth_stencil_renderbuffer);
 	virtual ~FrameBufferObject();
+
+	int getHeight() { return m_height; }
+	int getWidth() { return m_width; }
 
 	void bind();
 	void release();
@@ -21,7 +23,7 @@ public:
 	};
 
 	void attachTexture(RenderTexture* tex, AttachmentPoint attachment, GLenum textarget = GL_TEXTURE_2D);
-	void commitTextures();
+	void commitTextures(int passNb);
 	void swapTextures();
 
 private:

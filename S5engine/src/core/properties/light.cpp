@@ -43,7 +43,7 @@ const double negz[] = {
 	 0, 0, 0, 1
 };
 
-Light::Light()
+Light::Light() : IProperty("Light")
 {
 }
 
@@ -101,7 +101,7 @@ int Light::getNbProjections()
 
 Viewpoint::Style Light::getStyle()
 {
-	return CUBEMAP;
+	return PROXY_CUBEMAP;
 }
 
 void Light::setProjection(double aspect, int projection_nb)

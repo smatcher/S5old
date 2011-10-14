@@ -168,6 +168,8 @@ include/core/graphics/framebufferobject.h
 src/core/graphics/framebufferobject.cpp
 include/core/graphics/rendertarget.h
 include/core/graphics/viewpoint.h
+include/core/graphics/rtarray.h
+src/core/graphics/rtarray.cpp
 include/core/graphics/rtcubemap.h
 src/core/graphics/rtcubemap.cpp
 include/core/graphics/rt2d.h

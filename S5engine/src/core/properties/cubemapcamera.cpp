@@ -131,7 +131,7 @@ void CubemapCamera::createTarget(int height, int width)
 	if(node()) {
 		m_render_texture = new RenderTextureCubemap("RTT_"+node()->getName(), height, width, GL_RGBA, GL_UNSIGNED_BYTE);
 		FrameBufferObject* fbo = new FrameBufferObject(height, width, false, true);
-		RenderTarget* target = new RenderTarget(this, fbo, m_render_texture, false);
+		RenderTarget* target = new RenderTarget(this, fbo, m_render_texture, FrameBufferObject::COLOR_ATTACHMENT, false);
 		RENDER_MANAGER.addRenderTarget(target);
 	} else {
 		logError("Can't create RTT from unliked camera");

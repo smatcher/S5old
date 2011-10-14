@@ -188,7 +188,7 @@ void XmlMaterialFactory::parseTag(const QString& tag, QDomNode* node, XmlMateria
 		}
 		else
 		{
-			logError("Check texture tag" << node->lineNumber() << "in file" << xmlresource->m_path);
+			logError("Check texture tag line" << node->lineNumber() << "in file" << xmlresource->m_path << "texture ressource" << content.at(0).nodeValue() << "does not exist");
 		}
 	}
 	else if(tag == "diffuse")

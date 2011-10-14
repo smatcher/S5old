@@ -3,11 +3,16 @@
 
 #include <core/graphics/framebufferobject.h>
 #include <core/graphics/viewpoint.h>
+#include <QList>
+#include <QPair>
 
 class RenderTarget {
 
 public:
-	RenderTarget(Viewpoint* viewpoint, FrameBufferObject* buffer, RenderTexture* rendertexture, bool on_screen);
+
+	RenderTarget(Viewpoint* viewpoint);
+	RenderTarget(Viewpoint* viewpoint, FrameBufferObject* buffer, QList< QPair<RenderTexture*,FrameBufferObject::AttachmentPoint> > rendertextures, bool on_screen);
+	RenderTarget(Viewpoint* viewpoint, FrameBufferObject* buffer, RenderTexture* rendertexture, FrameBufferObject::AttachmentPoint attachmentpoint, bool on_screen);
 	virtual ~RenderTarget() {}
 
 	Viewpoint* getViewpoint() {return m_viewpoint;}
@@ -24,7 +29,7 @@ public:
 private:
 	Viewpoint* m_viewpoint;
 	FrameBufferObject* m_buffer;
-	RenderTexture* m_rendertexture;
+	QList<QPair<RenderTexture*,FrameBufferObject::AttachmentPoint> > m_rendertextures;
 	int m_height;
 	int m_width;
 	bool m_on_screen;

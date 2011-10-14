@@ -8,7 +8,8 @@ public:
 
 	enum Style {
 		MONO,
-		CUBEMAP
+		CUBEMAP,
+		PROXY_CUBEMAP
 	};
 
 	Viewpoint() {}
