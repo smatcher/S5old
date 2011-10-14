@@ -5,10 +5,17 @@
 
 class Viewpoint {
 public:
+
+	enum Style {
+		MONO,
+		CUBEMAP
+	};
+
 	Viewpoint() {}
 	virtual ~Viewpoint() {}
 
 	virtual int getNbProjections() = 0;
+	virtual Style getStyle() = 0;
 
 	virtual void setProjection(double aspect, int projection_nb) = 0;
 

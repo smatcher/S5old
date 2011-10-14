@@ -1,0 +1,4 @@
+<material>
+	<texture texunit="0">RTT_CubemapCamera</texture>
+	<program>flat_cube</program>
+</material>

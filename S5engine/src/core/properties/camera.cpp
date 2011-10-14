@@ -33,10 +33,9 @@ Camera::~Camera()
 void Camera::createTarget(int height, int width)
 {
 	if(node()) {
-		m_render_texture = new RenderTexture2D("RTT_"+getName(), height, width, GL_RGBA, GL_UNSIGNED_BYTE);
+		m_render_texture = new RenderTexture2D("RTT_"+node()->getName(), height, width, GL_RGBA, GL_UNSIGNED_BYTE);
 		FrameBufferObject* fbo = new FrameBufferObject(height, width, false, true);
-		fbo->attachTexture(m_render_texture, FrameBufferObject::COLOR_ATTACHMENT);
-		RenderTarget* target = new RenderTarget(this, fbo, height, width, false);
+		RenderTarget* target = new RenderTarget(this, fbo, m_render_texture, false);
 		RENDER_MANAGER.addRenderTarget(target);
 	} else {
 		logError("Can't create RTT from unliked camera");

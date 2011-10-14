@@ -73,6 +73,11 @@ int DebugCamera::getNbProjections()
 	return 1;
 }
 
+Viewpoint::Style DebugCamera::getStyle()
+{
+	return MONO;
+}
+
 const Matrix4d& DebugCamera::getProjection(double aspect, int projection_nb)
 {
 	logWarn("Not implemented");

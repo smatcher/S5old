@@ -128,7 +128,6 @@ void RenderManager::render(double elapsed_time, SceneGraph* sg)
 	for(int i = 0 ; i<LIGHTING_MANAGER.managees().count() ; i++) {
 		Light* light = LIGHTING_MANAGER.managees().at(i);
 		FrameBufferObject fbo(512, 512, false, false);
-		RenderTarget srt(light, &fbo, 512,512, false);
 
 		QString name("RTT_Light");
 		name += QString().setNum(i);
@@ -142,45 +141,15 @@ void RenderManager::render(double elapsed_time, SceneGraph* sg)
 			rt = new RenderTexture2D(name, 512, 512, GL_DEPTH_COMPONENT, GL_FLOAT);
 		}
 
-		glEnable(GL_TEXTURE_CUBE_MAP);
-		for(int j=0 ; j< light->getNbProjections() ; j++) {
-		//for(int j=0 ; j< 1 /*light->getNbProjections()*/ ; j++) {
-			fbo.attachTexture(rt, FrameBufferObject::COLOR_ATTACHMENT, cubemap_targets[j]);
-			//fbo.attachTexture(rt, FrameBufferObject::DEPTH_ATTACHMENT, cubemap_targets[j]);
-			srt.bindAsTarget();
-			renderTarget(sg, srt, j);
-		}
-		srt.releaseAsTarget();
-/*
-		for(int i=0 ; i< light->getNbProjections() ; i++) {
-			QString name("RTT_Light");
-			name += QString().setNum(i);
-
-			Texture tex = TEXTURE_MANAGER.get(name);
-
-			RenderTexture* rt;
-			if(tex.isValid()) {
-				rt = static_cast<RenderTexture*>(*tex);
-			} else {
-				rt = new RenderTexture2D(name, 512, 512, GL_DEPTH_COMPONENT, GL_FLOAT);
-			}
-
-			fbo.attachTexture(rt, FrameBufferObject::DEPTH_ATTACHMENT);
-			srt.bindAsTarget();
-			renderTarget(sg, srt, i);
-			srt.releaseAsTarget();
-		}
-*/
+		RenderTarget srt(light, &fbo, rt, false);
+		renderTarget(sg, srt);
 	}
 
 	// Render
 	for(int i=0 ; i<m_rts.length() ; i++) {
 		RenderTarget* rt = m_rts[i];
-
 		if(rt != NULL) {
-			rt->bindAsTarget();
 			renderTarget(sg, *rt);
-			rt->releaseAsTarget();
 		}
 	}
 
@@ -188,7 +157,7 @@ void RenderManager::render(double elapsed_time, SceneGraph* sg)
 	if(m_camera == NULL) {
 		viewpoint = m_context->getViewpoint();
 	}
-	RenderTarget crt(viewpoint, NULL, 0,0, true);
+	RenderTarget crt(viewpoint, NULL, NULL, true);
 	renderTarget(sg, crt);
 
 	m_context->swapBuffers();
@@ -209,7 +178,7 @@ void RenderManager::render(double elapsed_time, SceneGraph* sg)
 
 }
 
-void RenderManager::renderTarget(SceneGraph* sg, RenderTarget& target, int projection_nb)
+void RenderManager::renderTarget(SceneGraph* sg, RenderTarget& target)
 {
 	Viewpoint* viewpoint = target.getViewpoint();
 
@@ -218,69 +187,79 @@ void RenderManager::renderTarget(SceneGraph* sg, RenderTarget& target, int proje
 		return;
 	}
 
-	QList<IRenderable*> transparent_renderables;
+	target.bind();
 
-	if(m_context == NULL) {
-		return;
-	}
+	for(int pass_nb=0 ; pass_nb<target.getNbPass() ; pass_nb++) {
 
-	if(m_defaultBackground.type == SKYBOX) {
-		setupProjection(target,projection_nb);
-		glLoadIdentity();
-		applyBackground(target,projection_nb);
-	} else {
-		glLoadIdentity();
-		applyBackground(target,projection_nb);
-		setupProjection(target,projection_nb);
-		glLoadIdentity();
-	}
+		target.setupPass(pass_nb);
 
-	viewpoint->applyTransform(projection_nb);
+		QList<IRenderable*> transparent_renderables;
 
-	//std::cout<< registeredManagees.count() << " Renderable nodes to render." << std::endl;
+		if(m_context == NULL) {
+			return;
+		}
 
-	glEnable(GL_LIGHTING);
-	for(int index = 0; index < LIGHTING_MANAGER.managees().count(); index++) {
-		LIGHTING_MANAGER.managees().at(index)->sendParameters(index);
-	}
-
-	for(QVector<IRenderable*>::iterator it = registeredManagees.begin();
-		it != registeredManagees.end();
-		it++) {
-		glPushMatrix();
-		if((*it)->isTransparent()){
-			transparent_renderables.push_back(*it); // Transparent renderables are deferred for later rendering
+		if(m_defaultBackground.type == SKYBOX) {
+			setupProjection(target,pass_nb);
+			glLoadIdentity();
+			applyBackground(target,pass_nb);
 		} else {
-			(*it)->render(m_context);
+			glLoadIdentity();
+			applyBackground(target,pass_nb);
+			setupProjection(target,pass_nb);
+			glLoadIdentity();
 		}
-		glPopMatrix();
-	}
 
-	for(QList<IRenderable*>::iterator it = transparent_renderables.begin();
-		it != transparent_renderables.end();
-		it++) {
-		glPushMatrix();
-		(*it)->render(m_context);
-		glPopMatrix();
-	}
+		viewpoint->applyTransform(pass_nb);
 
-	if(m_drawDebug && target.isOnScreen())	{
-		glDisable(GL_LIGHTING);
-		glDisable(GL_TEXTURE_2D);
-		for(int i=0 ; i<sg->childCount() ; i++) {
-			sg->child(i)->drawDebug(m_context,true);
-		}
-		PHYSICS_MANAGER.debugDraw();
-		glEnable(GL_TEXTURE_2D);
+		//std::cout<< registeredManagees.count() << " Renderable nodes to render." << std::endl;
+
 		glEnable(GL_LIGHTING);
+		for(int index = 0; index < LIGHTING_MANAGER.managees().count(); index++) {
+			LIGHTING_MANAGER.managees().at(index)->sendParameters(index);
+		}
+
+		for(QVector<IRenderable*>::iterator it = registeredManagees.begin();
+			it != registeredManagees.end();
+			it++) {
+			glPushMatrix();
+			if((*it)->isTransparent()){
+				transparent_renderables.push_back(*it); // Transparent renderables are deferred for later rendering
+			} else {
+				(*it)->render(m_context);
+			}
+			glPopMatrix();
+		}
+
+		for(QList<IRenderable*>::iterator it = transparent_renderables.begin();
+			it != transparent_renderables.end();
+			it++) {
+			glPushMatrix();
+			(*it)->render(m_context);
+			glPopMatrix();
+		}
+
+		if(m_drawDebug && target.isOnScreen())	{
+			glDisable(GL_LIGHTING);
+			glDisable(GL_TEXTURE_2D);
+			for(int i=0 ; i<sg->childCount() ; i++) {
+				sg->child(i)->drawDebug(m_context,true);
+			}
+			PHYSICS_MANAGER.debugDraw();
+			glEnable(GL_TEXTURE_2D);
+			glEnable(GL_LIGHTING);
+		}
+
+		#ifdef WITH_TOOLS
+			if(target.isOnScreen()) {
+				sg->getManipulator()->draw(m_context);
+			}
+		#endif
+
+		target.passDone();
 	}
 
-	#ifdef WITH_TOOLS
-		if(target.isOnScreen()) {
-			sg->getManipulator()->draw(m_context);
-		}
-	#endif
-
+	target.release();
 }
 
 void RenderManager::setCurrentCamera(Camera* cam)

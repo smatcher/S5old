@@ -174,3 +174,4 @@ include/core/graphics/rt2d.h
 src/core/graphics/rt2d.cpp
 src/core/properties/cubemapcamera.cpp
 include/core/properties/cubemapcamera.h
+src/core/graphics/rendertarget.cpp

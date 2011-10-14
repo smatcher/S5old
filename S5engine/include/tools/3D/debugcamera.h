@@ -65,6 +65,7 @@ public:
 
 	// Mise à jour de la matrice modelview
 	virtual int getNbProjections();
+	virtual Viewpoint::Style getStyle();
 	virtual const Matrix4d& getProjection(double aspect, int projection_nb);
 	virtual void setProjection(double aspect, int projection_nb);
 

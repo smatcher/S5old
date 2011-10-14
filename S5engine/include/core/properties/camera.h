@@ -21,6 +21,7 @@ public :
 	virtual ~Camera();
 
 	virtual int getNbProjections() {return 1;}
+	virtual Viewpoint::Style getStyle() {return MONO;}
 
 	virtual const Matrix4d& getProjection(double aspect, int projection_nb);
 	virtual void setProjection(double aspect, int projection_nb);

@@ -11,8 +11,8 @@ public:
 	FrameBufferObject(int height, int width, bool onscreen, bool add_depth_stencil_renderbuffer);
 	virtual ~FrameBufferObject();
 
-	void bindAsTarget();
-	void releaseAsTarget();
+	void bind();
+	void release();
 
 	enum AttachmentPoint {
 		COLOR_ATTACHMENT = GL_COLOR_ATTACHMENT0,
@@ -21,6 +21,8 @@ public:
 	};
 
 	void attachTexture(RenderTexture* tex, AttachmentPoint attachment, GLenum textarget = GL_TEXTURE_2D);
+	void commitTextures();
+	void swapTextures();
 
 private:
 	GLuint m_framebuffer;

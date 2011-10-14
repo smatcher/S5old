@@ -99,6 +99,11 @@ int Light::getNbProjections()
 	return 6;
 }
 
+Viewpoint::Style Light::getStyle()
+{
+	return CUBEMAP;
+}
+
 void Light::setProjection(double aspect, int projection_nb)
 {
 	Matrix4d mat;

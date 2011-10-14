@@ -34,11 +34,45 @@ FrameBufferObject::~FrameBufferObject()
 	}
 }
 
-void FrameBufferObject::bindAsTarget()
+void FrameBufferObject::bind()
+{
+	glBindFramebuffer(GL_FRAMEBUFFER, m_framebuffer);
+}
+
+void FrameBufferObject::release()
+{
+	glBindFramebuffer(GL_FRAMEBUFFER, 0);
+}
+
+void FrameBufferObject::attachTexture(RenderTexture* tex, AttachmentPoint attachment, GLenum textarget)
+{
+	bool valid = false;
+
+	if(tex != NULL) {
+		valid = tex->getWidth() == m_width && tex->getHeight() == m_height;
+	}
+
+	if(!valid) {
+		if(tex == NULL) {
+			logError("Could not attach texture to FBO texture is not valid");
+		} else {
+			logError("Could not attach texture to FBO, dimensions don't match");
+		}
+		return;
+	}
+
+	for(int i=0 ; i< m_textures.count() ; i++) {
+		if(m_textures[i].ap == attachment) {
+			m_textures.removeAt(i);
+		}
+	}
+	Attachment at = {tex,attachment,textarget};
+	m_textures.push_back(at);
+}
+
+void FrameBufferObject::commitTextures()
 {
 	bool has_color = false;
-
-	glBindFramebuffer(GL_FRAMEBUFFER, m_framebuffer);
 
 	// attach the textures to FBO depth attachment point
 	for(int i=0 ; i<m_textures.size() ; i++) {
@@ -71,38 +105,10 @@ void FrameBufferObject::bindAsTarget()
 	}
 }
 
-void FrameBufferObject::releaseAsTarget()
+void FrameBufferObject::swapTextures()
 {
-	glBindFramebuffer(GL_FRAMEBUFFER, 0);
-
 	for(int i=0 ; i<m_textures.size() ; i++) {
 		RenderTexture* tex = m_textures[i].tex;
 		tex->swap();
 	}
-}
-
-void FrameBufferObject::attachTexture(RenderTexture* tex, AttachmentPoint attachment, GLenum textarget)
-{
-	bool valid = false;
-
-	if(tex != NULL) {
-		valid = tex->getWidth() == m_width && tex->getHeight() == m_height;
-	}
-
-	if(!valid) {
-		if(tex == NULL) {
-			logError("Could not attach texture to FBO texture is not valid");
-		} else {
-			logError("Could not attach texture to FBO, dimensions don't match");
-		}
-		return;
-	}
-
-	for(int i=0 ; i< m_textures.count() ; i++) {
-		if(m_textures[i].ap == attachment) {
-			m_textures.removeAt(i);
-		}
-	}
-	Attachment at = {tex,attachment,textarget};
-	m_textures.push_back(at);
 }

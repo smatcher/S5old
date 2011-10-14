@@ -47,7 +47,7 @@ private :
 
 	QList<RenderTarget*> m_rts;
 
-	void renderTarget(SceneGraph* sg, RenderTarget& target, int projection_nb=0);
+	void renderTarget(SceneGraph* sg, RenderTarget& target);
 	void setupProjection(RenderTarget& target, int projection_nb);
 	void applyBackground(RenderTarget& target, int projection_nb);
 

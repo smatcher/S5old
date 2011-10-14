@@ -15,6 +15,7 @@ public:
 	virtual void drawDebug(const GLWidget* widget) const;
 
 	virtual int getNbProjections();
+	virtual Viewpoint::Style getStyle();
 
 	virtual void setProjection(double aspect, int projection_nb);
 
