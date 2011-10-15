@@ -1,0 +1,11 @@
+<program>
+	<shader source="receive_shadow.vert"/>
+	<shader source="receive_shadow.frag"/>
+	<uniform name="color_map" value="0" type="int"/>
+	<uniform name="map0" value="1" type="int"/>
+	<uniform name="map1" value="2" type="int"/>
+	<uniform name="map2" value="3" type="int"/>
+	<uniform name="map3" value="4" type="int"/>
+	<uniform name="map4" value="5" type="int"/>
+	<uniform name="map5" value="6" type="int"/>
+</program>

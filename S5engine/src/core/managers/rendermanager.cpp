@@ -26,6 +26,9 @@
 #define GL_MULTISAMPLE  0x809D
 #endif
 
+
+//#define SHOW_PASS_INFO
+
 RenderManager::RenderManager() : m_context(NULL), m_camera(NULL), m_cameraChanged(true), m_drawDebug(false)
 {
 	m_defaultBackground.type = NO_CLEAR;
@@ -113,6 +116,10 @@ void RenderManager::init(GLWidget* context)
 	glLightfv(GL_LIGHT0, GL_POSITION, lightPosition);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 	glEnable(GL_BLEND);
+
+	#ifndef SHOW_PASS_INFO
+		Log::topicPolicy.insert("PASS_INFO", Log::POLICY_IGNORE);
+	#endif
 }
 
 void RenderManager::render(double elapsed_time, SceneGraph* sg)
@@ -124,7 +131,10 @@ void RenderManager::render(double elapsed_time, SceneGraph* sg)
 		(*it)->frameBegin(elapsed_time);
 	}
 
+	debug("PASS_INFO","begin");
+
 	// Render shadowmap
+	glCullFace(GL_FRONT);
 	for(int i = 0 ; i<LIGHTING_MANAGER.managees().count() ; i++) {
 		Light* light = LIGHTING_MANAGER.managees().at(i);
 		FrameBufferObject fbo(512, 512, false, false);
@@ -137,8 +147,10 @@ void RenderManager::render(double elapsed_time, SceneGraph* sg)
 		if(tex.isValid()) {
 			RenderTexture* rt;
 			rt = static_cast<RenderTexture*>(*tex);
-			RenderTarget srt(light, &fbo, rt, FrameBufferObject::COLOR_ATTACHMENT, false);
-			renderTarget(sg, srt);
+			//RenderTarget srt(light, &fbo, rt, FrameBufferObject::COLOR_ATTACHMENT, false);
+			RenderTarget srt(light, &fbo, rt, FrameBufferObject::DEPTH_ATTACHMENT, false);
+			debug("PASS_INFO","light " + QString().setNum(i));
+			renderTarget(sg, srt, true);
 		} else {
 			//rt = new RenderTexture2D(name, 512, 512, GL_DEPTH_COMPONENT, GL_FLOAT);
 		}
@@ -146,9 +158,11 @@ void RenderManager::render(double elapsed_time, SceneGraph* sg)
 	}
 
 	// Render
+	glCullFace(GL_BACK);
 	for(int i=0 ; i<m_rts.length() ; i++) {
 		RenderTarget* rt = m_rts[i];
 		if(rt != NULL) {
+			debug("PASS_INFO","rtt " + QString().setNum(i));
 			renderTarget(sg, *rt);
 		}
 	}
@@ -158,6 +172,7 @@ void RenderManager::render(double elapsed_time, SceneGraph* sg)
 		viewpoint = m_context->getViewpoint();
 	}
 	RenderTarget crt(viewpoint);
+	debug("PASS_INFO","screen");
 	renderTarget(sg, crt);
 
 	m_context->swapBuffers();
@@ -178,7 +193,7 @@ void RenderManager::render(double elapsed_time, SceneGraph* sg)
 
 }
 
-void RenderManager::renderTarget(SceneGraph* sg, RenderTarget& target)
+void RenderManager::renderTarget(SceneGraph* sg, RenderTarget& target, bool setup_texture_matrices)
 {
 	Viewpoint* viewpoint = target.getViewpoint();
 
@@ -212,7 +227,18 @@ void RenderManager::renderTarget(SceneGraph* sg, RenderTarget& target)
 
 		viewpoint->applyTransform(pass_nb);
 
-		//std::cout<< registeredManagees.count() << " Renderable nodes to render." << std::endl;
+		debugGL("initiating cameras");
+
+		if(setup_texture_matrices) {
+			target.setTextureMatrix(pass_nb);
+			debugGL("setting up texture matrices");
+		}
+
+		// set inverse camera transform
+		glGetDoublev(GL_MODELVIEW_MATRIX, m_inverse_transpose_camera_transform);
+		Matrix4d mat(m_inverse_transpose_camera_transform);
+		mat.invertAndTranspose();
+		memcpy(m_inverse_transpose_camera_transform,mat.values,16*sizeof(double));
 
 		glEnable(GL_LIGHTING);
 		for(int index = 0; index < LIGHTING_MANAGER.managees().count(); index++) {
@@ -412,3 +438,7 @@ void RenderManager::addRenderTarget(RenderTarget *rt)
 	}
 }
 
+double* RenderManager::getInverseTransposeCameraTransform()
+{
+	return m_inverse_transpose_camera_transform;
+}

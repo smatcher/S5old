@@ -108,8 +108,8 @@ void Light::setProjection(double aspect, int projection_nb)
 {
 	Matrix4d mat;
 	const float h = 1.0f/tan(90*M_PI/360);
-	const float znear = 0.1;
-	const float zfar = 100;
+	const float znear = 0.5;
+	const float zfar = 400;
 	float neg_depth = znear-zfar;
 
 	mat[0] = h;

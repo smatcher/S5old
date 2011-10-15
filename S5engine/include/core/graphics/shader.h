@@ -51,6 +51,7 @@ public:
 	virtual const UniformBase* uniform(int nb) = 0;
 	virtual int nbUniforms() = 0;
 	virtual void setUniform(const UniformBase* uniform) = 0;
+	virtual void setEngineUniforms() = 0;
 	virtual void use() = 0;
 	virtual void unset() = 0;
 	virtual QGLShaderProgram* program() = 0;

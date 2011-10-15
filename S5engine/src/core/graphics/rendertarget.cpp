@@ -1,4 +1,8 @@
+#include <GL/glew.h>
+
 #include "core/graphics/rendertarget.h"
+
+#include <QtOpenGL>
 
 RenderTarget::RenderTarget(Viewpoint* viewpoint) :
 	m_viewpoint(viewpoint),
@@ -120,4 +124,48 @@ void RenderTarget::setupPass(int passNb)
 void RenderTarget::passDone()
 {
 
+}
+
+void RenderTarget::setTextureMatrix(int passNb)
+{
+	GLint mode;
+	static double modelView[16];
+	static double projection[16];
+	static double final[16];
+	const GLdouble biais[16] = {
+		0.5, 0.0, 0.0, 0.0,
+		0.0, 0.5, 0.0, 0.0,
+		0.0, 0.0, 0.5, 0.0,
+		0.5, 0.5, 0.5, 1.0
+	};
+
+	debugGL("1");
+	glGetDoublev(GL_PROJECTION_MATRIX, projection);
+	debugGL("2");
+	glGetDoublev(GL_MODELVIEW_MATRIX, modelView);
+	debugGL("3");
+	glGetIntegerv(GL_MATRIX_MODE, &mode);
+	debugGL("4");
+
+	glMatrixMode(GL_TEXTURE);
+	glPushMatrix();
+	glLoadIdentity();
+	glLoadMatrixd(biais);
+	glMultMatrixd(projection);
+	glMultMatrixd(modelView);
+	glGetDoublev(GL_TEXTURE_MATRIX, final);
+	glPopMatrix();
+	glMatrixMode(mode);
+
+	Matrix4d mat(final);
+
+	switch(m_viewpoint->getStyle()) {
+		case Viewpoint::PROXY_CUBEMAP :
+			for(int i=0 ; i<m_rendertextures.size() ; i++) {
+				m_rendertextures[i].first->setTextureMatrix(mat,passNb);
+			}
+			break;
+		default:
+			logWarn("Not implemented");
+	}
 }

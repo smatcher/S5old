@@ -60,6 +60,7 @@ void XmlMaterial::apply(unsigned int layer)
 		{
 			target->m_program->setUniform(target->m_program->uniform(i));
 		}
+		target->m_program->setEngineUniforms();
 	}
 }
 

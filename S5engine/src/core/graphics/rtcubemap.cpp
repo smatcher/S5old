@@ -5,6 +5,15 @@
 
 #include <QtOpenGL>
 
+static GLenum cubemap_targets[] = {
+	GL_TEXTURE_CUBE_MAP_POSITIVE_X,
+	GL_TEXTURE_CUBE_MAP_NEGATIVE_X,
+	GL_TEXTURE_CUBE_MAP_POSITIVE_Y,
+	GL_TEXTURE_CUBE_MAP_NEGATIVE_Y,
+	GL_TEXTURE_CUBE_MAP_POSITIVE_Z,
+	GL_TEXTURE_CUBE_MAP_NEGATIVE_Z
+};
+
 RenderTextureCubemap::RenderTextureCubemap(QString name, int height, int width, GLenum format, GLenum type)
 	: RenderTexture(name, height, width)
 {

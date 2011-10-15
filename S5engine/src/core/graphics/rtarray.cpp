@@ -8,6 +8,8 @@
 RenderTextureArray::RenderTextureArray(QString name, int height, int width, int depth, GLenum format, GLenum type)
 	: RenderTexture(name, height, width), m_depth(depth)
 {
+	debugGL("RenderTextureArray constructor start");
+
 	m_hasgltex = true;
 	m_state = STATE_LOADED;
 
@@ -24,6 +26,7 @@ RenderTextureArray::RenderTextureArray(QString name, int height, int width, int 
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
 		glTexParameteri(GL_TEXTURE_2D, GL_GENERATE_MIPMAP, GL_FALSE);
 		glTexImage2D(GL_TEXTURE_2D, 0, format, width, height, 0, format, type, 0);
+		debugGL("RenderTextureArray constructor spec");
 	}
 
 	for(int i=0 ; i<m_depth ; i++) {
@@ -34,11 +37,14 @@ RenderTextureArray::RenderTextureArray(QString name, int height, int width, int 
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
 		glTexParameteri(GL_TEXTURE_2D, GL_GENERATE_MIPMAP, GL_FALSE);
 		glTexImage2D(GL_TEXTURE_2D, 0, format, width, height, 0, format, type, 0);
+		debugGL("RenderTextureArray constructor spec");
 	}
 
 	glBindTexture(GL_TEXTURE_2D, 0);
 
 	TEXTURE_MANAGER.add(this);
+
+	debugGL("RenderTextureArray constructor end");
 }
 
 bool RenderTextureArray::unload()
@@ -59,3 +65,40 @@ void RenderTextureArray::swap()
 		m_render_textures[i] = tmp;
 	}
 }
+
+void RenderTextureArray::bind(int i)
+{
+	if(m_hasgltex)
+	{
+		for(int j=0 ; j< m_depth ; j++) {
+			glActiveTexture(GL_TEXTURE0 + i + j);
+			if(m_texture_matrices.size() > j) {
+				glMatrixMode(GL_TEXTURE);
+				m_texture_matrices[j].glLoadd();
+				glMatrixMode(GL_MODELVIEW);
+			}
+			glBindTexture(GL_TEXTURE_2D, m_gltextures[j]);
+		}
+	}
+}
+
+void RenderTextureArray::release(int i)
+{
+	for(int j=0 ; j< m_depth ; j++) {
+		glActiveTexture(GL_TEXTURE0 + i + j);
+		glMatrixMode(GL_TEXTURE);
+		glLoadIdentity();
+		glMatrixMode(GL_MODELVIEW);
+		glBindTexture(GL_TEXTURE_2D, 0);
+	}
+}
+
+void RenderTextureArray::setTextureMatrix(const Matrix4d& texture_matrix, int i)
+{
+	while(m_texture_matrices.size() <= i) {
+		m_texture_matrices.push_back(Matrix4d());
+	}
+
+	m_texture_matrices[i] = texture_matrix;
+}
+

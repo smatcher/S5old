@@ -3,6 +3,9 @@
 #include "core/log/log.h"
 #include <QtXml/QtXml>
 #include "core/resources/managers.h"
+#include "core/managers/rendermanager.h"
+
+#include <QMatrix4x4>
 
 GLSLShaderProgram::GLSLShaderProgram(const QString &name, const QString &path, IResourceFactory *factory) :
 	ShaderProgramData(name, path, factory),
@@ -38,6 +41,19 @@ void GLSLShaderProgram::setUniform(const UniformBase* uniform)
 {
 	if(m_program != NULL && uniform != NULL)
 		uniform->sendTo(*m_program);
+}
+
+void GLSLShaderProgram::setEngineUniforms()
+{
+	if(m_program != NULL) {
+		int location;
+
+		location = m_program->uniformLocation("inverse_transpose_camera");
+		if(location >= 0) {
+			QMatrix4x4 mat(RENDER_MANAGER.getInverseTransposeCameraTransform());
+			m_program->setUniformValue(location,mat);
+		}
+	}
 }
 
 const GLSLShaderProgram::UniformBase* GLSLShaderProgram::uniform(int nb)

@@ -29,28 +29,15 @@ public:
 	virtual GLuint getRenderTextureId(int i= 0);
 	virtual void swap();
 
-	virtual void bind(int i=0)
-	{
-		if(m_hasgltex)
-		{
-			for(int j=0 ; j< m_depth ; j++) {
-				glActiveTexture(GL_TEXTURE0 + i + j);
-				glBindTexture(GL_TEXTURE_2D, m_gltextures[i+j]);
-			}
-		}
-	}
+	virtual void bind(int i=0);
+	virtual void release(int i=0);
 
-	virtual void release(int i=0)
-	{
-		for(int j=0 ; j< m_depth ; j++) {
-			glActiveTexture(GL_TEXTURE0 + i + j);
-			glBindTexture(GL_TEXTURE_2D, 0);
-		}
-	}
+	virtual void setTextureMatrix(const Matrix4d& texture_matrix, int i = 0);
 
 private:
 	GLuint* m_render_textures;
 	GLuint* m_gltextures;
+	QList<Matrix4d> m_texture_matrices;
 	int m_depth;
 };
 

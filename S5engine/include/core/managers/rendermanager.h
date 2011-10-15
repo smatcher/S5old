@@ -44,10 +44,11 @@ private :
 	bool m_cameraChanged;
 	bool m_drawDebug;
 	Background m_defaultBackground;
+	double m_inverse_transpose_camera_transform[16];
 
 	QList<RenderTarget*> m_rts;
 
-	void renderTarget(SceneGraph* sg, RenderTarget& target);
+	void renderTarget(SceneGraph* sg, RenderTarget& target, bool setup_texture_matrices = false);
 	void setupProjection(RenderTarget& target, int projection_nb);
 	void applyBackground(RenderTarget& target, int projection_nb);
 
@@ -65,6 +66,8 @@ public:
 	const Camera* getCurrentCamera();
 
 	void addRenderTarget(RenderTarget* rt);
+
+	double* getInverseTransposeCameraTransform();
 };
 
 typedef Singleton<RenderManager> SingletonRenderManager;

@@ -5,15 +5,6 @@
 
 #include <QtOpenGL>
 
-static GLenum cubemap_targets[] = {
-	GL_TEXTURE_CUBE_MAP_POSITIVE_X,
-	GL_TEXTURE_CUBE_MAP_NEGATIVE_X,
-	GL_TEXTURE_CUBE_MAP_POSITIVE_Y,
-	GL_TEXTURE_CUBE_MAP_NEGATIVE_Y,
-	GL_TEXTURE_CUBE_MAP_POSITIVE_Z,
-	GL_TEXTURE_CUBE_MAP_NEGATIVE_Z
-};
-
 class RenderTextureCubemap : public RenderTexture
 {
 public:
@@ -24,6 +15,8 @@ public:
 
 	virtual GLuint getRenderTextureId(int i= 0);
 	virtual void swap();
+
+	virtual void setTextureMatrix(const Matrix4d& texture_matrix, int i = 0) {}
 
 	virtual void bind(int i=0)
 	{

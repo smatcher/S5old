@@ -21,6 +21,7 @@ public:
 	int getNbPass();
 	void setupPass(int passNb);
 	void passDone();
+	void setTextureMatrix(int passNb);
 
 	int getHeight() const {return m_height;}
 	int getWidth() const {return m_width;}

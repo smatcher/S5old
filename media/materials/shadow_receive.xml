@@ -1,0 +1,5 @@
+<material>
+	<texture texunit="1">sand.tga</texture>
+	<texture texunit="0">RTT_Light0</texture>
+	<program>receive_shadow</program>
+</material>
