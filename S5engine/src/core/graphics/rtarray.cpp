@@ -8,7 +8,7 @@
 RenderTextureArray::RenderTextureArray(QString name, int height, int width, int depth, GLenum format, GLenum type)
 	: RenderTexture(name, height, width), m_depth(depth)
 {
-	debugGL("RenderTextureArray constructor start");
+	debugGL("before RenderTextureArray constructor");
 
 	m_hasgltex = true;
 	m_state = STATE_LOADED;

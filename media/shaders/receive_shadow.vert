@@ -3,8 +3,6 @@ uniform mat4 inverse_transpose_camera;
 
 void main()
 {	
-	gl_TexCoord[0] = gl_MultiTexCoord0;
-
 	vec4 transformed = inverse_transpose_camera * gl_ModelViewMatrix * gl_Vertex;
 
 	shadowcoord0 = gl_TextureMatrix[1] * transformed;

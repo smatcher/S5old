@@ -124,12 +124,16 @@ int main(int argc, char *argv[])
 	nPlane6->rotate(Vector3f(0,1,0),270);
 	nPlane6->setScale(Vector3f(50,50,50));
 
+
+	new RenderTexture2D("Shadowmap", 512, 512, GL_RGBA, GL_UNSIGNED_BYTE);
+	new RenderTextureArray("Omni_Lightmap", 256, 256, 6, GL_DEPTH_COMPONENT, GL_FLOAT);
+	/*
 	for(int i=0 ; i< 1 ; i++) {
 		QString name("RTT_Light");
 		name += QString().setNum(i);
 	//	new RenderTextureArray(name, 512, 512, 6, GL_RGBA, GL_FLOAT);
-		new RenderTextureArray(name, 512, 512, 6, GL_DEPTH_COMPONENT, GL_FLOAT);
 	}
+	*/
 
 	/*
 	cam->createTarget(512,512);

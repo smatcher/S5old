@@ -45,13 +45,20 @@ void GLSLShaderProgram::setUniform(const UniformBase* uniform)
 
 void GLSLShaderProgram::setEngineUniforms()
 {
+	debugGL("before setEngineUniforms");
+
 	if(m_program != NULL) {
 		int location;
 
-		location = m_program->uniformLocation("inverse_transpose_camera");
-		if(location >= 0) {
-			QMatrix4x4 mat(RENDER_MANAGER.getInverseTransposeCameraTransform());
-			m_program->setUniformValue(location,mat);
+		const QHash<QString, UniformBase*>& engine_uniforms = RENDER_MANAGER.getEngineUniforms();
+
+		for(QHash<QString, UniformBase*>::const_iterator it = engine_uniforms.begin();
+			it != engine_uniforms.end() ; it++) {
+			location = m_program->uniformLocation(it.key());
+			if(location >= 0) {
+				it.value()->sendTo(*m_program);
+			}
+			debugGL("setting uniform" << it.key());
 		}
 	}
 }

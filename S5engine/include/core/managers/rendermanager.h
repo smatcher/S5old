@@ -5,7 +5,11 @@
 #include "core/utils/singleton.h"
 
 #include "core/graphics/texture.h"
+#include "core/graphics/shader.h"
 #include "core/maths/vector3.h"
+
+#include <QMatrix4x4>
+#include <QVector2D>
 
 class IRenderable;
 class GLWidget;
@@ -44,11 +48,16 @@ private :
 	bool m_cameraChanged;
 	bool m_drawDebug;
 	Background m_defaultBackground;
-	double m_inverse_transpose_camera_transform[16];
+
+	QHash<QString, ShaderProgramData::UniformBase*> m_engine_uniforms;
+	// engine uniforms data
+	QMatrix4x4* m_inverse_transpose_camera;
+	QVector2D* m_screen_size;
 
 	QList<RenderTarget*> m_rts;
 
 	void renderTarget(SceneGraph* sg, RenderTarget& target, bool setup_texture_matrices = false);
+	void postprocessPass(RenderTarget& target, QGLShaderProgram* program);
 	void setupProjection(RenderTarget& target, int projection_nb);
 	void applyBackground(RenderTarget& target, int projection_nb);
 
@@ -67,8 +76,8 @@ public:
 
 	void addRenderTarget(RenderTarget* rt);
 
-	double* getInverseTransposeCameraTransform();
-};
+	const QHash<QString, ShaderProgramData::UniformBase*>& getEngineUniforms();
+	};
 
 typedef Singleton<RenderManager> SingletonRenderManager;
 #define RENDER_MANAGER SingletonRenderManager::getInstance()

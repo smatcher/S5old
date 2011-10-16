@@ -1,5 +1,5 @@
 <material>
-	<texture texunit="1">sand.tga</texture>
-	<texture texunit="0">RTT_Light0</texture>
+	<texture texunit="1">Shadowmap</texture>
+	<texture texunit="1">Omni_Lightmap</texture>
 	<program>receive_shadow</program>
 </material>

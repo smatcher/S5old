@@ -9,10 +9,12 @@
 #include <core/graphics/rendertarget.h>
 #include <core/graphics/rt2d.h>
 #include <core/graphics/rtcubemap.h>
+#include <core/graphics/rtarray.h>
 
 #include <core/resources/managers.h>
 
 #include <QtOpenGL>
+#include <QRect>
 #include <math.h>
 
 #include "core/log/log.h"
@@ -117,6 +119,23 @@ void RenderManager::init(GLWidget* context)
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 	glEnable(GL_BLEND);
 
+	// setting up engine uniforms hash
+	m_inverse_transpose_camera = new QMatrix4x4();
+	m_engine_uniforms.insert(
+		"inverse_transpose_camera",
+		new ShaderProgramData::Uniform<QMatrix4x4>("inverse_transpose_camera",m_inverse_transpose_camera, 1, 1)
+	);
+	m_screen_size = new QVector2D();
+	m_engine_uniforms.insert(
+		"screen_size",
+		new ShaderProgramData::Uniform<QVector2D>("screen_size",m_screen_size, 1, 1)
+	);
+
+	// Setting up shadow textures
+	/*
+	new RenderTexture2D("Shadowmap", 512, 512, GL_RGBA, GL_UNSIGNED_BYTE);
+	new RenderTextureArray("Omni_Lightmap", 256, 256, 6, GL_DEPTH_COMPONENT, GL_FLOAT);
+*/
 	#ifndef SHOW_PASS_INFO
 		Log::topicPolicy.insert("PASS_INFO", Log::POLICY_IGNORE);
 	#endif
@@ -137,24 +156,17 @@ void RenderManager::render(double elapsed_time, SceneGraph* sg)
 	glCullFace(GL_FRONT);
 	for(int i = 0 ; i<LIGHTING_MANAGER.managees().count() ; i++) {
 		Light* light = LIGHTING_MANAGER.managees().at(i);
-		FrameBufferObject fbo(512, 512, false, false);
+		FrameBufferObject fbo(256, 256, false, false);
 
-		QString name("RTT_Light");
-		name += QString().setNum(i);
-
-		Texture tex = TEXTURE_MANAGER.get(name);
+		Texture tex = TEXTURE_MANAGER.get("Omni_Lightmap");
 
 		if(tex.isValid()) {
 			RenderTexture* rt;
 			rt = static_cast<RenderTexture*>(*tex);
-			//RenderTarget srt(light, &fbo, rt, FrameBufferObject::COLOR_ATTACHMENT, false);
 			RenderTarget srt(light, &fbo, rt, FrameBufferObject::DEPTH_ATTACHMENT, false);
 			debug("PASS_INFO","light " + QString().setNum(i));
 			renderTarget(sg, srt, true);
-		} else {
-			//rt = new RenderTexture2D(name, 512, 512, GL_DEPTH_COMPONENT, GL_FLOAT);
 		}
-
 	}
 
 	// Render
@@ -235,10 +247,20 @@ void RenderManager::renderTarget(SceneGraph* sg, RenderTarget& target, bool setu
 		}
 
 		// set inverse camera transform
-		glGetDoublev(GL_MODELVIEW_MATRIX, m_inverse_transpose_camera_transform);
-		Matrix4d mat(m_inverse_transpose_camera_transform);
+		double camera_transform[16];
+		glGetDoublev(GL_MODELVIEW_MATRIX, camera_transform);
+		Matrix4d mat(camera_transform);
 		mat.invertAndTranspose();
-		memcpy(m_inverse_transpose_camera_transform,mat.values,16*sizeof(double));
+		*m_inverse_transpose_camera = QMatrix4x4(mat.values);
+		// set screensize
+		if(target.isOnScreen()) {
+			QRect geom = m_context->geometry();
+			m_screen_size->setX(geom.width());
+			m_screen_size->setY(geom.height());
+		} else {
+			m_screen_size->setX(target.getWidth());
+			m_screen_size->setY(target.getHeight());
+		}
 
 		glEnable(GL_LIGHTING);
 		for(int index = 0; index < LIGHTING_MANAGER.managees().count(); index++) {
@@ -286,6 +308,10 @@ void RenderManager::renderTarget(SceneGraph* sg, RenderTarget& target, bool setu
 	}
 
 	target.release();
+}
+
+void RenderManager::postprocessPass(RenderTarget& target, QGLShaderProgram* program)
+{
 }
 
 void RenderManager::setCurrentCamera(Camera* cam)
@@ -438,7 +464,8 @@ void RenderManager::addRenderTarget(RenderTarget *rt)
 	}
 }
 
-double* RenderManager::getInverseTransposeCameraTransform()
+const QHash<QString, ShaderProgramData::UniformBase*>& RenderManager::getEngineUniforms()
 {
-	return m_inverse_transpose_camera_transform;
+	return m_engine_uniforms;
 }
+
