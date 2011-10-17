@@ -102,3 +102,6 @@ void RenderTextureArray::setTextureMatrix(const Matrix4d& texture_matrix, int i)
 	m_texture_matrices[i] = texture_matrix;
 }
 
+void RenderTextureArray::clear()
+{
+}

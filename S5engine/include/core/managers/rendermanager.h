@@ -6,6 +6,7 @@
 
 #include "core/graphics/texture.h"
 #include "core/graphics/shader.h"
+#include "core/graphics/material.h"
 #include "core/maths/vector3.h"
 
 #include <QMatrix4x4>
@@ -17,6 +18,7 @@ class Viewpoint;
 class Camera;
 class SceneGraph;
 class RenderTarget;
+class RenderTexture;
 
 class RenderManager : public Manager<IRenderable>
 {
@@ -54,9 +56,13 @@ private :
 	QMatrix4x4* m_inverse_transpose_camera;
 	QVector2D* m_screen_size;
 
+	// shadowmap render textures
+	RenderTexture* m_shadowmap;
+
 	QList<RenderTarget*> m_rts;
 
 	void renderTarget(SceneGraph* sg, RenderTarget& target, bool setup_texture_matrices = false);
+	void renderTarget(SceneGraph* sg, RenderTarget& target, Material forced_material, bool setup_texture_matrices = false);
 	void postprocessPass(RenderTarget& target, QGLShaderProgram* program);
 	void setupProjection(RenderTarget& target, int projection_nb);
 	void applyBackground(RenderTarget& target, int projection_nb);

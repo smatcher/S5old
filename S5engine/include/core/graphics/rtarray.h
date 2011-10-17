@@ -28,6 +28,7 @@ public:
 
 	virtual GLuint getRenderTextureId(int i= 0);
 	virtual void swap();
+	virtual void clear();
 
 	virtual void bind(int i=0);
 	virtual void release(int i=0);

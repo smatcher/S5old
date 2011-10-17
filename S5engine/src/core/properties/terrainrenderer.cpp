@@ -231,7 +231,7 @@ TerrainRenderer::TerrainRenderer(Texture& hm, Material& mat, float yscale, float
 
 }
 
-void TerrainRenderer::render(GLWidget* context) {
+void TerrainRenderer::render(GLWidget* context, bool material_overridden) {
 
 	QGLShaderProgram* program = NULL;
 	node()->getGlobalTransform().glMultf();
@@ -241,45 +241,47 @@ void TerrainRenderer::render(GLWidget* context) {
 	}
 
 	/* Application du Material */
-	if(m_material.isValid())
-	{
-		m_material->apply(0);
-		program = m_material->program(0);
-	}
-	else
-	{
-		debug( "RENDERING" , "TerrainRenderer : no material to apply for " << node()->getName());
-	}
+	if(!material_overridden) {
+		if(m_material.isValid())
+		{
+			m_material->apply(0);
+			program = m_material->program(0);
+		}
+		else
+		{
+			debug( "RENDERING" , "TerrainRenderer : no material to apply for " << node()->getName());
+		}
 
-	if(m_texcoords.isCreated() && m_stexcoords.isCreated())
-	{
-		glEnable(GL_TEXTURE_2D);
-		glEnableClientState(GL_TEXTURE_COORD_ARRAY);
-		glClientActiveTexture(GL_TEXTURE0);
-		m_texcoords.bind();
-		glTexCoordPointer(2, GL_FLOAT, 0, NULL);
+		if(m_texcoords.isCreated() && m_stexcoords.isCreated())
+		{
+			glEnable(GL_TEXTURE_2D);
+			glEnableClientState(GL_TEXTURE_COORD_ARRAY);
+			glClientActiveTexture(GL_TEXTURE0);
+			m_texcoords.bind();
+			glTexCoordPointer(2, GL_FLOAT, 0, NULL);
 
-		glEnable(GL_TEXTURE_2D);
-		glEnableClientState(GL_TEXTURE_COORD_ARRAY);
-		glClientActiveTexture(GL_TEXTURE1);
-		m_stexcoords.bind();
-		glTexCoordPointer(2, GL_FLOAT, 0, NULL);
-	}
-	else
-	{
-		glDisable(GL_TEXTURE_2D);
-	}
+			glEnable(GL_TEXTURE_2D);
+			glEnableClientState(GL_TEXTURE_COORD_ARRAY);
+			glClientActiveTexture(GL_TEXTURE1);
+			m_stexcoords.bind();
+			glTexCoordPointer(2, GL_FLOAT, 0, NULL);
+		}
+		else
+		{
+			glDisable(GL_TEXTURE_2D);
+		}
 
-	if(m_colors.isCreated())
-	{
-		glEnable(GL_COLOR_MATERIAL);
-		glEnableClientState(GL_COLOR_ARRAY);
-		m_colors.bind();
-		glColorPointer(4, GL_FLOAT, 0, NULL);
-	}
-	else
-	{
-		glDisable(GL_COLOR_MATERIAL);
+		if(m_colors.isCreated())
+		{
+			glEnable(GL_COLOR_MATERIAL);
+			glEnableClientState(GL_COLOR_ARRAY);
+			m_colors.bind();
+			glColorPointer(4, GL_FLOAT, 0, NULL);
+		}
+		else
+		{
+			glDisable(GL_COLOR_MATERIAL);
+		}
 	}
 
 	if(m_normals.isCreated())
@@ -318,7 +320,7 @@ void TerrainRenderer::render(GLWidget* context) {
 	glDisableClientState(GL_INDEX_ARRAY);
 
 	/* Désactivation du material */
-	if(m_material.isValid())
+	if(!material_overridden && m_material.isValid())
 	{
 		m_material->unset(0);
 	}

@@ -1,0 +1,4 @@
+<program>
+	<shader source="shadow_cast.vert"/>
+	<shader source="shadow_cast.frag"/>
+</program>

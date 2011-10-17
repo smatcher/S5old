@@ -14,7 +14,7 @@ class MeshRenderer : public IRenderable
 
 public:
 	MeshRenderer(Mesh& mesh, Material& material);
-	void render(GLWidget* context);
+	void render(GLWidget* context, bool material_overridden);
 	bool isTransparent();
 	bool receivesShadows();
 	bool castsShadows();

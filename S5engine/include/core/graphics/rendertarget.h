@@ -11,8 +11,8 @@ class RenderTarget {
 public:
 
 	RenderTarget(Viewpoint* viewpoint);
-	RenderTarget(Viewpoint* viewpoint, FrameBufferObject* buffer, QList< QPair<RenderTexture*,FrameBufferObject::AttachmentPoint> > rendertextures, bool on_screen);
-	RenderTarget(Viewpoint* viewpoint, FrameBufferObject* buffer, RenderTexture* rendertexture, FrameBufferObject::AttachmentPoint attachmentpoint, bool on_screen);
+	RenderTarget(Viewpoint* viewpoint, FrameBufferObject* buffer, QList< QPair<RenderTexture*,FrameBufferObject::AttachmentPoint> > rendertextures, bool on_screen, bool stretch_to_screen);
+	RenderTarget(Viewpoint* viewpoint, FrameBufferObject* buffer, RenderTexture* rendertexture, FrameBufferObject::AttachmentPoint attachmentpoint, bool on_screen, bool stretch_to_screen);
 	virtual ~RenderTarget() {}
 
 	Viewpoint* getViewpoint() {return m_viewpoint;}
@@ -26,6 +26,7 @@ public:
 	int getHeight() const {return m_height;}
 	int getWidth() const {return m_width;}
 	bool isOnScreen() const {return m_on_screen;}
+	bool isStretchedToScreen() const {return m_stretch_to_screen;}
 
 private:
 	Viewpoint* m_viewpoint;
@@ -34,6 +35,7 @@ private:
 	int m_height;
 	int m_width;
 	bool m_on_screen;
+	bool m_stretch_to_screen;
 };
 
 #endif // RENDERTARGET_H

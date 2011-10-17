@@ -51,13 +51,25 @@ void RenderManager::setupProjection(RenderTarget& target, int projection_nb)
 
 	QSize resizeTo;
 	bool needResize = m_context->needResize(&resizeTo);
+	float aspect;
 
 	if(target.isOnScreen()) {
 		int side = qMax(resizeTo.width(), resizeTo.height());
 		glViewport((resizeTo.width() - side) / 2, (resizeTo.height() - side) / 2, side, side);
+		aspect = 1;
 		m_context->isResized();
 	} else {
-		glViewport(0, 0, target.getWidth(), target.getHeight());
+		int target_width = target.getWidth();
+		int target_height = target.getHeight();
+		glViewport(0, 0, target_width, target_height);
+		if(target.isStretchedToScreen()) {
+			int screen_width = resizeTo.width();
+			int screen_height = resizeTo.height();
+			//int side = qMax(screen_width, screen_height);
+			aspect = (screen_width * target_height) / (screen_height * target_width);
+		} else {
+			aspect = 1;
+		}
 	}
 
 	glMatrixMode(GL_PROJECTION);
@@ -65,7 +77,7 @@ void RenderManager::setupProjection(RenderTarget& target, int projection_nb)
 
 	if(viewpoint != NULL)
 	{
-		viewpoint->setProjection(1,projection_nb); // Pas besoin de passer l'aspect, il a déjà été pris en compte dans le viewport
+		viewpoint->setProjection(aspect,projection_nb);
 	}
 
 	glMatrixMode(GL_MODELVIEW);
@@ -136,6 +148,8 @@ void RenderManager::init(GLWidget* context)
 	new RenderTexture2D("Shadowmap", 512, 512, GL_RGBA, GL_UNSIGNED_BYTE);
 	new RenderTextureArray("Omni_Lightmap", 256, 256, 6, GL_DEPTH_COMPONENT, GL_FLOAT);
 */
+	m_shadowmap = static_cast<RenderTexture*>(*TEXTURE_MANAGER.get("Shadowmap"));
+
 	#ifndef SHOW_PASS_INFO
 		Log::topicPolicy.insert("PASS_INFO", Log::POLICY_IGNORE);
 	#endif
@@ -152,25 +166,41 @@ void RenderManager::render(double elapsed_time, SceneGraph* sg)
 
 	debug("PASS_INFO","begin");
 
-	// Render shadowmap
-	glCullFace(GL_FRONT);
+	//clear shadowmap
+	m_shadowmap->clear();
+	/// Render shadowmap
 	for(int i = 0 ; i<LIGHTING_MANAGER.managees().count() ; i++) {
+		// Render depthmap
 		Light* light = LIGHTING_MANAGER.managees().at(i);
-		FrameBufferObject fbo(256, 256, false, false);
 
-		Texture tex = TEXTURE_MANAGER.get("Omni_Lightmap");
+		Material cast_shadow_material = MATERIAL_MANAGER.get("shadow_cast");
+		Material receive_shadow_material = MATERIAL_MANAGER.get("shadow_receive");
 
-		if(tex.isValid()) {
+		Texture depthtex = TEXTURE_MANAGER.get("Omni_Lightmap");
+		if(depthtex.isValid()) {
 			RenderTexture* rt;
-			rt = static_cast<RenderTexture*>(*tex);
-			RenderTarget srt(light, &fbo, rt, FrameBufferObject::DEPTH_ATTACHMENT, false);
-			debug("PASS_INFO","light " + QString().setNum(i));
-			renderTarget(sg, srt, true);
+			FrameBufferObject fbo(256, 256, false, false);
+			rt = static_cast<RenderTexture*>(*depthtex);
+			RenderTarget srt(light, &fbo, rt, FrameBufferObject::DEPTH_ATTACHMENT, false, false);
+			debug("PASS_INFO","cast light " + QString().setNum(i));
+			glCullFace(GL_FRONT);
+			renderTarget(sg, srt, cast_shadow_material, true);
+			glCullFace(GL_BACK);
+		}
+
+		{
+			FrameBufferObject fbo(512, 512, false, true);
+			Viewpoint* viewpoint = m_camera;
+			if(m_camera == NULL) {
+				viewpoint = m_context->getViewpoint();
+			}
+			RenderTarget srt(viewpoint, &fbo, m_shadowmap, FrameBufferObject::COLOR_ATTACHMENT, false, true);
+			debug("PASS_INFO","receive light " + QString().setNum(i));
+			renderTarget(sg, srt, receive_shadow_material);
 		}
 	}
 
 	// Render
-	glCullFace(GL_BACK);
 	for(int i=0 ; i<m_rts.length() ; i++) {
 		RenderTarget* rt = m_rts[i];
 		if(rt != NULL) {
@@ -207,7 +237,13 @@ void RenderManager::render(double elapsed_time, SceneGraph* sg)
 
 void RenderManager::renderTarget(SceneGraph* sg, RenderTarget& target, bool setup_texture_matrices)
 {
+	renderTarget(sg,target, Material() , setup_texture_matrices);
+}
+
+void RenderManager::renderTarget(SceneGraph* sg, RenderTarget& target, Material forced_material, bool setup_texture_matrices)
+{
 	Viewpoint* viewpoint = target.getViewpoint();
+	bool material_is_overridden = forced_material.isValid();
 
 	if(viewpoint == NULL) {
 		logError("No viewpoint to render from, you must set a camera");
@@ -267,6 +303,10 @@ void RenderManager::renderTarget(SceneGraph* sg, RenderTarget& target, bool setu
 			LIGHTING_MANAGER.managees().at(index)->sendParameters(index);
 		}
 
+		if(material_is_overridden) {
+			forced_material->apply(0);
+		}
+
 		for(QVector<IRenderable*>::iterator it = registeredManagees.begin();
 			it != registeredManagees.end();
 			it++) {
@@ -274,7 +314,7 @@ void RenderManager::renderTarget(SceneGraph* sg, RenderTarget& target, bool setu
 			if((*it)->isTransparent()){
 				transparent_renderables.push_back(*it); // Transparent renderables are deferred for later rendering
 			} else {
-				(*it)->render(m_context);
+				(*it)->render(m_context, material_is_overridden);
 			}
 			glPopMatrix();
 		}
@@ -283,8 +323,12 @@ void RenderManager::renderTarget(SceneGraph* sg, RenderTarget& target, bool setu
 			it != transparent_renderables.end();
 			it++) {
 			glPushMatrix();
-			(*it)->render(m_context);
+			(*it)->render(m_context, material_is_overridden);
 			glPopMatrix();
+		}
+
+		if(material_is_overridden) {
+			forced_material->unset(0);
 		}
 
 		if(m_drawDebug && target.isOnScreen())	{

@@ -1,0 +1,4 @@
+<program>
+	<shader source="shadowed_phong.vert"/>
+	<shader source="shadowed_phong.frag"/>
+</program>

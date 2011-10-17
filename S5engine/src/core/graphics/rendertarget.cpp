@@ -13,13 +13,14 @@ RenderTarget::RenderTarget(Viewpoint* viewpoint) :
 {
 }
 
-RenderTarget::RenderTarget(Viewpoint *viewpoint, FrameBufferObject *buffer, QList<QPair<RenderTexture*,FrameBufferObject::AttachmentPoint> > rendertextures, bool on_screen) :
+RenderTarget::RenderTarget(Viewpoint *viewpoint, FrameBufferObject *buffer, QList<QPair<RenderTexture*,FrameBufferObject::AttachmentPoint> > rendertextures, bool on_screen, bool stretch_to_screen) :
 		m_viewpoint(viewpoint),
 		m_buffer(buffer),
 		m_rendertextures(rendertextures),
 		m_height(0),
 		m_width(0),
-		m_on_screen(on_screen)
+		m_on_screen(on_screen),
+		m_stretch_to_screen(stretch_to_screen)
 {
 	if(m_buffer != NULL) {
 		m_height = m_buffer->getHeight();
@@ -27,12 +28,13 @@ RenderTarget::RenderTarget(Viewpoint *viewpoint, FrameBufferObject *buffer, QLis
 	}
 }
 
-RenderTarget::RenderTarget(Viewpoint *viewpoint, FrameBufferObject *buffer, RenderTexture *rendertexture, FrameBufferObject::AttachmentPoint attachmentpoint, bool on_screen) :
+RenderTarget::RenderTarget(Viewpoint *viewpoint, FrameBufferObject *buffer, RenderTexture *rendertexture, FrameBufferObject::AttachmentPoint attachmentpoint, bool on_screen, bool stretch_to_screen) :
 		m_viewpoint(viewpoint),
 		m_buffer(buffer),
 		m_height(0),
 		m_width(0),
-		m_on_screen(on_screen)
+		m_on_screen(on_screen),
+		m_stretch_to_screen(stretch_to_screen)
 {
 	if(m_buffer != NULL) {
 		m_height = m_buffer->getHeight();

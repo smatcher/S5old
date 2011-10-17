@@ -15,6 +15,7 @@ public:
 
 	virtual GLuint getRenderTextureId(int i= 0);
 	virtual void swap();
+	virtual void clear();
 
 	virtual void setTextureMatrix(const Matrix4d& texture_matrix, int i = 0) {}
 

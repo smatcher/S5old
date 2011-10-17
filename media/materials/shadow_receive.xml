@@ -1,5 +1,6 @@
 <material>
-	<texture texunit="1">Shadowmap</texture>
+<!--	<texture texunit="0">Shadowmap</texture> -->
+	<texture texunit="0">black.tga</texture>
 	<texture texunit="1">Omni_Lightmap</texture>
 	<program>receive_shadow</program>
 </material>

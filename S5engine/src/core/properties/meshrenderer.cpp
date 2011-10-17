@@ -12,14 +12,14 @@ MeshRenderer::MeshRenderer(Mesh& mesh, Material& material) : IRenderable("MeshRe
 	m_material = material;
 }
 
-void MeshRenderer::render(GLWidget* context)
+void MeshRenderer::render(GLWidget* context, bool material_overridden)
 {
 	// The program is passed to the mesh in order to set the attributes
 	QGLShaderProgram* program = NULL;
 
 	node()->getGlobalTransform().glMultf();
 
-	if(!m_material.isValid())
+	if(!material_overridden && !m_material.isValid())
 	{
 		debug( "RENDERING" , "MeshRenderer : no material to apply for " << node()->getName());
 	}
@@ -41,15 +41,19 @@ void MeshRenderer::render(GLWidget* context)
 				 }
 			#endif
 
-			if(m_material.isValid()) {
-				m_material->apply(i);
-				program = m_material->program(i);
+			if(!material_overridden) {
+				if(m_material.isValid()) {
+					m_material->apply(i);
+					program = m_material->program(i);
+				}
 			}
 
 			m_mesh->draw(i,program);
 
-			if(m_material.isValid()) {
-				m_material->unset(i);
+			if(!material_overridden) {
+				if(m_material.isValid()) {
+					m_material->unset(i);
+				}
 			}
 
 			#ifdef WITH_TOOLS

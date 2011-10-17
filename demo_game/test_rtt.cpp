@@ -143,29 +143,31 @@ int main(int argc, char *argv[])
 	Mesh cube = MESH_MANAGER.get("Cube");
 	Mesh sphere = MESH_MANAGER.get("Sphere_16_32");
 	Mesh plane = MESH_MANAGER.get("Plane");
+	/*
 	Material rtt = MATERIAL_MANAGER.get("rtt");
 	Material rtt_cube = MATERIAL_MANAGER.get("rtt_cube");
 	Material rtt0 = MATERIAL_MANAGER.get("rtt_light0_cube");
 	Material rtt_array = MATERIAL_MANAGER.get("rtt_array");
-	Material shadow_rec = MATERIAL_MANAGER.get("shadow_receive");
+	*/
+	Material shadowed_phong = MATERIAL_MANAGER.get("shadowed_phong");
 	/*
 	nRttCube->addProperty(new MeshRenderer(cube,rtt));
 	nRttSphere->addProperty(new MeshRenderer(sphere, rtt_cube));
 	nRttL0->addProperty(new MeshRenderer(sphere,rtt_array));
 	*/
 
-	nCub1->addProperty(new MeshRenderer(cube,shadow_rec));
-	nCub2->addProperty(new MeshRenderer(cube,shadow_rec));
-	nCub3->addProperty(new MeshRenderer(cube,shadow_rec));
-	nCub4->addProperty(new MeshRenderer(cube,shadow_rec));
-	nCub5->addProperty(new MeshRenderer(cube,shadow_rec));
-	nPlane->addProperty(new MeshRenderer(plane,shadow_rec));
-	nPlane1->addProperty(new MeshRenderer(plane,shadow_rec));
-	nPlane2->addProperty(new MeshRenderer(plane,shadow_rec));
-	nPlane3->addProperty(new MeshRenderer(plane,shadow_rec));
-	nPlane4->addProperty(new MeshRenderer(plane,shadow_rec));
-	nPlane5->addProperty(new MeshRenderer(plane,shadow_rec));
-	nPlane6->addProperty(new MeshRenderer(plane,shadow_rec));
+	nCub1->addProperty(new MeshRenderer(cube,shadowed_phong));
+	nCub2->addProperty(new MeshRenderer(cube,shadowed_phong));
+	nCub3->addProperty(new MeshRenderer(cube,shadowed_phong));
+	nCub4->addProperty(new MeshRenderer(cube,shadowed_phong));
+	nCub5->addProperty(new MeshRenderer(cube,shadowed_phong));
+	nPlane->addProperty(new MeshRenderer(plane,shadowed_phong));
+	nPlane1->addProperty(new MeshRenderer(plane,shadowed_phong));
+	nPlane2->addProperty(new MeshRenderer(plane,shadowed_phong));
+	nPlane3->addProperty(new MeshRenderer(plane,shadowed_phong));
+	nPlane4->addProperty(new MeshRenderer(plane,shadowed_phong));
+	nPlane5->addProperty(new MeshRenderer(plane,shadowed_phong));
+	nPlane6->addProperty(new MeshRenderer(plane,shadowed_phong));
 
 	RENDER_MANAGER.setDrawDebug(true);
 	RenderManager::Background background;

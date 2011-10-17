@@ -72,3 +72,8 @@ void RenderTextureCubemap::swap()
 	m_gltexture = m_render_cube;
 	m_render_cube = tmp;
 }
+
+void RenderTextureCubemap::clear()
+{
+
+}

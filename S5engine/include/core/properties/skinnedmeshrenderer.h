@@ -17,7 +17,7 @@ public:
 	/// Destructor
 	virtual ~SkinnedMeshRenderer();
 
-	virtual void render(GLWidget* context);
+	virtual void render(GLWidget* context, bool material_overridden);
 	bool isTransparent();
 	bool receivesShadows();
 	bool castsShadows();
