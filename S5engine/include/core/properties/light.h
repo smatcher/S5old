@@ -17,7 +17,7 @@ public:
 	virtual int getNbProjections();
 	virtual Viewpoint::Style getStyle();
 
-	virtual void setProjection(double aspect, int projection_nb);
+	virtual void setProjection(double aspect, double scale, int projection_nb);
 
 	virtual void applyTransform(int projection_nb);
 	virtual void applyOnlyRotation(int projection_nb);

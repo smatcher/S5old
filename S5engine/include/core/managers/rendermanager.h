@@ -71,6 +71,7 @@ public:
 	virtual ~RenderManager();
 
 	void init(GLWidget* context);
+	void createResources();
 	void render(double elapsed_time, SceneGraph* sg);
 
 	void setCurrentCamera(Camera* cam);

@@ -54,13 +54,15 @@ const Matrix4d& Camera::getProjection(double aspect, int projection_nb)
 		m_lastAspect = aspect;
 		computeProjection();
 	}
+
 	return m_projection;
 }
 
-void Camera::setProjection(double aspect, int projection_nb)
+void Camera::setProjection(double aspect, double scale, int projection_nb)
 {
 //	gluPerspective(m_yfov,aspect,m_znear,m_zfar);
 	glLoadMatrixd(getProjection(aspect, projection_nb));
+	glScaled(scale, scale, 1);
 }
 
 void Camera::setParameters(double yfov, double znear, double zfar)

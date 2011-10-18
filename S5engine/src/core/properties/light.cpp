@@ -104,7 +104,7 @@ Viewpoint::Style Light::getStyle()
 	return PROXY_CUBEMAP;
 }
 
-void Light::setProjection(double aspect, int projection_nb)
+void Light::setProjection(double aspect, double scale, int projection_nb)
 {
 	Matrix4d mat;
 	const float h = 1.0f/tan(90*M_PI/360);

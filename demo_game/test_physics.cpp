@@ -94,12 +94,22 @@ int main(int argc, char *argv[])
 	Mesh cube = MESH_MANAGER.get("Cube");
 	Mesh sphere = MESH_MANAGER.get("Sphere_16_32");
 	Mesh mesh = MESH_MANAGER.get("duck");
+	/*
 	Material duck = MATERIAL_MANAGER.get("duck");
 	Material unicorn = MATERIAL_MANAGER.get("unicorn");
 	Material star = MATERIAL_MANAGER.get("star");
 	Material ball = MATERIAL_MANAGER.get("ball");
 	Material gargoyle = MATERIAL_MANAGER.get("gargoyle");
 	Material sand = MATERIAL_MANAGER.get("sand");
+	*/
+
+	Material duck = MATERIAL_MANAGER.get("shadowed_phong");
+	Material unicorn = MATERIAL_MANAGER.get("shadowed_phong");
+	Material star = MATERIAL_MANAGER.get("shadowed_phong");
+	Material ball = MATERIAL_MANAGER.get("shadowed_phong");
+	Material gargoyle = MATERIAL_MANAGER.get("shadowed_phong");
+	Material sand = MATERIAL_MANAGER.get("shadowed_phong");
+
 	Sample sample = SAMPLE_MANAGER.get("quacking.wav");
 
 	nDuck->addProperty(new MeshRenderer(mesh,duck));

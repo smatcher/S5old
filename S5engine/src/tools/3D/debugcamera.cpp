@@ -85,9 +85,10 @@ const Matrix4d& DebugCamera::getProjection(double aspect, int projection_nb)
 	return mat;
 }
 
-void DebugCamera::setProjection(double aspect, int projection_nb)
+void DebugCamera::setProjection(double aspect, double scale, int projection_nb)
 {
 	gluPerspective(70,aspect,0.01,1000);
+	glScaled(scale, scale, 1);
 }
 
 // Mise à jour de la matrice modelview

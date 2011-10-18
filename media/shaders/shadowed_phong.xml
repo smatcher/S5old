@@ -1,4 +1,5 @@
 <program>
 	<shader source="shadowed_phong.vert"/>
 	<shader source="shadowed_phong.frag"/>
+	<uniform name="shadowmap" value="0" type="int"/>
 </program>

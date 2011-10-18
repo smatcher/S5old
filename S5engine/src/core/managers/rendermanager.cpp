@@ -51,12 +51,13 @@ void RenderManager::setupProjection(RenderTarget& target, int projection_nb)
 
 	QSize resizeTo;
 	bool needResize = m_context->needResize(&resizeTo);
-	float aspect;
+	float aspect, scale;
 
 	if(target.isOnScreen()) {
 		int side = qMax(resizeTo.width(), resizeTo.height());
 		glViewport((resizeTo.width() - side) / 2, (resizeTo.height() - side) / 2, side, side);
 		aspect = 1;
+		scale = 1;
 		m_context->isResized();
 	} else {
 		int target_width = target.getWidth();
@@ -66,9 +67,11 @@ void RenderManager::setupProjection(RenderTarget& target, int projection_nb)
 			int screen_width = resizeTo.width();
 			int screen_height = resizeTo.height();
 			//int side = qMax(screen_width, screen_height);
-			aspect = (screen_width * target_height) / (screen_height * target_width);
+			aspect = float(screen_width * target_height) / float(screen_height * target_width);
+			scale = aspect;
 		} else {
 			aspect = 1;
+			scale = 1;
 		}
 	}
 
@@ -77,7 +80,7 @@ void RenderManager::setupProjection(RenderTarget& target, int projection_nb)
 
 	if(viewpoint != NULL)
 	{
-		viewpoint->setProjection(aspect,projection_nb);
+		viewpoint->setProjection(aspect,scale,projection_nb);
 	}
 
 	glMatrixMode(GL_MODELVIEW);
@@ -115,6 +118,13 @@ void RenderManager::setupProjection(RenderTarget& target, int projection_nb)
 }
 */
 
+void RenderManager::createResources()
+{
+	// Setting up shadow textures
+	m_shadowmap = new RenderTexture2D("Shadowmap", 512, 512, GL_RGBA, GL_UNSIGNED_BYTE);
+	new RenderTextureArray("Omni_Lightmap", 256, 256, 6, GL_DEPTH_COMPONENT, GL_FLOAT);
+}
+
 void RenderManager::init(GLWidget* context)
 {
 	m_context = context;
@@ -142,13 +152,6 @@ void RenderManager::init(GLWidget* context)
 		"screen_size",
 		new ShaderProgramData::Uniform<QVector2D>("screen_size",m_screen_size, 1, 1)
 	);
-
-	// Setting up shadow textures
-	/*
-	new RenderTexture2D("Shadowmap", 512, 512, GL_RGBA, GL_UNSIGNED_BYTE);
-	new RenderTextureArray("Omni_Lightmap", 256, 256, 6, GL_DEPTH_COMPONENT, GL_FLOAT);
-*/
-	m_shadowmap = static_cast<RenderTexture*>(*TEXTURE_MANAGER.get("Shadowmap"));
 
 	#ifndef SHOW_PASS_INFO
 		Log::topicPolicy.insert("PASS_INFO", Log::POLICY_IGNORE);

@@ -18,7 +18,7 @@ public:
 	virtual int getNbProjections() = 0;
 	virtual Style getStyle() = 0;
 
-	virtual void setProjection(double aspect, int projection_nb) = 0;
+	virtual void setProjection(double aspect, double scale, int projection_nb) = 0;
 
 	virtual void applyTransform(int projection_nb) = 0;
 	virtual void applyOnlyRotation(int projection_nb)= 0;
