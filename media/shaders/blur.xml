@@ -1,0 +1,7 @@
+<program>
+	<shader source="blur.vert"/>
+	<shader source="blur.frag"/>
+	<uniform name="tex_source" value="0" type="int"/>
+	<uniform name="offset" value="0.002" type="float"/>
+	<uniform name="glow_factor" value="1.0" type="float"/>
+</program>

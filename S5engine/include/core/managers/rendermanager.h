@@ -19,6 +19,7 @@ class Camera;
 class SceneGraph;
 class RenderTarget;
 class RenderTexture;
+class FrameBufferObject;
 
 class RenderManager : public Manager<IRenderable>
 {
@@ -58,12 +59,13 @@ private :
 
 	// shadowmap render textures
 	RenderTexture* m_shadowmap;
+	FrameBufferObject* m_postprocessfbo;
 
 	QList<RenderTarget*> m_rts;
 
 	void renderTarget(SceneGraph* sg, RenderTarget& target, bool setup_texture_matrices = false);
 	void renderTarget(SceneGraph* sg, RenderTarget& target, Material forced_material, bool setup_texture_matrices = false);
-	void postprocessPass(RenderTarget& target, QGLShaderProgram* program);
+	void postprocessPass(RenderTexture& texture, Material material);
 	void setupProjection(RenderTarget& target, int projection_nb);
 	void applyBackground(RenderTarget& target, int projection_nb);
 

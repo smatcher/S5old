@@ -73,7 +73,3 @@ void RenderTextureCubemap::swap()
 	m_render_cube = tmp;
 }
 
-void RenderTextureCubemap::clear()
-{
-
-}

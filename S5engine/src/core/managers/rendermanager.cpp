@@ -31,7 +31,13 @@
 
 //#define SHOW_PASS_INFO
 
-RenderManager::RenderManager() : m_context(NULL), m_camera(NULL), m_cameraChanged(true), m_drawDebug(false)
+RenderManager::RenderManager() :
+	m_context(NULL),
+	m_camera(NULL),
+	m_cameraChanged(true),
+	m_drawDebug(false),
+	m_shadowmap(NULL),
+	m_postprocessfbo(NULL)
 {
 	m_defaultBackground.type = NO_CLEAR;
 }
@@ -123,6 +129,9 @@ void RenderManager::createResources()
 	// Setting up shadow textures
 	m_shadowmap = new RenderTexture2D("Shadowmap", 512, 512, GL_RGBA, GL_UNSIGNED_BYTE);
 	new RenderTextureArray("Omni_Lightmap", 256, 256, 6, GL_DEPTH_COMPONENT, GL_FLOAT);
+
+	// Setting up postprocessing FBO
+	m_postprocessfbo = new FrameBufferObject(512,512, false, false);
 }
 
 void RenderManager::init(GLWidget* context)
@@ -170,7 +179,8 @@ void RenderManager::render(double elapsed_time, SceneGraph* sg)
 	debug("PASS_INFO","begin");
 
 	//clear shadowmap
-	m_shadowmap->clear();
+	Material clear_material = MATERIAL_MANAGER.get("clear_target");
+	postprocessPass(*m_shadowmap, clear_material);
 	/// Render shadowmap
 	for(int i = 0 ; i<LIGHTING_MANAGER.managees().count() ; i++) {
 		// Render depthmap
@@ -180,6 +190,7 @@ void RenderManager::render(double elapsed_time, SceneGraph* sg)
 		Material receive_shadow_material = MATERIAL_MANAGER.get("shadow_receive");
 
 		Texture depthtex = TEXTURE_MANAGER.get("Omni_Lightmap");
+
 		if(depthtex.isValid()) {
 			RenderTexture* rt;
 			FrameBufferObject fbo(256, 256, false, false);
@@ -203,6 +214,11 @@ void RenderManager::render(double elapsed_time, SceneGraph* sg)
 		}
 	}
 
+	//blur shadowmap
+	Material blur_material = MATERIAL_MANAGER.get("blur_shadowmap");
+	postprocessPass(*m_shadowmap, blur_material);
+	postprocessPass(*m_shadowmap, blur_material);
+
 	// Render
 	for(int i=0 ; i<m_rts.length() ; i++) {
 		RenderTarget* rt = m_rts[i];
@@ -211,11 +227,11 @@ void RenderManager::render(double elapsed_time, SceneGraph* sg)
 			renderTarget(sg, *rt);
 		}
 	}
-
 	Viewpoint* viewpoint = m_camera;
 	if(m_camera == NULL) {
 		viewpoint = m_context->getViewpoint();
 	}
+
 	RenderTarget crt(viewpoint);
 	debug("PASS_INFO","screen");
 	renderTarget(sg, crt);
@@ -357,8 +373,44 @@ void RenderManager::renderTarget(SceneGraph* sg, RenderTarget& target, Material 
 	target.release();
 }
 
-void RenderManager::postprocessPass(RenderTarget& target, QGLShaderProgram* program)
+void RenderManager::postprocessPass(RenderTexture& texture, Material material)
 {
+	debugGL("before postprocessing");
+
+	if(material.isValid()) {
+		m_postprocessfbo->bind();
+		m_postprocessfbo->attachTexture(&texture, FrameBufferObject::COLOR_ATTACHMENT, GL_TEXTURE_2D);
+		m_postprocessfbo->commitTextures(0);
+
+		debugGL("preparing FBO for postprocessing");
+		glClear(GL_DEPTH_BUFFER_BIT);
+
+		glMatrixMode(GL_PROJECTION);
+		glLoadIdentity();
+		glMatrixMode(GL_MODELVIEW);
+		glLoadIdentity();
+
+		material->apply(0);
+
+		int width = m_postprocessfbo->getWidth();
+		int height = m_postprocessfbo->getHeight();
+		glViewport(0,0,width,height);
+		glBegin(GL_QUADS);
+			glTexCoord2f(0.0f,0.0f);
+			glVertex3d(-1,-1,0.0f);
+			glTexCoord2f(1.0f,0.0f);
+			glVertex3d(1,-1,0.0f);
+			glTexCoord2f(1.0f,1.0f);
+			glVertex3d(1,1,0.0f);
+			glTexCoord2f(0.0f,1.0f);
+			glVertex3d(-1,1,0.0f);
+		glEnd();
+
+		material->unset(0);
+
+		m_postprocessfbo->swapTextures();
+		m_postprocessfbo->release();
+	}
 }
 
 void RenderManager::setCurrentCamera(Camera* cam)

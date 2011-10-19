@@ -48,8 +48,3 @@ void RenderTexture2D::swap()
 	m_gltexture = m_render_texture;
 	m_render_texture = tmp;
 }
-
-void RenderTexture2D::clear()
-{
-
-}

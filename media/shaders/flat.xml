@@ -1,4 +1,5 @@
 <program>
 	<shader source="flat.vert"/>
 	<shader source="flat.frag"/>
+	<uniform name="color_map" value="0" type="int"/>
 </program>

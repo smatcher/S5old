@@ -1,0 +1,4 @@
+<material>
+	<texture texunit="0">black.tga</texture>
+	<program>flat</program>
+</material>
