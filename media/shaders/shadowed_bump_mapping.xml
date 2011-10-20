@@ -1,0 +1,7 @@
+<program>
+	<shader type="vertex" source="shadowed_bump_mapping.vert"/>
+	<shader type="fragment" source="shadowed_bump_mapping.frag"/>
+	<uniform name="shadow_map" value="0" type="int"/>
+	<uniform name="color_map" value="1" type="int"/>
+	<uniform name="normal_map" value="2" type="int"/>
+</program>

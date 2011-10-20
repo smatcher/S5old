@@ -28,6 +28,8 @@
 #define GL_MULTISAMPLE  0x809D
 #endif
 
+#define POSTPROCESS_RESOLUTION 2048
+#define OMNIDEPTH_RESOLUTION 1024
 
 //#define SHOW_PASS_INFO
 
@@ -127,11 +129,11 @@ void RenderManager::setupProjection(RenderTarget& target, int projection_nb)
 void RenderManager::createResources()
 {
 	// Setting up shadow textures
-	m_shadowmap = new RenderTexture2D("Shadowmap", 512, 512, GL_RGBA, GL_UNSIGNED_BYTE);
-	new RenderTextureArray("Omni_Lightmap", 256, 256, 6, GL_DEPTH_COMPONENT, GL_FLOAT);
+	m_shadowmap = new RenderTexture2D("Shadowmap", POSTPROCESS_RESOLUTION, POSTPROCESS_RESOLUTION, GL_RGBA, GL_UNSIGNED_BYTE);
+	new RenderTextureArray("Omni_Lightmap", OMNIDEPTH_RESOLUTION, OMNIDEPTH_RESOLUTION, 6, GL_DEPTH_COMPONENT, GL_FLOAT);
 
 	// Setting up postprocessing FBO
-	m_postprocessfbo = new FrameBufferObject(512,512, false, false);
+	m_postprocessfbo = new FrameBufferObject(POSTPROCESS_RESOLUTION,POSTPROCESS_RESOLUTION, false, false);
 }
 
 void RenderManager::init(GLWidget* context)
@@ -193,8 +195,8 @@ void RenderManager::render(double elapsed_time, SceneGraph* sg)
 
 		if(depthtex.isValid()) {
 			RenderTexture* rt;
-			FrameBufferObject fbo(256, 256, false, false);
 			rt = static_cast<RenderTexture*>(*depthtex);
+			FrameBufferObject fbo(rt->getWidth(), rt->getHeight(), false, false);
 			RenderTarget srt(light, &fbo, rt, FrameBufferObject::DEPTH_ATTACHMENT, false, false);
 			debug("PASS_INFO","cast light " + QString().setNum(i));
 			glCullFace(GL_FRONT);
@@ -203,7 +205,7 @@ void RenderManager::render(double elapsed_time, SceneGraph* sg)
 		}
 
 		{
-			FrameBufferObject fbo(512, 512, false, true);
+			FrameBufferObject fbo(m_shadowmap->getWidth(), m_shadowmap->getHeight(), false, true);
 			Viewpoint* viewpoint = m_camera;
 			if(m_camera == NULL) {
 				viewpoint = m_context->getViewpoint();

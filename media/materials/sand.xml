@@ -1,10 +1,11 @@
 <material>
-	<texture texunit="0">sand.tga</texture>
-	<texture texunit="1">normalmap_sand.tga</texture>
+	<texture texunit="0">Shadowmap</texture>
+	<texture texunit="1">sand.tga</texture>
+	<texture texunit="2">normalmap_sand.tga</texture>
 	<diffuse>1.0 1.0 1.0 1.0</diffuse>
 	<specular>0.1 0.1 0.1 1.0</specular>
 	<ambient>1.0 1.0 1.0 1.0</ambient>
 	<emission>0.0 0.0 0.0 1.0</emission>
 	<shininess>1.0</shininess>
-	<program>bump_mapping</program>
+	<program>shadowed_bump_mapping</program>
 </material>
