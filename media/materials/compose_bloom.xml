@@ -1,0 +1,5 @@
+<material>
+	<texture texunit="0">Colormap</texture>
+	<texture texunit="1">Bloommap</texture>
+	<program>add_blurred</program>
+</material>

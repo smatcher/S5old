@@ -72,18 +72,33 @@ void FrameBufferObject::attachTexture(RenderTexture* tex, AttachmentPoint attach
 
 void FrameBufferObject::commitTextures(int passNb)
 {
-	bool has_color = false;
+	int nb_color_buffers = 0;
 
 	// attach the textures to FBO depth attachment point
 	for(int i=0 ; i<m_textures.size() ; i++) {
 		RenderTexture* tex = m_textures[i].tex;
 		AttachmentPoint attachment = m_textures[i].ap;
-		has_color = has_color || attachment == COLOR_ATTACHMENT;
+		if(attachment != DEPTH_ATTACHMENT && attachment != STENCIL_ATTACHMENT) {
+			nb_color_buffers++;
+		}
 		glFramebufferTexture2D(GL_FRAMEBUFFER, attachment, m_textures[i].textarget, tex->getRenderTextureId(passNb),0);
 		debugGL("attaching");
 	}
 
-	if(has_color) {
+	// Specify draw and read buffers
+	if(nb_color_buffers > 0) {
+		int i=0;
+		GLenum* bufs = new GLenum[nb_color_buffers]();
+		for(int j=0 ; j<m_textures.size() ; j++) {
+			AttachmentPoint attachment = m_textures[j].ap;
+			if(attachment != DEPTH_ATTACHMENT && attachment != STENCIL_ATTACHMENT) {
+				bufs[i] = attachment;
+				i++;
+			}
+		}
+		glDrawBuffers(nb_color_buffers, bufs);
+		//glReadBuffers(nb_color_buffers, bufs);
+		delete[] bufs;
 	} else {
 		glDrawBuffer(GL_NONE);
 		glReadBuffer(GL_NONE);

@@ -75,12 +75,15 @@ private :
 
 	// shadowmap render textures
 	RenderTexture* m_shadowmap;
+	RenderTexture* m_bloommap;
+	RenderTexture* m_colormap;
 	FrameBufferObject* m_postprocessfbo;
 
 	QList<RenderTarget*> m_rts;
 
 	void renderTarget(SceneGraph* sg, RenderTarget& target, RenderPassInfo& pass_info);
-	void postprocessPass(RenderTexture& texture, Material material);
+	void postprocessPass(RenderTexture* texture, Material material);
+	void debugDisplayTexture(Texture texture, int x, int y, int width, int height);
 	void setupProjection(RenderTarget& target, int projection_nb);
 	void applyBackground(RenderTarget& target, int projection_nb);
 

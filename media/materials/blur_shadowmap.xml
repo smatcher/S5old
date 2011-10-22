@@ -1,4 +1,4 @@
 <material>
 	<texture texunit="0">Shadowmap</texture>
-	<program>blur</program>
+	<program>blur_shadowmap</program>
 </material>

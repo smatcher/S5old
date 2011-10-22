@@ -1,7 +1,7 @@
 <material>
 	<texture texunit="0">star.tga</texture>
-	<receive_shadows>false</receive_shadows>
-	<cast_shadows>false</cast_shadows>
+	<receive_shadow>false</receive_shadow>
+	<cast_shadow>false</cast_shadow>
 	<transparent>true</transparent>
 	<doublesided>true</doublesided>
 </material>

@@ -39,6 +39,8 @@ RenderManager::RenderManager() :
 	m_cameraChanged(true),
 	m_drawDebug(false),
 	m_shadowmap(NULL),
+	m_bloommap(NULL),
+	m_colormap(NULL),
 	m_postprocessfbo(NULL)
 {
 	m_defaultBackground.type = NO_CLEAR;
@@ -132,6 +134,12 @@ void RenderManager::createResources()
 	m_shadowmap = new RenderTexture2D("Shadowmap", POSTPROCESS_RESOLUTION, POSTPROCESS_RESOLUTION, GL_RGBA, GL_UNSIGNED_BYTE);
 	new RenderTextureArray("Omni_Lightmap", OMNIDEPTH_RESOLUTION, OMNIDEPTH_RESOLUTION, 6, GL_DEPTH_COMPONENT, GL_FLOAT);
 
+	// Setting up color map
+	m_colormap = new RenderTexture2D("Colormap", POSTPROCESS_RESOLUTION, POSTPROCESS_RESOLUTION, GL_RGBA, GL_UNSIGNED_BYTE);
+
+	// Setting up bloom map
+	m_bloommap = new RenderTexture2D("Bloommap", POSTPROCESS_RESOLUTION, POSTPROCESS_RESOLUTION, GL_RGBA, GL_UNSIGNED_BYTE);
+
 	// Setting up postprocessing FBO
 	m_postprocessfbo = new FrameBufferObject(POSTPROCESS_RESOLUTION,POSTPROCESS_RESOLUTION, false, false);
 }
@@ -185,7 +193,7 @@ void RenderManager::render(double elapsed_time, SceneGraph* sg)
 
 	//clear shadowmap
 	Material clear_material = MATERIAL_MANAGER.get("clear_target");
-	postprocessPass(*m_shadowmap, clear_material);
+	postprocessPass(m_shadowmap, clear_material);
 	/// Render shadowmap
 	for(int i = 0 ; i<LIGHTING_MANAGER.managees().count() ; i++) {
 		// Render depthmap
@@ -217,7 +225,7 @@ void RenderManager::render(double elapsed_time, SceneGraph* sg)
 			if(m_camera == NULL) {
 				viewpoint = m_context->getViewpoint();
 			}
-			RenderTarget srt(viewpoint, &fbo, m_shadowmap, FrameBufferObject::COLOR_ATTACHMENT, false, true);
+			RenderTarget srt(viewpoint, &fbo, m_shadowmap, FrameBufferObject::COLOR_ATTACHMENT_0, false, true);
 			debug("PASS_INFO","receive light " + QString().setNum(i));
 			pass_info.forced_material = receive_shadow_material;
 			pass_info.type = RECEIVE_SHADOW_PASS;
@@ -227,8 +235,8 @@ void RenderManager::render(double elapsed_time, SceneGraph* sg)
 
 	//blur shadowmap
 	Material blur_material = MATERIAL_MANAGER.get("blur_shadowmap");
-	postprocessPass(*m_shadowmap, blur_material);
-	postprocessPass(*m_shadowmap, blur_material);
+	postprocessPass(m_shadowmap, blur_material);
+	postprocessPass(m_shadowmap, blur_material);
 
 	// Render
 	for(int i=0 ; i<m_rts.length() ; i++) {
@@ -245,11 +253,38 @@ void RenderManager::render(double elapsed_time, SceneGraph* sg)
 		viewpoint = m_context->getViewpoint();
 	}
 
+/*
 	RenderTarget crt(viewpoint);
 	debug("PASS_INFO","screen");
 	pass_info.forced_material = Material();
 	pass_info.type = FINAL_PASS;
 	renderTarget(sg, crt, pass_info);
+*/
+	{
+		FrameBufferObject fbo(m_shadowmap->getWidth(), m_shadowmap->getHeight(), false, true);
+		Viewpoint* viewpoint = m_camera;
+		if(m_camera == NULL) {
+			viewpoint = m_context->getViewpoint();
+		}
+		QList< QPair<RenderTexture*, FrameBufferObject::AttachmentPoint> > mrts;
+		mrts.push_back(QPair<RenderTexture*, FrameBufferObject::AttachmentPoint>(m_colormap, FrameBufferObject::COLOR_ATTACHMENT_0));
+		mrts.push_back(QPair<RenderTexture*, FrameBufferObject::AttachmentPoint>(m_bloommap, FrameBufferObject::COLOR_ATTACHMENT_1));
+		RenderTarget srt(viewpoint, &fbo, mrts, false, true);
+		debug("PASS_INFO","mrt color bloom");
+		pass_info.forced_material = Material();
+		pass_info.type = FINAL_PASS;
+		renderTarget(sg, srt, pass_info);
+	}
+
+	//blur bloommap
+	blur_material = MATERIAL_MANAGER.get("blur");
+	postprocessPass(m_bloommap, blur_material);
+	postprocessPass(m_bloommap, blur_material);
+
+	Material compose_bloom = MATERIAL_MANAGER.get("compose_bloom");
+	postprocessPass(NULL, compose_bloom);
+
+	debugDisplayTexture(*m_bloommap,0,0,256,256);
 
 	m_context->swapBuffers();
 
@@ -389,14 +424,16 @@ void RenderManager::renderTarget(SceneGraph* sg, RenderTarget& target, RenderPas
 	target.release();
 }
 
-void RenderManager::postprocessPass(RenderTexture& texture, Material material)
+void RenderManager::postprocessPass(RenderTexture* texture, Material material)
 {
 	debugGL("before postprocessing");
 
 	if(material.isValid()) {
-		m_postprocessfbo->bind();
-		m_postprocessfbo->attachTexture(&texture, FrameBufferObject::COLOR_ATTACHMENT, GL_TEXTURE_2D);
-		m_postprocessfbo->commitTextures(0);
+		if(texture != NULL) {
+			m_postprocessfbo->bind();
+			m_postprocessfbo->attachTexture(texture, FrameBufferObject::COLOR_ATTACHMENT_0, GL_TEXTURE_2D);
+			m_postprocessfbo->commitTextures(0);
+		}
 
 		debugGL("preparing FBO for postprocessing");
 		glClear(GL_DEPTH_BUFFER_BIT);
@@ -408,8 +445,18 @@ void RenderManager::postprocessPass(RenderTexture& texture, Material material)
 
 		material->apply(0);
 
-		int width = m_postprocessfbo->getWidth();
-		int height = m_postprocessfbo->getHeight();
+		int width;
+		int height;
+
+		if(texture != NULL) {
+			width = m_postprocessfbo->getWidth();
+			height = m_postprocessfbo->getHeight();
+		} else {
+			QRect geom = m_context->geometry();
+			width = geom.width();
+			height = geom.height();
+		}
+
 		glViewport(0,0,width,height);
 		glBegin(GL_QUADS);
 			glTexCoord2f(0.0f,0.0f);
@@ -424,9 +471,38 @@ void RenderManager::postprocessPass(RenderTexture& texture, Material material)
 
 		material->unset(0);
 
-		m_postprocessfbo->swapTextures();
-		m_postprocessfbo->release();
+		if(texture != NULL) {
+			m_postprocessfbo->swapTextures();
+			m_postprocessfbo->release();
+		}
 	}
+}
+
+void RenderManager::debugDisplayTexture(Texture texture, int x, int y, int width, int height)
+{
+	glClear(GL_DEPTH_BUFFER_BIT);
+
+	glDisable(GL_LIGHTING);
+
+	glMatrixMode(GL_PROJECTION);
+	glLoadIdentity();
+	glMatrixMode(GL_MODELVIEW);
+	glLoadIdentity();
+
+	glViewport(x,y,width,height);
+	texture->bind();
+	glBegin(GL_QUADS);
+		glTexCoord2f(0.0f,0.0f);
+		glVertex3d(-1,-1,0.0f);
+		glTexCoord2f(1.0f,0.0f);
+		glVertex3d(1,-1,0.0f);
+		glTexCoord2f(1.0f,1.0f);
+		glVertex3d(1,1,0.0f);
+		glTexCoord2f(0.0f,1.0f);
+		glVertex3d(-1,1,0.0f);
+	glEnd();
+
+	glEnable(GL_LIGHTING);
 }
 
 void RenderManager::setCurrentCamera(Camera* cam)
@@ -456,7 +532,7 @@ const Camera* RenderManager::getCurrentCamera()
 void RenderManager::setBackground(const Background &background)
 {
 	m_defaultBackground = background;
-};
+}
 
 void RenderManager::applyBackground(RenderTarget& target, int projection_nb)
 {
