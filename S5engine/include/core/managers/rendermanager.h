@@ -42,6 +42,22 @@ public :
 		Vector3f color;
 	};
 
+	enum RenderPassType
+	{
+		CAST_SHADOW_PASS,
+		RECEIVE_SHADOW_PASS,
+		FINAL_PASS
+	};
+
+	struct RenderPassInfo
+	{
+		RenderPassType type;
+		bool setup_texture_matrices;
+		Material forced_material;
+
+		bool isMaterialOverridden() {return forced_material.isValid();}
+	};
+
 protected :
 	RenderManager();
 
@@ -63,8 +79,7 @@ private :
 
 	QList<RenderTarget*> m_rts;
 
-	void renderTarget(SceneGraph* sg, RenderTarget& target, bool setup_texture_matrices = false);
-	void renderTarget(SceneGraph* sg, RenderTarget& target, Material forced_material, bool setup_texture_matrices = false);
+	void renderTarget(SceneGraph* sg, RenderTarget& target, RenderPassInfo& pass_info);
 	void postprocessPass(RenderTexture& texture, Material material);
 	void setupProjection(RenderTarget& target, int projection_nb);
 	void applyBackground(RenderTarget& target, int projection_nb);

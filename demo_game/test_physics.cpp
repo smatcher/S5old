@@ -103,7 +103,7 @@ int main(int argc, char *argv[])
 	Sample sample = SAMPLE_MANAGER.get("quacking.wav");
 
 	nDuck->addProperty(new MeshRenderer(mesh,duck));
-	//nStar->addProperty(new MeshRenderer(plane,star));
+	nStar->addProperty(new MeshRenderer(plane,star));
 	//nUni->addProperty(new MeshRenderer(cube,unicorn));
 	nGarg->addProperty(new MeshRenderer(cube,gargoyle));
 	nSand->addProperty(new MeshRenderer(cube,sand));

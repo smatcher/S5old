@@ -4,6 +4,9 @@
 	<ambient>0.5 0.5 0.5 1.0</ambient>
 	<emission>0.0 0.0 0.0 1.0</emission>
 	<shininess>0.1</shininess>
-	<program>phong</program>
+	<cast_shadow>false</cast_shadow>
+	<receive_shadow>false</receive_shadow>
+	<program>shadowed_phong</program>
+		<texture texunit="0">Shadowmap</texture>
 		<texture texunit="0">pwips.tga</texture>
 </material>

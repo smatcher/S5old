@@ -171,6 +171,9 @@ void RenderManager::init(GLWidget* context)
 
 void RenderManager::render(double elapsed_time, SceneGraph* sg)
 {
+	RenderPassInfo pass_info;
+	pass_info.setup_texture_matrices = false;
+
 	// Frame Begin
 	for(QVector<IRenderable*>::iterator it = registeredManagees.begin();
 		it != registeredManagees.end();
@@ -200,7 +203,11 @@ void RenderManager::render(double elapsed_time, SceneGraph* sg)
 			RenderTarget srt(light, &fbo, rt, FrameBufferObject::DEPTH_ATTACHMENT, false, false);
 			debug("PASS_INFO","cast light " + QString().setNum(i));
 			glCullFace(GL_FRONT);
-			renderTarget(sg, srt, cast_shadow_material, true);
+			pass_info.setup_texture_matrices = true;
+			pass_info.forced_material = cast_shadow_material;
+			pass_info.type = CAST_SHADOW_PASS;
+			renderTarget(sg, srt, pass_info);
+			pass_info.setup_texture_matrices = false;
 			glCullFace(GL_BACK);
 		}
 
@@ -212,7 +219,9 @@ void RenderManager::render(double elapsed_time, SceneGraph* sg)
 			}
 			RenderTarget srt(viewpoint, &fbo, m_shadowmap, FrameBufferObject::COLOR_ATTACHMENT, false, true);
 			debug("PASS_INFO","receive light " + QString().setNum(i));
-			renderTarget(sg, srt, receive_shadow_material);
+			pass_info.forced_material = receive_shadow_material;
+			pass_info.type = RECEIVE_SHADOW_PASS;
+			renderTarget(sg, srt, pass_info);
 		}
 	}
 
@@ -226,7 +235,9 @@ void RenderManager::render(double elapsed_time, SceneGraph* sg)
 		RenderTarget* rt = m_rts[i];
 		if(rt != NULL) {
 			debug("PASS_INFO","rtt " + QString().setNum(i));
-			renderTarget(sg, *rt);
+			pass_info.forced_material = Material();
+			pass_info.type = FINAL_PASS;
+			renderTarget(sg, *rt, pass_info);
 		}
 	}
 	Viewpoint* viewpoint = m_camera;
@@ -236,7 +247,9 @@ void RenderManager::render(double elapsed_time, SceneGraph* sg)
 
 	RenderTarget crt(viewpoint);
 	debug("PASS_INFO","screen");
-	renderTarget(sg, crt);
+	pass_info.forced_material = Material();
+	pass_info.type = FINAL_PASS;
+	renderTarget(sg, crt, pass_info);
 
 	m_context->swapBuffers();
 
@@ -256,15 +269,10 @@ void RenderManager::render(double elapsed_time, SceneGraph* sg)
 
 }
 
-void RenderManager::renderTarget(SceneGraph* sg, RenderTarget& target, bool setup_texture_matrices)
-{
-	renderTarget(sg,target, Material() , setup_texture_matrices);
-}
-
-void RenderManager::renderTarget(SceneGraph* sg, RenderTarget& target, Material forced_material, bool setup_texture_matrices)
+void RenderManager::renderTarget(SceneGraph* sg, RenderTarget& target, RenderPassInfo& pass_info)
 {
 	Viewpoint* viewpoint = target.getViewpoint();
-	bool material_is_overridden = forced_material.isValid();
+	bool material_is_overridden = pass_info.isMaterialOverridden();
 
 	if(viewpoint == NULL) {
 		logError("No viewpoint to render from, you must set a camera");
@@ -298,7 +306,7 @@ void RenderManager::renderTarget(SceneGraph* sg, RenderTarget& target, Material 
 
 		debugGL("initiating cameras");
 
-		if(setup_texture_matrices) {
+		if(pass_info.setup_texture_matrices) {
 			target.setTextureMatrix(pass_nb);
 			debugGL("setting up texture matrices");
 		}
@@ -325,12 +333,18 @@ void RenderManager::renderTarget(SceneGraph* sg, RenderTarget& target, Material 
 		}
 
 		if(material_is_overridden) {
-			forced_material->apply(0);
+			pass_info.forced_material->apply(0);
 		}
 
 		for(QVector<IRenderable*>::iterator it = registeredManagees.begin();
 			it != registeredManagees.end();
 			it++) {
+
+			if(pass_info.type == CAST_SHADOW_PASS && !((*it)->castsShadows()))
+				continue;
+			if(pass_info.type == RECEIVE_SHADOW_PASS && !((*it)->receivesShadows()))
+				continue;
+
 			glPushMatrix();
 			if((*it)->isTransparent()){
 				transparent_renderables.push_back(*it); // Transparent renderables are deferred for later rendering
@@ -349,7 +363,7 @@ void RenderManager::renderTarget(SceneGraph* sg, RenderTarget& target, Material 
 		}
 
 		if(material_is_overridden) {
-			forced_material->unset(0);
+			pass_info.forced_material->unset(0);
 		}
 
 		if(m_drawDebug && target.isOnScreen())	{

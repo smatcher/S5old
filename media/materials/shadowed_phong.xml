@@ -1,4 +1,5 @@
 <material>
 	<texture texunit="0">Shadowmap</texture>
+	<texture texunit="0">ball.tga</texture>
 	<program>shadowed_phong</program>
 </material>
