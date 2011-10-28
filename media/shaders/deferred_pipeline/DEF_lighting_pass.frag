@@ -19,22 +19,18 @@ void main()
 	eyepos = eyepos/eyepos.w;
 
 	vec3 lightvec = eyelightpos - eyepos.xyz;
+	vec3 viewvec = normalize(eyepos.rgb);
+	vec3 halfvec = normalize(lightvec + viewvec);
 	vec3 normal = texture2D(gbuffer_normal, screen_pos).rgb;
 	vec3 diffuse = texture2D(gbuffer_diffuse, screen_pos).rgb;
+	vec4 specular = texture2D(gbuffer_specular, screen_pos).rgb; // rgb:specularity a:shininess
+	
 	float attenuation = clamp(1.0 - length(lightvec/5.0), 0.0, 1.0);
 	lightvec = normalize(lightvec);
 	vec3 idiff = clamp(dot(lightvec, normal)*diffuse, 0.0, 1.0);
+	vec3 ispec = pow(clamp(dot(halfvec,normal),0.0,1.0),specular.a) * specular.rgb;
 
-	vec4 final = vec4(idiff, attenuation);
-/*
-	vec4 final = texture2D(gbuffer_diffuse, screen_pos);
-	final.a = 0.0;
+	vec4 final = vec4(idiff + ispec, attenuation);
 
-	float lambertTerm = dot(texture2D(gbuffer_normal, screen_pos).xyz,lightvec);
-
-	if(lambertTerm > 0.0) {
-		final.a = lambertTerm;
-	}
-*/
 	gl_FragColor = final;
 }

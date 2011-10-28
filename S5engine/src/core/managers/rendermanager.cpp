@@ -296,12 +296,15 @@ void RenderManager::render(double elapsed_time, SceneGraph* sg)
 	input_textures.push_back(*m_specularmap);
 	input_textures.push_back(*m_depthmap);
 
+	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+	//glBlendFunc(GL_ONE, GL_ONE);
 	for(int i = 0 ; i<LIGHTING_MANAGER.managees().count() ; i++) {
 		// Render depthmap
 		Light* light = LIGHTING_MANAGER.managees().at(i);
 		light->sendParameters(0);
 		postprocessPass(NULL,input_textures);
 	}
+	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
 /*
 	debugDisplayTexture(*m_normalmap,0,0,256,256);

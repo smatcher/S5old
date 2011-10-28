@@ -26,8 +26,10 @@ void main()
 	#endif
 	#ifdef COLOR_MAP
 		gl_FragData[1] = texture2D(colormap, gl_TexCoord[0].st) * gl_FrontMaterial.diffuse;
+		gl_FragData[1].a = gl_FrontMaterial.shininess;
 	#else
 		gl_FragData[1] = gl_FrontMaterial.diffuse;
+		gl_FragData[1].a = gl_FrontMaterial.shininess;
 	#endif
 	gl_FragData[2] = gl_FrontMaterial.specular;
 }
