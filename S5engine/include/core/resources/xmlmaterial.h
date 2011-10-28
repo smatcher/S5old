@@ -29,6 +29,10 @@ protected:
 		bool     m_doublesided;
 		Texture  m_colormap;
 		Texture  m_normalmap;
+		Texture  m_splattingmap;
+		Texture  m_splatting_red;
+		Texture  m_splatting_green;
+		Texture  m_splatting_blue;
 		QList<ShaderProgramData::UniformBase*> m_uniforms;
 
 		MaterialAttributes() :

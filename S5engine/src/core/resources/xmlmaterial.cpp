@@ -41,18 +41,33 @@ void XmlMaterial::apply(unsigned int layer)
 
 	// Set ubershader parameters
 	UberShader shader = RENDER_MANAGER.getRenderPassInfo()->ubershader_used;
-	shader->setParamValue(UberShaderData::US_COLORMAPPED, target->m_colormap.isValid());
-	shader->setParamValue(UberShaderData::US_NORMALMAPPED, target->m_normalmap.isValid());
+	shader->setParamValue(UberShaderDefine::COLORMAPPED, target->m_colormap.isValid());
+	shader->setParamValue(UberShaderDefine::NORMALMAPPED, target->m_normalmap.isValid());
+	shader->setParamValue(UberShaderDefine::SPLATTING, target->m_splattingmap.isValid());
 	// Bind UberShader
 	shader->use();
 	shader->setAllUniforms();
 
 	if(target->m_colormap.isValid()) {
-		target->m_colormap->bind(shader->getTexUnit(UberShaderData::TEX_COLOR_MAP));
+		target->m_colormap->bind(shader->getTexUnit(UberShaderTextureType::COLOR_MAP));
 	}
 
 	if(target->m_normalmap.isValid()) {
-		target->m_normalmap->bind(shader->getTexUnit(UberShaderData::TEX_NORMAL_MAP));
+		target->m_normalmap->bind(shader->getTexUnit(UberShaderTextureType::NORMAL_MAP));
+	}
+
+	if(target->m_splattingmap.isValid()) {
+		target->m_splattingmap->bind(shader->getTexUnit(UberShaderTextureType::SPLATTING));
+
+		if(target->m_splatting_red.isValid()) {
+			target->m_splatting_red->bind(shader->getTexUnit(UberShaderTextureType::SPLATTING_R));
+		}
+		if(target->m_splatting_green.isValid()) {
+			target->m_splatting_green->bind(shader->getTexUnit(UberShaderTextureType::SPLATTING_G));
+		}
+		if(target->m_splatting_blue.isValid()) {
+			target->m_splatting_blue->bind(shader->getTexUnit(UberShaderTextureType::SPLATTING_B));
+		}
 	}
 }
 
@@ -72,11 +87,25 @@ void XmlMaterial::unset(unsigned int layer)
 	}
 
 	if(target->m_colormap.isValid()) {
-		target->m_colormap->release(shader->getTexUnit(UberShaderData::TEX_COLOR_MAP));
+		target->m_colormap->release(shader->getTexUnit(UberShaderTextureType::COLOR_MAP));
 	}
 
 	if(target->m_normalmap.isValid()) {
-		target->m_normalmap->release(shader->getTexUnit(UberShaderData::TEX_NORMAL_MAP));
+		target->m_normalmap->release(shader->getTexUnit(UberShaderTextureType::NORMAL_MAP));
+	}
+
+	if(target->m_splattingmap.isValid()) {
+		target->m_splattingmap->release(shader->getTexUnit(UberShaderTextureType::SPLATTING));
+
+		if(target->m_splatting_red.isValid()) {
+			target->m_splatting_red->release(shader->getTexUnit(UberShaderTextureType::SPLATTING_R));
+		}
+		if(target->m_splatting_green.isValid()) {
+			target->m_splatting_green->release(shader->getTexUnit(UberShaderTextureType::SPLATTING_G));
+		}
+		if(target->m_splatting_blue.isValid()) {
+			target->m_splatting_blue->release(shader->getTexUnit(UberShaderTextureType::SPLATTING_B));
+		}
 	}
 
 	shader->unset();
@@ -184,6 +213,14 @@ void XmlMaterialFactory::parseTag(const QString& tag, QDomNode* node, XmlMateria
 				target->m_colormap = tex;
 			} else if(type == "normalmap") {
 				target->m_normalmap = tex;
+			} else if(type == "splatting") {
+				target->m_splattingmap = tex;
+			} else if(type == "splat_R") {
+				target->m_splatting_red = tex;
+			} else if(type == "splat_G") {
+				target->m_splatting_green = tex;
+			} else if(type == "splat_B") {
+				target->m_splatting_blue = tex;
 			} else {
 				logError("texture tag line "<< node->lineNumber() << "in file" << xmlresource->m_path << "misses the attribute type or has a wrong type");
 				logInfo("valid texture types are colormap and normalmap");

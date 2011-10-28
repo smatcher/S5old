@@ -6,14 +6,69 @@
 #include <QMap>
 #include <QtOpenGL>
 
-static QString UberShaderParamNames[] =
+namespace UberShaderDefine
 {
-	"SKINNED",
-	"COLOR_MAP",
-	"NORMAL_MAP",
-	"SHADOW_MAP",
-	"REFLECTION_MAP",
-};
+	enum Type
+	{
+		SKINNED = 0,
+		COLORMAPPED,
+		NORMALMAPPED,
+		SHADOWED,
+		SPLATTING,
+		REFLECTIONMAPPED,
+		SKY,
+		NB_DEFINES,
+		UNKNOWN
+	};
+
+	static QString Names[] =
+	{
+		"SKINNED",
+		"COLOR_MAP",
+		"NORMAL_MAP",
+		"SHADOW_MAP",
+		"SPLATTING",
+		"REFLECTION_MAP",
+		"SKY",
+		"NB_DEFINES",
+		"UNKOWN"
+	};
+
+	Type fromStr(const QString& name);
+	QString toString(int i);
+	QString toString(Type type);
+}
+
+namespace UberShaderTextureType
+{
+	enum Type
+	{
+		COLOR_MAP = 0,
+		NORMAL_MAP,
+		SPLATTING,
+		SPLATTING_R,
+		SPLATTING_G,
+		SPLATTING_B,
+		NB_TEXTURES,
+		UNKNOWN
+	};
+
+	static QString Names[] =
+	{
+		"COLOR_MAP",
+		"NORMAL_MAP",
+		"SPLATTING",
+		"SPLATTING_R",
+		"SPLATTING_G",
+		"SPLATTING_B",
+		"NB_TEXTURES",
+		"UNKNOWN"
+	};
+
+	Type fromStr(const QString& name);
+	QString toString(int i);
+	QString toString(Type type);
+}
 
 class UberShader;
 
@@ -23,31 +78,16 @@ class UberShaderData : public ShaderProgramData
 	friend class ResourceManager<UberShaderData, UberShader>;
 
 public:
-	enum UberShaderParam
-	{
-		US_SKINNED = 0,
-		US_COLORMAPPED,
-		US_NORMALMAPPED,
-		US_SHADOWED,
-		US_REFLECTIONMAPPED,
-		US_NB_PARAMS
-	};
 
-	enum UberShaderTextureType
-	{
-		TEX_COLOR_MAP = 0,
-		TEX_NORMAL_MAP,
-		TEX_NB_TEXTURES
-	};
 
 	UberShaderData(const QString& name, const QString& path, IResourceFactory* factory) : ShaderProgramData(name, path, factory), m_tree(NULL), m_current(NULL) {
 		m_tree = new UberShaderNode();
-		for(int i=0 ; i<US_NB_PARAMS ; i++) {
+		for(int i=0 ; i<UberShaderDefine::NB_DEFINES ; i++) {
 			m_defines[i] = false;
 		}
 	}
 	virtual ~UberShaderData() {if(m_tree!=NULL) {delete m_tree;}}
-	void setParamValue(UberShaderParam param, bool value) {m_defines[param] = value; m_current = NULL;}
+	void setParamValue(UberShaderDefine::Type param, bool value) {m_defines[param] = value; m_current = NULL;}
 	virtual bool isUber() {return true;}
 	virtual void compile() {
 		UberShaderNode* node = getCurrentNode();
@@ -63,7 +103,7 @@ public:
 		return getCurrentNode()->m_program;
 	}
 
-	int getTexUnit(UberShaderTextureType texture) {
+	int getTexUnit(UberShaderTextureType::Type texture) {
 		return getCurrentNode()->m_texunits[texture];
 	}
 
@@ -79,7 +119,7 @@ protected:
 		QGLShaderProgram* m_program;
 		QGLShader* m_fragment_shader;
 		QGLShader* m_vertex_shader;
-		int  m_texunits[TEX_NB_TEXTURES];
+		int  m_texunits[UberShaderTextureType::NB_TEXTURES];
 
 		UberShaderNode() :
 			m_yes_son(NULL),
@@ -101,9 +141,9 @@ protected:
 	QString buildDefineList() {
 		QString ret;
 
-		for(int i=0 ; i< US_NB_PARAMS ; i++) {
+		for(int i=0 ; i< UberShaderDefine::NB_DEFINES ; i++) {
 			if(m_defines[i]) {
-				ret += "#define "+ UberShaderParamNames[i] +" \n";
+				ret += "#define "+ UberShaderDefine::toString(i) +" \n";
 			}
 		}
 
@@ -113,8 +153,12 @@ protected:
 	void buildTexunitsList(int* texunits) {
 		int texunit = 0;
 
-		texunits[TEX_COLOR_MAP] = m_defines[US_COLORMAPPED] ? texunit++ : -1;
-		texunits[TEX_NORMAL_MAP] = m_defines[US_NORMALMAPPED] ? texunit++ : -1;
+		texunits[UberShaderTextureType::COLOR_MAP]   = m_defines[UberShaderDefine::COLORMAPPED] ? texunit++ : -1;
+		texunits[UberShaderTextureType::NORMAL_MAP]  = m_defines[UberShaderDefine::NORMALMAPPED] ? texunit++ : -1;
+		texunits[UberShaderTextureType::SPLATTING]   = m_defines[UberShaderDefine::SPLATTING] ? texunit++ : -1;
+		texunits[UberShaderTextureType::SPLATTING_R] = m_defines[UberShaderDefine::SPLATTING] ? texunit++ : -1;
+		texunits[UberShaderTextureType::SPLATTING_G] = m_defines[UberShaderDefine::SPLATTING] ? texunit++ : -1;
+		texunits[UberShaderTextureType::SPLATTING_B] = m_defines[UberShaderDefine::SPLATTING] ? texunit++ : -1;
 	}
 
 	UberShaderNode* getCurrentNode(int param_read = 0, UberShaderNode* current_branch = NULL) {
@@ -127,7 +171,7 @@ protected:
 		}
 
 		UberShaderNode* ret = current_branch;
-		if(param_read < US_NB_PARAMS) {
+		if(param_read < UberShaderDefine::NB_DEFINES) {
 			if(m_defines[param_read]) {
 				if(current_branch->m_yes_son == NULL) {
 					current_branch->m_yes_son = new UberShaderNode();
@@ -149,7 +193,7 @@ protected:
 
 	UberShaderNode* m_tree;
 	UberShaderNode* m_current;
-	bool m_defines[US_NB_PARAMS];
+	bool m_defines[UberShaderDefine::NB_DEFINES];
 };
 
 class UberShader : public ResourceHandle<UberShaderData>

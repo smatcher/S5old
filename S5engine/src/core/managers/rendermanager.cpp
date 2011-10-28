@@ -235,7 +235,7 @@ void RenderManager::init(GLWidget* context)
 		new ShaderProgramData::Uniform<QVector2D>("screen_size",m_screen_size, 1, 1)
 	);
 
-	m_scene_ambient = new QVector3D(0.3,0.3,0.3);
+	m_scene_ambient = new QVector3D(0.1,0.1,0.1);
 	m_engine_uniforms.insert(
 		"scene_ambient",
 		new ShaderProgramData::Uniform<QVector3D>("scene_ambient",m_scene_ambient, 1, 1)
@@ -281,6 +281,7 @@ void RenderManager::render(double elapsed_time, SceneGraph* sg)
 	debug("PASS_INFO","geom pass");
 	m_passinfo.ubershader_used = m_deferred_geometry;
 	m_passinfo.type = FINAL_PASS;
+	glBlendFunc(GL_ONE, GL_ZERO);
 	renderTarget(sg, srt);
 
 	/// Second pass - lighting postprocess
@@ -296,22 +297,19 @@ void RenderManager::render(double elapsed_time, SceneGraph* sg)
 	input_textures.push_back(*m_specularmap);
 	input_textures.push_back(*m_depthmap);
 
-	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-	//glBlendFunc(GL_ONE, GL_ONE);
+	glBlendFunc(GL_SRC_ALPHA, GL_ONE);
 	for(int i = 0 ; i<LIGHTING_MANAGER.managees().count() ; i++) {
 		// Render depthmap
 		Light* light = LIGHTING_MANAGER.managees().at(i);
 		light->sendParameters(0);
 		postprocessPass(NULL,input_textures);
 	}
-	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
-/*
+	glBlendFunc(GL_SRC_ALPHA, GL_ZERO);
 	debugDisplayTexture(*m_normalmap,0,0,256,256);
 	debugDisplayTexture(*m_diffusemap,256,0,256,256);
 	debugDisplayTexture(*m_specularmap,512,0,256,256);
 	debugDisplayTexture(*m_depthmap,768,0,256,256);
-*/
 
 	m_context->swapBuffers();
 
@@ -699,6 +697,10 @@ void RenderManager::applyBackground(RenderTarget& target, int projection_nb)
 	glClear(GL_DEPTH_BUFFER_BIT);
 	glDepthMask(false);
 
+	m_passinfo.ubershader_used->setParamValue(UberShaderDefine::SKY, true);
+	m_passinfo.ubershader_used->setParamValue(UberShaderDefine::COLORMAPPED, true);
+	m_passinfo.ubershader_used->use();
+
 	switch(m_defaultBackground.type)
 	{
 		case COLOR :
@@ -795,6 +797,10 @@ void RenderManager::applyBackground(RenderTarget& target, int projection_nb)
 		default :
 			break;
 	}
+
+	m_passinfo.ubershader_used->unset();
+	m_passinfo.ubershader_used->setParamValue(UberShaderDefine::SKY, false);
+	m_passinfo.ubershader_used->setParamValue(UberShaderDefine::COLORMAPPED, false);
 
 	glDepthMask(true);
 }

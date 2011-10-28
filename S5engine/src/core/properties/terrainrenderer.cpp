@@ -15,7 +15,7 @@ TerrainPatch::TerrainPatch(int start_x, int start_y, int dim, int lod, int theig
 	m_dim(dim),
 	m_lod(lod) {
 
-	logInfo("Creating terrain patch with LOD="<<lod<<" at ("<<start_x<<","<<start_y<<")");
+	//logInfo("Creating terrain patch with LOD="<<lod<<" at ("<<start_x<<","<<start_y<<")");
 
 	/* On saute 2^lod vertex*/
 	int increment = 1<<m_lod;

@@ -180,3 +180,4 @@ src/core/properties/cubemapcamera.cpp
 include/core/properties/cubemapcamera.h
 src/core/graphics/rendertarget.cpp
 include/core/graphics/ubershader.h
+src/core/graphics/ubershader.cpp

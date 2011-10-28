@@ -97,11 +97,23 @@ void GLSLUberShader::use()
 	if(_program != NULL) {
 		_program->bind();
 
-		if(m_current->m_texunits[TEX_COLOR_MAP] >= 0)
-			_program->setUniformValue("colormap",m_current->m_texunits[TEX_COLOR_MAP]);
+		if(m_current->m_texunits[UberShaderTextureType::COLOR_MAP] >= 0)
+			_program->setUniformValue("colormap",m_current->m_texunits[UberShaderTextureType::COLOR_MAP]);
 
-		if(m_current->m_texunits[TEX_NORMAL_MAP] >= 0)
-			_program->setUniformValue("normalmap",m_current->m_texunits[TEX_NORMAL_MAP]);
+		if(m_current->m_texunits[UberShaderTextureType::NORMAL_MAP] >= 0)
+			_program->setUniformValue("normalmap",m_current->m_texunits[UberShaderTextureType::NORMAL_MAP]);
+
+		if(m_current->m_texunits[UberShaderTextureType::SPLATTING] >= 0)
+			_program->setUniformValue("spatting",m_current->m_texunits[UberShaderTextureType::SPLATTING]);
+
+		if(m_current->m_texunits[UberShaderTextureType::SPLATTING_R] >= 0)
+			_program->setUniformValue("splat_r",m_current->m_texunits[UberShaderTextureType::SPLATTING_R]);
+
+		if(m_current->m_texunits[UberShaderTextureType::SPLATTING_G] >= 0)
+			_program->setUniformValue("splat_g",m_current->m_texunits[UberShaderTextureType::SPLATTING_G]);
+
+		if(m_current->m_texunits[UberShaderTextureType::SPLATTING_B] >= 0)
+			_program->setUniformValue("splat_b",m_current->m_texunits[UberShaderTextureType::SPLATTING_B]);
 	}
 }
 

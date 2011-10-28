@@ -10,6 +10,9 @@ varying vec3 normal;
 void main()
 {	
 	gl_TexCoord[0] = gl_MultiTexCoord0;
+	#ifdef SPLATTING
+		gl_TexCoord[1] = gl_MultiTexCoord1;
+	#endif
 
 	normal = gl_NormalMatrix * gl_Normal;
 
