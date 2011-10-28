@@ -16,14 +16,11 @@ SkinnedMeshRenderer::~SkinnedMeshRenderer()
 {
 }
 
-void SkinnedMeshRenderer::render(GLWidget *context, bool material_overridden)
+void SkinnedMeshRenderer::render()
 {
-	// The program is passed to the mesh in order to set the attributes
-	QGLShaderProgram* program = NULL;
-
 	node()->getGlobalTransform().glMultf();
 
-	if(!material_overridden && !m_material.isValid())
+	if(!m_material.isValid())
 	{
 		debug( "RENDERING" , "MeshRenderer : no material to apply for " << node()->getName());
 	}
@@ -52,19 +49,14 @@ void SkinnedMeshRenderer::render(GLWidget *context, bool material_overridden)
 				 }
 			#endif
 
-			if(!material_overridden) {
-				if(m_material.isValid()) {
-					m_material->apply(i);
-					program = m_material->program(i);
-				}
+			if(m_material.isValid()) {
+				m_material->apply(i);
 			}
 
-			m_mesh->draw(i,matrix_palette,program, MeshData::SKINNED);
+			m_mesh->draw(i,matrix_palette, MeshData::SKINNED);
 
-			if(!material_overridden) {
-				if(m_material.isValid()) {
-					m_material->unset(i);
-				}
+			if(m_material.isValid()) {
+				m_material->unset(i);
 			}
 
 			#ifdef WITH_TOOLS
@@ -75,10 +67,10 @@ void SkinnedMeshRenderer::render(GLWidget *context, bool material_overridden)
 					glStencilFunc( GL_NOTEQUAL, 1, 0xFFFF );
 					glStencilOp( GL_KEEP, GL_KEEP, GL_REPLACE );
 					// Draw the object with thick lines
-					context->qglColor(Qt::white);
+					RENDER_MANAGER.getRenderPassInfo()->context->qglColor(Qt::white);
 					glLineWidth(3.0);
 
-					m_mesh->draw(i,program, MeshData::WIREFRAME | MeshData::SKINNED);
+					m_mesh->draw(i, MeshData::WIREFRAME | MeshData::SKINNED);
 
 					glLineWidth(1.0);
 					glDisable(GL_STENCIL_TEST);

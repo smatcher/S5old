@@ -1,5 +1,6 @@
 #include <QtOpenGL>
 #include "core/resources/rawmesh.h"
+#include "core/managers/rendermanager.h"
 
 RawMesh::RawMesh(const QString &name, const QString &path, IResourceFactory *factory) :
 	MeshData(name,path,factory),
@@ -29,8 +30,10 @@ bool RawMesh::unload()
 	return true;
 }
 
-void RawMesh::draw(unsigned int, QGLShaderProgram* program, int flags)
+void RawMesh::draw(unsigned int, int flags)
 {
+	QGLShaderProgram* program = RENDER_MANAGER.getRenderPassInfo()->ubershader_used->program();
+
 	bool wireframe = flags & WIREFRAME;
 
 	if(wireframe) {
@@ -121,9 +124,9 @@ void RawMesh::draw(unsigned int, QGLShaderProgram* program, int flags)
 	debugGL("while rendering" << name());
 }
 
-void RawMesh::draw(unsigned int submesh, const QMap<QString, Matrix4f>& matrix_palette, QGLShaderProgram *program, int flags)
+void RawMesh::draw(unsigned int submesh, const QMap<QString, Matrix4f>& matrix_palette, int flags)
 {
-	draw(submesh, program, flags);
+	draw(submesh, flags);
 }
 
 unsigned int RawMesh::nbSubmeshes()

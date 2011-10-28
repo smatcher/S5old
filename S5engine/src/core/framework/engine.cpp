@@ -67,11 +67,12 @@ void Engine::init(int argc, char *argv[], QString mod_dir)
 	#endif
 
 	RENDER_MANAGER.setCurrentCamera(NULL);
-	RENDER_MANAGER.createResources();
 
 	QCoreApplication::processEvents();
 
 	initResourceManagers(mod_dir);
+
+	RENDER_MANAGER.createResources();
 }
 
 int Engine::start()

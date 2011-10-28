@@ -6,6 +6,7 @@
 
 #include "core/graphics/texture.h"
 #include "core/graphics/shader.h"
+#include "core/graphics/ubershader.h"
 #include "core/graphics/material.h"
 #include "core/maths/vector3.h"
 
@@ -44,6 +45,7 @@ public :
 
 	enum RenderPassType
 	{
+		DEF_GEOMETRY_PASS,
 		CAST_SHADOW_PASS,
 		RECEIVE_SHADOW_PASS,
 		FINAL_PASS
@@ -51,11 +53,12 @@ public :
 
 	struct RenderPassInfo
 	{
+		const QGLWidget* context;
 		RenderPassType type;
 		bool setup_texture_matrices;
-		Material forced_material;
-
-		bool isMaterialOverridden() {return forced_material.isValid();}
+		bool background_enabled;
+		bool texturing_enabled;
+		UberShader ubershader_used;
 	};
 
 protected :
@@ -70,19 +73,39 @@ private :
 
 	QHash<QString, ShaderProgramData::UniformBase*> m_engine_uniforms;
 	// engine uniforms data
-	QMatrix4x4* m_inverse_transpose_camera;
+	QMatrix4x4* m_inverse_modelview;
+	QMatrix4x4* m_modelview;
+	QMatrix4x4* m_inverse_projection;
+	QMatrix4x4* m_projection;
 	QVector2D* m_screen_size;
+	QVector3D* m_scene_ambient;
+
+	// render pass info
+	bool           m_rendering;
+	RenderPassInfo m_passinfo;
+
+	// deferred shading textures
+	RenderTexture* m_positionmap;
+	RenderTexture* m_normalmap;
+	RenderTexture* m_diffusemap;
+	RenderTexture* m_specularmap;
+	RenderTexture* m_depthmap;
+
+	UberShader m_deferred_geometry;
+	UberShader m_deferred_ambient;
+	UberShader m_deferred_lighting;
+
+	RenderTexture* m_bloommap;
+	RenderTexture* m_colormap;
 
 	// shadowmap render textures
 	RenderTexture* m_shadowmap;
-	RenderTexture* m_bloommap;
-	RenderTexture* m_colormap;
 	FrameBufferObject* m_postprocessfbo;
 
 	QList<RenderTarget*> m_rts;
 
-	void renderTarget(SceneGraph* sg, RenderTarget& target, RenderPassInfo& pass_info);
-	void postprocessPass(RenderTexture* texture, Material material);
+	void renderTarget(SceneGraph* sg, RenderTarget& target);
+	void postprocessPass(RenderTexture* target_texture, QList<Texture> input_textures);
 	void debugDisplayTexture(Texture texture, int x, int y, int width, int height);
 	void setupProjection(RenderTarget& target, int projection_nb);
 	void applyBackground(RenderTarget& target, int projection_nb);
@@ -104,7 +127,9 @@ public:
 	void addRenderTarget(RenderTarget* rt);
 
 	const QHash<QString, ShaderProgramData::UniformBase*>& getEngineUniforms();
-	};
+
+	RenderPassInfo* getRenderPassInfo();
+};
 
 typedef Singleton<RenderManager> SingletonRenderManager;
 #define RENDER_MANAGER SingletonRenderManager::getInstance()

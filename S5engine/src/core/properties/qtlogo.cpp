@@ -465,7 +465,7 @@ void QtLogo::draw() const
 }
 //! [4]
 
-void QtLogo::render(GLWidget* context, bool material_overridden)
+void QtLogo::render()
 {
 	node()->getGlobalTransform().glMultf();
 	this->draw();

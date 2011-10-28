@@ -38,8 +38,18 @@ RenderManager::RenderManager() :
 	m_camera(NULL),
 	m_cameraChanged(true),
 	m_drawDebug(false),
-	m_shadowmap(NULL),
+	m_inverse_modelview(NULL),
+	m_modelview(NULL),
+	m_inverse_projection(NULL),
+	m_projection(NULL),
+	m_screen_size(NULL),
+	m_rendering(false),
+	m_normalmap(NULL),
+	m_diffusemap(NULL),
+	m_specularmap(NULL),
+	m_depthmap(NULL),
 	m_bloommap(NULL),
+	m_shadowmap(NULL),
 	m_colormap(NULL),
 	m_postprocessfbo(NULL)
 {
@@ -142,6 +152,44 @@ void RenderManager::createResources()
 
 	// Setting up postprocessing FBO
 	m_postprocessfbo = new FrameBufferObject(POSTPROCESS_RESOLUTION,POSTPROCESS_RESOLUTION, false, false);
+
+	ShaderProgram shader = SHADER_PROGRAM_MANAGER.get("DEF_geometry_pass");
+	if(shader.isValid() && shader->isUber()) {
+		m_deferred_geometry = UberShader(*(static_cast<UberShaderData*>(*shader)));
+	} else {
+		if(!shader.isValid()) {
+			logError("Could not find the DEF_geometry_pass ubershader for the deferred pipeline");
+		} else if(!shader->isUber()) {
+			logError("The DEF_geometry_pass shader is not an ubershader");
+		}
+	}
+	shader = SHADER_PROGRAM_MANAGER.get("DEF_ambient_pass");
+	if(shader.isValid() && shader->isUber()) {
+		m_deferred_ambient = UberShader(*(static_cast<UberShaderData*>(*shader)));
+	} else {
+		if(!shader.isValid()) {
+			logError("Could not find the DEF_ambient_pass ubershader for the deferred pipeline");
+		} else if(!shader->isUber()) {
+			logError("The DEF_ambient_pass shader is not an ubershader");
+		}
+	}
+	shader = SHADER_PROGRAM_MANAGER.get("DEF_lighting_pass");
+	if(shader.isValid() && shader->isUber()) {
+		m_deferred_lighting = UberShader(*(static_cast<UberShaderData*>(*shader)));
+	} else {
+		if(!shader.isValid()) {
+			logError("Could not find the DEF_lighting_pass ubershader for the deferred pipeline");
+		} else if(!shader->isUber()) {
+			logError("The DEF_lighting_pass shader is not an ubershader");
+		}
+	}
+
+	// Deferred shading resources
+	m_positionmap = new RenderTexture2D("DEF_Positionmap", POSTPROCESS_RESOLUTION, POSTPROCESS_RESOLUTION, GL_RGBA, GL_UNSIGNED_BYTE);
+	m_normalmap = new RenderTexture2D("DEF_Normalmap", POSTPROCESS_RESOLUTION, POSTPROCESS_RESOLUTION, GL_RGBA, GL_UNSIGNED_BYTE);
+	m_diffusemap = new RenderTexture2D("DEF_Diffusemap", POSTPROCESS_RESOLUTION, POSTPROCESS_RESOLUTION, GL_RGBA, GL_UNSIGNED_BYTE);
+	m_specularmap = new RenderTexture2D("DEF_Specularmap", POSTPROCESS_RESOLUTION, POSTPROCESS_RESOLUTION, GL_RGBA, GL_UNSIGNED_BYTE);
+	m_depthmap = new RenderTexture2D("DEF_Depthmap", POSTPROCESS_RESOLUTION, POSTPROCESS_RESOLUTION, GL_DEPTH_COMPONENT, GL_FLOAT);
 }
 
 void RenderManager::init(GLWidget* context)
@@ -161,15 +209,36 @@ void RenderManager::init(GLWidget* context)
 	glEnable(GL_BLEND);
 
 	// setting up engine uniforms hash
-	m_inverse_transpose_camera = new QMatrix4x4();
+	m_inverse_modelview = new QMatrix4x4();
 	m_engine_uniforms.insert(
-		"inverse_transpose_camera",
-		new ShaderProgramData::Uniform<QMatrix4x4>("inverse_transpose_camera",m_inverse_transpose_camera, 1, 1)
+		"inverse_modelview",
+		new ShaderProgramData::Uniform<QMatrix4x4>("inverse_modelview",m_inverse_modelview, 1, 1)
+	);
+	m_modelview = new QMatrix4x4();
+	m_engine_uniforms.insert(
+		"modelview",
+		new ShaderProgramData::Uniform<QMatrix4x4>("modelview",m_modelview, 1, 1)
+	);
+	m_inverse_projection = new QMatrix4x4();
+	m_engine_uniforms.insert(
+		"inverse_projection",
+		new ShaderProgramData::Uniform<QMatrix4x4>("inverse_projection",m_inverse_projection, 1, 1)
+	);
+	m_projection = new QMatrix4x4();
+	m_engine_uniforms.insert(
+		"projection",
+		new ShaderProgramData::Uniform<QMatrix4x4>("modelview",m_projection, 1, 1)
 	);
 	m_screen_size = new QVector2D();
 	m_engine_uniforms.insert(
 		"screen_size",
 		new ShaderProgramData::Uniform<QVector2D>("screen_size",m_screen_size, 1, 1)
+	);
+
+	m_scene_ambient = new QVector3D(0.3,0.3,0.3);
+	m_engine_uniforms.insert(
+		"scene_ambient",
+		new ShaderProgramData::Uniform<QVector3D>("scene_ambient",m_scene_ambient, 1, 1)
 	);
 
 	#ifndef SHOW_PASS_INFO
@@ -178,6 +247,88 @@ void RenderManager::init(GLWidget* context)
 }
 
 void RenderManager::render(double elapsed_time, SceneGraph* sg)
+/* Deferred version */
+{
+	m_rendering = true;
+
+	m_passinfo.context = m_context;
+	m_passinfo.background_enabled = true;
+	m_passinfo.setup_texture_matrices = false;
+	m_passinfo.texturing_enabled = true;
+	m_passinfo.type = FINAL_PASS;
+
+	// Frame Begin
+	for(QVector<IRenderable*>::iterator it = registeredManagees.begin();
+		it != registeredManagees.end();
+		it++) {
+		(*it)->frameBegin(elapsed_time);
+	}
+
+	debug("PASS_INFO","begin");
+
+	Viewpoint* viewpoint = m_camera;
+	if(m_camera == NULL) {
+		viewpoint = m_context->getViewpoint();
+	}
+
+	/// First pass - Render gbuffer
+	QList< QPair<RenderTexture*, FrameBufferObject::AttachmentPoint> > mrts;
+	mrts.push_back(QPair<RenderTexture*, FrameBufferObject::AttachmentPoint>(m_normalmap, FrameBufferObject::COLOR_ATTACHMENT_0));
+	mrts.push_back(QPair<RenderTexture*, FrameBufferObject::AttachmentPoint>(m_diffusemap, FrameBufferObject::COLOR_ATTACHMENT_1));
+	mrts.push_back(QPair<RenderTexture*, FrameBufferObject::AttachmentPoint>(m_specularmap, FrameBufferObject::COLOR_ATTACHMENT_2));
+	mrts.push_back(QPair<RenderTexture*, FrameBufferObject::AttachmentPoint>(m_depthmap, FrameBufferObject::DEPTH_ATTACHMENT));
+	RenderTarget srt(viewpoint, m_postprocessfbo, mrts , false, false);
+	debug("PASS_INFO","geom pass");
+	m_passinfo.ubershader_used = m_deferred_geometry;
+	m_passinfo.type = FINAL_PASS;
+	renderTarget(sg, srt);
+
+	/// Second pass - lighting postprocess
+	//// Modulate ambient
+	m_passinfo.ubershader_used = m_deferred_ambient;
+	QList<Texture> input_textures;
+	input_textures.push_back(*m_diffusemap);
+	postprocessPass(NULL,input_textures);
+
+	//// For each light => light
+	m_passinfo.ubershader_used = m_deferred_lighting;
+	input_textures.push_front(*m_normalmap);
+	input_textures.push_back(*m_specularmap);
+	input_textures.push_back(*m_depthmap);
+
+	for(int i = 0 ; i<LIGHTING_MANAGER.managees().count() ; i++) {
+		// Render depthmap
+		Light* light = LIGHTING_MANAGER.managees().at(i);
+		light->sendParameters(0);
+		postprocessPass(NULL,input_textures);
+	}
+
+/*
+	debugDisplayTexture(*m_normalmap,0,0,256,256);
+	debugDisplayTexture(*m_diffusemap,256,0,256,256);
+	debugDisplayTexture(*m_specularmap,512,0,256,256);
+	debugDisplayTexture(*m_depthmap,768,0,256,256);
+*/
+
+	m_context->swapBuffers();
+
+	// Frame End
+	for(QVector<IRenderable*>::iterator it = registeredManagees.begin();
+		it != registeredManagees.end();
+		it++) {
+		(*it)->frameEnd();
+	}
+
+	// Debug errors
+	GLenum error = glGetError();
+	if(error != GL_NO_ERROR) {
+		const char* msg = (char*)gluErrorString(error);
+		logError( QString(msg) );
+	}
+
+	m_rendering = false;
+}
+/* Normal version
 {
 	RenderPassInfo pass_info;
 	pass_info.setup_texture_matrices = false;
@@ -253,13 +404,6 @@ void RenderManager::render(double elapsed_time, SceneGraph* sg)
 		viewpoint = m_context->getViewpoint();
 	}
 
-/*
-	RenderTarget crt(viewpoint);
-	debug("PASS_INFO","screen");
-	pass_info.forced_material = Material();
-	pass_info.type = FINAL_PASS;
-	renderTarget(sg, crt, pass_info);
-*/
 	{
 		FrameBufferObject fbo(m_shadowmap->getWidth(), m_shadowmap->getHeight(), false, true);
 		Viewpoint* viewpoint = m_camera;
@@ -303,11 +447,11 @@ void RenderManager::render(double elapsed_time, SceneGraph* sg)
 	}
 
 }
+*/
 
-void RenderManager::renderTarget(SceneGraph* sg, RenderTarget& target, RenderPassInfo& pass_info)
+void RenderManager::renderTarget(SceneGraph* sg, RenderTarget& target)
 {
 	Viewpoint* viewpoint = target.getViewpoint();
-	bool material_is_overridden = pass_info.isMaterialOverridden();
 
 	if(viewpoint == NULL) {
 		logError("No viewpoint to render from, you must set a camera");
@@ -341,17 +485,24 @@ void RenderManager::renderTarget(SceneGraph* sg, RenderTarget& target, RenderPas
 
 		debugGL("initiating cameras");
 
-		if(pass_info.setup_texture_matrices) {
+		if(m_passinfo.setup_texture_matrices) {
 			target.setTextureMatrix(pass_nb);
 			debugGL("setting up texture matrices");
 		}
 
 		// set inverse camera transform
+		// Transpose because Qt does not have the same major than OpenGL
 		double camera_transform[16];
 		glGetDoublev(GL_MODELVIEW_MATRIX, camera_transform);
+		*m_modelview = QMatrix4x4(camera_transform).transposed();
 		Matrix4d mat(camera_transform);
 		mat.invertAndTranspose();
-		*m_inverse_transpose_camera = QMatrix4x4(mat.values);
+		*m_inverse_modelview = QMatrix4x4(mat.values);
+		glGetDoublev(GL_PROJECTION_MATRIX, camera_transform);
+		*m_projection = QMatrix4x4(camera_transform).transposed();
+		mat = Matrix4d(camera_transform);
+		mat.invertAndTranspose();
+		*m_inverse_projection = QMatrix4x4(mat.values);
 		// set screensize
 		if(target.isOnScreen()) {
 			QRect geom = m_context->geometry();
@@ -367,24 +518,20 @@ void RenderManager::renderTarget(SceneGraph* sg, RenderTarget& target, RenderPas
 			LIGHTING_MANAGER.managees().at(index)->sendParameters(index);
 		}
 
-		if(material_is_overridden) {
-			pass_info.forced_material->apply(0);
-		}
-
 		for(QVector<IRenderable*>::iterator it = registeredManagees.begin();
 			it != registeredManagees.end();
 			it++) {
 
-			if(pass_info.type == CAST_SHADOW_PASS && !((*it)->castsShadows()))
+			if(m_passinfo.type == CAST_SHADOW_PASS && !((*it)->castsShadows()))
 				continue;
-			if(pass_info.type == RECEIVE_SHADOW_PASS && !((*it)->receivesShadows()))
+			if(m_passinfo.type == RECEIVE_SHADOW_PASS && !((*it)->receivesShadows()))
 				continue;
 
 			glPushMatrix();
 			if((*it)->isTransparent()){
 				transparent_renderables.push_back(*it); // Transparent renderables are deferred for later rendering
 			} else {
-				(*it)->render(m_context, material_is_overridden);
+				(*it)->render();
 			}
 			glPopMatrix();
 		}
@@ -393,12 +540,8 @@ void RenderManager::renderTarget(SceneGraph* sg, RenderTarget& target, RenderPas
 			it != transparent_renderables.end();
 			it++) {
 			glPushMatrix();
-			(*it)->render(m_context, material_is_overridden);
+			(*it)->render();
 			glPopMatrix();
-		}
-
-		if(material_is_overridden) {
-			pass_info.forced_material->unset(0);
 		}
 
 		if(m_drawDebug && target.isOnScreen())	{
@@ -424,57 +567,64 @@ void RenderManager::renderTarget(SceneGraph* sg, RenderTarget& target, RenderPas
 	target.release();
 }
 
-void RenderManager::postprocessPass(RenderTexture* texture, Material material)
+void RenderManager::postprocessPass(RenderTexture* target_texture, QList<Texture> input_textures)
 {
 	debugGL("before postprocessing");
 
-	if(material.isValid()) {
-		if(texture != NULL) {
-			m_postprocessfbo->bind();
-			m_postprocessfbo->attachTexture(texture, FrameBufferObject::COLOR_ATTACHMENT_0, GL_TEXTURE_2D);
-			m_postprocessfbo->commitTextures(0);
-		}
+	if(target_texture != NULL) {
+		m_postprocessfbo->bind();
+		m_postprocessfbo->attachTexture(target_texture, FrameBufferObject::COLOR_ATTACHMENT_0, GL_TEXTURE_2D);
+		m_postprocessfbo->commitTextures(0);
+	}
 
-		debugGL("preparing FBO for postprocessing");
-		glClear(GL_DEPTH_BUFFER_BIT);
+	debugGL("preparing FBO for postprocessing");
+	glClear(GL_DEPTH_BUFFER_BIT);
 
-		glMatrixMode(GL_PROJECTION);
-		glLoadIdentity();
-		glMatrixMode(GL_MODELVIEW);
-		glLoadIdentity();
+	glMatrixMode(GL_PROJECTION);
+	glLoadIdentity();
+	glMatrixMode(GL_MODELVIEW);
+	glLoadIdentity();
 
-		material->apply(0);
+	m_passinfo.ubershader_used->use();
+	m_passinfo.ubershader_used->setAllUniforms();
 
-		int width;
-		int height;
+	int width;
+	int height;
 
-		if(texture != NULL) {
-			width = m_postprocessfbo->getWidth();
-			height = m_postprocessfbo->getHeight();
-		} else {
-			QRect geom = m_context->geometry();
-			width = geom.width();
-			height = geom.height();
-		}
+	if(target_texture != NULL) {
+		width = m_postprocessfbo->getWidth();
+		height = m_postprocessfbo->getHeight();
+	} else {
+		QRect geom = m_context->geometry();
+		width = geom.width();
+		height = geom.height();
+	}
 
-		glViewport(0,0,width,height);
-		glBegin(GL_QUADS);
-			glTexCoord2f(0.0f,0.0f);
-			glVertex3d(-1,-1,0.0f);
-			glTexCoord2f(1.0f,0.0f);
-			glVertex3d(1,-1,0.0f);
-			glTexCoord2f(1.0f,1.0f);
-			glVertex3d(1,1,0.0f);
-			glTexCoord2f(0.0f,1.0f);
-			glVertex3d(-1,1,0.0f);
-		glEnd();
+	for(int i=0 ; i< input_textures.size() ; i++) {
+		input_textures[i]->bind(i);
+	}
 
-		material->unset(0);
+	glViewport(0,0,width,height);
+	glBegin(GL_QUADS);
+		glTexCoord2f(0.0f,0.0f);
+		glVertex3d(-1,-1,0.0f);
+		glTexCoord2f(1.0f,0.0f);
+		glVertex3d(1,-1,0.0f);
+		glTexCoord2f(1.0f,1.0f);
+		glVertex3d(1,1,0.0f);
+		glTexCoord2f(0.0f,1.0f);
+		glVertex3d(-1,1,0.0f);
+	glEnd();
 
-		if(texture != NULL) {
-			m_postprocessfbo->swapTextures();
-			m_postprocessfbo->release();
-		}
+	for(int i=0 ; i< input_textures.size() ; i++) {
+		input_textures[i]->release(i);
+	}
+
+	m_passinfo.ubershader_used->unset();
+
+	if(target_texture != NULL) {
+		m_postprocessfbo->swapTextures();
+		m_postprocessfbo->release();
 	}
 }
 
@@ -660,3 +810,15 @@ const QHash<QString, ShaderProgramData::UniformBase*>& RenderManager::getEngineU
 	return m_engine_uniforms;
 }
 
+RenderManager::RenderPassInfo* RenderManager::getRenderPassInfo()
+{
+	RenderPassInfo* ret = NULL;
+
+	if(m_rendering) {
+		ret = &m_passinfo;
+	} else {
+		logError("Asked for RenderPassInfo outside the rendering loop");
+	}
+
+	return ret;
+}

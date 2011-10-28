@@ -2,6 +2,7 @@
 #include <QtXml>
 #include <QVector>
 #include "core/resources/managers.h"
+#include "core/managers/rendermanager.h"
 
 XmlMaterial::XmlMaterial(const QString& name, const QString& path, IResourceFactory* factory) :
 	MaterialData(name, path, factory)
@@ -38,35 +39,27 @@ void XmlMaterial::apply(unsigned int layer)
 		glDisable(GL_CULL_FACE);
 	}
 
-	if(target->m_textures.length() > 0)
-	{
-		glEnable(GL_TEXTURE_2D);
-		for(int i = 0 ; i< target->m_textures.length() ; i++)
-		{
-			if(target->m_textures[i].isValid())
-				target->m_textures[i]->bind(i);
-		}
-	}
-	else
-	{
-		glDisable(GL_TEXTURE_2D);
+	// Set ubershader parameters
+	UberShader shader = RENDER_MANAGER.getRenderPassInfo()->ubershader_used;
+	shader->setParamValue(UberShaderData::US_COLORMAPPED, target->m_colormap.isValid());
+	shader->setParamValue(UberShaderData::US_NORMALMAPPED, target->m_normalmap.isValid());
+	// Bind UberShader
+	shader->use();
+	shader->setAllUniforms();
+
+	if(target->m_colormap.isValid()) {
+		target->m_colormap->bind(shader->getTexUnit(UberShaderData::TEX_COLOR_MAP));
 	}
 
-	if(target->m_program.isValid())
-	{
-		target->m_program->use();
-		int nb_uniforms = target->m_program->nbUniforms();
-		for(int i=0 ; i<nb_uniforms ; i++)
-		{
-			target->m_program->setUniform(target->m_program->uniform(i));
-		}
-		target->m_program->setEngineUniforms();
+	if(target->m_normalmap.isValid()) {
+		target->m_normalmap->bind(shader->getTexUnit(UberShaderData::TEX_NORMAL_MAP));
 	}
 }
 
 void XmlMaterial::unset(unsigned int layer)
 {
 	MaterialAttributes* target;
+	UberShader shader = RENDER_MANAGER.getRenderPassInfo()->ubershader_used;
 
 	if(m_layers.size() <= layer) {
 		target = &m_default_attributes;
@@ -78,14 +71,15 @@ void XmlMaterial::unset(unsigned int layer)
 		glEnable(GL_CULL_FACE);
 	}
 
-	if(target->m_program.isValid())
-		target->m_program->unset();
-
-	for(int i = 0 ; i< target->m_textures.length() ; i++)
-	{
-		if(target->m_textures[i].isValid())
-			target->m_textures[i]->release(i);
+	if(target->m_colormap.isValid()) {
+		target->m_colormap->release(shader->getTexUnit(UberShaderData::TEX_COLOR_MAP));
 	}
+
+	if(target->m_normalmap.isValid()) {
+		target->m_normalmap->release(shader->getTexUnit(UberShaderData::TEX_NORMAL_MAP));
+	}
+
+	shader->unset();
 }
 
 bool XmlMaterial::unload()
@@ -182,10 +176,18 @@ void XmlMaterialFactory::parseTag(const QString& tag, QDomNode* node, XmlMateria
 	if(tag == "texture")
 	{
 		QDomNodeList content = node->childNodes();
+		QString type = node->attributes().namedItem("type").nodeValue();
 		Texture tex = TEXTURE_MANAGER.get(content.at(0).nodeValue());
 		if(tex.isValid())
 		{
-			target->m_textures.push_back(tex);
+			if(type == "colormap") {
+				target->m_colormap = tex;
+			} else if(type == "normalmap") {
+				target->m_normalmap = tex;
+			} else {
+				logError("texture tag line "<< node->lineNumber() << "in file" << xmlresource->m_path << "misses the attribute type or has a wrong type");
+				logInfo("valid texture types are colormap and normalmap");
+			}
 		}
 		else
 		{
@@ -286,22 +288,6 @@ void XmlMaterialFactory::parseTag(const QString& tag, QDomNode* node, XmlMateria
 				   content.at(0).nodeValue() == "1";
 		target->m_doublesided= val;
 	}
-	else if(tag == "program")
-	{
-		QDomNodeList content = node->childNodes();
-		QString program_name = content.at(0).nodeValue();
-
-		ShaderProgram prog = SHADER_PROGRAM_MANAGER.get(program_name);
-
-		if(prog.isValid())
-		{
-			target->m_program = prog;
-		}
-		else
-		{
-			logError("In file" << xmlresource->m_path << "require program" << program_name << "which can't be found");
-		}
-	}
 	else if(tag == "uniform")
 	{
 
@@ -336,22 +322,6 @@ void XmlMaterialFactory::parseFile(const QString &path, QList<ResourceData *> &c
 	{
 		debug( "RESOURCE PARSING" , path << " : " << dir << " does not exist");
 	}
-}
-
-QGLShaderProgram* XmlMaterial::program(unsigned int layer)
-{
-	MaterialAttributes* target;
-
-	if(m_layers.size() <= layer) {
-		target = &m_default_attributes;
-	} else {
-		target = &m_layers[layer];
-	}
-
-	if(target->m_program.isValid())
-		return target->m_program->program();
-	else
-		return NULL;
 }
 
 bool XmlMaterial::isTransparent(unsigned int layer)
@@ -389,3 +359,28 @@ bool XmlMaterial::castsShadows(unsigned int layer)
 	}
 	return target->m_cast_shadow;
 }
+
+bool XmlMaterial::usesColorMap(unsigned int layer)
+{
+	MaterialAttributes* target;
+
+	if(m_layers.size() <= layer) {
+		target = &m_default_attributes;
+	} else {
+		target = &m_layers[layer];
+	}
+	return target->m_colormap.isValid();
+}
+
+bool XmlMaterial::usesNormalMap(unsigned int layer)
+{
+	MaterialAttributes* target;
+
+	if(m_layers.size() <= layer) {
+		target = &m_default_attributes;
+	} else {
+		target = &m_layers[layer];
+	}
+	return target->m_normalmap.isValid();
+}
+

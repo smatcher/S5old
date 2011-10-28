@@ -1,5 +1,5 @@
 <material>
-	<texture texunit="0">star.tga</texture>
+	<texture type="colormap">star.tga</texture>
 	<receive_shadow>false</receive_shadow>
 	<cast_shadow>false</cast_shadow>
 	<transparent>true</transparent>

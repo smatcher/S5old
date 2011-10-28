@@ -16,7 +16,7 @@ public:
 	virtual ~IRenderable();
 
 	virtual void frameBegin(double elapsed_time) {}
-	virtual void render(GLWidget* context, bool material_overridden) = 0;
+	virtual void render() = 0;
 	virtual void frameEnd() {}
 
 	virtual bool isTransparent() {return false;}

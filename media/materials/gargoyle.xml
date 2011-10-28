@@ -1,6 +1,4 @@
 <material>
-	<texture texunit="0">Shadowmap</texture>
-	<texture texunit="1">gargoyle_color.tga</texture>
-	<texture texunit="2">gargoyle_normal.tga</texture>
-	<program>shadowed_parallax_mapping</program>
+	<texture type="colormap">gargoyle_color.tga</texture>
+	<texture type="normalmap">gargoyle_normal.tga</texture>
 </material>

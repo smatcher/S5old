@@ -1,6 +1,8 @@
 #include "core/resources/assimpmesh.h"
 #include <QtOpenGL>
 
+#include "core/managers/rendermanager.h"
+
 #include <assimp.h>
 #include <aiMesh.h>
 
@@ -186,8 +188,10 @@ void AssimpMesh::Submesh::buildVBO(QString name)
 	delete[] indices;
 }
 
-void AssimpMesh::draw(unsigned int submesh, QGLShaderProgram* program, int flags)
+void AssimpMesh::draw(unsigned int submesh, int flags)
 {
+	QGLShaderProgram* program = RENDER_MANAGER.getRenderPassInfo()->ubershader_used->program();
+
 	if(submesh < m_submeshes.size()) {
 		m_submeshes[submesh]->draw(program,flags);
 	}
@@ -195,8 +199,10 @@ void AssimpMesh::draw(unsigned int submesh, QGLShaderProgram* program, int flags
 	debugGL("while rendering" << name());
 }
 
-void AssimpMesh::draw(unsigned int submesh, const QMap<QString, Matrix4f>& matrix_palette, QGLShaderProgram *program, int flags)
+void AssimpMesh::draw(unsigned int submesh, const QMap<QString, Matrix4f>& matrix_palette, int flags)
 {
+	QGLShaderProgram* program = RENDER_MANAGER.getRenderPassInfo()->ubershader_used->program();
+
 	if(submesh < m_submeshes.size()) {
 		m_submeshes[submesh]->skin(matrix_palette);
 		m_submeshes[submesh]->draw(program,flags);

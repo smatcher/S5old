@@ -1,0 +1,5 @@
+<ubershader>
+	<shader source="DEF_ambient_pass.vert"/>
+	<shader source="DEF_ambient_pass.frag"/>
+	<uniform name="gbuffer_diffuse" value="0" type="int"/>
+</ubershader>

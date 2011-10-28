@@ -16,6 +16,7 @@
 #include "core/resources/samplefactory.h"
 #include "core/resources/xmlmaterial.h"
 #include "core/resources/glslshader.h"
+#include "core/resources/glslubershader.h"
 
 #include "core/utils/primitives.h"
 
@@ -46,6 +47,7 @@ inline void initResourceManagers(QString spec_dir = "")
 	SAMPLE_MANAGER.addFactory(new SampleFactory());
 	SHADER_MANAGER.addFactory(new GLSLShaderFactory());
 	SHADER_PROGRAM_MANAGER.addFactory(new GLSLShaderProgramFactory());
+	SHADER_PROGRAM_MANAGER.addFactory(new GLSLUberShaderFactory());
 	MATERIAL_MANAGER.addFactory(new XmlMaterialFactory());
 
 	QString base_dir = MEDIA_DIR;

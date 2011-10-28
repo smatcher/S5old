@@ -1,9 +1,9 @@
 varying vec4 shadowcoord0, shadowcoord1, shadowcoord2, shadowcoord3, shadowcoord4, shadowcoord5;
-uniform mat4 inverse_transpose_camera;
+uniform mat4 inverse_modelview;
 
 void main()
 {	
-	vec4 transformed = inverse_transpose_camera * gl_ModelViewMatrix * gl_Vertex;
+	vec4 transformed = inverse_modelview * gl_ModelViewMatrix * gl_Vertex;
 
 	shadowcoord0 = gl_TextureMatrix[1] * transformed;
 	shadowcoord1 = gl_TextureMatrix[2] * transformed;

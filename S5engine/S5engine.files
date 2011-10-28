@@ -37,6 +37,7 @@ src/core/resources/rawmesh.cpp
 src/core/utils/primitives.cpp
 src/core/resources/xmlmaterial.cpp
 src/core/resources/glslshader.cpp
+src/core/resources/glslubershader.cpp
 include/core/properties/qtlogo.h
 include/core/utils/parenting.h
 include/core/utils/parenting.hpp
@@ -109,6 +110,7 @@ include/core/resources/rawmesh.h
 include/core/utils/primitives.h
 include/core/resources/xmlmaterial.h
 include/core/resources/glslshader.h
+include/core/resources/glslubershader.h
 src/tools/scenegraphview.cpp
 src/tools/scenegraphmodel.cpp
 src/tools/widgets/nodewidget.cpp
@@ -177,3 +179,4 @@ src/core/graphics/rt2d.cpp
 src/core/properties/cubemapcamera.cpp
 include/core/properties/cubemapcamera.h
 src/core/graphics/rendertarget.cpp
+include/core/graphics/ubershader.h

@@ -4,15 +4,12 @@
 	<ambient>0.5 0.5 0.5 1.0</ambient>
 	<emission>0.0 0.0 0.0 1.0</emission>
 	<shininess>0.1</shininess>
-	<program>shadowed_phong</program>
 	<layers>
 		<layer id="0">
-			<texture texunit="0">Shadowmap</texture>
-			<texture texunit="0">axe.png</texture>
+			<texture type="colormap">axe.png</texture>
 		</layer>
 		<layer id="1">
-			<texture texunit="0">Shadowmap</texture>
-			<texture texunit="0">dwarf.png</texture>
+			<texture type="colormap">dwarf.png</texture>
 		</layer>
 	</layers>
 </material>

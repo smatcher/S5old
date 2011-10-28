@@ -51,7 +51,7 @@ public:
 	virtual ~QtLogo();
 	void setColor(QColor c);
 	void draw() const;
-	void render(GLWidget* context, bool material_overridden);
+	void render();
 
 private:
 	void buildGeometry(int d, qreal s);

@@ -89,7 +89,7 @@ void TrailRenderer::frameBegin(double elapsed_time)
 	}
 }
 
-void TrailRenderer::render(GLWidget*, bool material_overridden)
+void TrailRenderer::render()
 {
 	if(!m_vertices.isCreated() || !m_indices.isCreated())
 		return;

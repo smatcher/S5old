@@ -1,0 +1,8 @@
+<ubershader>
+	<shader source="DEF_lighting_pass.vert"/>
+	<shader source="DEF_lighting_pass.frag"/>
+	<uniform name="gbuffer_normal" value="0" type="int"/>
+	<uniform name="gbuffer_diffuse" value="1" type="int"/>
+	<uniform name="gbuffer_specular" value="2" type="int"/>
+	<uniform name="gbuffer_depth" value="3" type="int"/>
+</ubershader>

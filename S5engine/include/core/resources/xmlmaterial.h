@@ -18,7 +18,6 @@ class XmlMaterial : public MaterialData
 
 protected:
 	struct MaterialAttributes {
-		QList<Texture> m_textures;
 		Vector4f m_diffuse;
 		Vector4f m_specular;
 		Vector4f m_ambient;
@@ -28,7 +27,8 @@ protected:
 		bool     m_receive_shadow;
 		bool     m_cast_shadow;
 		bool     m_doublesided;
-		ShaderProgram m_program;
+		Texture  m_colormap;
+		Texture  m_normalmap;
 		QList<ShaderProgramData::UniformBase*> m_uniforms;
 
 		MaterialAttributes() :
@@ -41,19 +41,6 @@ protected:
 			m_receive_shadow(true),
 			m_cast_shadow(true),
 			m_doublesided(false) {}
-/*
-		MaterialAttributes(const MaterialAttributes& ref) :
-			m_textures(ref.m_textures),
-			m_diffuse(ref.m_diffuse),
-			m_specular(ref.m_specular),
-			m_ambient(ref.m_ambient),
-			m_emission(ref.m_emission),
-			m_shininess(ref.m_shininess),
-			m_transparent(ref.m_transparent),
-
-		{
-		}
-*/
 	};
 
 	MaterialAttributes m_default_attributes;
@@ -65,10 +52,11 @@ public:
 	virtual void apply(unsigned int layer);
 	virtual void unset(unsigned int layer);
 	virtual bool unload();
-	virtual QGLShaderProgram* program(unsigned int layer);
 	virtual bool isTransparent(unsigned int layer);
 	virtual bool receivesShadows(unsigned int layer);
 	virtual bool castsShadows(unsigned int layer);
+	virtual bool usesColorMap(unsigned int layer);
+	virtual bool usesNormalMap(unsigned int layer);
 };
 
 class XmlMaterialFactory : public IResourceFactory

@@ -52,9 +52,11 @@ public:
 	virtual int nbUniforms() = 0;
 	virtual void setUniform(const UniformBase* uniform) = 0;
 	virtual void setEngineUniforms() = 0;
+	virtual void setAllUniforms() = 0;
 	virtual void use() = 0;
 	virtual void unset() = 0;
 	virtual QGLShaderProgram* program() = 0;
+	virtual bool isUber() {return false;}
 };
 
 class ShaderProgram : public ResourceHandle<ShaderProgramData>

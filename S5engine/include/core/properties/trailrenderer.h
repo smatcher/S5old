@@ -13,7 +13,7 @@ public:
 	TrailRenderer(Material mat);
 
 	void frameBegin(double elapsed_time);
-	void render(GLWidget*, bool material_overridden);
+	void render();
 
 private:
 	Vector4f m_lastPosition;

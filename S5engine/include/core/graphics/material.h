@@ -16,18 +16,19 @@ public:
 	MaterialData(const QString& name, const QString& path, IResourceFactory* factory) : ResourceData(name,path,factory) {}
 	virtual void apply(unsigned int layer) = 0;
 	virtual void unset(unsigned int layer) = 0;
-	virtual QGLShaderProgram* program(unsigned int layer) = 0;
 	virtual bool isTransparent(unsigned int layer) = 0;
 	virtual bool receivesShadows(unsigned int layer) = 0;
 	virtual bool castsShadows(unsigned int layer) = 0;
+	virtual bool usesColorMap(unsigned int layer) = 0;
+	virtual bool usesNormalMap(unsigned int layer) = 0;
 };
 
 class Material : public ResourceHandle<MaterialData>
 {
 public:
 	Material() {}
-	Material(const Material& from) : ResourceHandle<MaterialData>(from) {};
-	Material(MaterialData& from) : ResourceHandle<MaterialData>(from) {};
+	Material(const Material& from) : ResourceHandle<MaterialData>(from) {}
+	Material(MaterialData& from) : ResourceHandle<MaterialData>(from) {}
 	virtual ~Material() {}
 };
 

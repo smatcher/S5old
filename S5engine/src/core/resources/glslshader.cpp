@@ -63,6 +63,16 @@ void GLSLShaderProgram::setEngineUniforms()
 	}
 }
 
+void GLSLShaderProgram::setAllUniforms()
+{
+	int nb_uniforms = nbUniforms();
+	for(int i=0 ; i<nb_uniforms ; i++)
+	{
+		setUniform(uniform(i));
+	}
+	setEngineUniforms();
+}
+
 const GLSLShaderProgram::UniformBase* GLSLShaderProgram::uniform(int nb)
 {
 	return m_uniforms[nb];

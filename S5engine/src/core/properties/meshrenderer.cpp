@@ -12,14 +12,11 @@ MeshRenderer::MeshRenderer(Mesh& mesh, Material& material) : IRenderable("MeshRe
 	m_material = material;
 }
 
-void MeshRenderer::render(GLWidget* context, bool material_overridden)
+void MeshRenderer::render()
 {
-	// The program is passed to the mesh in order to set the attributes
-	QGLShaderProgram* program = NULL;
-
 	node()->getGlobalTransform().glMultf();
 
-	if(!material_overridden && !m_material.isValid())
+	if(!m_material.isValid())
 	{
 		debug( "RENDERING" , "MeshRenderer : no material to apply for " << node()->getName());
 	}
@@ -41,19 +38,14 @@ void MeshRenderer::render(GLWidget* context, bool material_overridden)
 				 }
 			#endif
 
-			if(!material_overridden) {
-				if(m_material.isValid()) {
-					m_material->apply(i);
-					program = m_material->program(i);
-				}
+			if(m_material.isValid()) {
+				m_material->apply(i);
 			}
 
-			m_mesh->draw(i,program);
+			m_mesh->draw(i);
 
-			if(!material_overridden) {
-				if(m_material.isValid()) {
-					m_material->unset(i);
-				}
+			if(m_material.isValid()) {
+				m_material->unset(i);
 			}
 
 			#ifdef WITH_TOOLS
@@ -64,10 +56,10 @@ void MeshRenderer::render(GLWidget* context, bool material_overridden)
 					glStencilFunc( GL_NOTEQUAL, 1, 0xFFFF );
 					glStencilOp( GL_KEEP, GL_KEEP, GL_REPLACE );
 					// Draw the object with thick lines
-					context->qglColor(Qt::white);
+					RENDER_MANAGER.getRenderPassInfo()->context->qglColor(Qt::white);
 					glLineWidth(3.0);
 
-					m_mesh->draw(i,program, MeshData::WIREFRAME);
+					m_mesh->draw(i,MeshData::WIREFRAME);
 
 					glLineWidth(1.0);
 					glDisable(GL_STENCIL_TEST);

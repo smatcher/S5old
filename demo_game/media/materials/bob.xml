@@ -6,36 +6,29 @@
 	<shininess>0.1</shininess>
 	<cast_shadow>false</cast_shadow>
 	<receive_shadow>false</receive_shadow>
-	<program>shadowed_phong</program>
 	<layers>
 		<layer id="0">
-			<texture texunit="0">Shadowmap</texture>
-			<texture texunit="1">guard1_body.png</texture>
+			<texture type="colormap">guard1_body.png</texture>
 		</layer>
 		<layer id="1">
-			<texture texunit="0">Shadowmap</texture>
-			<texture texunit="0">guard1_face.png</texture>
+			<texture type="colormap">guard1_face.png</texture>
 		</layer>
 		<layer id="2">
-			<texture texunit="0">Shadowmap</texture>
-			<texture texunit="0">guard1_helmet.png</texture>
+			<texture type="colormap">guard1_helmet.png</texture>
 			<doublesided>true</doublesided>
 		</layer>
 		<layer id="3">
-			<texture texunit="0">Shadowmap</texture>
-			<texture texunit="0">iron_grill.png</texture>
+			<texture type="colormap">iron_grill.png</texture>
 			<transparent>true</transparent>
 			<doublesided>true</doublesided>
 		</layer>
 		<layer id="4">
-			<texture texunit="0">Shadowmap</texture>
-			<texture texunit="0">round_grill.png</texture>
+			<texture type="colormap">round_grill.png</texture>
 			<transparent>true</transparent>
 			<doublesided>true</doublesided>
 		</layer>
 		<layer id="5">
-			<texture texunit="0">Shadowmap</texture>
-			<texture texunit="0">guard1_body.png</texture>
+			<texture type="colormap">guard1_body.png</texture>
 		</layer>
 	</layers>
 </material>

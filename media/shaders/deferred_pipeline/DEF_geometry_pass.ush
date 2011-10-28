@@ -1,0 +1,4 @@
+<ubershader>
+	<shader source="DEF_geometry_pass.vert"/>
+	<shader source="DEF_geometry_pass.frag"/>
+</ubershader>
