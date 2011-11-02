@@ -58,7 +58,7 @@ int main(int argc, char *argv[])
 	nCubeCam->addProperty(cubecam);
 	*/
 	nRot->addProperty(new DummyUpdatable(0.5));
-	nLight->addProperty(new Light());
+	nLight->addProperty(new Light(true));
 
 	/*
 	sg->link(nRttCube);

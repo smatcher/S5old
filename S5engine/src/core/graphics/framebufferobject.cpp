@@ -70,6 +70,11 @@ void FrameBufferObject::attachTexture(RenderTexture* tex, AttachmentPoint attach
 	m_textures.push_back(at);
 }
 
+void FrameBufferObject::clearAttachments()
+{
+	m_textures.clear();
+}
+
 void FrameBufferObject::commitTextures(int passNb)
 {
 	int nb_color_buffers = 0;

@@ -1,0 +1,5 @@
+<ubershader>
+	<shader source="DEF_vertical_blur_pass.vert"/>
+	<shader source="DEF_vertical_blur_pass.frag"/>
+	<uniform name="input" value="0" type="int"/>
+</ubershader>

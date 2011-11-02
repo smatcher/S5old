@@ -7,10 +7,16 @@
 
 #include "core/graphics/viewpoint.h"
 
+class RenderTexture;
+
 class Light : public IProperty, public Managee<LightingManager>, public Viewpoint
 {
+private:
+	bool m_casts_shadows;
+	RenderTexture* m_shadowmap;
+
 public:
-	Light();
+	Light(bool casts_shadows = false);
 	void sendParameters(int lightid);
 	virtual void drawDebug(const GLWidget* widget) const;
 
@@ -21,6 +27,9 @@ public:
 
 	virtual void applyTransform(int projection_nb);
 	virtual void applyOnlyRotation(int projection_nb);
+
+	bool castsShadows();
+	RenderTexture* getRenderTexture();
 };
 
 #endif // LIGHT_H

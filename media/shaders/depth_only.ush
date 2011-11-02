@@ -1,0 +1,4 @@
+<ubershader>
+	<shader source="depth_only.vert"/>
+	<shader source="depth_only.frag"/>
+</ubershader>

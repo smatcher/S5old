@@ -29,7 +29,6 @@
 #endif
 
 #define POSTPROCESS_RESOLUTION 2048
-#define OMNIDEPTH_RESOLUTION 1024
 
 //#define SHOW_PASS_INFO
 
@@ -142,7 +141,6 @@ void RenderManager::createResources()
 {
 	// Setting up shadow textures
 	m_shadowmap = new RenderTexture2D("Shadowmap", POSTPROCESS_RESOLUTION, POSTPROCESS_RESOLUTION, GL_RGBA, GL_UNSIGNED_BYTE);
-	new RenderTextureArray("Omni_Lightmap", OMNIDEPTH_RESOLUTION, OMNIDEPTH_RESOLUTION, 6, GL_DEPTH_COMPONENT, GL_FLOAT);
 
 	// Setting up color map
 	m_colormap = new RenderTexture2D("Colormap", POSTPROCESS_RESOLUTION, POSTPROCESS_RESOLUTION, GL_RGBA, GL_UNSIGNED_BYTE);
@@ -181,6 +179,56 @@ void RenderManager::createResources()
 			logError("Could not find the DEF_lighting_pass ubershader for the deferred pipeline");
 		} else if(!shader->isUber()) {
 			logError("The DEF_lighting_pass shader is not an ubershader");
+		}
+	}
+	shader = SHADER_PROGRAM_MANAGER.get("DEF_shadowmap_pass");
+	if(shader.isValid() && shader->isUber()) {
+		m_generate_shadowmap = UberShader(*(static_cast<UberShaderData*>(*shader)));
+	} else {
+		if(!shader.isValid()) {
+			logError("Could not find the DEF_shadowmap_pass ubershader for the deferred pipeline");
+		} else if(!shader->isUber()) {
+			logError("The DEF_shadowmap_pass shader is not an ubershader");
+		}
+	}
+	shader = SHADER_PROGRAM_MANAGER.get("DEF_vertical_blur_pass");
+	if(shader.isValid() && shader->isUber()) {
+		m_vertical_blur = UberShader(*(static_cast<UberShaderData*>(*shader)));
+	} else {
+		if(!shader.isValid()) {
+			logError("Could not find the DEF_vertical_blur_pass ubershader for the deferred pipeline");
+		} else if(!shader->isUber()) {
+			logError("The DEF_vertical_blur_pass shader is not an ubershader");
+		}
+	}
+	shader = SHADER_PROGRAM_MANAGER.get("DEF_horizontal_blur_pass");
+	if(shader.isValid() && shader->isUber()) {
+		m_horizontal_blur = UberShader(*(static_cast<UberShaderData*>(*shader)));
+	} else {
+		if(!shader.isValid()) {
+			logError("Could not find the DEF_horizontal_blur_pass ubershader for the deferred pipeline");
+		} else if(!shader->isUber()) {
+			logError("The DEF_horizontal_blur_pass shader is not an ubershader");
+		}
+	}
+	shader = SHADER_PROGRAM_MANAGER.get("DEF_bloom_pass");
+	if(shader.isValid() && shader->isUber()) {
+		m_bloom = UberShader(*(static_cast<UberShaderData*>(*shader)));
+	} else {
+		if(!shader.isValid()) {
+			logError("Could not find the DEF_bloom_pass ubershader for the deferred pipeline");
+		} else if(!shader->isUber()) {
+			logError("The DEF_bloom_pass shader is not an ubershader");
+		}
+	}
+	shader = SHADER_PROGRAM_MANAGER.get("depth_only");
+	if(shader.isValid() && shader->isUber()) {
+		m_depth = UberShader(*(static_cast<UberShaderData*>(*shader)));
+	} else {
+		if(!shader.isValid()) {
+			logError("Could not find the depth_only ubershader");
+		} else if(!shader->isUber()) {
+			logError("The depth_only shader is not an ubershader");
 		}
 	}
 
@@ -271,6 +319,33 @@ void RenderManager::render(double elapsed_time, SceneGraph* sg)
 		viewpoint = m_context->getViewpoint();
 	}
 
+	/// Render shadowmaps
+	for(int i = 0 ; i<LIGHTING_MANAGER.managees().count() ; i++) {
+		// Render depthmap
+		Light* light = LIGHTING_MANAGER.managees().at(i);
+
+		if(light->castsShadows()) {
+			RenderTexture* depthtex = light->getRenderTexture();
+
+			if(depthtex != NULL) {
+				FrameBufferObject fbo(depthtex->getWidth(), depthtex->getHeight(), false, false);
+				RenderTarget srt(light, &fbo, depthtex, FrameBufferObject::DEPTH_ATTACHMENT, false, false);
+				debug("PASS_INFO","cast light " + QString().setNum(i));
+				glCullFace(GL_FRONT);
+				m_passinfo.setup_texture_matrices = true;
+				m_passinfo.ubershader_used = m_depth;
+				m_passinfo.type = CAST_SHADOW_PASS;
+				renderTarget(sg, srt);
+				m_passinfo.setup_texture_matrices = false;
+				glCullFace(GL_BACK);
+			}
+		}
+	}
+
+	/// Cleans
+	clearTexture(m_bloommap);
+	clearTexture(m_colormap);
+
 	/// First pass - Render gbuffer
 	QList< QPair<RenderTexture*, FrameBufferObject::AttachmentPoint> > mrts;
 	mrts.push_back(QPair<RenderTexture*, FrameBufferObject::AttachmentPoint>(m_normalmap, FrameBufferObject::COLOR_ATTACHMENT_0));
@@ -283,33 +358,177 @@ void RenderManager::render(double elapsed_time, SceneGraph* sg)
 	m_passinfo.type = FINAL_PASS;
 	glBlendFunc(GL_ONE, GL_ZERO);
 	renderTarget(sg, srt);
+	m_postprocessfbo->clearAttachments();
 
 	/// Second pass - lighting postprocess
 	//// Modulate ambient
 	m_passinfo.ubershader_used = m_deferred_ambient;
+	m_passinfo.ubershader_used->setParamValue(UberShaderDefine::BLOOM, true);
+	m_postprocessfbo->bind();
+	m_postprocessfbo->attachTexture(m_colormap, FrameBufferObject::COLOR_ATTACHMENT_0);
+	m_postprocessfbo->attachTexture(m_bloommap, FrameBufferObject::COLOR_ATTACHMENT_1);
+	m_postprocessfbo->commitTextures(0);
+
+	glDisable(GL_DEPTH_TEST);
+	glMatrixMode(GL_PROJECTION);
+	glLoadIdentity();
+	glMatrixMode(GL_MODELVIEW);
+	glLoadIdentity();
+
+	m_passinfo.ubershader_used->use();
+	m_passinfo.ubershader_used->setAllUniforms();
+
+	int width;
+	int height;
+
+	width = m_postprocessfbo->getWidth();
+	height = m_postprocessfbo->getHeight();
+	m_diffusemap->bind(0);
+	glViewport(0,0,width,height);
+	glBegin(GL_QUADS);
+		glTexCoord2f(0.0f,0.0f);
+		glVertex3d(-1,-1,0.0f);
+		glTexCoord2f(1.0f,0.0f);
+		glVertex3d(1,-1,0.0f);
+		glTexCoord2f(1.0f,1.0f);
+		glVertex3d(1,1,0.0f);
+		glTexCoord2f(0.0f,1.0f);
+		glVertex3d(-1,1,0.0f);
+	glEnd();
+	m_diffusemap->release(0);
+	m_passinfo.ubershader_used->unset();
+/*
 	QList<Texture> input_textures;
 	input_textures.push_back(*m_diffusemap);
 	postprocessPass(NULL,input_textures);
-
+*/
 	//// For each light => light
 	m_passinfo.ubershader_used = m_deferred_lighting;
+	m_passinfo.ubershader_used->setParamValue(UberShaderDefine::BLOOM, true);
+/*
 	input_textures.push_front(*m_normalmap);
 	input_textures.push_back(*m_specularmap);
 	input_textures.push_back(*m_depthmap);
+*/
+	m_normalmap->bind(0);
+	m_diffusemap->bind(1);
+	m_specularmap->bind(2);
+	m_depthmap->bind(3);
 
-	glBlendFunc(GL_SRC_ALPHA, GL_ONE);
+/*
+	mrts.clear();
+	mrts.push_back(QPair<RenderTexture*, FrameBufferObject::AttachmentPoint>(m_colormap, FrameBufferObject::COLOR_ATTACHMENT_0));
+	mrts.push_back(QPair<RenderTexture*, FrameBufferObject::AttachmentPoint>(m_bloommap, FrameBufferObject::COLOR_ATTACHMENT_1));
+*/
+	glBlendFunc(GL_ONE, GL_ONE);
 	for(int i = 0 ; i<LIGHTING_MANAGER.managees().count() ; i++) {
 		// Render depthmap
 		Light* light = LIGHTING_MANAGER.managees().at(i);
 		light->sendParameters(0);
-		postprocessPass(NULL,input_textures);
+		//postprocessPass(mrts,input_textures);
+		//postprocessPass(NULL,input_textures);
+
+		m_passinfo.ubershader_used->setParamValue(UberShaderDefine::SHADOWED, light->castsShadows());
+		m_passinfo.ubershader_used->use();
+		m_passinfo.ubershader_used->setAllUniforms();
+
+		if(light->castsShadows())
+		{
+			m_postprocessfbo->clearAttachments();
+			m_postprocessfbo->attachTexture(m_shadowmap, FrameBufferObject::COLOR_ATTACHMENT_0);
+			m_postprocessfbo->commitTextures(0);
+			m_passinfo.ubershader_used->unset();
+			m_passinfo.ubershader_used = m_generate_shadowmap;
+			m_passinfo.ubershader_used->use();
+			m_passinfo.ubershader_used->setAllUniforms();
+
+			m_depthmap->bind(0);
+			light->getRenderTexture()->bind(1);
+
+			glClear(GL_COLOR_BUFFER_BIT);
+			glViewport(0,0,width,height);
+			glBegin(GL_QUADS);
+				glTexCoord2f(0.0f,0.0f);
+				glVertex3d(-1,-1,0.0f);
+				glTexCoord2f(1.0f,0.0f);
+				glVertex3d(1,-1,0.0f);
+				glTexCoord2f(1.0f,1.0f);
+				glVertex3d(1,1,0.0f);
+				glTexCoord2f(0.0f,1.0f);
+				glVertex3d(-1,1,0.0f);
+			glEnd();
+
+			m_passinfo.ubershader_used->unset();
+			m_passinfo.ubershader_used = m_deferred_lighting;
+			m_passinfo.ubershader_used->use();
+			m_passinfo.ubershader_used->setAllUniforms();
+			m_shadowmap->swap();
+			m_postprocessfbo->clearAttachments();
+			m_postprocessfbo->attachTexture(m_colormap, FrameBufferObject::COLOR_ATTACHMENT_0);
+			m_postprocessfbo->attachTexture(m_bloommap, FrameBufferObject::COLOR_ATTACHMENT_1);
+			m_postprocessfbo->commitTextures(0);
+			m_normalmap->bind(0);
+			m_diffusemap->bind(1);
+			m_specularmap->bind(2);
+			m_depthmap->bind(3);
+			m_shadowmap->bind(4);
+		}
+
+		glViewport(0,0,width,height);
+		glBegin(GL_QUADS);
+			glTexCoord2f(0.0f,0.0f);
+			glVertex3d(-1,-1,0.0f);
+			glTexCoord2f(1.0f,0.0f);
+			glVertex3d(1,-1,0.0f);
+			glTexCoord2f(1.0f,1.0f);
+			glVertex3d(1,1,0.0f);
+			glTexCoord2f(0.0f,1.0f);
+			glVertex3d(-1,1,0.0f);
+		glEnd();
+
+		m_passinfo.ubershader_used->unset();
 	}
 
-	glBlendFunc(GL_SRC_ALPHA, GL_ZERO);
-	debugDisplayTexture(*m_normalmap,0,0,256,256);
-	debugDisplayTexture(*m_diffusemap,256,0,256,256);
-	debugDisplayTexture(*m_specularmap,512,0,256,256);
-	debugDisplayTexture(*m_depthmap,768,0,256,256);
+	m_normalmap->release(0);
+	m_diffusemap->release(1);
+	m_specularmap->release(2);
+	m_depthmap->release(3);
+	m_postprocessfbo->swapTextures();
+	m_postprocessfbo->release();
+
+	m_postprocessfbo->clearAttachments();
+
+	QList<Texture> input_textures;
+	input_textures.push_back(*m_bloommap);
+
+	glBlendFunc(GL_ONE, GL_ZERO);
+	for(int i=0 ; i<2 ; i++) {
+		m_passinfo.ubershader_used = m_vertical_blur;
+		postprocessPass(m_bloommap,input_textures);
+		m_passinfo.ubershader_used = m_horizontal_blur;
+		postprocessPass(m_bloommap,input_textures);
+	}
+
+	glBlendFunc(GL_ONE, GL_ONE);
+	m_passinfo.ubershader_used = m_bloom;
+	input_textures.push_front(*m_colormap);
+	glClear(GL_COLOR_BUFFER_BIT);
+	postprocessPass(NULL,input_textures);
+
+	glBlendFunc(GL_ONE, GL_ZERO);
+	glEnable(GL_DEPTH_TEST);
+
+	int xpos = 0;
+
+	debugDisplayTexture(*m_shadowmap,xpos,0,256,256); xpos += 256;
+/*
+	debugDisplayTexture(*m_normalmap,xpos,0,256,256); xpos += 256;
+	debugDisplayTexture(*m_diffusemap,xpos,0,256,256); xpos += 256;
+	debugDisplayTexture(*m_specularmap,xpos,0,256,256); xpos += 256;
+	debugDisplayTexture(*m_depthmap,xpos,0,256,256); xpos += 256;
+	debugDisplayTexture(*m_colormap,xpos,0,256,256); xpos += 256;
+	debugDisplayTexture(*m_bloommap,xpos,0,256,256); xpos += 256;
+*/
 
 	m_context->swapBuffers();
 
@@ -514,11 +733,13 @@ void RenderManager::renderTarget(SceneGraph* sg, RenderTarget& target)
 			m_screen_size->setY(target.getHeight());
 		}
 
+/*      Disabled for now, we use deferred shading
+
 		glEnable(GL_LIGHTING);
 		for(int index = 0; index < LIGHTING_MANAGER.managees().count(); index++) {
 			LIGHTING_MANAGER.managees().at(index)->sendParameters(index);
 		}
-
+*/
 		for(QVector<IRenderable*>::iterator it = registeredManagees.begin();
 			it != registeredManagees.end();
 			it++) {
@@ -568,13 +789,48 @@ void RenderManager::renderTarget(SceneGraph* sg, RenderTarget& target)
 	target.release();
 }
 
+void RenderManager::clearTexture(RenderTexture* texture)
+{
+	debugGL("before clean");
+
+	m_postprocessfbo->bind();
+	m_postprocessfbo->attachTexture(texture, FrameBufferObject::COLOR_ATTACHMENT_0, GL_TEXTURE_2D);
+
+	m_postprocessfbo->commitTextures(0);
+	glClear(GL_COLOR_BUFFER_BIT);
+	m_postprocessfbo->swapTextures();
+
+	m_postprocessfbo->commitTextures(0);
+	glClear(GL_COLOR_BUFFER_BIT);
+	m_postprocessfbo->swapTextures();
+
+	m_postprocessfbo->release();
+
+	debugGL("after clean");
+}
+
 void RenderManager::postprocessPass(RenderTexture* target_texture, QList<Texture> input_textures)
+{
+	QList< QPair<RenderTexture* , FrameBufferObject::AttachmentPoint> > target_textures;
+
+	if(target_texture != NULL) {
+		target_textures.push_back(QPair<RenderTexture*, FrameBufferObject::AttachmentPoint>(target_texture, FrameBufferObject::COLOR_ATTACHMENT_0));
+	}
+
+	postprocessPass(target_textures, input_textures);
+}
+
+void RenderManager::postprocessPass(QList< QPair<RenderTexture* , FrameBufferObject::AttachmentPoint> > target_textures, QList<Texture> input_textures)
 {
 	debugGL("before postprocessing");
 
-	if(target_texture != NULL) {
+	if(target_textures.size() > 0) {
 		m_postprocessfbo->bind();
-		m_postprocessfbo->attachTexture(target_texture, FrameBufferObject::COLOR_ATTACHMENT_0, GL_TEXTURE_2D);
+		for(int i = 0 ; i< target_textures.size() ; i++) {
+			m_postprocessfbo->attachTexture(target_textures[i].first,
+											target_textures[i].second,
+											GL_TEXTURE_2D);
+		}
 		m_postprocessfbo->commitTextures(0);
 	}
 
@@ -592,7 +848,7 @@ void RenderManager::postprocessPass(RenderTexture* target_texture, QList<Texture
 	int width;
 	int height;
 
-	if(target_texture != NULL) {
+	if(target_textures.size() > 0) {
 		width = m_postprocessfbo->getWidth();
 		height = m_postprocessfbo->getHeight();
 	} else {
@@ -623,7 +879,7 @@ void RenderManager::postprocessPass(RenderTexture* target_texture, QList<Texture
 
 	m_passinfo.ubershader_used->unset();
 
-	if(target_texture != NULL) {
+	if(target_textures.size() > 0) {
 		m_postprocessfbo->swapTextures();
 		m_postprocessfbo->release();
 	}

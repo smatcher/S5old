@@ -5,4 +5,5 @@
 	<uniform name="gbuffer_diffuse" value="1" type="int"/>
 	<uniform name="gbuffer_specular" value="2" type="int"/>
 	<uniform name="gbuffer_depth" value="3" type="int"/>
+	<uniform name="shadowmap" value="4" type="int"/>
 </ubershader>

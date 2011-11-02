@@ -17,6 +17,7 @@ namespace UberShaderDefine
 		SPLATTING,
 		REFLECTIONMAPPED,
 		SKY,
+		BLOOM,
 		NB_DEFINES,
 		UNKNOWN
 	};
@@ -30,6 +31,7 @@ namespace UberShaderDefine
 		"SPLATTING",
 		"REFLECTION_MAP",
 		"SKY",
+		"BLOOM",
 		"NB_DEFINES",
 		"UNKOWN"
 	};

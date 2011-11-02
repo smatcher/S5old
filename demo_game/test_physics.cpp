@@ -87,8 +87,8 @@ int main(int argc, char *argv[])
 	nCam->addProperty(new Camera(70,1,200));
 	nCamFollow->addProperty(new Camera(90,1,200));
 	nHead->addProperty(new DummyUpdatable());
-	nLight->addProperty(new Light());
-	nLight2->addProperty(new Light());
+	nLight->addProperty(new Light(true));
+	nLight2->addProperty(new Light(false));
 
 	Mesh plane = MESH_MANAGER.get("Plane");
 	Mesh cube = MESH_MANAGER.get("Cube");
@@ -193,16 +193,11 @@ int main(int argc, char *argv[])
 	prop.mass = 100.0;
 	prop.restitution = 0.1;
 	//prop.shape = PhysicObject::SPHERE;
-	int i=0;
 	for(QVector<Node*>::iterator it=balls.begin() ; it != balls.end() ; it++) {
 		(*it)->addProperty(new PhysicObject(prop));
-		prop.mass += 2.0;
-		i++;
-		//(*it)->addProperty(new MeshRenderer(sphere,ball));
-		if(i%2)
-			(*it)->addProperty(new MeshRenderer(mesh,duck));
-		else
-			(*it)->addProperty(new MeshRenderer(mesh,gargoyle));
+		prop.mass += 1.0;
+		(*it)->addProperty(new MeshRenderer(mesh,duck));
+		//(*it)->addProperty(new Light());
 	}
 
 	// Beurk ! Mais je peux le faire alors je me prive pas ^^

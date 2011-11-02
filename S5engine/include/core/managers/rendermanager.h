@@ -8,6 +8,7 @@
 #include "core/graphics/shader.h"
 #include "core/graphics/ubershader.h"
 #include "core/graphics/material.h"
+#include "core/graphics/framebufferobject.h"
 #include "core/maths/vector3.h"
 
 #include <QMatrix4x4>
@@ -20,7 +21,6 @@ class Camera;
 class SceneGraph;
 class RenderTarget;
 class RenderTexture;
-class FrameBufferObject;
 
 class RenderManager : public Manager<IRenderable>
 {
@@ -94,6 +94,11 @@ private :
 	UberShader m_deferred_geometry;
 	UberShader m_deferred_ambient;
 	UberShader m_deferred_lighting;
+	UberShader m_generate_shadowmap;
+	UberShader m_vertical_blur;
+	UberShader m_horizontal_blur;
+	UberShader m_bloom;
+	UberShader m_depth;
 
 	RenderTexture* m_bloommap;
 	RenderTexture* m_colormap;
@@ -104,8 +109,10 @@ private :
 
 	QList<RenderTarget*> m_rts;
 
+	void clearTexture(RenderTexture* texture);
 	void renderTarget(SceneGraph* sg, RenderTarget& target);
 	void postprocessPass(RenderTexture* target_texture, QList<Texture> input_textures);
+	void postprocessPass(QList< QPair<RenderTexture*, FrameBufferObject::AttachmentPoint> > target_textures, QList<Texture> input_textures);
 	void debugDisplayTexture(Texture texture, int x, int y, int width, int height);
 	void setupProjection(RenderTarget& target, int projection_nb);
 	void applyBackground(RenderTarget& target, int projection_nb);

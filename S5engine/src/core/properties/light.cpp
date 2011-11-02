@@ -1,5 +1,10 @@
 #include "core/properties/light.h"
 #include "core/scenegraph/node.h"
+#include "core/log/log.h"
+#include "core/resources/managers.h"
+#include <core/graphics/rtarray.h>
+
+#define OMNIDEPTH_RESOLUTION 1024
 
 const double posx[] = {
 	 0, 0,-1, 0,
@@ -43,12 +48,19 @@ const double negz[] = {
 	 0, 0, 0, 1
 };
 
-Light::Light() : IProperty("Light")
+Light::Light(bool casts_shadows) : m_casts_shadows(casts_shadows), m_shadowmap(NULL), IProperty("Light")
 {
+	if(casts_shadows) {
+		int i=0;
+		while(TEXTURE_MANAGER.get("Omni_Lightmap"+QString().setNum(i)).isValid()) i++;
+		m_shadowmap = new RenderTextureArray("Omni_Lightmap"+QString().setNum(i), OMNIDEPTH_RESOLUTION, OMNIDEPTH_RESOLUTION, 6, GL_DEPTH_COMPONENT, GL_FLOAT);
+	}
 }
 
 void Light::sendParameters(int lightid)
 {
+	debugGL("before sending light parameters for light" << lightid);
+
 	glEnable(GL_LIGHT0 + lightid);
 	glEnable(GL_MULTISAMPLE);
 	Matrix4f trans = node()->getGlobalTransform();
@@ -66,6 +78,8 @@ void Light::sendParameters(int lightid)
 	glLightfv(GL_LIGHT0 + lightid, GL_AMBIENT, ambientLight0);
 	glLightfv(GL_LIGHT0 + lightid, GL_DIFFUSE, diffuseLight0);
 	glLightfv(GL_LIGHT0 + lightid, GL_SPECULAR, specularLight0);
+
+	debugGL("while sending light parameters for light" << lightid);
 }
 
 void Light::drawDebug(const GLWidget* widget) const
@@ -174,4 +188,18 @@ void Light::applyOnlyRotation(int projection_nb)
 	Transformf transform(rotation.getInverse(),Vector3f(),Vector3f(1,1,1));
 	transform.glMultd();
 	*/
+}
+
+bool Light::castsShadows()
+{
+	return m_casts_shadows;
+}
+
+RenderTexture* Light::getRenderTexture()
+{
+	if(m_shadowmap == NULL) {
+		m_shadowmap = new RenderTextureArray("Omni_Lightmap", OMNIDEPTH_RESOLUTION, OMNIDEPTH_RESOLUTION, 6, GL_DEPTH_COMPONENT, GL_FLOAT);
+	}
+
+	return m_shadowmap;
 }

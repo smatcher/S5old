@@ -30,6 +30,7 @@ public:
 	};
 
 	void attachTexture(RenderTexture* tex, AttachmentPoint attachment, GLenum textarget = GL_TEXTURE_2D);
+	void clearAttachments();
 	void commitTextures(int passNb);
 	void swapTextures();
 
