@@ -3,6 +3,7 @@
 
 #include <QWidget>
 #include <QTreeWidget>
+#include <QTableWidget>
 
 class RenderWidget;
 class PropertiesPanel;
@@ -22,6 +23,7 @@ protected:
 private:
 	// widgets
 	RenderWidget*    m_renderWidget;
+	QTabWidget*      m_tab;
 	PropertiesPanel* m_propertiesWidget;
 	QTreeView*       m_treeWidget;
 

@@ -1,4 +1,4 @@
-#include "tools/scenegraphmodel.h"
+#include "tools/mvc/scenegraphmodel.h"
 #include "core/utils/customevents.h"
 
 SceneGraphModel::SceneGraphModel(SceneGraph* item)

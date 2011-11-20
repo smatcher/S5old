@@ -26,19 +26,22 @@ btRigidBody* PhysicObject::getRigidBody()
 	return m_body;
 }
 
-void PhysicObject::drawDebug(const GLWidget*) const
+void PhysicObject::drawDebug(const GLWidget*, const RenderManager::DebugGizmosFilter& filter) const
 {
-	if(m_cached_shape != NULL) {
-		const unsigned int* indices = m_cached_shape->getIndexPointer();
-		const btVector3* vertices = m_cached_shape->getVertexPointer();
-		unsigned int num_indices = m_cached_shape->numIndices();
-		glColor3f(1,1,1);
-		for(int i=0 ; i+2< num_indices ; i+=3) {
-			glBegin(GL_LINE_STRIP);
-				glVertex3fv(vertices[indices[i]]);
-				glVertex3fv(vertices[indices[i+1]]);
-				glVertex3fv(vertices[indices[i+2]]);
-			glEnd();
+	if(filter.draw_colliders)
+	{
+		if(m_cached_shape != NULL) {
+			const unsigned int* indices = m_cached_shape->getIndexPointer();
+			const btVector3* vertices = m_cached_shape->getVertexPointer();
+			unsigned int num_indices = m_cached_shape->numIndices();
+			glColor3f(1,1,1);
+			for(int i=0 ; i+2< num_indices ; i+=3) {
+				glBegin(GL_LINE_STRIP);
+					glVertex3fv(vertices[indices[i]]);
+					glVertex3fv(vertices[indices[i+1]]);
+					glVertex3fv(vertices[indices[i+2]]);
+				glEnd();
+			}
 		}
 	}
 }

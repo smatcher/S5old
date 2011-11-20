@@ -1,100 +1,110 @@
 #include "tools/widgets/renderwidget.h"
 #include "core/managers/rendermanager.h"
-#include "tools/widgets/cameraradiobutton.h"
+
+#include "tools/mvc/cameramodel.h"
+#include "tools/mvc/cameraview.h"
 #include <QtGui>
 
 RenderWidget::RenderWidget()
 {
-	m_draw_debug_radio = new QCheckBox("Draw debug info");
-	m_cameras_combo = new QComboBox();
-	QGroupBox* cameraBox = new QGroupBox("Rendered from camera");
+	m_draw_debug_button = new QPushButton("Debug Gizmos");
+	m_draw_debug_menu = new QMenu();
 
-	QVBoxLayout* layout = new QVBoxLayout;
-	layout->addWidget(m_draw_debug_radio);
+	m_draw_debug = m_draw_debug_menu->addAction("draw gizmos");
+	m_draw_debug->setCheckable(true);
+	m_draw_debug->setChecked(RENDER_MANAGER.getDrawDebug());
+	m_draw_debug_menu->addSeparator();
+	RenderManager::DebugGizmosFilter filter = RENDER_MANAGER.getDrawDebugFilter();
+	m_draw_transforms = m_draw_debug_menu->addAction("transforms");
+	m_draw_transforms->setCheckable(true);
+	m_draw_transforms->setChecked(filter.draw_transforms);
+	m_draw_lights = m_draw_debug_menu->addAction("lights");
+	m_draw_lights->setCheckable(true);
+	m_draw_lights->setChecked(filter.draw_lights);
+	m_draw_cameras = m_draw_debug_menu->addAction("cameras");
+	m_draw_cameras->setCheckable(true);
+	m_draw_cameras->setChecked(filter.draw_cameras);
+	m_draw_skeletons = m_draw_debug_menu->addAction("skeletons");
+	m_draw_skeletons->setCheckable(true);
+	m_draw_skeletons->setChecked(filter.draw_skeletons);
+	m_draw_colliders = m_draw_debug_menu->addAction("colliders");
+	m_draw_colliders->setCheckable(true);
+	m_draw_colliders->setChecked(filter.draw_colliders);
+	m_cameras_combo = new QComboBox();
+	m_cameras_combo->setModel(CAMERA_MANAGER.getDebugModel());
+	m_cameras_combo->setView(CAMERA_MANAGER.getDebugView());
+
+	QHBoxLayout* layout = new QHBoxLayout;
+	layout->addWidget(m_draw_debug_button);
 	layout->addWidget(m_cameras_combo);
-	layout->addWidget(cameraBox);
-	layout->addStretch(1);
+	//layout->addStretch(1);
 	setLayout(layout);
 
-	camerasLayout = new QVBoxLayout;
-	cameraBox->setLayout(camerasLayout);
-	editorCam = new CameraRadioButton(NULL);
-	camerasLayout->addWidget(editorCam);
-	const QVector<Camera*>& cameras = CAMERA_MANAGER.managees();
-	for(int i=0 ; i<cameras.count() ; i++)
-	{
-		CameraRadioButton* cam = new CameraRadioButton(cameras.at(i));
-		camerasLayout->addWidget(cam);
-	}
-	//camerasLayout->addStretch(1);
-
 	setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Maximum);
-	connect(m_draw_debug_radio, SIGNAL(stateChanged(int)), this, SLOT(drawDebugChanged(int)));
+	connect(m_draw_debug_button, SIGNAL(clicked()), this, SLOT(showDebugMenu()));
+	connect(m_draw_debug, SIGNAL(triggered()), this, SLOT(drawDebugChanged()));
+	connect(m_draw_colliders, SIGNAL(triggered()), this, SLOT(drawDebugFilterChanged()));
+	connect(m_draw_cameras, SIGNAL(triggered()), this, SLOT(drawDebugFilterChanged()));
+	connect(m_draw_transforms, SIGNAL(triggered()), this, SLOT(drawDebugFilterChanged()));
+	connect(m_draw_lights, SIGNAL(triggered()), this, SLOT(drawDebugFilterChanged()));
+	connect(m_draw_skeletons, SIGNAL(triggered()), this, SLOT(drawDebugFilterChanged()));
 }
 
 RenderWidget::~RenderWidget()
 {
-	CAMERA_MANAGER.widgetDestroyed();
-}
-
-void RenderWidget::cameraAdded(Camera *cam)
-{
-	CameraRadioButton* radio = new CameraRadioButton(cam);
-	camerasLayout->addWidget(radio);
-
-	Node* node = cam->node();
-
-	if(node != NULL) {
-		m_cameras_combo->insertItem(0,node->getName());
-	}
-}
-
-void RenderWidget::cameraRemoved(CameraRadioButton *radio)
-{
-	camerasLayout->removeWidget(radio);
-	delete radio;
+	RENDER_MANAGER.widgetDestroyed();
 }
 
 void RenderWidget::activeCameraChanged(Camera* cam)
 {
-	if(cam == NULL)
-	{
-		if(! editorCam->isChecked())
-			editorCam->setChecked(true);
-	}
-	else
-	{
-		CameraRadioButton* radio = cam->getRadioButton();
+	int index = 0;
 
-		if(radio != NULL)
+	for(int i=0 ; i<CAMERA_MANAGER.managees().count() ; i++)
+	{
+		if(CAMERA_MANAGER.managees().at(i) == cam)
 		{
-			if(! radio->isChecked())
-				radio->setChecked(true);
+			index = i+1;
+			break;
 		}
 	}
+
+	m_cameras_combo->setCurrentIndex(index);
 }
 
 void RenderWidget::setDrawDebug(bool draw)
 {
-	m_draw_debug_radio->setChecked(draw);
+	m_draw_debug->setChecked(draw);
 }
 
-void RenderWidget::drawDebugChanged(int state)
+void RenderWidget::drawDebugChanged()
 {
-	switch(state)
-	{
-		case Qt::Checked :
-			RENDER_MANAGER.setDrawDebug(true);
-			break;
-		case Qt::Unchecked :
-			RENDER_MANAGER.setDrawDebug(false);
-			break;
-		default :
-			break;
-	}
+	RENDER_MANAGER.setDrawDebug(m_draw_debug->isChecked());
 }
 
-QSize RenderWidget::sizeHint() const
+void RenderWidget::drawDebugFilterChanged()
 {
-	return QSize(240,200);
+	RenderManager::DebugGizmosFilter filter;
+	filter.draw_cameras = m_draw_cameras->isChecked();
+	filter.draw_transforms = m_draw_transforms->isChecked();
+	filter.draw_lights = m_draw_lights->isChecked();
+	filter.draw_colliders = m_draw_colliders->isChecked();
+	filter.draw_skeletons = m_draw_skeletons->isChecked();
+
+	RENDER_MANAGER.setDrawDebugFilter(filter);
+}
+
+void RenderWidget::showDebugMenu()
+{
+	QPoint pos = QWidget::mapToGlobal(m_draw_debug_button->pos());
+	pos.setY(pos.y() + m_draw_debug_button->height());
+	m_draw_debug_menu->popup(pos);
+}
+
+void RenderWidget::setDrawDebugFilter(const RenderManager::DebugGizmosFilter& filter)
+{
+	m_draw_transforms->setChecked(filter.draw_transforms);
+	m_draw_lights->setChecked(filter.draw_lights);
+	m_draw_cameras->setChecked(filter.draw_cameras);
+	m_draw_skeletons->setChecked(filter.draw_skeletons);
+	m_draw_colliders->setChecked(filter.draw_colliders);
 }

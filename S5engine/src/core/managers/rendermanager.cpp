@@ -25,6 +25,10 @@
 RenderManager::RenderManager() : m_context(NULL), m_camera(NULL), m_cameraChanged(true), m_drawDebug(false)
 {
 	m_defaultBackground.type = NO_CLEAR;
+
+	#ifdef WITH_TOOLS
+		m_widget = NULL;
+	#endif
 }
 
 RenderManager::~RenderManager()
@@ -97,6 +101,8 @@ void RenderManager::setupProjection(RenderTarget& target, int projection_nb)
 void RenderManager::init(GLWidget* context)
 {
 	m_context = context;
+
+	CAMERA_MANAGER.setDebugCamera(context->getViewpoint());
 
 	m_context->qglClearColor(Qt::black);
 	glEnable(GL_DEPTH_TEST);
@@ -215,9 +221,12 @@ void RenderManager::renderTarget(SceneGraph* sg, RenderTarget& target)
 		glDisable(GL_LIGHTING);
 		glDisable(GL_TEXTURE_2D);
 		for(int i=0 ; i<sg->childCount() ; i++) {
-			sg->child(i)->drawDebug(m_context,true);
+			sg->child(i)->drawDebug(m_context,m_drawDebugFilter,true);
 		}
-		PHYSICS_MANAGER.debugDraw();
+		if(m_drawDebugFilter.draw_colliders)
+		{
+			PHYSICS_MANAGER.debugDraw();
+		}
 		glEnable(GL_TEXTURE_2D);
 		glEnable(GL_LIGHTING);
 	}
@@ -234,7 +243,7 @@ void RenderManager::setCurrentCamera(Camera* cam)
 	m_cameraChanged = true;
 
 	#ifdef WITH_TOOLS
-		CAMERA_MANAGER.getDebugView()->activeCameraChanged(m_camera);
+		getDebugView()->activeCameraChanged(m_camera);
 	#endif
 }
 
@@ -243,8 +252,26 @@ void RenderManager::setDrawDebug(bool draw)
 	m_drawDebug = draw;
 
 	#ifdef WITH_TOOLS
-		CAMERA_MANAGER.getDebugView()->setDrawDebug(draw);
+		getDebugView()->setDrawDebug(draw);
 	#endif
+}
+void RenderManager::setDrawDebugFilter(const DebugGizmosFilter& filter)
+{
+	m_drawDebugFilter = filter;
+
+	#ifdef WITH_TOOLS
+		getDebugView()->setDrawDebugFilter(filter);
+	#endif
+}
+
+bool RenderManager::getDrawDebug() const
+{
+	return m_drawDebug;
+}
+
+RenderManager::DebugGizmosFilter RenderManager::getDrawDebugFilter() const
+{
+	return m_drawDebugFilter;
 }
 
 const Camera* RenderManager::getCurrentCamera()
@@ -377,4 +404,22 @@ void RenderManager::addRenderTarget(RenderTarget *rt)
 		logWarn("tried to add NULL render target");
 	}
 }
+
+#ifdef WITH_TOOLS
+
+RenderWidget* RenderManager::getDebugView()
+{
+	if(m_widget == NULL)
+		m_widget = new RenderWidget();
+
+	return m_widget;
+}
+
+void RenderManager::widgetDestroyed()
+{
+	m_widget = NULL;
+}
+
+#endif
+
 

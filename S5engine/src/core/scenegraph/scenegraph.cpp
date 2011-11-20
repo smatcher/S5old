@@ -1,8 +1,8 @@
 #include "core/scenegraph/scenegraph.h"
 
 #ifdef WITH_TOOLS
-	#include "tools/scenegraphview.h"
-	#include "tools/scenegraphmodel.h"
+	#include "tools/mvc/scenegraphview.h"
+	#include "tools/mvc/scenegraphmodel.h"
 #endif
 
 SceneGraph::SceneGraph()

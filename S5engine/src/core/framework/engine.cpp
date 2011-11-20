@@ -15,7 +15,7 @@
 #include "core/resources/managers.h"
 
 #ifdef WITH_TOOLS
-	#include "tools/scenegraphmodel.h"
+	#include "tools/mvc/scenegraphmodel.h"
 	#include "tools/3D/manipulator.h"
 #endif
 
@@ -32,6 +32,9 @@ Engine::Engine(int argc, char *argv[], QString mod_dir) :
 
 	m_running(false)
 {
+	#ifndef WITH_TOOLS
+		qInstallMsgHandler(Engine::MsgHandler);
+	#endif
 	init(argc, argv, mod_dir);
 }
 
@@ -70,6 +73,7 @@ void Engine::init(int argc, char *argv[], QString mod_dir)
 
 	QCoreApplication::processEvents();
 
+	Log::topicPolicy.insert("RESOURCE PARSING",Log::POLICY_IGNORE);
 	initResourceManagers(mod_dir);
 }
 
@@ -123,4 +127,25 @@ int Engine::start()
 void Engine::stop()
 {
 	m_running = false;
+}
+
+void Engine::MsgHandler(QtMsgType type, const char *msg)
+{
+	switch (type) {
+		case QtDebugMsg:
+			fprintf(stdout, "%s\n", msg);
+			fflush(stdout);
+			break;
+		case QtWarningMsg:
+			fprintf(stderr, "%s\n", msg);
+			fflush(stderr);
+			break;
+		case QtCriticalMsg:
+			fprintf(stderr, "%s\n", msg);
+			fflush(stderr);
+			break;
+		case QtFatalMsg:
+			fprintf(stderr, "%s\n", msg);
+			abort();
+	}
 }

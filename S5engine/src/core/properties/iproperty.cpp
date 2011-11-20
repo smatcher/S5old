@@ -31,7 +31,7 @@ const Node* IProperty::node() const
 		return NULL;
 }
 
-void IProperty::drawDebug(const GLWidget*) const
+void IProperty::drawDebug(const GLWidget* widget, const RenderManager::DebugGizmosFilter& filter) const
 {
 }
 

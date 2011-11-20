@@ -38,6 +38,8 @@ public :
 
 	SceneGraph* getScenegraph_TEMPORARY() {return &m_scene;}
 	GLWidget*   getGLW_TEMPORARY() {return m_window.getGLW_TEMPORARY();}
+
+	static void MsgHandler(QtMsgType type, const char *msg);
 };
 
 #endif // ENGINE_HPP

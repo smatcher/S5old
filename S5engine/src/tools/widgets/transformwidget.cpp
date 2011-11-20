@@ -67,7 +67,7 @@ TransformWidget::~TransformWidget()
 
 QSize TransformWidget::sizeHint() const
 {
-	return QSize(300,100);
+	return QSize(260,100);
 }
 
 void TransformWidget::updateData()

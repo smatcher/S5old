@@ -26,8 +26,10 @@ void Light::sendParameters(int lightid)
 	glLightfv(GL_LIGHT0 + lightid, GL_SPECULAR, specularLight0);
 }
 
-void Light::drawDebug(const GLWidget* widget) const
+void Light::drawDebug(const GLWidget* widget, const RenderManager::DebugGizmosFilter& filter) const
 {
+	if(filter.draw_lights)
+	{
 		widget->qglColor(Qt::yellow);
 		glBegin(GL_LINE_LOOP);
 		for(int i=0 ; i<360 ; i+=10) {
@@ -50,4 +52,5 @@ void Light::drawDebug(const GLWidget* widget) const
 			glVertex3d(sin,cos,0);
 		}
 		glEnd();
+	}
 }

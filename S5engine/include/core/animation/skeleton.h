@@ -15,7 +15,7 @@ class BoneNode : public Node
 {
 public:
 	BoneNode(const QString& name) : Node(name) {}
-	virtual void drawDebug(const GLWidget *widget, bool recursive) const;
+	virtual void drawDebug(const GLWidget *widget, const RenderManager::DebugGizmosFilter& filter, bool recursive) const;
 };
 
 class Skeleton

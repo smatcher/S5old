@@ -55,7 +55,7 @@ public:
 	virtual void onUnlinked(ParentOfNode * from);
 
 	// Debug
-	virtual void drawDebug(const GLWidget* widget, bool recursive) const;
+	virtual void drawDebug(const GLWidget* widget, const RenderManager::DebugGizmosFilter& filter, bool recursive) const;
 
 	#ifdef WITH_TOOLS
 		virtual NodeWidget* getWidget();
