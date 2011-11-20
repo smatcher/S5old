@@ -173,3 +173,6 @@ include/tools/mvc/cameraview.h
 src/tools/mvc/cameraview.cpp
 src/tools/widgets/consolewidget.cpp
 include/tools/widgets/consolewidget.h
+include/core/managers/commandmanager.h
+src/core/managers/commandmanager.cpp
+include/core/utils/enginecommands.h

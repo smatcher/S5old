@@ -21,6 +21,8 @@
 
 #include <AL/alut.h>
 
+#include "core/utils/enginecommands.h"
+
 Engine::Engine(int argc, char *argv[], QString mod_dir) :
 	m_app(argc, argv),
 	m_scene(),
@@ -30,7 +32,8 @@ Engine::Engine(int argc, char *argv[], QString mod_dir) :
 		m_toolswindow(this),
 	#endif
 
-	m_running(false)
+	m_running(false),
+	m_paused(false)
 {
 	#ifndef WITH_TOOLS
 		qInstallMsgHandler(Engine::MsgHandler);
@@ -75,6 +78,8 @@ void Engine::init(int argc, char *argv[], QString mod_dir)
 
 	Log::topicPolicy.insert("RESOURCE PARSING",Log::POLICY_IGNORE);
 	initResourceManagers(mod_dir);
+
+	registerEngineCommands(this);
 }
 
 int Engine::start()
@@ -97,7 +102,11 @@ int Engine::start()
 		QDateTime time = QDateTime::currentDateTime();
 		double elapsed = double(lastTime.msecsTo(time))/1000.0;
 
-		updateManager->update(elapsed);
+		if(!m_paused)
+		{
+			updateManager->update(elapsed);
+		}
+
 		renderManager->render(elapsed,&m_scene);
 
 		lastTime = time;
@@ -127,6 +136,11 @@ int Engine::start()
 void Engine::stop()
 {
 	m_running = false;
+}
+
+void Engine::setPaused(bool pause)
+{
+	m_paused = pause;
 }
 
 void Engine::MsgHandler(QtMsgType type, const char *msg)

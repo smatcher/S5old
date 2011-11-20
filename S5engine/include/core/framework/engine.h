@@ -25,6 +25,7 @@ private :
 	#endif
 
 	bool m_running;
+	bool m_paused;
 
 	void init(int argc, char *argv[], QString mod_dir);
 
@@ -34,7 +35,10 @@ public :
 
 	int start();
 	void stop();
+	void setPaused(bool pause);
+
 	bool isRunning() {return m_running;}
+	bool isPaused() {return m_paused;}
 
 	SceneGraph* getScenegraph_TEMPORARY() {return &m_scene;}
 	GLWidget*   getGLW_TEMPORARY() {return m_window.getGLW_TEMPORARY();}

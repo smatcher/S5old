@@ -1,4 +1,5 @@
 #include "tools/widgets/consolewidget.h"
+#include "core/managers/commandmanager.h"
 #include "core/log/log.h"
 
 #include <QKeyEvent>
@@ -89,11 +90,25 @@ ConsoleWidget::~ConsoleWidget()
 
 void ConsoleWidget::newCommand()
 {
-	m_historyId = -1;
-	m_history.push_back(m_input_field->text());
-	m_content_field->addItem(QString("console not implemented yet ignoring command : ") + m_input_field->text());
-	m_content_field->scrollToBottom();
+	QString cmd = m_input_field->text();
+
+	bool retval = COMMAND_MANAGER.runCommand(cmd);
+
 	m_input_field->clear();
+	m_historyId = -1;
+	m_history.push_back(cmd);
+
+	QListWidgetItem* item = new QListWidgetItem();
+	item->setText(cmd);
+
+	if(retval)
+		item->setIcon(QIcon("media/icons/ok.png"));
+	else
+		item->setIcon(QIcon("media/icons/nok.png"));
+
+	m_content_field->addItem(item);
+	m_content_field->scrollToBottom();
+
 }
 
 void ConsoleWidget::historyNext()
@@ -123,7 +138,7 @@ void ConsoleWidget::historyPrevious()
 
 void ConsoleWidget::autocomplete()
 {
-	m_input_field->setText("sry dawg no autocompletion yet");
+	m_input_field->setText(COMMAND_MANAGER.autocomplete(m_input_field->text()));
 }
 
 void ConsoleWidget::ConsoleInputField::keyPressEvent(QKeyEvent * event)
