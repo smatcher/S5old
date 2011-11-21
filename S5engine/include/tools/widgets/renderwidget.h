@@ -1,13 +1,14 @@
 #ifndef RENDERWIDGET_H
 #define RENDERWIDGET_H
 
+#include <core/managers/rendermanager.h>
 #include <QWidget>
 #include <QLayout>
 #include <QCheckBox>
 #include <QComboBox>
 
 class Camera;
-class CameraRadioButton;
+
 class RenderWidget : public QWidget
 {
 	Q_OBJECT
@@ -16,22 +17,26 @@ public :
 	RenderWidget();
 	virtual ~RenderWidget();
 
-	void cameraAdded(Camera* cam);
-	void cameraRemoved(CameraRadioButton *radio);
 	void activeCameraChanged(Camera* cam);
 
 	void setDrawDebug(bool draw);
-
-	QSize sizeHint() const;
+	void setDrawDebugFilter(const RenderManager::DebugGizmosFilter& filter);
 
 public slots :
-	void drawDebugChanged(int state);
+	void drawDebugChanged();
+	void drawDebugFilterChanged();
+	void showDebugMenu();
 
 private:
 	QComboBox* m_cameras_combo;
-	QVBoxLayout* camerasLayout;
-	CameraRadioButton* editorCam;
-	QCheckBox* m_draw_debug_radio;
+	QPushButton* m_draw_debug_button;
+	QMenu*   m_draw_debug_menu;
+	QAction* m_draw_debug;
+	QAction* m_draw_lights;
+	QAction* m_draw_transforms;
+	QAction* m_draw_skeletons;
+	QAction* m_draw_cameras;
+	QAction* m_draw_colliders;
 };
 
 #endif // RENDERWIDGET_H

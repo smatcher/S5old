@@ -53,6 +53,10 @@ RenderManager::RenderManager() :
 	m_postprocessfbo(NULL)
 {
 	m_defaultBackground.type = NO_CLEAR;
+
+	#ifdef WITH_TOOLS
+		m_widget = NULL;
+	#endif
 }
 
 RenderManager::~RenderManager()
@@ -235,6 +239,8 @@ void RenderManager::updateResources(int new_height, int new_width)
 void RenderManager::init(GLWidget* context)
 {
 	m_context = context;
+
+	CAMERA_MANAGER.setDebugCamera(context->getViewpoint());
 
 	m_context->qglClearColor(Qt::black);
 	glEnable(GL_DEPTH_TEST);
@@ -911,7 +917,7 @@ void RenderManager::setCurrentCamera(Camera* cam)
 	m_cameraChanged = true;
 
 	#ifdef WITH_TOOLS
-		CAMERA_MANAGER.getDebugView()->activeCameraChanged(m_camera);
+		getDebugView()->activeCameraChanged(m_camera);
 	#endif
 }
 
@@ -920,8 +926,26 @@ void RenderManager::setDrawDebug(bool draw)
 	m_drawDebug = draw;
 
 	#ifdef WITH_TOOLS
-		CAMERA_MANAGER.getDebugView()->setDrawDebug(draw);
+		getDebugView()->setDrawDebug(draw);
 	#endif
+}
+void RenderManager::setDrawDebugFilter(const DebugGizmosFilter& filter)
+{
+	m_drawDebugFilter = filter;
+
+	#ifdef WITH_TOOLS
+		getDebugView()->setDrawDebugFilter(filter);
+	#endif
+}
+
+bool RenderManager::getDrawDebug() const
+{
+	return m_drawDebug;
+}
+
+RenderManager::DebugGizmosFilter RenderManager::getDrawDebugFilter() const
+{
+	return m_drawDebugFilter;
 }
 
 const Camera* RenderManager::getCurrentCamera()
@@ -1113,3 +1137,29 @@ Vector2i RenderManager::getCurrentViewportSize()
 {
 	return m_viewport_size;
 }
+
+void RenderManager::takeScreenshot(QString path)
+{
+	if(m_context)
+	{
+		m_context->takeScreenshot(path);
+	}
+}
+
+#ifdef WITH_TOOLS
+
+RenderWidget* RenderManager::getDebugView()
+{
+	if(m_widget == NULL)
+		m_widget = new RenderWidget();
+
+	return m_widget;
+}
+
+void RenderManager::widgetDestroyed()
+{
+	m_widget = NULL;
+}
+
+#endif
+

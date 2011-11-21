@@ -12,7 +12,7 @@ Grid::~Grid()
 
 }
 
-void Grid::drawDebug(const GLWidget*) const
+void Grid::drawDebug(const GLWidget*, const RenderManager::DebugGizmosFilter& filter) const
 {
 	int i;
 
@@ -22,22 +22,22 @@ void Grid::drawDebug(const GLWidget*) const
 	glBegin(GL_LINES);
 	for(i=0; i<=m_w; i++)
 	{
-	   if(i%(m_w/5) == 0)
-		   glColor3f(1.0f, 1.0f, 1.0f);
-	   glVertex3f(i*m_stepw, 0, 0);
-	   glVertex3f(i*m_stepw, m_h*m_steph, 0);
-	   if(i%(m_w/5) == 0)
-		   glColor3f(.5f, .5f, .5f);
+		if(i%(m_w/5) == 0)
+			glColor3f(1.0f, 1.0f, 1.0f);
+		glVertex3f(i*m_stepw, 0, 0);
+		glVertex3f(i*m_stepw, m_h*m_steph, 0);
+		if(i%(m_w/5) == 0)
+			glColor3f(.5f, .5f, .5f);
 	}
 
 	for(i=0; i<=m_h; i++)
 	{
 		if(i%(m_h/5)== 0)
 			glColor3f(1.0f, 1.0f, 1.0f);
-	   glVertex3f(0, i*m_stepw, 0);
-	   glVertex3f(m_w*m_stepw, i*m_stepw, 0);
-	   if(i%(m_h/5) == 0)
-		   glColor3f(.5f, .5f, .5f);
+		glVertex3f(0, i*m_stepw, 0);
+		glVertex3f(m_w*m_stepw, i*m_stepw, 0);
+		if(i%(m_h/5) == 0)
+			glColor3f(.5f, .5f, .5f);
 	}
 	glEnd();
 

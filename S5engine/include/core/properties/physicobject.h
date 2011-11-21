@@ -50,7 +50,7 @@ private:
 	PhysicObject::Properties m_properties;
 
 	/// Debug
-	virtual void drawDebug(const GLWidget*) const;
+	virtual void drawDebug(const GLWidget*, const RenderManager::DebugGizmosFilter& filter) const;
 
 	virtual void onLinked(PropertySet *);
 	virtual void onUnlinked(PropertySet *);

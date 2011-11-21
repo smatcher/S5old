@@ -35,52 +35,56 @@ Node* Skeleton::buildSkeleton()
 	return m_root_bone.buildNodes(true);
 }
 
-void BoneNode::drawDebug(const GLWidget* widget, bool recursive) const
+void BoneNode::drawDebug(const GLWidget* widget, const RenderManager::DebugGizmosFilter& filter, bool recursive) const
 {
 	glPushMatrix();
-	glDisable(GL_DEPTH_TEST);
 		this->glMultd();
-/*
-		widget->qglColor(Qt::red);
-		glBegin(GL_LINES);
-			glVertex3d(0,0,0);
-			glVertex3d(1,0,0);
-		glEnd();
-		widget->qglColor(Qt::green);
-		glBegin(GL_LINES);
-			glVertex3d(0,0,0);
-			glVertex3d(0,1,0);
-		glEnd();
-		widget->qglColor(Qt::blue);
-		glBegin(GL_LINES);
-			glVertex3d(0,0,0);
-			glVertex3d(0,0,1);
-		glEnd();
-*/
 
-		QColor color = Qt::white;
-		color.setAlpha(200);
-		widget->qglColor(color);
-		for(int i=0 ; i<childCount() ; i++) {
-			glBegin(GL_LINES);
-				glVertex3d(0,0,0);
-				Node* son = child(i);
-				Vector3f position = son->getPosition();
-				glVertex3d(position.x,position.y,position.z);
-			glEnd();
+		if(filter.draw_skeletons)
+		{
+			glDisable(GL_DEPTH_TEST);
+		/*
+				widget->qglColor(Qt::red);
+				glBegin(GL_LINES);
+					glVertex3d(0,0,0);
+					glVertex3d(1,0,0);
+				glEnd();
+				widget->qglColor(Qt::green);
+				glBegin(GL_LINES);
+					glVertex3d(0,0,0);
+					glVertex3d(0,1,0);
+				glEnd();
+				widget->qglColor(Qt::blue);
+				glBegin(GL_LINES);
+					glVertex3d(0,0,0);
+					glVertex3d(0,0,1);
+				glEnd();
+		*/
+
+				QColor color = Qt::white;
+				color.setAlpha(200);
+				widget->qglColor(color);
+				for(int i=0 ; i<childCount() ; i++) {
+					glBegin(GL_LINES);
+						glVertex3d(0,0,0);
+						Node* son = child(i);
+						Vector3f position = son->getPosition();
+						glVertex3d(position.x,position.y,position.z);
+					glEnd();
+				}
+			glEnable(GL_DEPTH_TEST);
 		}
-	glEnable(GL_DEPTH_TEST);
 
 		for(int i=0 ; i<properties().childCount() ; i++)
 		{
-			properties().child(i)->drawDebug(widget);
+			properties().child(i)->drawDebug(widget,filter);
 		}
 
 		if(recursive)
 		{
 			for(int i= 0 ; i<childCount() ; i++)
 			{
-				child(i)->drawDebug(widget,true);
+				child(i)->drawDebug(widget,filter,true);
 			}
 		}
 	glPopMatrix();

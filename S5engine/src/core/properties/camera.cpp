@@ -7,7 +7,7 @@
 #include <QtOpenGL>
 
 #ifdef WITH_TOOLS
-	#include "tools/widgets/cameraradiobutton.h"
+	#include "tools/mvc/cameramodel.h"
 #endif
 
 Camera::Camera(double yfov, double znear, double zfar) : IProperty("Camera"), Managee<CameraManager>()
@@ -23,10 +23,6 @@ Camera::Camera(double yfov, double znear, double zfar) : IProperty("Camera"), Ma
 
 Camera::~Camera()
 {
-	#ifdef WITH_TOOLS
-		if(m_radiobutton != NULL)
-			QCoreApplication::postEvent(m_radiobutton,new DELETED_EVENT());
-	#endif
 }
 
 
@@ -104,54 +100,57 @@ void Camera::computeProjection()
 	computeProjectionFunction(m_projection, m_yfov, m_znear, m_zfar, m_lastAspect);
 }
 
-void Camera::drawDebug(const GLWidget* widget) const
+void Camera::drawDebug(const GLWidget* widget, const RenderManager::DebugGizmosFilter& filter) const
 {
-	glPushMatrix();
+	if(filter.draw_cameras)
+	{
+		glPushMatrix();
 
-		Matrix4d mat;
-		computeProjectionFunction(mat, m_yfov, m_znear, m_zfar, 1);
-		mat.invert();
-		glMultMatrixd(mat.values);
+			Matrix4d mat;
+			computeProjectionFunction(mat, m_yfov, m_znear, m_zfar, 1);
+			mat.invert();
+			glMultMatrixd(mat.values);
 
-		widget->qglColor(Qt::gray);
-		glBegin(GL_LINES);
-			glVertex3d(-1,-1,-1);
-			glVertex3d( 1,-1,-1);
+			widget->qglColor(Qt::gray);
+			glBegin(GL_LINES);
+				glVertex3d(-1,-1,-1);
+				glVertex3d( 1,-1,-1);
 
-			glVertex3d(-1,-1,-1);
-			glVertex3d(-1, 1,-1);
+				glVertex3d(-1,-1,-1);
+				glVertex3d(-1, 1,-1);
 
-			glVertex3d(-1,-1,-1);
-			glVertex3d(-1,-1, 1);
+				glVertex3d(-1,-1,-1);
+				glVertex3d(-1,-1, 1);
 
-			glVertex3d( 1,-1,-1);
-			glVertex3d( 1, 1,-1);
+				glVertex3d( 1,-1,-1);
+				glVertex3d( 1, 1,-1);
 
-			glVertex3d( 1,-1,-1);
-			glVertex3d( 1,-1, 1);
+				glVertex3d( 1,-1,-1);
+				glVertex3d( 1,-1, 1);
 
-			glVertex3d(-1, 1,-1);
-			glVertex3d( 1, 1,-1);
+				glVertex3d(-1, 1,-1);
+				glVertex3d( 1, 1,-1);
 
-			glVertex3d(-1, 1,-1);
-			glVertex3d(-1, 1, 1);
+				glVertex3d(-1, 1,-1);
+				glVertex3d(-1, 1, 1);
 
-			glVertex3d(-1,-1, 1);
-			glVertex3d( 1,-1, 1);
+				glVertex3d(-1,-1, 1);
+				glVertex3d( 1,-1, 1);
 
-			glVertex3d(-1,-1, 1);
-			glVertex3d(-1, 1, 1);
+				glVertex3d(-1,-1, 1);
+				glVertex3d(-1, 1, 1);
 
-			glVertex3d( 1, 1, 1);
-			glVertex3d(-1, 1, 1);
+				glVertex3d( 1, 1, 1);
+				glVertex3d(-1, 1, 1);
 
-			glVertex3d( 1, 1, 1);
-			glVertex3d( 1,-1, 1);
+				glVertex3d( 1, 1, 1);
+				glVertex3d( 1,-1, 1);
 
-			glVertex3d( 1, 1, 1);
-			glVertex3d( 1, 1,-1);
-		glEnd();
-	glPopMatrix();
+				glVertex3d( 1, 1, 1);
+				glVertex3d( 1, 1,-1);
+			glEnd();
+		glPopMatrix();
+	}
 }
 
 void Camera::applyTransform(int projection_nb)
@@ -169,34 +168,14 @@ void Camera::applyOnlyRotation(int projection_nb)
 
 #ifdef WITH_TOOLS
 
-CameraRadioButton* Camera::getRadioButton()
-{
-	return m_radiobutton;
-}
-
-void Camera::setRadioButton(CameraRadioButton* radio)
-{
-	m_radiobutton = radio;
-}
-
 void Camera::onLinked(PropertySet *)
 {
-	CameraManager* manager = &(Singleton<CameraManager>::getInstance());
-	manager->getDebugView()->cameraAdded(this);
-
-	/*
-	if(m_radiobutton != NULL)
-		QCoreApplication::postEvent(m_radiobutton,new UPDATED_EVENT());
-	*/
+	QCoreApplication::postEvent(CAMERA_MANAGER.getDebugModel(), new UPDATED_EVENT());
 }
 
 void Camera::onUnlinked(PropertySet *)
 {
-	//CameraManager::getDebugView()->cameraRemoved(m_radiobutton);
-/*
-	if(m_radiobutton != NULL)
-		QCoreApplication::postEvent(m_radiobutton,new UPDATED_EVENT());
-*/
+	QCoreApplication::postEvent(CAMERA_MANAGER.getDebugModel(), new UPDATED_EVENT());
 }
 
 #endif

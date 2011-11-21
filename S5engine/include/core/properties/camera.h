@@ -8,10 +8,6 @@
 #include "core/graphics/rendertexture.h"
 #include "core/graphics/viewpoint.h"
 
-#ifdef WITH_TOOLS
-	class CameraRadioButton;
-#endif
-
 class Camera : public IProperty, public Managee<CameraManager>, public Viewpoint
 {
 public :
@@ -31,11 +27,6 @@ public :
 	virtual void applyTransform(int projection_nb);
 	virtual void applyOnlyRotation(int projection_nb);
 
-	#ifdef WITH_TOOLS
-		CameraRadioButton* getRadioButton();
-		void setRadioButton(CameraRadioButton* radio);
-	#endif
-
 	void createTarget(int height, int width);
 	Texture getTargetTexture();
 
@@ -48,16 +39,12 @@ private :
 
 	RenderTexture* m_render_texture;
 
-	#ifdef WITH_TOOLS
-		CameraRadioButton* m_radiobutton;
-	#endif
-
 	Matrix4d m_projection;
 
 	void computeProjection();
 
 	/// Debug
-	virtual void drawDebug(const GLWidget*) const;
+	virtual void drawDebug(const GLWidget*, const RenderManager::DebugGizmosFilter& filter) const;
 
 	#ifdef WITH_TOOLS
 		virtual void onLinked(PropertySet *);

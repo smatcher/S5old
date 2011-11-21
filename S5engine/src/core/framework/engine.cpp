@@ -15,11 +15,13 @@
 #include "core/resources/managers.h"
 
 #ifdef WITH_TOOLS
-	#include "tools/scenegraphmodel.h"
+	#include "tools/mvc/scenegraphmodel.h"
 	#include "tools/3D/manipulator.h"
 #endif
 
 #include <AL/alut.h>
+
+#include "core/utils/enginecommands.h"
 
 Engine::Engine(int argc, char *argv[], QString mod_dir) :
 	m_app(argc, argv),
@@ -30,8 +32,12 @@ Engine::Engine(int argc, char *argv[], QString mod_dir) :
 		m_toolswindow(this),
 	#endif
 
-	m_running(false)
+	m_running(false),
+	m_paused(false)
 {
+	#ifndef WITH_TOOLS
+		qInstallMsgHandler(Engine::MsgHandler);
+	#endif
 	init(argc, argv, mod_dir);
 }
 
@@ -70,7 +76,10 @@ void Engine::init(int argc, char *argv[], QString mod_dir)
 
 	QCoreApplication::processEvents();
 
+	Log::topicPolicy.insert("RESOURCE PARSING",Log::POLICY_IGNORE);
 	initResourceManagers(mod_dir);
+
+	registerEngineCommands(this);
 }
 
 int Engine::start()
@@ -95,7 +104,11 @@ int Engine::start()
 		QDateTime time = QDateTime::currentDateTime();
 		double elapsed = double(lastTime.msecsTo(time))/1000.0;
 
-		updateManager->update(elapsed);
+		if(!m_paused)
+		{
+			updateManager->update(elapsed);
+		}
+
 		renderManager->render(elapsed,&m_scene);
 
 		lastTime = time;
@@ -125,4 +138,30 @@ int Engine::start()
 void Engine::stop()
 {
 	m_running = false;
+}
+
+void Engine::setPaused(bool pause)
+{
+	m_paused = pause;
+}
+
+void Engine::MsgHandler(QtMsgType type, const char *msg)
+{
+	switch (type) {
+		case QtDebugMsg:
+			fprintf(stdout, "%s\n", msg);
+			fflush(stdout);
+			break;
+		case QtWarningMsg:
+			fprintf(stderr, "%s\n", msg);
+			fflush(stderr);
+			break;
+		case QtCriticalMsg:
+			fprintf(stderr, "%s\n", msg);
+			fflush(stderr);
+			break;
+		case QtFatalMsg:
+			fprintf(stderr, "%s\n", msg);
+			abort();
+	}
 }

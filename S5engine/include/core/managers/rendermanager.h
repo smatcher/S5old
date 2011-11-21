@@ -23,9 +23,17 @@ class SceneGraph;
 class RenderTarget;
 class RenderTexture;
 
+#ifdef WITH_TOOLS
+	class RenderWidget;
+#endif
+
 class RenderManager : public Manager<IRenderable>
 {
 	friend class Singleton<RenderManager>;
+
+	#ifdef WITH_TOOLS
+		friend class RenderWidget;
+	#endif
 
 public :
 
@@ -62,6 +70,30 @@ public :
 		UberShader ubershader_used;
 	};
 
+	struct DebugGizmosFilter
+	{
+		bool draw_transforms;
+		bool draw_colliders;
+		bool draw_lights;
+		bool draw_cameras;
+		bool draw_skeletons;
+
+		DebugGizmosFilter() :
+			draw_transforms(true),
+			draw_colliders(true),
+			draw_lights(true),
+			draw_cameras(true),
+			draw_skeletons(true) {}
+	};
+
+#ifdef WITH_TOOLS
+		RenderWidget* getDebugView();
+
+	private :
+		RenderWidget* m_widget;
+		void widgetDestroyed();
+#endif
+
 protected :
 	RenderManager();
 
@@ -69,7 +101,10 @@ private :
 	GLWidget* m_context;
 	Camera* m_camera;
 	bool m_cameraChanged;
+
 	bool m_drawDebug;
+	DebugGizmosFilter m_drawDebugFilter;
+
 	Background m_defaultBackground;
 	Vector2i m_viewport_size;
 
@@ -129,8 +164,14 @@ public:
 	void createResources();
 	void render(double elapsed_time, SceneGraph* sg);
 
+	void takeScreenshot(QString path="screen.png");
+
 	void setCurrentCamera(Camera* cam);
+
 	void setDrawDebug(bool draw);
+	void setDrawDebugFilter(const DebugGizmosFilter& filter);
+	bool getDrawDebug() const;
+	DebugGizmosFilter getDrawDebugFilter() const;
 
 	void setBackground(const Background& background);
 	Vector2i getCurrentViewportSize();

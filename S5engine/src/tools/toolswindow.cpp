@@ -5,7 +5,8 @@
 #include "tools/widgets/nodewidget.h"
 #include "tools/widgets/propertiespanel.h"
 #include "tools/widgets/renderwidget.h"
-#include "tools/scenegraphview.h"
+#include "tools/widgets/consolewidget.h"
+#include "tools/mvc/scenegraphview.h"
 
 #include "core/framework/engine.h"
 #include "core/managers/cameramanager.h"
@@ -15,10 +16,33 @@
 ToolsWindow::ToolsWindow(Engine* engine)
 {
 	m_engine = engine;
-	m_renderWidget = CAMERA_MANAGER.getDebugView();
+	m_tab = new QTabWidget();
+	m_renderWidget = RENDER_MANAGER.getDebugView();
 	m_treeWidget = engine->getScenegraph_TEMPORARY()->getDebugView();
 	m_propertiesWidget = new PropertiesPanel();
 
+	QVBoxLayout* vlayout = new QVBoxLayout();
+	vlayout->addWidget(m_renderWidget);
+	vlayout->addWidget(m_tab);
+	setLayout(vlayout);
+
+	QHBoxLayout* hlayout = new QHBoxLayout();
+	QWidget* wid = new QFrame();
+	hlayout->addWidget(m_treeWidget);
+	hlayout->addWidget(m_propertiesWidget);
+	wid->setLayout(hlayout);
+	m_tab->addTab(wid, "Scene");
+
+	hlayout = new QHBoxLayout();
+	wid = new QFrame();
+	wid->setLayout(hlayout);
+	m_tab->addTab(wid, "Resources");
+
+	wid = new ConsoleWidget();
+	m_tab->addTab(wid, "Console");
+
+
+	/*
 	QGridLayout* layout = new QGridLayout();
 
 	layout->addWidget(m_renderWidget,0,0,1,2);
@@ -26,6 +50,7 @@ ToolsWindow::ToolsWindow(Engine* engine)
 	layout->addWidget(m_propertiesWidget,1,1);
 
 	setLayout(layout);
+	*/
 
 	/*
 	QDockWidget* dock1 = new QDockWidget("Editor");

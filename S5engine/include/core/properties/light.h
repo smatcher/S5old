@@ -26,7 +26,6 @@ private:
 public:
 	Light(bool casts_shadows = false);
 	void sendParameters(int lightid);
-	virtual void drawDebug(const GLWidget* widget) const;
 
 	virtual int getNbProjections();
 	virtual Viewpoint::Style getStyle();
@@ -41,6 +40,8 @@ public:
 
 	bool castsShadows();
 	RenderTexture* getRenderTexture();
+
+	virtual void drawDebug(const GLWidget* widget, const RenderManager::DebugGizmosFilter& filter) const;
 };
 
 #endif // LIGHT_H

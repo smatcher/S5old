@@ -7,7 +7,7 @@
 #include "core/log/log.h"
 
 #ifdef WITH_TOOLS
-	#include "tools/scenegraphmodel.h"
+	#include "tools/mvc/scenegraphmodel.h"
 	#include "tools/widgets/nodewidget.h"
 #endif
 
@@ -79,37 +79,40 @@ void Node::addProperty(IProperty *property)
 	m_properties.link(property);
 }
 
-void Node::drawDebug(const GLWidget* widget, bool recursive) const
+void Node::drawDebug(const GLWidget* widget, const RenderManager::DebugGizmosFilter& filter, bool recursive) const
 {
 	glPushMatrix();
 		this->glMultd();
 
-		widget->qglColor(Qt::red);
-		glBegin(GL_LINES);
-			glVertex3d(0,0,0);
-			glVertex3d(1,0,0);
-		glEnd();
-		widget->qglColor(Qt::green);
-		glBegin(GL_LINES);
-			glVertex3d(0,0,0);
-			glVertex3d(0,1,0);
-		glEnd();
-		widget->qglColor(Qt::blue);
-		glBegin(GL_LINES);
-			glVertex3d(0,0,0);
-			glVertex3d(0,0,1);
-		glEnd();
+		if(filter.draw_transforms)
+		{
+			widget->qglColor(Qt::red);
+			glBegin(GL_LINES);
+				glVertex3d(0,0,0);
+				glVertex3d(1,0,0);
+			glEnd();
+			widget->qglColor(Qt::green);
+			glBegin(GL_LINES);
+				glVertex3d(0,0,0);
+				glVertex3d(0,1,0);
+			glEnd();
+			widget->qglColor(Qt::blue);
+			glBegin(GL_LINES);
+				glVertex3d(0,0,0);
+				glVertex3d(0,0,1);
+			glEnd();
+		}
 
 		for(int i=0 ; i<properties().childCount() ; i++)
 		{
-			properties().child(i)->drawDebug(widget);
+			properties().child(i)->drawDebug(widget,filter);
 		}
 
 		if(recursive)
 		{
 			for(int i= 0 ; i<childCount() ; i++)
 			{
-				child(i)->drawDebug(widget,true);
+				child(i)->drawDebug(widget,filter, true);
 			}
 		}
 	glPopMatrix();

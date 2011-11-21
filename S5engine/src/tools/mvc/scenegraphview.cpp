@@ -1,5 +1,5 @@
-#include "tools/scenegraphview.h"
-#include "tools/scenegraphmodel.h"
+#include "tools/mvc/scenegraphview.h"
+#include "tools/mvc/scenegraphmodel.h"
 #include "tools/3D/manipulator.h"
 
 #include <QModelIndexList>

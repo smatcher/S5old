@@ -113,6 +113,8 @@ include/core/resources/glslshader.h
 include/core/resources/glslubershader.h
 src/tools/scenegraphview.cpp
 src/tools/scenegraphmodel.cpp
+src/tools/mvc/scenegraphview.cpp
+src/tools/mvc/scenegraphmodel.cpp
 src/tools/widgets/nodewidget.cpp
 src/tools/widgets/transformwidget.cpp
 src/tools/widgets/propertiespanel.cpp
@@ -123,15 +125,14 @@ src/tools/widgets/meshrendererwidget.cpp
 src/tools/widgets/soundemitterwidget.cpp
 src/tools/widgets/terrainwidget.cpp
 src/tools/toolswindow.cpp
-include/tools/scenegraphmodel.h
-include/tools/scenegraphview.h
+include/tools/mvc/scenegraphmodel.h
+include/tools/mvc/scenegraphview.h
 include/tools/widgets/nodewidget.h
 include/tools/widgets/transformwidget.h
 include/tools/widgets/propertiespanel.h
 include/tools/widgets/propertywidget.h
 include/tools/widgets/foldablegroup.h
 include/tools/widgets/renderwidget.h
-include/tools/widgets/cameraradiobutton.h
 include/tools/widgets/meshrendererwidget.h
 include/tools/widgets/soundemitterwidget.h
 include/tools/widgets/terrainwidget.h
@@ -181,3 +182,13 @@ include/core/properties/cubemapcamera.h
 src/core/graphics/rendertarget.cpp
 include/core/graphics/ubershader.h
 src/core/graphics/ubershader.cpp
+include/tools/mvc/cameramodel.h
+src/tools/mvc/cameramodel.cpp
+include/tools/mvc/cameraview.h
+src/tools/mvc/cameraview.cpp
+src/tools/widgets/consolewidget.cpp
+include/tools/widgets/consolewidget.h
+include/core/managers/commandmanager.h
+src/core/managers/commandmanager.cpp
+include/core/utils/enginecommands.h
+>>>>>>> gui

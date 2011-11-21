@@ -3,6 +3,7 @@
 
 #include "core/utils/parenting.h"
 #include "core/properties/propertyset.h"
+#include "core/managers/rendermanager.h"
 
 #ifdef WITH_TOOLS
 	#include "tools/widgets/propertywidget.h"
@@ -16,7 +17,7 @@ class IProperty : public ChildOf<PropertySet>
 {
 
 public:
-   /// Constructor
+	/// Constructor
 	IProperty(const QString& name = "Basic Property");
 	/// Destructor
 	virtual ~IProperty();
@@ -25,7 +26,7 @@ public:
 	const Node* node() const;
 
 	// Debug
-	virtual void drawDebug(const GLWidget* widget) const;
+	virtual void drawDebug(const GLWidget* widget, const RenderManager::DebugGizmosFilter& filter) const;
 
 #ifdef WITH_TOOLS
 
