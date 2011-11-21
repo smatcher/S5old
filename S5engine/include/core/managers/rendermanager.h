@@ -92,6 +92,8 @@ public:
 	void init(GLWidget* context);
 	void render(double elapsed_time, SceneGraph* sg);
 
+	void takeScreenshot(QString path="screen.png");
+
 	void setCurrentCamera(Camera* cam);
 
 	void setDrawDebug(bool draw);

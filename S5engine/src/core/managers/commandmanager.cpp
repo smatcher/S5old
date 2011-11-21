@@ -8,9 +8,11 @@ CommandManager::~CommandManager()
 {
 }
 
-QString CommandManager::autocomplete(QString from)
+QStringList CommandManager::autocomplete(QString from)
 {
-	return from + "lolTAB";
+	QStringList ret;
+	ret.push_back(from + "lolTAB");
+	return ret;
 }
 
 void CommandManager::registerCommand(QString name, Command command)

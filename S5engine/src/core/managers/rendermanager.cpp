@@ -405,6 +405,14 @@ void RenderManager::addRenderTarget(RenderTarget *rt)
 	}
 }
 
+void RenderManager::takeScreenshot(QString path)
+{
+	if(m_context)
+	{
+		m_context->takeScreenshot(path);
+	}
+}
+
 #ifdef WITH_TOOLS
 
 RenderWidget* RenderManager::getDebugView()

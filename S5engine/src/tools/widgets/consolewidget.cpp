@@ -138,7 +138,10 @@ void ConsoleWidget::historyPrevious()
 
 void ConsoleWidget::autocomplete()
 {
-	m_input_field->setText(COMMAND_MANAGER.autocomplete(m_input_field->text()));
+	QStringList suggestions = COMMAND_MANAGER.autocomplete(m_input_field->text());
+
+	if(suggestions.count() == 1)
+		m_input_field->setText(suggestions.at(0));
 }
 
 void ConsoleWidget::ConsoleInputField::keyPressEvent(QKeyEvent * event)

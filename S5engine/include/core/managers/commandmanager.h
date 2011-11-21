@@ -19,7 +19,7 @@ public:
 		STRING
 	};
 
-	QString autocomplete(QString);
+	QStringList autocomplete(QString);
 	void registerCommand(QString name, Command command);
 	void registerVariable(QString name, Type type);
 

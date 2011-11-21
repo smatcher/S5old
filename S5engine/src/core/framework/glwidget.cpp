@@ -15,7 +15,14 @@
 
 void saveWrapper(const QPixmap& pix, const QString& path)
 {
-	pix.save(path);
+	if(pix.save(path))
+	{
+		logInfo("Screenshot saved to " + path);
+	}
+	else
+	{
+		logError("Screenshot not saved, wrong format");
+	}
 }
 
 GLWidget::GLWidget(QWidget *parent)
@@ -41,7 +48,6 @@ void GLWidget::takeScreenshot(QString path)
 	QImage screen = grabFrameBuffer();
 	QPixmap shot = QPixmap::fromImage(screen);
 	QtConcurrent::run(&saveWrapper,shot,path);
-	logInfo("Screenshot saved to " + path);
 }
 
 QSize GLWidget::minimumSizeHint() const
@@ -66,12 +72,12 @@ Viewpoint* GLWidget::getViewpoint()
 bool GLWidget::event(QEvent *e)
 {
 	if(e->type() == QEvent::MouseButtonPress ||
-	   e->type() == QEvent::MouseButtonRelease ||
-	   e->type() == QEvent::MouseMove ||
-	   e->type() == QEvent::Resize ||
-	   e->type() == QEvent::KeyPress ||
-	   e->type() == QEvent::KeyRelease ||
-	   e->type() == QEvent::Close)
+		e->type() == QEvent::MouseButtonRelease ||
+		e->type() == QEvent::MouseMove ||
+		e->type() == QEvent::Resize ||
+		e->type() == QEvent::KeyPress ||
+		e->type() == QEvent::KeyRelease ||
+		e->type() == QEvent::Close)
 	{
 		return QGLWidget::event(e);
 	}
