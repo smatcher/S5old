@@ -12,6 +12,8 @@ RenderTextureArray::RenderTextureArray(QString name, int height, int width, int 
 
 	m_hasgltex = true;
 	m_state = STATE_LOADED;
+	m_format = format;
+	m_type = type;
 
 	m_gltextures = new GLuint[m_depth]();
 	m_render_textures = new GLuint[m_depth]();
@@ -45,6 +47,29 @@ RenderTextureArray::RenderTextureArray(QString name, int height, int width, int 
 	TEXTURE_MANAGER.add(this);
 
 	debugGL("RenderTextureArray constructor end");
+}
+
+RenderTextureArray::~RenderTextureArray()
+{
+	glDeleteTextures(m_depth, m_gltextures);
+	glDeleteTextures(m_depth, m_render_textures);
+	TEXTURE_MANAGER.remove(this);
+}
+
+void RenderTextureArray::resize(int height, int width)
+{
+	m_height = height;
+	m_width = width;
+
+	for(int i=0 ; i<m_depth ; i++) {
+		glBindTexture(GL_TEXTURE_2D, m_gltextures[i]);
+		glTexImage2D(GL_TEXTURE_2D, 0, m_format, width, height, 0, m_format, m_type, 0);
+	}
+
+	for(int i=0 ; i<m_depth ; i++) {
+		glBindTexture(GL_TEXTURE_2D, m_render_textures[i]);
+		glTexImage2D(GL_TEXTURE_2D, 0, m_format, width, height, 0, m_format, m_type, 0);
+	}
 }
 
 bool RenderTextureArray::unload()

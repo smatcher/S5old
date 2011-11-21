@@ -22,6 +22,10 @@ class RenderTextureArray : public RenderTexture
 {
 public:
 	RenderTextureArray(QString name, int height, int width, int depth, GLenum format, GLenum type);
+	~RenderTextureArray();
+
+	virtual void resize(int height, int width);
+
 	virtual bool unload();
 
 	virtual bool isCubemap() {return false;}
@@ -39,6 +43,8 @@ private:
 	GLuint* m_gltextures;
 	QList<Matrix4d> m_texture_matrices;
 	int m_depth;
+	GLenum m_format;
+	GLenum m_type;
 };
 
 #endif // RTARRAY_H

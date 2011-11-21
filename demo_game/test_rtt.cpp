@@ -85,7 +85,7 @@ int main(int argc, char *argv[])
 
 	sg->link(nLight);
 
-	nLight->moveTo(Vector3f(-2,1,-1));
+	nLight->moveTo(Vector3f(-2,3,-1));
 
 	/*
 	nCam->moveTo(Vector3f(0,0,-5));
@@ -155,9 +155,9 @@ int main(int argc, char *argv[])
 
 	nCub1->addProperty(new MeshRenderer(cube,shadowed_phong));
 	nCub2->addProperty(new MeshRenderer(cube,shadowed_phong));
-	nCub3->addProperty(new MeshRenderer(cube,shadowed_phong));
+	nCub3->addProperty(new MeshRenderer(sphere,shadowed_phong));
 	nCub4->addProperty(new MeshRenderer(cube,shadowed_phong));
-	nCub5->addProperty(new MeshRenderer(cube,shadowed_phong));
+	nCub5->addProperty(new MeshRenderer(sphere,shadowed_phong));
 	nPlane->addProperty(new MeshRenderer(plane,shadowed_phong));
 	nPlane1->addProperty(new MeshRenderer(plane,shadowed_phong));
 	nPlane2->addProperty(new MeshRenderer(plane,shadowed_phong));

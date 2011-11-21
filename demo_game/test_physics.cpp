@@ -87,8 +87,15 @@ int main(int argc, char *argv[])
 	nCam->addProperty(new Camera(70,1,200));
 	nCamFollow->addProperty(new Camera(90,1,200));
 	nHead->addProperty(new DummyUpdatable());
-	nLight->addProperty(new Light(true));
-	nLight2->addProperty(new Light(false));
+	Light* light;
+	light = new Light(true);
+	light->setDiffuseColor(Vector4f(1.0,0.2,0.2,1.0));
+	light->setSpecularColor(Vector4f(1.0,0.2,0.2,1.0));
+	nLight->addProperty(light);
+	light = new Light(true);
+	light->setDiffuseColor(Vector4f(0.2,1.0,0.2,1.0));
+	light->setSpecularColor(Vector4f(0.2,1.0,0.2,1.0));
+	nLight2->addProperty(light);
 
 	Mesh plane = MESH_MANAGER.get("Plane");
 	Mesh cube = MESH_MANAGER.get("Cube");
@@ -192,12 +199,19 @@ int main(int argc, char *argv[])
 	prop.is_kinematic = false;
 	prop.mass = 100.0;
 	prop.restitution = 0.1;
+	bool first = true;
 	//prop.shape = PhysicObject::SPHERE;
 	for(QVector<Node*>::iterator it=balls.begin() ; it != balls.end() ; it++) {
 		(*it)->addProperty(new PhysicObject(prop));
 		prop.mass += 1.0;
 		(*it)->addProperty(new MeshRenderer(mesh,duck));
-		//(*it)->addProperty(new Light());
+		if(first) {
+			light = new Light(true);
+			light->setDiffuseColor(Vector4f(0.2,0.2,1.0,1.0));
+			light->setSpecularColor(Vector4f(0.2,0.2,1.0,1.0));
+			(*it)->addProperty(light);
+			first = false;
+		}
 	}
 
 	// Beurk ! Mais je peux le faire alors je me prive pas ^^

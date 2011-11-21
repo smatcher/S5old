@@ -68,30 +68,25 @@ void RenderManager::setupProjection(RenderTarget& target, int projection_nb)
 		return;
 	}
 
-	QSize resizeTo;
-	bool needResize = m_context->needResize(&resizeTo);
 	float aspect, scale;
 
-	if(target.isOnScreen()) {
-		int side = qMax(resizeTo.width(), resizeTo.height());
-		glViewport((resizeTo.width() - side) / 2, (resizeTo.height() - side) / 2, side, side);
+	if(target.isOnScreen() || target.isStretchedToScreen()) {
+/*
+		int min_side = qMin(m_viewport_size.x, m_viewport_size.y);
+		int max_side = qMax(m_viewport_size.x, m_viewport_size.y);
+		glViewport((m_viewport_size.y - max_side) / 2, (m_viewport_size.x - max_side) / 2, max_side, max_side);
 		aspect = 1;
+		scale = 1; //float(min_side)/float(max_side);
+*/
+		glViewport(0, 0, m_viewport_size.y, m_viewport_size.x);
+		aspect = float(m_viewport_size.y)/float(m_viewport_size.x);
 		scale = 1;
-		m_context->isResized();
 	} else {
 		int target_width = target.getWidth();
 		int target_height = target.getHeight();
 		glViewport(0, 0, target_width, target_height);
-		if(target.isStretchedToScreen()) {
-			int screen_width = resizeTo.width();
-			int screen_height = resizeTo.height();
-			//int side = qMax(screen_width, screen_height);
-			aspect = float(screen_width * target_height) / float(screen_height * target_width);
-			scale = aspect;
-		} else {
-			aspect = 1;
-			scale = 1;
-		}
+		aspect = 1;
+		scale = 1;
 	}
 
 	glMatrixMode(GL_PROJECTION);
@@ -105,51 +100,20 @@ void RenderManager::setupProjection(RenderTarget& target, int projection_nb)
 	glMatrixMode(GL_MODELVIEW);
 }
 
-/*
-{
-	QSize resizeTo;
-	bool needResize = m_context->needResize(&resizeTo);
-	if(needResize || m_cameraChanged)
-	{
-		if(needResize)
-		{
-			int side = qMax(resizeTo.width(), resizeTo.height());
-			glViewport((resizeTo.width() - side) / 2, (resizeTo.height() - side) / 2, side, side);
-			m_context->isResized();
-		}
-
-		glMatrixMode(GL_PROJECTION);
-		glLoadIdentity();
-
-		if(camera != NULL)
-		{
-			camera->setProjection(1); // Pas besoin de passer l'aspect, il a déjà été pris en compte dans le viewport
-		}
-		else
-		{
-			gluPerspective(70,1,0.01,1000);
-		}
-
-		glMatrixMode(GL_MODELVIEW);
-	}
-
-	m_cameraChanged = false;
-}
-*/
-
 void RenderManager::createResources()
 {
+	QSize size = m_context->size();
 	// Setting up shadow textures
-	m_shadowmap = new RenderTexture2D("Shadowmap", POSTPROCESS_RESOLUTION, POSTPROCESS_RESOLUTION, GL_RGBA, GL_UNSIGNED_BYTE);
+	m_shadowmap = new RenderTexture2D("Shadowmap", size.height(), size.width(), GL_RGBA, GL_UNSIGNED_BYTE);
 
 	// Setting up color map
-	m_colormap = new RenderTexture2D("Colormap", POSTPROCESS_RESOLUTION, POSTPROCESS_RESOLUTION, GL_RGBA, GL_UNSIGNED_BYTE);
+	m_colormap = new RenderTexture2D("Colormap", size.height(), size.width(), GL_RGBA, GL_UNSIGNED_BYTE);
 
 	// Setting up bloom map
-	m_bloommap = new RenderTexture2D("Bloommap", POSTPROCESS_RESOLUTION, POSTPROCESS_RESOLUTION, GL_RGBA, GL_UNSIGNED_BYTE);
+	m_bloommap = new RenderTexture2D("Bloommap", size.height(), size.width(), GL_RGBA, GL_UNSIGNED_BYTE);
 
 	// Setting up postprocessing FBO
-	m_postprocessfbo = new FrameBufferObject(POSTPROCESS_RESOLUTION,POSTPROCESS_RESOLUTION, false, false);
+	m_postprocessfbo = new FrameBufferObject(size.height(), size.width(), false, false);
 
 	ShaderProgram shader = SHADER_PROGRAM_MANAGER.get("DEF_geometry_pass");
 	if(shader.isValid() && shader->isUber()) {
@@ -233,11 +197,39 @@ void RenderManager::createResources()
 	}
 
 	// Deferred shading resources
-	m_positionmap = new RenderTexture2D("DEF_Positionmap", POSTPROCESS_RESOLUTION, POSTPROCESS_RESOLUTION, GL_RGBA, GL_UNSIGNED_BYTE);
-	m_normalmap = new RenderTexture2D("DEF_Normalmap", POSTPROCESS_RESOLUTION, POSTPROCESS_RESOLUTION, GL_RGBA, GL_UNSIGNED_BYTE);
-	m_diffusemap = new RenderTexture2D("DEF_Diffusemap", POSTPROCESS_RESOLUTION, POSTPROCESS_RESOLUTION, GL_RGBA, GL_UNSIGNED_BYTE);
-	m_specularmap = new RenderTexture2D("DEF_Specularmap", POSTPROCESS_RESOLUTION, POSTPROCESS_RESOLUTION, GL_RGBA, GL_UNSIGNED_BYTE);
-	m_depthmap = new RenderTexture2D("DEF_Depthmap", POSTPROCESS_RESOLUTION, POSTPROCESS_RESOLUTION, GL_DEPTH_COMPONENT, GL_FLOAT);
+	m_positionmap = new RenderTexture2D("DEF_Positionmap", size.height(), size.width(), GL_RGBA, GL_UNSIGNED_BYTE);
+	m_normalmap = new RenderTexture2D("DEF_Normalmap", size.height(), size.width(), GL_RGBA, GL_UNSIGNED_BYTE);
+	m_diffusemap = new RenderTexture2D("DEF_Diffusemap", size.height(), size.width(), GL_RGBA, GL_UNSIGNED_BYTE);
+	m_specularmap = new RenderTexture2D("DEF_Specularmap", size.height(), size.width(), GL_RGBA, GL_UNSIGNED_BYTE);
+	m_depthmap = new RenderTexture2D("DEF_Depthmap", size.height(), size.width(), GL_DEPTH_COMPONENT, GL_FLOAT);
+}
+
+void RenderManager::testViewportResize()
+{
+	QSize resizeTo;
+	bool needResize = m_context->needResize(&resizeTo);
+
+	if(needResize)
+	{
+		updateResources(resizeTo.height(), resizeTo.width());
+		m_context->isResized();
+	}
+
+	m_viewport_size.x = resizeTo.height();
+	m_viewport_size.y = resizeTo.width();
+}
+
+void RenderManager::updateResources(int new_height, int new_width)
+{
+	m_postprocessfbo->resize(new_height, new_width);
+	m_shadowmap->resize(new_height, new_width);
+	m_colormap->resize(new_height, new_width);
+	m_bloommap->resize(new_height, new_width);
+	m_positionmap->resize(new_height, new_width);
+	m_normalmap->resize(new_height, new_width);
+	m_diffusemap->resize(new_height, new_width);
+	m_specularmap->resize(new_height, new_width);
+	m_depthmap->resize(new_height, new_width);
 }
 
 void RenderManager::init(GLWidget* context)
@@ -305,6 +297,8 @@ void RenderManager::render(double elapsed_time, SceneGraph* sg)
 	m_passinfo.texturing_enabled = true;
 	m_passinfo.type = FINAL_PASS;
 
+	testViewportResize();
+
 	// Frame Begin
 	for(QVector<IRenderable*>::iterator it = registeredManagees.begin();
 		it != registeredManagees.end();
@@ -352,7 +346,7 @@ void RenderManager::render(double elapsed_time, SceneGraph* sg)
 	mrts.push_back(QPair<RenderTexture*, FrameBufferObject::AttachmentPoint>(m_diffusemap, FrameBufferObject::COLOR_ATTACHMENT_1));
 	mrts.push_back(QPair<RenderTexture*, FrameBufferObject::AttachmentPoint>(m_specularmap, FrameBufferObject::COLOR_ATTACHMENT_2));
 	mrts.push_back(QPair<RenderTexture*, FrameBufferObject::AttachmentPoint>(m_depthmap, FrameBufferObject::DEPTH_ATTACHMENT));
-	RenderTarget srt(viewpoint, m_postprocessfbo, mrts , false, false);
+	RenderTarget srt(viewpoint, m_postprocessfbo, mrts , false, true);
 	debug("PASS_INFO","geom pass");
 	m_passinfo.ubershader_used = m_deferred_geometry;
 	m_passinfo.type = FINAL_PASS;
@@ -520,16 +514,15 @@ void RenderManager::render(double elapsed_time, SceneGraph* sg)
 
 	int xpos = 0;
 
-	debugDisplayTexture(*m_shadowmap,xpos,0,256,256); xpos += 256;
-/*
+	//debugDisplayTexture(*m_shadowmap,xpos,0,256,256); xpos += 256;
 	debugDisplayTexture(*m_normalmap,xpos,0,256,256); xpos += 256;
 	debugDisplayTexture(*m_diffusemap,xpos,0,256,256); xpos += 256;
 	debugDisplayTexture(*m_specularmap,xpos,0,256,256); xpos += 256;
+/*
 	debugDisplayTexture(*m_depthmap,xpos,0,256,256); xpos += 256;
 	debugDisplayTexture(*m_colormap,xpos,0,256,256); xpos += 256;
 	debugDisplayTexture(*m_bloommap,xpos,0,256,256); xpos += 256;
 */
-
 	m_context->swapBuffers();
 
 	// Frame End
@@ -953,17 +946,41 @@ void RenderManager::applyBackground(RenderTarget& target, int projection_nb)
 	glClear(GL_DEPTH_BUFFER_BIT);
 	glDepthMask(false);
 
-	m_passinfo.ubershader_used->setParamValue(UberShaderDefine::SKY, true);
-	m_passinfo.ubershader_used->setParamValue(UberShaderDefine::COLORMAPPED, true);
-	m_passinfo.ubershader_used->use();
-
 	switch(m_defaultBackground.type)
 	{
 		case COLOR :
+			m_passinfo.ubershader_used->setParamValue(UberShaderDefine::SKY, true);
+			m_passinfo.ubershader_used->setParamValue(UberShaderDefine::COLORMAPPED, false);
+			m_passinfo.ubershader_used->use();
+
+			glMatrixMode(GL_PROJECTION);
+			glPushMatrix();
+				glLoadIdentity();
+				gluOrtho2D(0,1,0,1);
+				glDisable(GL_LIGHTING);
+				glDisable(GL_TEXTURE_2D);
+				//glColor4f(m_defaultBackground.color.r,m_defaultBackground.color.g,m_defaultBackground.color.b,1);
+				glMaterialfv(GL_FRONT_AND_BACK, GL_DIFFUSE,  m_defaultBackground.color.coords);
+				glBegin(GL_QUADS);
+					glVertex2f(0,0);
+					glVertex2f(1,0);
+					glVertex2f(1,1);
+					glVertex2f(0,1);
+				glEnd();
+				glEnable(GL_LIGHTING);
+			glPopMatrix();
+			glMatrixMode(GL_MODELVIEW);
+			break;
+/*
 			glClearColor(m_defaultBackground.color.r, m_defaultBackground.color.g, m_defaultBackground.color.b, 1.0f);
 			glClear(GL_COLOR_BUFFER_BIT);
 			break;
+*/
 		case SINGLE_TEXTURE :
+			m_passinfo.ubershader_used->setParamValue(UberShaderDefine::SKY, true);
+			m_passinfo.ubershader_used->setParamValue(UberShaderDefine::COLORMAPPED, true);
+			m_passinfo.ubershader_used->use();
+
 			glMatrixMode(GL_PROJECTION);
 			glPushMatrix();
 				glLoadIdentity();
@@ -985,6 +1002,10 @@ void RenderManager::applyBackground(RenderTarget& target, int projection_nb)
 			glMatrixMode(GL_MODELVIEW);
 			break;
 		case SKYBOX :
+			m_passinfo.ubershader_used->setParamValue(UberShaderDefine::SKY, true);
+			m_passinfo.ubershader_used->setParamValue(UberShaderDefine::COLORMAPPED, true);
+			m_passinfo.ubershader_used->use();
+
 			glPushMatrix();
 				viewpoint->applyOnlyRotation(projection_nb);
 				glDisable(GL_LIGHTING);
@@ -1086,4 +1107,9 @@ RenderManager::RenderPassInfo* RenderManager::getRenderPassInfo()
 	}
 
 	return ret;
+}
+
+Vector2i RenderManager::getCurrentViewportSize()
+{
+	return m_viewport_size;
 }

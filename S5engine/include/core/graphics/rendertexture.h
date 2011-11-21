@@ -12,6 +12,8 @@ public:
 	RenderTexture(QString name, int height, int width);
 	virtual bool unload() = 0;
 
+	virtual void resize(int height, int width) = 0;
+
 	virtual GLuint getRenderTextureId(int i= 0) = 0;
 	virtual void swap() = 0;
 

@@ -13,6 +13,8 @@ public:
 	int getHeight() { return m_height; }
 	int getWidth() { return m_width; }
 
+	void resize(int height, int width);
+
 	void bind();
 	void release();
 
@@ -37,6 +39,7 @@ public:
 private:
 	GLuint m_framebuffer;
 	GLuint m_renderbuffer;
+	bool m_hasrenderbuffer;
 	int m_width;
 	int m_height;
 	bool m_on_screen;

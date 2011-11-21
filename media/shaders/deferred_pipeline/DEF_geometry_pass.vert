@@ -8,19 +8,19 @@ varying vec3 normal;
 #endif
 
 void main()
-{	
+{
 	gl_TexCoord[0] = gl_MultiTexCoord0;
 	#ifdef SPLATTING
 		gl_TexCoord[1] = gl_MultiTexCoord1;
 	#endif
 
-	normal = gl_NormalMatrix * gl_Normal;
+	normal = normalize(gl_NormalMatrix * gl_Normal);
 
 	#ifdef NORMAL_MAP
-		eyetangent = gl_NormalMatrix * tangent;
-		eyebitangent = gl_NormalMatrix * bitangent;
+		eyetangent = normalize(gl_NormalMatrix * tangent);
+		eyebitangent = normalize(gl_NormalMatrix * bitangent);
 	#endif
 
-	gl_Position = ftransform();		
+	gl_Position = ftransform();
 }
 

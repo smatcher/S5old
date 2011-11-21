@@ -71,8 +71,6 @@ void Engine::init(int argc, char *argv[], QString mod_dir)
 	QCoreApplication::processEvents();
 
 	initResourceManagers(mod_dir);
-
-	RENDER_MANAGER.createResources();
 }
 
 int Engine::start()
@@ -84,6 +82,8 @@ int Engine::start()
 	UpdateManager* updateManager = &(UPDATE_MANAGER);
 
 	renderManager->init(m_window.getGLW_TEMPORARY());
+
+	renderManager->createResources();
 
 	QDateTime lastTime = QDateTime::currentDateTime();
 	QDateTime lastFpsTime = QDateTime::currentDateTime();

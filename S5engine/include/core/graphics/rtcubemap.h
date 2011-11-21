@@ -9,6 +9,10 @@ class RenderTextureCubemap : public RenderTexture
 {
 public:
 	RenderTextureCubemap(QString name, int height, int width, GLenum format, GLenum type);
+	~RenderTextureCubemap();
+
+	virtual void resize(int height, int width);
+
 	virtual bool unload();
 
 	virtual bool isCubemap() {return true;}
@@ -36,6 +40,8 @@ public:
 
 private:
 	GLuint m_render_cube;
+	GLenum m_format;
+	GLenum m_type;
 };
 
 #endif // RTCUBEMAP_H

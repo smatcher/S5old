@@ -10,6 +10,8 @@ RenderTexture2D::RenderTexture2D(QString name, int height, int width, GLenum for
 {
 	m_hasgltex = true;
 	m_state = STATE_LOADED;
+	m_format = format;
+	m_type = type;
 
 	glGenTextures(1, &m_gltexture);
 	glGenTextures(1, &m_render_texture);
@@ -30,6 +32,25 @@ RenderTexture2D::RenderTexture2D(QString name, int height, int width, GLenum for
 	glBindTexture(GL_TEXTURE_2D, 0);
 
 	TEXTURE_MANAGER.add(this);
+}
+
+RenderTexture2D::~RenderTexture2D()
+{
+	glDeleteTextures(1, &m_gltexture);
+	glDeleteTextures(1, &m_render_texture);
+	TEXTURE_MANAGER.remove(this);
+}
+
+void RenderTexture2D::resize(int height, int width)
+{
+	m_height = height;
+	m_width = width;
+
+	glBindTexture(GL_TEXTURE_2D, m_gltexture);
+	glTexImage2D(GL_TEXTURE_2D, 0, m_format, width, height, 0, m_format, m_type, 0);
+
+	glBindTexture(GL_TEXTURE_2D, m_render_texture);
+	glTexImage2D(GL_TEXTURE_2D, 0, m_format, width, height, 0, m_format, m_type, 0);
 }
 
 bool RenderTexture2D::unload()

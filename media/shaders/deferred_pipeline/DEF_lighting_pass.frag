@@ -29,15 +29,20 @@ void main()
 	vec4 diffuse = texture2D(gbuffer_diffuse, screen_pos);	// rgb:diffuse a:sky (if 0)
 	vec4 specular = texture2D(gbuffer_specular, screen_pos); // rgb:specularity a:shininess
 
-	float attenuation = clamp(1.0 - length(lightvec/5.0), 0.0, 1.0);
+	float dist = length(lightvec);
+	float attenuation = 1.0/ (
+			gl_LightSource[0].constantAttenuation +
+			gl_LightSource[0].linearAttenuation*dist +
+			gl_LightSource[0].quadraticAttenuation*dist*dist
+	);
 
 	#ifdef SHADOW_MAP
 		attenuation *= texture2D(shadowmap, screen_pos).r;
 	#endif
 
 	lightvec = normalize(lightvec);
-	vec3 idiff = clamp(dot(lightvec, normal)*diffuse.rgb, 0.0, 1.0);
-	vec3 ispec = pow(clamp(dot(halfvec,normal),0.0,1.0),specular.a) * specular.rgb;
+	vec3 idiff = clamp(dot(lightvec, normal) * gl_LightSource[0].diffuse.rgb * diffuse.rgb, 0.0, 1.0);
+	vec3 ispec = pow(clamp(dot(halfvec,normal),0.0,1.0),specular.a) * gl_LightSource[0].specular.rgb * specular.rgb;
 
 	#ifdef BLOOM
 		gl_FragData[0] = vec4((idiff+ispec) * attenuation * diffuse.a, 1.0);

@@ -55,6 +55,13 @@ Light::Light(bool casts_shadows) : m_casts_shadows(casts_shadows), m_shadowmap(N
 		while(TEXTURE_MANAGER.get("Omni_Lightmap"+QString().setNum(i)).isValid()) i++;
 		m_shadowmap = new RenderTextureArray("Omni_Lightmap"+QString().setNum(i), OMNIDEPTH_RESOLUTION, OMNIDEPTH_RESOLUTION, 6, GL_DEPTH_COMPONENT, GL_FLOAT);
 	}
+
+	m_constant_attenuation = 1.0f;
+	m_linear_attenuation = 0.0f;
+	m_quadratic_attenuation = 0.25f;
+
+	m_diffuse_color = Vector4f(1.0,1.0,1.0,1.0);
+	m_specular_color = Vector4f(1.0,1.0,1.0,1.0);
 }
 
 void Light::sendParameters(int lightid)
@@ -70,14 +77,11 @@ void Light::sendParameters(int lightid)
 		lightPosition[i] = pos[i];
 	}
 	glLightfv(GL_LIGHT0 + lightid, GL_POSITION, lightPosition);
-	// Create light components for GL_LIGHT0
-	float ambientLight0[] = { 0.2f, 0.2f, 0.2f, 1.0f };
-	float diffuseLight0[] = { 0.5f, 0.5f, 0.5f, 1.0f };
-	float specularLight0[] = { 0.2f, 0.2f, 0.2f, 1.0f };
-	// Assign created components to GL_LIGHT0
-	glLightfv(GL_LIGHT0 + lightid, GL_AMBIENT, ambientLight0);
-	glLightfv(GL_LIGHT0 + lightid, GL_DIFFUSE, diffuseLight0);
-	glLightfv(GL_LIGHT0 + lightid, GL_SPECULAR, specularLight0);
+	glLightf(GL_LIGHT0 + lightid, GL_CONSTANT_ATTENUATION, m_constant_attenuation);
+	glLightf(GL_LIGHT0 + lightid, GL_LINEAR_ATTENUATION, m_linear_attenuation);
+	glLightf(GL_LIGHT0 + lightid, GL_QUADRATIC_ATTENUATION, m_quadratic_attenuation);
+	glLightfv(GL_LIGHT0 + lightid, GL_DIFFUSE, m_diffuse_color.coords);
+	glLightfv(GL_LIGHT0 + lightid, GL_SPECULAR, m_specular_color.coords);
 
 	debugGL("while sending light parameters for light" << lightid);
 }
@@ -202,4 +206,14 @@ RenderTexture* Light::getRenderTexture()
 	}
 
 	return m_shadowmap;
+}
+
+void Light::setDiffuseColor(Vector4f color)
+{
+	m_diffuse_color = color;
+}
+
+void Light::setSpecularColor(Vector4f color)
+{
+	m_specular_color = color;
 }

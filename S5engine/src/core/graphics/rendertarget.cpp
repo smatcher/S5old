@@ -1,6 +1,8 @@
 #include <GL/glew.h>
 
 #include "core/graphics/rendertarget.h"
+#include "core/managers/rendermanager.h"
+#include "core/maths/vector2.h"
 
 #include <QtOpenGL>
 
@@ -11,6 +13,9 @@ RenderTarget::RenderTarget(Viewpoint* viewpoint) :
 	m_width(0),
 	m_on_screen(true)
 {
+	Vector2i vp_size = RENDER_MANAGER.getCurrentViewportSize();
+	m_height = vp_size.x;
+	m_width = vp_size.y;
 }
 
 RenderTarget::RenderTarget(Viewpoint *viewpoint, FrameBufferObject *buffer, QList<QPair<RenderTexture*,FrameBufferObject::AttachmentPoint> > rendertextures, bool on_screen, bool stretch_to_screen) :

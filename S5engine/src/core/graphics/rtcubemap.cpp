@@ -19,6 +19,8 @@ RenderTextureCubemap::RenderTextureCubemap(QString name, int height, int width, 
 {
 	m_hasgltex = true;
 	m_state = STATE_LOADED;
+	m_format = format;
+	m_type = type;
 
 	glGenTextures(1, &m_gltexture);
 	glGenTextures(1, &m_render_cube);
@@ -54,6 +56,31 @@ RenderTextureCubemap::RenderTextureCubemap(QString name, int height, int width, 
 	glBindTexture(GL_TEXTURE_CUBE_MAP, 0);
 
 	TEXTURE_MANAGER.add(this);
+}
+
+RenderTextureCubemap::~RenderTextureCubemap()
+{
+	glDeleteTextures(1, &m_render_cube);
+	glDeleteTextures(1, &m_gltexture);
+	TEXTURE_MANAGER.remove(this);
+}
+
+void RenderTextureCubemap::resize(int height, int width)
+{
+	m_height = height;
+	m_width = width;
+
+	glBindTexture(GL_TEXTURE_CUBE_MAP, m_gltexture);
+	for(int i=0 ; i<6 ; i++) {
+		glTexImage2D(cubemap_targets[i], 0, m_format, width, height, 0, m_format, m_type, 0);
+	}
+
+	glBindTexture(GL_TEXTURE_CUBE_MAP, m_render_cube);
+	for(int i=0 ; i<6 ; i++) {
+		glTexImage2D(cubemap_targets[i], 0, m_format, width, height, 0, m_format, m_type, 0);
+	}
+
+	glBindTexture(GL_TEXTURE_CUBE_MAP, 0);
 }
 
 bool RenderTextureCubemap::unload()

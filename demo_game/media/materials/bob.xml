@@ -4,8 +4,10 @@
 	<ambient>0.5 0.5 0.5 1.0</ambient>
 	<emission>0.0 0.0 0.0 1.0</emission>
 	<shininess>0.1</shininess>
+<!--
 	<cast_shadow>false</cast_shadow>
 	<receive_shadow>false</receive_shadow>
+-->
 	<layers>
 		<layer id="0">
 			<texture type="colormap">guard1_body.png</texture>

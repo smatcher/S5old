@@ -10,6 +10,7 @@
 #include "core/graphics/material.h"
 #include "core/graphics/framebufferobject.h"
 #include "core/maths/vector3.h"
+#include "core/maths/vector2.h"
 
 #include <QMatrix4x4>
 #include <QVector2D>
@@ -70,6 +71,7 @@ private :
 	bool m_cameraChanged;
 	bool m_drawDebug;
 	Background m_defaultBackground;
+	Vector2i m_viewport_size;
 
 	QHash<QString, ShaderProgramData::UniformBase*> m_engine_uniforms;
 	// engine uniforms data
@@ -117,6 +119,9 @@ private :
 	void setupProjection(RenderTarget& target, int projection_nb);
 	void applyBackground(RenderTarget& target, int projection_nb);
 
+	void testViewportResize();
+	void updateResources(int new_height, int new_width);
+
 public:
 	virtual ~RenderManager();
 
@@ -128,6 +133,7 @@ public:
 	void setDrawDebug(bool draw);
 
 	void setBackground(const Background& background);
+	Vector2i getCurrentViewportSize();
 
 	const Camera* getCurrentCamera();
 

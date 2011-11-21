@@ -26,6 +26,7 @@ public:
 	void unload(Handle resource);
 
 	void add(Resource* resource);
+	void remove(Resource* resource);
 
 protected:
 	QHash<QString,Resource*> m_resources;

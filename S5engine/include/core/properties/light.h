@@ -7,6 +7,8 @@
 
 #include "core/graphics/viewpoint.h"
 
+#include "core/maths/vector4.h"
+
 class RenderTexture;
 
 class Light : public IProperty, public Managee<LightingManager>, public Viewpoint
@@ -14,6 +16,12 @@ class Light : public IProperty, public Managee<LightingManager>, public Viewpoin
 private:
 	bool m_casts_shadows;
 	RenderTexture* m_shadowmap;
+
+	float m_constant_attenuation;
+	float m_linear_attenuation;
+	float m_quadratic_attenuation;
+	Vector4f m_diffuse_color;
+	Vector4f m_specular_color;
 
 public:
 	Light(bool casts_shadows = false);
@@ -27,6 +35,9 @@ public:
 
 	virtual void applyTransform(int projection_nb);
 	virtual void applyOnlyRotation(int projection_nb);
+
+	void setDiffuseColor(Vector4f color);
+	void setSpecularColor(Vector4f color);
 
 	bool castsShadows();
 	RenderTexture* getRenderTexture();

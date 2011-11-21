@@ -20,8 +20,10 @@ FrameBufferObject::FrameBufferObject(int height, int width, bool onscreen, bool 
 		glFramebufferRenderbufferEXT(GL_FRAMEBUFFER_EXT, GL_DEPTH_ATTACHMENT_EXT, GL_RENDERBUFFER_EXT, m_renderbuffer);
 		glFramebufferRenderbufferEXT(GL_FRAMEBUFFER_EXT, GL_STENCIL_ATTACHMENT_EXT, GL_RENDERBUFFER_EXT, m_renderbuffer);
 		glBindFramebuffer(GL_FRAMEBUFFER, 0);
+
+		m_hasrenderbuffer = true;
 	} else {
-		m_renderbuffer = -1;
+		m_hasrenderbuffer = false;
 	}
 }
 
@@ -29,9 +31,28 @@ FrameBufferObject::~FrameBufferObject()
 {
 	glDeleteFramebuffers(1,&m_framebuffer);
 
-	if(m_renderbuffer >= 0) {
+	if(m_hasrenderbuffer) {
 		glDeleteRenderbuffers(1,&m_renderbuffer);
 	}
+}
+
+void FrameBufferObject::resize(int height, int width)
+{
+	debugGL("before resize");
+	m_height = height;
+	m_width = width;
+
+	if(m_hasrenderbuffer) {
+		glBindRenderbuffer(GL_RENDERBUFFER_EXT, m_renderbuffer);
+		glRenderbufferStorage(GL_RENDERBUFFER_EXT, GL_DEPTH_STENCIL, width, height);
+		glBindRenderbuffer(GL_RENDERBUFFER_EXT, 0);
+
+		glBindFramebuffer(GL_FRAMEBUFFER, m_framebuffer);
+		glFramebufferRenderbufferEXT(GL_FRAMEBUFFER_EXT, GL_DEPTH_ATTACHMENT_EXT, GL_RENDERBUFFER_EXT, m_renderbuffer);
+		glFramebufferRenderbufferEXT(GL_FRAMEBUFFER_EXT, GL_STENCIL_ATTACHMENT_EXT, GL_RENDERBUFFER_EXT, m_renderbuffer);
+		glBindFramebuffer(GL_FRAMEBUFFER, 0);
+	}
+	debugGL("resizing");
 }
 
 void FrameBufferObject::bind()

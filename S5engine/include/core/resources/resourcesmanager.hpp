@@ -111,4 +111,17 @@ void ResourceManager<Resource, Handle>::add(Resource* resource)
 	}
 }
 
+template <class Resource, class Handle>
+void ResourceManager<Resource, Handle>::remove(Resource* resource)
+{
+	if(!m_resources.contains(resource->name()))
+	{
+		m_resources.remove(resource->name());
+	}
+	else
+	{
+		logError( "Resource named " << resource->name() << " not removed because no resource add this name" );
+	}
+}
+
 #endif // RESOURCESMANAGER_HPP
