@@ -769,9 +769,12 @@ void RenderManager::renderTarget(SceneGraph* sg, RenderTarget& target)
 			glDisable(GL_LIGHTING);
 			glDisable(GL_TEXTURE_2D);
 			for(int i=0 ; i<sg->childCount() ; i++) {
-				sg->child(i)->drawDebug(m_context,true);
+				sg->child(i)->drawDebug(m_context,m_drawDebugFilter, true);
 			}
-			PHYSICS_MANAGER.debugDraw();
+			if(m_drawDebugFilter.draw_colliders)
+			{
+				PHYSICS_MANAGER.debugDraw();
+			}
 			glEnable(GL_TEXTURE_2D);
 			glEnable(GL_LIGHTING);
 		}

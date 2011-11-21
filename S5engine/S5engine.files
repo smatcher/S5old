@@ -111,8 +111,6 @@ include/core/utils/primitives.h
 include/core/resources/xmlmaterial.h
 include/core/resources/glslshader.h
 include/core/resources/glslubershader.h
-src/tools/scenegraphview.cpp
-src/tools/scenegraphmodel.cpp
 src/tools/mvc/scenegraphview.cpp
 src/tools/mvc/scenegraphmodel.cpp
 src/tools/widgets/nodewidget.cpp
