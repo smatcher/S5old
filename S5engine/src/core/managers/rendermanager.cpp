@@ -520,11 +520,11 @@ void RenderManager::render(double elapsed_time, SceneGraph* sg)
 
 	int xpos = 0;
 
+/*
 	//debugDisplayTexture(*m_shadowmap,xpos,0,256,256); xpos += 256;
 	debugDisplayTexture(*m_normalmap,xpos,0,256,256); xpos += 256;
 	debugDisplayTexture(*m_diffusemap,xpos,0,256,256); xpos += 256;
 	debugDisplayTexture(*m_specularmap,xpos,0,256,256); xpos += 256;
-/*
 	debugDisplayTexture(*m_depthmap,xpos,0,256,256); xpos += 256;
 	debugDisplayTexture(*m_colormap,xpos,0,256,256); xpos += 256;
 	debugDisplayTexture(*m_bloommap,xpos,0,256,256); xpos += 256;

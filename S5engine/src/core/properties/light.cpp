@@ -4,7 +4,7 @@
 #include "core/resources/managers.h"
 #include <core/graphics/rtarray.h>
 
-#define OMNIDEPTH_RESOLUTION 1024
+#define OMNIDEPTH_RESOLUTION 256
 
 const double posx[] = {
 	 0, 0,-1, 0,

@@ -1,5 +1,5 @@
 <ubershader>
 	<shader source="DEF_horizontal_blur_pass.vert"/>
 	<shader source="DEF_horizontal_blur_pass.frag"/>
-	<uniform name="input" value="0" type="int"/>
+	<uniform name="input_tex" value="0" type="int"/>
 </ubershader>

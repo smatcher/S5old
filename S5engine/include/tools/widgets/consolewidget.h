@@ -6,6 +6,7 @@
 #include <QLabel>
 #include <QLineEdit>
 #include <QLayout>
+#include <QIcon>
 
 class ConsoleWidget : public QFrame
 {
@@ -43,6 +44,12 @@ private:
 	QListWidget* m_content_field;
 	ConsoleInputField* m_input_field;
 	QVBoxLayout* m_layout;
+
+	QIcon m_info;
+	QIcon m_warn;
+	QIcon m_error;
+	QIcon m_ok;
+	QIcon m_nok;
 };
 
 #endif // CONSOLEWIDGET_H

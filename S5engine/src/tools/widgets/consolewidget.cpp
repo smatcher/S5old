@@ -16,19 +16,19 @@ void ConsoleWidget::MsgHandler(QtMsgType type, const char *msg)
 			case QtDebugMsg:
 				item = new QListWidgetItem();
 				item->setText(msg);
-				item->setIcon(QIcon("media/icons/info.png"));
+				item->setIcon(m_instance->m_info);
 				m_instance->m_content_field->addItem(item);
 				break;
 			case QtWarningMsg:
 				item = new QListWidgetItem();
 				item->setText(msg);
-				item->setIcon(QIcon("media/icons/warn.png"));
+				item->setIcon(m_instance->m_warn);
 				m_instance->m_content_field->addItem(item);
 				break;
 			case QtCriticalMsg:
 				item = new QListWidgetItem();
 				item->setText(msg);
-				item->setIcon(QIcon("media/icons/error.png"));
+				item->setIcon(m_instance->m_error);
 				m_instance->m_content_field->addItem(item);
 				break;
 			default:
@@ -74,6 +74,12 @@ ConsoleWidget::ConsoleWidget()
 		m_layout->addWidget(m_input_field);
 		setLayout(m_layout);
 
+		m_ok = QIcon("media/icons/ok.png");
+		m_nok = QIcon("media/icons/nok.png");
+		m_info = QIcon("media/icons/info.png");
+		m_warn = QIcon("media/icons/warn.png");
+		m_error = QIcon("media/icons/error.png");
+
 		QObject::connect(m_input_field,SIGNAL(returnPressed()),this,SLOT(newCommand()));
 	}
 	else
@@ -102,9 +108,9 @@ void ConsoleWidget::newCommand()
 	item->setText(cmd);
 
 	if(retval)
-		item->setIcon(QIcon("media/icons/ok.png"));
+		item->setIcon(m_ok);
 	else
-		item->setIcon(QIcon("media/icons/nok.png"));
+		item->setIcon(m_nok);
 
 	m_content_field->addItem(item);
 	m_content_field->scrollToBottom();

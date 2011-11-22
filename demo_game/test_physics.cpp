@@ -31,6 +31,8 @@
 
 int main(int argc, char *argv[])
 {
+	bool shadow_mapping = false;
+
 	#ifdef Q_WS_X11
 		XInitThreads();
 	#endif
@@ -75,7 +77,7 @@ int main(int argc, char *argv[])
 	for(int i=0 ; i<4 ; i++) {
 		walls.push_back(new Node("Wall" + QString().setNum(i+1)));
 	}
-	for(int i=0 ; i<30 ; i++) {
+	for(int i=0 ; i<5 ; i++) {
 		balls.push_back(new Node("Ball" + QString().setNum(i+1)));
 	}
 
@@ -88,11 +90,11 @@ int main(int argc, char *argv[])
 	nCamFollow->addProperty(new Camera(90,1,200));
 	nHead->addProperty(new DummyUpdatable());
 	Light* light;
-	light = new Light(true);
+	light = new Light(shadow_mapping);
 	light->setDiffuseColor(Vector4f(1.0,0.2,0.2,1.0));
 	light->setSpecularColor(Vector4f(1.0,0.2,0.2,1.0));
 	nLight->addProperty(light);
-	light = new Light(true);
+	light = new Light(shadow_mapping);
 	light->setDiffuseColor(Vector4f(0.2,1.0,0.2,1.0));
 	light->setSpecularColor(Vector4f(0.2,1.0,0.2,1.0));
 	nLight2->addProperty(light);
@@ -206,7 +208,7 @@ int main(int argc, char *argv[])
 		prop.mass += 1.0;
 		(*it)->addProperty(new MeshRenderer(mesh,duck));
 		if(first) {
-			light = new Light(true);
+			light = new Light(shadow_mapping);
 			light->setDiffuseColor(Vector4f(0.2,0.2,1.0,1.0));
 			light->setSpecularColor(Vector4f(0.2,0.2,1.0,1.0));
 			(*it)->addProperty(light);
