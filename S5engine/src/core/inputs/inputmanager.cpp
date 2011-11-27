@@ -37,7 +37,7 @@ void InputManager::parseBindings(const QString &file)
 {
 }
 
-void InputManager::addBinding(const QString &input, const QString &control)
+bool InputManager::addBinding(const QString &input, const QString &control)
 {
 	InputSource source_index = extractSource(input);
 
@@ -62,6 +62,7 @@ void InputManager::addBinding(const QString &input, const QString &control)
 				else
 				{
 					m_bindings[source_index].insert(input_value, *control_id);
+					return true;
 				}
 			}
 			else
@@ -78,6 +79,8 @@ void InputManager::addBinding(const QString &input, const QString &control)
 	{
 		logError( "cannot bind " << input << " because it is not a valid key");
 	}
+
+	return false;
 }
 
 void InputManager::removeBinding(const QString &input)

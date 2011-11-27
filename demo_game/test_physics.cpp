@@ -7,7 +7,6 @@
 #include "core/properties/dummyupdatable.h"
 #include "core/properties/dummycontrolable.h"
 #include "core/properties/physicobject.h"
-#include "core/properties/qtlogo.h"
 #include "core/properties/camera.h"
 #include "core/properties/light.h"
 #include "core/properties/soundemitter.h"
@@ -20,6 +19,8 @@
 #include "core/resources/managers.h"
 #include "core/properties/meshrenderer.h"
 
+#include "core/managers/commandmanager.h"
+
 #include "core/inputs/inputmanager.h"
 
 #include <AL/al.h>
@@ -27,7 +28,27 @@
 //#include <AL/alu.h>
 #include <AL/alut.h>
 
+SceneGraph* g_sg = NULL;
 
+bool spawn_duck(QStringList args)
+{
+	Material mat = MATERIAL_MANAGER.get("duck");
+	Mesh mesh = MESH_MANAGER.get("duck");
+	Node* node = new Node("a duck");
+	g_sg->link(node);
+	node->moveTo(Vector3f(0,6,0));
+
+	node->addProperty(new MeshRenderer(mesh, mat));
+	PhysicObject::Properties prop;
+	prop.is_kinematic = false;
+	prop.mass = 100.0;
+	prop.restitution = 0.1;
+	prop.shape = PhysicObject::MESH;
+	prop.mesh_name = "duck";
+	node->addProperty(new PhysicObject(prop));
+
+	return true;
+}
 
 int main(int argc, char *argv[])
 {
@@ -40,6 +61,7 @@ int main(int argc, char *argv[])
 	Engine engine(argc, argv,"demo_game/media/");
 
 	SceneGraph* sg = engine.getScenegraph_TEMPORARY();
+	g_sg = sg;
 
 	QList<InputManager::Control> controls;
 	controls.push_back(InputManager::Control(false,"avance"));
@@ -229,6 +251,8 @@ int main(int argc, char *argv[])
 	background.textures[4] = TEXTURE_MANAGER.get("stormy_top.tga");
 	background.textures[5] = TEXTURE_MANAGER.get("stormy_bottom.tga");
 	RENDER_MANAGER.setBackground(background);
+
+	COMMAND_MANAGER.registerCommand("spawn_duck",spawn_duck);
 
 	int ret = engine.start();
 

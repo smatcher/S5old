@@ -62,7 +62,7 @@ public:
 
 	// Edit bindings
 	void parseBindings(const QString& file);
-	void addBinding(const QString& input, const QString& control);
+	bool addBinding(const QString& input, const QString& control);
 	void removeBinding(const QString& input);
 
 	// Report inputs

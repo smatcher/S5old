@@ -1,7 +1,7 @@
 // This include should fail since parenting.h includes parenting.hpp
 // However QtCreator needs this include in order to provide code assistance.
 #include "parenting.h"
-
+#include "core/log/log.h"
 /*
  *  ParentOf
  */
@@ -57,22 +57,23 @@ void ParentOf<Child>::link(Child* son)
 
 	if(son != NULL)
 	{
-		const QString& name = son->getName();
+		QString name = son->getName();
 
-		if(!m_sons.contains(name))
+		if(m_sons.contains(name))
 		{
-			m_sons.insert(name,son);
-			son->setParent((typename Child::ParentPtrType)this);
-			onLinked(son);
+			int cpt=2;
+			while(m_sons.contains(name+QString().setNum(cpt))) {cpt++;}
+			name = name+QString().setNum(cpt);
+			debug("NAME_COLLISIONS","Son named " << son->getName() << " renamed to " << name);
+			son->setName(name);
 		}
-		else
-		{
-			// TODO print a warning (there is already a son named like this)
-		}
+		m_sons.insert(name,son);
+		son->setParent((typename Child::ParentPtrType)this);
+		onLinked(son);
 	}
 	else
 	{
-		// TODO print a warning (trying to add NULL)
+		logWarn("Trying to add NULL as a son");
 	}
 }
 
@@ -136,11 +137,13 @@ void ChildOf<Parent>::setName(const QString& name)
 	// Save parent
 	Parent* parent = m_parent;
 	// Unlink
-	unlinkFromParent();
+	if(parent != NULL)
+		unlinkFromParent();
 	// Change name
 	m_name = name;
 	// Relink
-	parent->link((typename Parent::ChildPtrType)this);
+	if(parent != NULL)
+		parent->link((typename Parent::ChildPtrType)this);
 }
 
 template<class Parent>

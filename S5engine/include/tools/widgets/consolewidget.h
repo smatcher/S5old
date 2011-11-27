@@ -1,12 +1,16 @@
 #ifndef CONSOLEWIDGET_H
 #define CONSOLEWIDGET_H
 
+#include "core/log/log.h"
+
 #include <QFrame>
 #include <QListWidget>
 #include <QLabel>
 #include <QLineEdit>
 #include <QLayout>
 #include <QIcon>
+
+class ConsoleItemModel;
 
 class ConsoleWidget : public QFrame
 {
@@ -16,11 +20,11 @@ public:
 	ConsoleWidget();
 	~ConsoleWidget();
 
-	static void MsgHandler(QtMsgType type, const char *msg);
-
 	void historyNext();
 	void historyPrevious();
 	void autocomplete();
+	void echo(QString msg);
+	void log(Log::LogItem& log);
 
 public slots:
 	virtual void newCommand();
@@ -41,15 +45,18 @@ private:
 
 	QStringList m_history;
 	int m_historyId;
-	QListWidget* m_content_field;
+	QListView* m_content_field;
+	ConsoleItemModel* m_content_model;
 	ConsoleInputField* m_input_field;
 	QVBoxLayout* m_layout;
 
 	QIcon m_info;
 	QIcon m_warn;
 	QIcon m_error;
+	QIcon m_debug;
 	QIcon m_ok;
 	QIcon m_nok;
+	QIcon m_input;
 };
 
 #endif // CONSOLEWIDGET_H

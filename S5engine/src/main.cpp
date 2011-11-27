@@ -6,7 +6,6 @@
 #include "core/maths/trigo.h"
 #include "core/properties/dummyupdatable.h"
 #include "core/properties/dummycontrolable.h"
-#include "core/properties/qtlogo.h"
 #include "core/properties/camera.h"
 #include "core/properties/light.h"
 #include "core/properties/terrainrenderer.h"
@@ -40,7 +39,6 @@ int main(int argc, char *argv[])
 	SceneGraph* sg = engine.getScenegraph_TEMPORARY();
 
 	Node* nRot = new Node("Rotating node");
-	Node* nQt = new Node("Qt Logo");
 	Node* nCam = new Node("Camera");
 	Node* nBall = new Node("Ball");
 	Node* nLight = new Node("Light");
@@ -48,8 +46,6 @@ int main(int argc, char *argv[])
 
 	nRot->addProperty(new IProperty());
 	nRot->addProperty(new DummyUpdatable());
-	nQt->addProperty(new QtLogo(engine.getGLW_TEMPORARY()));
-	nQt->addProperty(new Grid(1.0f, 1.0f, 40, 40));
 	nCam->addProperty(new Camera(70,1,200));
 	nLight->addProperty(new Light());
 
@@ -60,14 +56,11 @@ int main(int argc, char *argv[])
 	nBall->addProperty(new MeshRenderer(sphere,ball));
 
 	sg->link(nRot);
-	sg->link(nQt);
 	sg->link(nBall);
 	nRot->link(nCam);
 	nRot->link(nLight);
 
 	nRot->moveTo(Vector3f(0,0,0));
-	nQt->moveTo(Vector3f(0,-0.5,0));
-	nQt->rotate(Vector3f(1,0,0),90);
 	nCam->moveTo(Vector3f(0,1,2));
 	nCam->rotate(Vector3f(1,0,0),330);
 

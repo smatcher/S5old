@@ -1,10 +1,9 @@
 <material>
-	<texture texunit="0">ball.tga</texture>
-	<texture texunit="1">normal_ball.tga</texture>
+	<texture type="colormap">ball.tga</texture>
+	<texture type="normalmap">normal_ball.tga</texture>
 	<diffuse>1.0 1.0 1.0 1.0</diffuse>
 	<specular>0.1 0.1 0.1 1.0</specular>
 	<ambient>0.3 0.3 0.3 1.0</ambient>
 	<emission>0.0 0.0 0.0 1.0</emission>
 	<shininess>1.0</shininess>
-	<program>bump_mapping</program>
 </material>

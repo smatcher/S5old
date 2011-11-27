@@ -2,9 +2,12 @@
 #define COMMANDMANAGER_H
 
 #include "core/utils/singleton.h"
+#include "core/log/log.h"
 
 #include <QStringList>
 #include <QHash>
+
+class ConsoleWidget;
 
 class CommandManager
 {
@@ -21,11 +24,12 @@ public:
 
 	QStringList autocomplete(QString);
 	void registerCommand(QString name, Command command);
-	void registerVariable(QString name, Type type);
+	void registerCommand(QString name, Command command, QString helpmsg);
+	void registerConsole(ConsoleWidget* console);
 
 	bool runCommand(QString cmd);
-	void* getVariable(QString var);
-	bool 	setVariable(QString var, void* value);
+	void echo(QString msg);
+	void logToConsole(Log::LogItem& log);
 
 protected:
 	CommandManager();
@@ -34,8 +38,12 @@ protected:
 private:
 
 	QHash<QString, Command> m_commands;
-	QHash<QString, Type> m_variables_type;
-	QHash<QString, void*> m_variables_value;
+	QHash<QString, QString> m_commands_help;
+
+	ConsoleWidget* m_console;
+
+	void printAllHelp();
+	void printHelp(QString command);
 };
 
 typedef Singleton<CommandManager> SingletonCommandManager;

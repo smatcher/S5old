@@ -4,6 +4,7 @@
 #include <QString>
 #include <QHash>
 #include <QDebug>
+#include <QDir>
 
 #ifdef _DEBUG
 	#define debugGL(message)\
@@ -17,41 +18,41 @@
 	}
 	#define debug(topic, message)\
 	{\
-		if(Log::displaysTopic(topic))\
-                        qDebug() << Log::format( Log::LOG_DEBUG, __FILE__ , __LINE__ , __FUNCTION__ , topic ).header.toStdString().c_str() << message;\
+					if(Log::displaysTopic(topic))\
+								{ Log::LogItem( Log::LOG_DEBUG, __FILE__ , __LINE__ , __FUNCTION__ , topic ).debugStream() << message; }\
 	}
 	#define logInfo(message)\
 	{\
-                if(Log::infoPolicy == Log::POLICY_SHOW)\
-                        qDebug() << Log::format( Log::LOG_INFO, __FILE__ , __LINE__ , __FUNCTION__ ).header.toStdString().c_str() << message;\
+					 if(Log::infoPolicy == Log::POLICY_SHOW)\
+								{ Log::LogItem( Log::LOG_INFO, __FILE__ , __LINE__ , __FUNCTION__ ).debugStream() << message; }\
 	}
 	#define logWarn(message)\
 	{\
-                if(Log::warnPolicy == Log::POLICY_SHOW)\
-                        qDebug() << Log::format( Log::LOG_WARN, __FILE__ , __LINE__ , __FUNCTION__ ).header.toStdString().c_str() << message;\
+					 if(Log::warnPolicy == Log::POLICY_SHOW)\
+								{ Log::LogItem( Log::LOG_WARN, __FILE__ , __LINE__ , __FUNCTION__ ).debugStream() << message; }\
 	}
 	#define logError(message)\
 	{\
-                if(Log::errorPolicy == Log::POLICY_SHOW)\
-                        qDebug() << Log::format( Log::LOG_ERROR, __FILE__ , __LINE__ , __FUNCTION__ ).header.toStdString().c_str() << message;\
+					 if(Log::errorPolicy == Log::POLICY_SHOW)\
+								{ Log::LogItem( Log::LOG_ERROR, __FILE__ , __LINE__ , __FUNCTION__ ).debugStream() << message; }\
 	}
 #else
 	#define debugGL(message) {}
 	#define debug(topic, message) {}
 	#define logInfo(message)\
 	{\
-                if(Log::infoPolicy == Log::POLICY_SHOW)\
-                        qDebug() << "[" << Log::format(Log::LOG_INFO).header.toStdString().c_str() << "]" << message;\
+					 if(Log::infoPolicy == Log::POLICY_SHOW)\
+						{ Log::LogItem(Log::LOG_INFO).debugStream() << message; }\
 	}
 	#define logWarn(message)\
 	{\
-                if(Log::warnPolicy == Log::POLICY_SHOW)\
-                        qDebug() << "[" << Log::format(Log::LOG_WARN).header.toStdString().c_str() << "]" << message;\
+					 if(Log::warnPolicy == Log::POLICY_SHOW)\
+						{ Log::LogItem(Log::LOG_WARN).debugStream() << message; }\
 	}
 	#define logError(message)\
 	{\
-                if(Log::errorPolicy == Log::POLICY_SHOW)\
-                        qDebug() << "[" << Log::format(Log::LOG_ERROR).header.toStdString().c_str() << "]" << message;\
+					if(Log::errorPolicy == Log::POLICY_SHOW)\
+						{ Log::LogItem(Log::LOG_ERROR).debugStream() << message; }\
 	}
 #endif
 
@@ -60,22 +61,37 @@ class Log
 	public:
 		enum LogType
 		{
-                        LOG_INFO,
-                        LOG_WARN,
-                        LOG_ERROR,
-                        LOG_DEBUG
+								LOG_INFO,
+								LOG_WARN,
+								LOG_ERROR,
+								LOG_DEBUG
 		};
 
 		enum Policy
 		{
-                        POLICY_IGNORE,
-                        POLICY_SHOW
+								POLICY_IGNORE,
+								POLICY_SHOW
 		};
 
-		struct Format
+		class LogItem
 		{
+		public:
+
+			LogItem( LogType type);
+			LogItem( LogType type , const char* file , int line , const char* function);
+			LogItem( LogType type , const char* file , int line , const char* function , const char* topic);
+			~LogItem();
+
+			QDebug debugStream();
+
+			bool has_file;
+			bool has_topic;
 			LogType type;
-			QString header;
+			QDir file;
+			int line;
+			QString function;
+			QString topic;
+			QString message;
 		};
 
 		static Policy infoPolicy;
@@ -84,9 +100,6 @@ class Log
 		static Policy defaultDebugPolicy;
 		static QHash<QString, Policy> topicPolicy;
 
-		static Format format( LogType type);
-		static Format format( LogType type , const char* file , int line , const char* function);
-		static Format format( LogType type , const char* file , int line , const char* function , const char* topic);
 		static bool displaysTopic(const char* topic);
 };
 

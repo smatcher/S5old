@@ -1,92 +1,57 @@
 #include "tools/widgets/consolewidget.h"
+#include "tools/mvc/consoleitemmodel.h"
+#include "tools/mvc/consoleitemdelegate.h"
 #include "core/managers/commandmanager.h"
 #include "core/log/log.h"
 
 #include <QKeyEvent>
 #include <QEvent>
+#include <QList>
+#include <QAbstractListModel>
 
 ConsoleWidget* ConsoleWidget::m_instance = NULL;
-
-void ConsoleWidget::MsgHandler(QtMsgType type, const char *msg)
-{
-	if(m_instance)
-	{
-		QListWidgetItem* item;
-		switch (type) {
-			case QtDebugMsg:
-				item = new QListWidgetItem();
-				item->setText(msg);
-				item->setIcon(m_instance->m_info);
-				m_instance->m_content_field->addItem(item);
-				break;
-			case QtWarningMsg:
-				item = new QListWidgetItem();
-				item->setText(msg);
-				item->setIcon(m_instance->m_warn);
-				m_instance->m_content_field->addItem(item);
-				break;
-			case QtCriticalMsg:
-				item = new QListWidgetItem();
-				item->setText(msg);
-				item->setIcon(m_instance->m_error);
-				m_instance->m_content_field->addItem(item);
-				break;
-			default:
-				break;
-		}
-
-		if(m_instance->m_content_field->isVisible())
-		{
-			m_instance->m_content_field->scrollToBottom();
-		}
-	}
-	switch (type) {
-		case QtDebugMsg:
-			fprintf(stdout, "%s\n", msg);
-			fflush(stdout);
-			break;
-		case QtWarningMsg:
-			fprintf(stderr, "%s\n", msg);
-			fflush(stderr);
-			break;
-		case QtCriticalMsg:
-			fprintf(stderr, "%s\n", msg);
-			fflush(stderr);
-			break;
-		case QtFatalMsg:
-			fprintf(stderr, "%s\n", msg);
-			abort();
-	}
-}
 
 ConsoleWidget::ConsoleWidget()
 {
 	if(!m_instance)
 	{
 		m_instance = this;
-		qInstallMsgHandler(ConsoleWidget::MsgHandler);
-
-		m_historyId = -1;
-		m_content_field = new QListWidget();
-		m_input_field = new ConsoleInputField();
-		m_layout = new QVBoxLayout();
-		m_layout->addWidget(m_content_field);
-		m_layout->addWidget(m_input_field);
-		setLayout(m_layout);
-
-		m_ok = QIcon("media/icons/ok.png");
-		m_nok = QIcon("media/icons/nok.png");
-		m_info = QIcon("media/icons/info.png");
-		m_warn = QIcon("media/icons/warn.png");
-		m_error = QIcon("media/icons/error.png");
-
-		QObject::connect(m_input_field,SIGNAL(returnPressed()),this,SLOT(newCommand()));
 	}
 	else
 	{
 		logError("Only one console widget is allowed");
 		abort();
 	}
+
+	m_historyId = -1;
+	m_content_field = new QListView();
+	m_content_model = new ConsoleItemModel();
+	m_input_field = new ConsoleInputField();
+	m_layout = new QVBoxLayout();
+	m_layout->addWidget(m_content_field);
+	m_layout->addWidget(m_input_field);
+	setLayout(m_layout);
+
+	ConsoleItemDelegate* delegate = new ConsoleItemDelegate(this);
+
+	m_content_field->setModel(m_content_model);
+	m_content_field->setItemDelegate(delegate);
+	m_content_field->setAlternatingRowColors(true);
+
+	m_ok = QIcon("media/icons/ok.png");
+	m_nok = QIcon("media/icons/nok.png");
+	m_info = QIcon("media/icons/info.png");
+	m_warn = QIcon("media/icons/warn.png");
+	m_error = QIcon("media/icons/error.png");
+	m_input = QIcon("media/icons/input.png");
+	m_debug = QIcon("media/icons/debug.png");
+
+	QObject::connect(m_input_field,SIGNAL(returnPressed()),this,SLOT(newCommand()));
+
+	connect(m_content_field->selectionModel(), SIGNAL(currentChanged(QModelIndex,QModelIndex)),
+					delegate, SLOT(currentChanged(QModelIndex,QModelIndex)));
+
+	COMMAND_MANAGER.registerConsole(this);
 }
 
 ConsoleWidget::~ConsoleWidget()
@@ -94,9 +59,18 @@ ConsoleWidget::~ConsoleWidget()
 	m_instance = NULL;
 }
 
+void ConsoleWidget::echo(QString msg)
+{
+	ConsoleItem item(ConsoleItem::Echo, QIcon(), msg);
+	m_content_model->insertItem(item);
+}
+
 void ConsoleWidget::newCommand()
 {
 	QString cmd = m_input_field->text();
+
+	ConsoleItem item(ConsoleItem::Input, m_input, cmd);
+	m_content_model->insertItem(item);
 
 	bool retval = COMMAND_MANAGER.runCommand(cmd);
 
@@ -104,15 +78,16 @@ void ConsoleWidget::newCommand()
 	m_historyId = -1;
 	m_history.push_back(cmd);
 
-	QListWidgetItem* item = new QListWidgetItem();
-	item->setText(cmd);
-
 	if(retval)
-		item->setIcon(m_ok);
+	{
+		item = ConsoleItem(ConsoleItem::Echo, m_ok, "command returned ok");
+	}
 	else
-		item->setIcon(m_nok);
+	{
+		item = ConsoleItem(ConsoleItem::Echo, m_nok, "command returned not ok");
+	}
 
-	m_content_field->addItem(item);
+	m_content_model->insertItem(item);
 	m_content_field->scrollToBottom();
 
 }
@@ -147,7 +122,18 @@ void ConsoleWidget::autocomplete()
 	QStringList suggestions = COMMAND_MANAGER.autocomplete(m_input_field->text());
 
 	if(suggestions.count() == 1)
+	{
 		m_input_field->setText(suggestions.at(0));
+	}
+	else if(suggestions.count() > 1)
+	{
+		QString msg = "suggested commands :";
+		for(int i=0 ; i<suggestions.count() ; i++) {
+			msg.append("\n" + suggestions.at(i));
+		}
+		echo(msg);
+		m_content_field->scrollToBottom();
+	}
 }
 
 void ConsoleWidget::ConsoleInputField::keyPressEvent(QKeyEvent * event)
@@ -178,4 +164,44 @@ bool ConsoleWidget::ConsoleInputField::event(QEvent * event)
 		}
 	}
 	return QLineEdit::event(event);
+}
+
+void ConsoleWidget::log(Log::LogItem& log)
+{
+	ConsoleItem* item = NULL;
+
+	switch(log.type)
+	{
+		case Log::LOG_DEBUG:
+			item = new ConsoleItem(ConsoleItem::Info, m_debug, log.message);
+			item->type = ConsoleItem::Debug;
+			break;
+		case Log::LOG_INFO:
+			item = new ConsoleItem(ConsoleItem::Info, m_info, log.message);
+			item->type = ConsoleItem::Info;
+			break;
+		case Log::LOG_WARN:
+			item = new ConsoleItem(ConsoleItem::Info, m_warn, log.message);
+			item->type = ConsoleItem::Warning;
+			break;
+		case Log::LOG_ERROR:
+			item = new ConsoleItem(ConsoleItem::Info, m_error, log.message);
+			item->type = ConsoleItem::Error;
+			break;
+		default:
+			item = new ConsoleItem(ConsoleItem::Info, QIcon(), log.message);
+			item->type = ConsoleItem::Echo;
+			break;
+	}
+
+	if(log.has_file)
+		item->setFile(log.file, log.line, log.function);
+
+	if(log.has_topic)
+		item->setTopic(log.topic);
+
+	if(m_content_model)
+		m_content_model->insertItem(*item);
+
+	delete item;
 }

@@ -35,9 +35,7 @@ Engine::Engine(int argc, char *argv[], QString mod_dir) :
 	m_running(false),
 	m_paused(false)
 {
-	#ifndef WITH_TOOLS
-		qInstallMsgHandler(Engine::MsgHandler);
-	#endif
+	qInstallMsgHandler(Engine::MsgHandler);
 	init(argc, argv, mod_dir);
 }
 

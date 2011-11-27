@@ -7,7 +7,6 @@
 #include "core/properties/dummyupdatable.h"
 #include "core/properties/dummycontrolable.h"
 #include "core/properties/physicobject.h"
-#include "core/properties/qtlogo.h"
 #include "core/properties/camera.h"
 #include "core/properties/light.h"
 #include "core/properties/soundemitter.h"

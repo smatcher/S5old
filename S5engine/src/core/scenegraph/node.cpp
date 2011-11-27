@@ -184,17 +184,17 @@ void Node::onUnlinked(ParentOfNode * from)
 	changedScenegraph(NULL);
 }
 
-void Node::setSelected(bool selected)
-{
-	m_selected = selected;
-}
-
-bool Node::isSelected()
-{
-	return m_selected;
-}
-
 #ifdef WITH_TOOLS
+
+	void Node::setSelected(bool selected)
+	{
+		m_selected = selected;
+	}
+
+	bool Node::isSelected()
+	{
+		return m_selected;
+	}
 
 	NodeWidget* Node::getWidget()
 	{

@@ -1,5 +1,4 @@
 src/main.cpp
-src/core/properties/qtlogo.cpp
 src/core/scenegraph/node.cpp
 src/core/properties/propertyset.cpp
 src/core/scenegraph/scenegraph.cpp
@@ -38,7 +37,6 @@ src/core/utils/primitives.cpp
 src/core/resources/xmlmaterial.cpp
 src/core/resources/glslshader.cpp
 src/core/resources/glslubershader.cpp
-include/core/properties/qtlogo.h
 include/core/utils/parenting.h
 include/core/utils/parenting.hpp
 include/core/scenegraph/node.h
@@ -189,4 +187,7 @@ include/tools/widgets/consolewidget.h
 include/core/managers/commandmanager.h
 src/core/managers/commandmanager.cpp
 include/core/utils/enginecommands.h
->>>>>>> gui
+include/tools/mvc/consoleitemmodel.h
+src/tools/mvc/consoleitemmodel.cpp
+include/tools/mvc/consoleitemdelegate.h
+src/tools/mvc/consoleitemdelegate.cpp
