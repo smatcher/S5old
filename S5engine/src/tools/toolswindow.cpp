@@ -5,6 +5,7 @@
 #include "tools/widgets/nodewidget.h"
 #include "tools/widgets/propertiespanel.h"
 #include "tools/widgets/renderwidget.h"
+#include "tools/widgets/resourceswidget.h"
 #include "tools/widgets/consolewidget.h"
 #include "tools/mvc/scenegraphview.h"
 
@@ -20,27 +21,41 @@ ToolsWindow::ToolsWindow(Engine* engine)
 	m_renderWidget = RENDER_MANAGER.getDebugView();
 	m_treeWidget = engine->getScenegraph_TEMPORARY()->getDebugView();
 	m_propertiesWidget = new PropertiesPanel();
+	m_resourcesWidget = new ResourcesWidget();
+
+	m_icon_pause = QIcon("media/icons/pause.png");
+	m_icon_play = QIcon("media/icons/play.png");
+
+	if(engine->isPaused())
+		m_pause_button = new QPushButton(m_icon_play,"");
+	else
+		m_pause_button = new QPushButton(m_icon_pause,"");
+	m_pause_button->setMaximumWidth(40);
+
+	QFrame* ctrl_frame = new QFrame();
+	QHBoxLayout* hlayout = new QHBoxLayout();
+	hlayout->addWidget(m_pause_button);
+	hlayout->addWidget(m_renderWidget);
+	ctrl_frame->setLayout(hlayout);
 
 	QVBoxLayout* vlayout = new QVBoxLayout();
-	vlayout->addWidget(m_renderWidget);
+	vlayout->addWidget(ctrl_frame);
 	vlayout->addWidget(m_tab);
 	setLayout(vlayout);
 
-	QHBoxLayout* hlayout = new QHBoxLayout();
+	hlayout = new QHBoxLayout();
 	QWidget* wid = new QFrame();
 	hlayout->addWidget(m_treeWidget);
 	hlayout->addWidget(m_propertiesWidget);
 	wid->setLayout(hlayout);
 	m_tab->addTab(wid, "Scene");
 
-	hlayout = new QHBoxLayout();
-	wid = new QFrame();
-	wid->setLayout(hlayout);
-	m_tab->addTab(wid, "Resources");
+	m_tab->addTab(m_resourcesWidget, "Resources");
 
 	wid = new ConsoleWidget();
 	m_tab->addTab(wid, "Console");
 
+	connect(m_pause_button, SIGNAL(clicked()), this, SLOT(pauseClicked()));
 
 	/*
 	QGridLayout* layout = new QGridLayout();
@@ -94,3 +109,17 @@ bool ToolsWindow::event(QEvent* evt)
 		return QWidget::event(evt);
 	}
 }
+
+void ToolsWindow::pauseClicked()
+{
+	m_engine->setPaused(!m_engine->isPaused());
+}
+
+void ToolsWindow::enginePauseChanged(bool paused)
+{
+	if(paused)
+		m_pause_button->setIcon(m_icon_play);
+	else
+		m_pause_button->setIcon(m_icon_pause);
+}
+

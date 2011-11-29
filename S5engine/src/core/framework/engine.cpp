@@ -27,13 +27,12 @@ Engine::Engine(int argc, char *argv[], QString mod_dir) :
 	m_app(argc, argv),
 	m_scene(),
 	m_window(this),
-
-	#ifdef WITH_TOOLS
-		m_toolswindow(this),
-	#endif
-
 	m_running(false),
 	m_paused(false)
+
+	#ifdef WITH_TOOLS
+		,m_toolswindow(this)
+	#endif
 {
 	qInstallMsgHandler(Engine::MsgHandler);
 	init(argc, argv, mod_dir);
@@ -141,6 +140,10 @@ void Engine::stop()
 void Engine::setPaused(bool pause)
 {
 	m_paused = pause;
+
+#ifdef WITH_TOOLS
+	m_toolswindow.enginePauseChanged(m_paused);
+#endif
 }
 
 void Engine::MsgHandler(QtMsgType type, const char *msg)

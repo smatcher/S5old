@@ -191,3 +191,11 @@ include/tools/mvc/consoleitemmodel.h
 src/tools/mvc/consoleitemmodel.cpp
 include/tools/mvc/consoleitemdelegate.h
 src/tools/mvc/consoleitemdelegate.cpp
+include/tools/widgets/resourceswidget.h
+src/tools/widgets/resourceswidget.cpp
+include/tools/widgets/resourcewidget.h
+include/tools/widgets/texturewidget.h
+include/tools/widgets/shaderwidget.h
+include/tools/widgets/materialwidget.h
+include/tools/widgets/meshwidget.h
+src/tools/widgets/resourcewidget.cpp

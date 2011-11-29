@@ -8,8 +8,12 @@
 CommandManager::CommandManager()
 {
 	m_console = NULL;
-	m_commands.insert("help",NULL); // the help is catched before, we only add it here for the autocompletion algorithm
+
+	// These commands are catched before, we only add them here for the autocompletion and the help
+	m_commands.insert("help",NULL);
 	m_commands_help.insert("help","displays a help message on a given command or list all the help messages");
+	m_commands.insert("exec",NULL);
+	m_commands_help.insert("exec","run every command in a given file");
 }
 
 CommandManager::~CommandManager()
@@ -82,6 +86,18 @@ bool CommandManager::runCommand(QString cmd)
 				ret = true;
 			}
 		}
+		else if(command == "exec")
+		{
+			if(strlist.count()>1)
+			{
+				ret = readFile(strlist.at(1));
+			}
+			else
+			{
+				echo("you need to specify a file, usage is \"exec some_file.cfg\"");
+				ret = false;
+			}
+		}
 		else if(m_commands.contains(command))
 		{
 			QHash<QString, Command>::iterator it = m_commands.find(strlist.at(0));
@@ -135,4 +151,33 @@ void CommandManager::logToConsole(Log::LogItem &log)
 		m_console->log(log);
 	#endif
 	}
+}
+
+bool CommandManager::readFile(QString path)
+{
+	bool ret = false;
+
+	QFile file(path);
+	if(file.open(QIODevice::ReadOnly | QIODevice::Text))
+	{
+		QTextStream t(&file);
+		while(!t.atEnd())
+		{
+			QString line = t.readLine();
+			line = line.trimmed();
+
+			if(!line.isEmpty() && !line.startsWith('#'))
+			{
+				runCommand(line);
+			}
+		}
+
+		ret = true;
+	}
+	else
+	{
+		logError("Can't open the file" << path);
+	}
+
+	return ret;
 }

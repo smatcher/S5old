@@ -253,6 +253,7 @@ int main(int argc, char *argv[])
 	RENDER_MANAGER.setBackground(background);
 
 	COMMAND_MANAGER.registerCommand("spawn_duck",spawn_duck);
+	COMMAND_MANAGER.readFile("config.cfg");
 
 	int ret = engine.start();
 

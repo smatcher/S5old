@@ -137,8 +137,13 @@ void ConsoleItemDelegate::paint(QPainter *painter, const QStyleOptionViewItem &o
 	  painter->setBrush(opt.palette.highlight().color());
 	  backgroundColor = opt.palette.highlight().color();
 	} else {
-	  painter->setBrush(opt.palette.background().color());
-	  backgroundColor = opt.palette.background().color();
+		if(index.row()%2 == 0) {
+			painter->setBrush(opt.palette.base().color());
+			backgroundColor = opt.palette.base().color();
+		} else {
+			painter->setBrush(opt.palette.alternateBase().color());
+			backgroundColor = opt.palette.alternateBase().color();
+		}
 	}
 	painter->setPen(Qt::NoPen);
 	painter->drawRect(opt.rect);

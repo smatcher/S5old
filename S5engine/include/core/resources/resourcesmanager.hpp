@@ -6,6 +6,20 @@
 #include "core/resources/iresourcefactory.h"
 #include "core/log/log.h"
 
+#ifdef WITH_TOOLS
+	#include "core/utils/singleton.h"
+#endif
+
+#include <QApplication>
+#include <QPalette>
+
+template <class Resource, class Handle>
+ResourceManager<Resource, Handle>::ResourceManager()
+{
+#ifdef WITH_TOOLS
+	m_model = NULL;
+#endif
+}
 
 template <class Resource, class Handle>
 Handle ResourceManager<Resource, Handle>::get(const QString& name)
@@ -37,6 +51,11 @@ void ResourceManager<Resource, Handle>::addFactory(IResourceFactory* factory)
 template <class Resource, class Handle>
 void ResourceManager<Resource, Handle>::parseDir(const QString& path, bool recursive)
 {
+#ifdef WITH_TOOLS
+	if(m_model)
+		m_model->aboutToInsert();
+#endif
+
 	for(typename QList< IResourceFactory * >::Iterator it = m_factories.begin() ; it != m_factories.end() ; it++)
 	{
 		QList<ResourceData*> found = (*it)->searchDir(path, recursive);
@@ -46,6 +65,9 @@ void ResourceManager<Resource, Handle>::parseDir(const QString& path, bool recur
 			if(!m_resources.contains((*it2)->name()))
 			{
 				m_resources.insert((*it2)->name(),static_cast<Resource*>(*it2));
+				#ifdef WITH_TOOLS
+					m_sorted_keys.push_back((*it2)->name());
+				#endif
 			}
 			else
 			{
@@ -53,6 +75,12 @@ void ResourceManager<Resource, Handle>::parseDir(const QString& path, bool recur
 			}
 		}
 	}
+
+#ifdef WITH_TOOLS
+	m_sorted_keys.sort();
+	if(m_model)
+		m_model->finishedInserting();
+#endif
 }
 
 template <class Resource, class Handle>
@@ -101,6 +129,11 @@ void ResourceManager<Resource, Handle>::unload(Handle resource)
 template <class Resource, class Handle>
 void ResourceManager<Resource, Handle>::add(Resource* resource)
 {
+#ifdef WITH_TOOLS
+	if(m_model)
+		m_model->aboutToInsert();
+#endif
+
 	if(!m_resources.contains(resource->name()))
 	{
 		m_resources.insert(resource->name(),resource);
@@ -109,6 +142,13 @@ void ResourceManager<Resource, Handle>::add(Resource* resource)
 	{
 		logError( "Resource named " << resource->name() << " discarded because an other resource add the same name" );
 	}
+
+#ifdef WITH_TOOLS
+	m_sorted_keys.push_back(resource->name());
+	m_sorted_keys.sort();
+	if(m_model)
+		m_model->finishedInserting();
+#endif
 }
 
 template <class Resource, class Handle>
@@ -123,5 +163,79 @@ void ResourceManager<Resource, Handle>::remove(Resource* resource)
 		logError( "Resource named " << resource->name() << " not removed because no resource add this name" );
 	}
 }
+
+
+#ifdef WITH_TOOLS
+template <class Resource, class Handle>
+ResourceManagerModel<Resource, Handle>::ResourceManagerModel()
+{
+	m_manager = &Singleton< ResourceManager<Resource, Handle > >::getInstance();
+	m_manager->m_model = this;
+}
+
+template <class Resource, class Handle>
+int ResourceManagerModel<Resource, Handle>::rowCount(const QModelIndex &parent) const
+{
+	if(parent.isValid())
+		return 0;
+	else
+		return m_manager->m_sorted_keys.count();
+}
+
+template <class Resource, class Handle>
+QVariant ResourceManagerModel<Resource, Handle>::data(const QModelIndex &parent, int role) const
+{
+	if(parent.isValid())
+	{
+		if(role == Qt::DisplayRole)
+		{
+			if(parent.row() < m_manager->m_sorted_keys.count())
+				return m_manager->m_sorted_keys.at(parent.row());
+		}
+		else if(role == Qt::TextColorRole)
+		{
+			const QHash<QString,Resource*>& resources = m_manager->m_resources;
+			if(parent.row() < m_manager->m_sorted_keys.count())
+			{
+				if(resources.value(m_manager->m_sorted_keys.at(parent.row()))->isLoaded())
+				{
+					return QApplication::palette().text().color();
+				}
+				else
+				{
+					QColor textColor = QApplication::palette().text().color();
+					QColor backgroundColor = QApplication::palette().background().color();
+					QColor mix;
+					mix.setRgb( static_cast<int>(0.3 * textColor.red()   + 0.7 * backgroundColor.red()),
+					 static_cast<int>(0.5 * textColor.green() + 0.5 * backgroundColor.green()),
+					 static_cast<int>(0.5 * textColor.blue()  + 0.5 * backgroundColor.blue()));
+					return mix;
+				}
+			}
+		}
+		else if(role == Qt::UserRole)
+		{
+			const QHash<QString,Resource*>& resources = m_manager->m_resources;
+			if(parent.row() < m_manager->m_sorted_keys.count())
+				return qVariantFromValue((void*)resources.value(m_manager->m_sorted_keys.at(parent.row()))->getWidget());
+		}
+	}
+
+	return QVariant();
+}
+
+template <class Resource, class Handle>
+void ResourceManagerModel<Resource, Handle>::aboutToInsert()
+{
+	beginInsertRows(QModelIndex(), m_manager->m_resources.count(), m_manager->m_resources.count());
+}
+
+template <class Resource, class Handle>
+void ResourceManagerModel<Resource, Handle>::finishedInserting()
+{
+	endInsertRows();
+}
+
+#endif
 
 #endif // RESOURCESMANAGER_HPP

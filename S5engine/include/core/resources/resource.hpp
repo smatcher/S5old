@@ -59,4 +59,6 @@ ResourceHandle<Resource>& ResourceHandle<Resource>::operator=(const ResourceHand
 	return (*this);
 }
 
+
+
 #endif // RESOURCE_HPP

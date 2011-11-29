@@ -6,6 +6,10 @@
 
 #include "core/log/log.h"
 
+#ifdef WITH_TOOLS
+	#include "tools/widgets/resourcewidget.h"
+#endif
+
 template <class Resource>
 class ResourceHandle
 {
@@ -27,6 +31,11 @@ protected:
 
 class ResourceData
 {
+
+#ifdef WITH_TOOLS
+	friend class ResourceWidget;
+#endif
+
 public:
 
 	enum State
@@ -40,7 +49,11 @@ public:
 		m_name(name),
 		m_path(path),
 		m_state(STATE_UNLOADED),
-		m_ref(0) {}
+		m_ref(0)
+ #ifdef WITH_TOOLS
+		, m_widget(NULL)
+ #endif
+		{}
 
 	// Getters
 	const QString& name() {return m_name;}
@@ -48,6 +61,7 @@ public:
 	State state()         {return m_state;}
 
 	virtual void load()   {m_factory->load(this);}
+	bool isLoaded() {return m_state == STATE_LOADED;}
 
 protected:
 	IResourceFactory* m_factory;
@@ -62,6 +76,32 @@ protected:
 	int refCount() {return m_ref;}
 
 	virtual bool unload() = 0;
+
+#ifdef WITH_TOOLS
+
+	protected:
+		ResourceWidget* m_widget;
+
+	private:
+		void widgetDestroyed()
+		{
+			m_widget = NULL;
+		}
+
+	public:
+		virtual ResourceWidget* getWidget()
+		{
+			if(m_widget)
+			{
+				return m_widget;
+			}
+			else
+			{
+				m_widget = new ResourceWidget(*this);
+				return m_widget;
+			}
+		}
+	#endif
 };
 
 #include "resource.hpp"

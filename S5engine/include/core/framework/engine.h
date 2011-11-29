@@ -19,13 +19,13 @@ private :
 	SceneGraph m_scene;
 	AppWindow  m_window;
 
+	bool m_running;
+	bool m_paused;
+
 	#ifdef WITH_TOOLS
 		ToolsWindow m_toolswindow;
 		Manipulator m_manipulator;
 	#endif
-
-	bool m_running;
-	bool m_paused;
 
 	void init(int argc, char *argv[], QString mod_dir);
 

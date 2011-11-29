@@ -27,6 +27,8 @@ public:
 	void registerCommand(QString name, Command command, QString helpmsg);
 	void registerConsole(ConsoleWidget* console);
 
+	bool readFile(QString path);
+
 	bool runCommand(QString cmd);
 	void echo(QString msg);
 	void logToConsole(Log::LogItem& log);
