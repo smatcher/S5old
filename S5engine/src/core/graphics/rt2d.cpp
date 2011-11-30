@@ -51,6 +51,13 @@ void RenderTexture2D::resize(int height, int width)
 
 	glBindTexture(GL_TEXTURE_2D, m_render_texture);
 	glTexImage2D(GL_TEXTURE_2D, 0, m_format, width, height, 0, m_format, m_type, 0);
+
+#ifdef WITH_TOOLS
+	if(m_widget)
+	{
+		m_widget->updateData();
+	}
+#endif
 }
 
 bool RenderTexture2D::unload()

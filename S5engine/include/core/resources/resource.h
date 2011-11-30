@@ -91,17 +91,12 @@ protected:
 	public:
 		virtual ResourceWidget* getWidget()
 		{
-			if(m_widget)
-			{
-				return m_widget;
-			}
-			else
-			{
+			if(!m_widget)
 				m_widget = new ResourceWidget(*this);
-				return m_widget;
-			}
+
+			return m_widget;
 		}
-	#endif
+#endif
 };
 
 #include "resource.hpp"

@@ -177,6 +177,7 @@ public:
 	Vector2i getCurrentViewportSize();
 
 	const Camera* getCurrentCamera();
+	GLWidget*     getContext();
 
 	void addRenderTarget(RenderTarget* rt);
 

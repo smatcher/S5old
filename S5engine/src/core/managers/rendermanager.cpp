@@ -295,6 +295,8 @@ void RenderManager::init(GLWidget* context)
 void RenderManager::render(double elapsed_time, SceneGraph* sg)
 /* Deferred version */
 {
+	m_context->makeCurrent();
+
 	m_rendering = true;
 
 	m_passinfo.context = m_context;
@@ -973,26 +975,33 @@ void RenderManager::applyBackground(RenderTarget& target, int projection_nb)
 	glClear(GL_DEPTH_BUFFER_BIT);
 	glDepthMask(false);
 
+	if(target.isOnScreen() || target.isStretchedToScreen()) {
+		glViewport(0, 0, m_viewport_size.y, m_viewport_size.x);
+	} else {
+		int target_width = target.getWidth();
+		int target_height = target.getHeight();
+		glViewport(0, 0, target_width, target_height);
+	}
+
 	switch(m_defaultBackground.type)
 	{
 		case COLOR :
 			m_passinfo.ubershader_used->setParamValue(UberShaderDefine::SKY, true);
 			m_passinfo.ubershader_used->setParamValue(UberShaderDefine::COLORMAPPED, false);
 			m_passinfo.ubershader_used->use();
-
 			glMatrixMode(GL_PROJECTION);
 			glPushMatrix();
 				glLoadIdentity();
-				gluOrtho2D(0,1,0,1);
+				gluOrtho2D(-1,1,-1,1);
 				glDisable(GL_LIGHTING);
 				glDisable(GL_TEXTURE_2D);
 				//glColor4f(m_defaultBackground.color.r,m_defaultBackground.color.g,m_defaultBackground.color.b,1);
 				glMaterialfv(GL_FRONT_AND_BACK, GL_DIFFUSE,  m_defaultBackground.color.coords);
 				glBegin(GL_QUADS);
-					glVertex2f(0,0);
-					glVertex2f(1,0);
-					glVertex2f(1,1);
-					glVertex2f(0,1);
+					glVertex2f(-1,-1);
+					glVertex2f( 1,-1);
+					glVertex2f( 1, 1);
+					glVertex2f(-1, 1);
 				glEnd();
 				glEnable(GL_LIGHTING);
 			glPopMatrix();
@@ -1011,17 +1020,16 @@ void RenderManager::applyBackground(RenderTarget& target, int projection_nb)
 			glMatrixMode(GL_PROJECTION);
 			glPushMatrix();
 				glLoadIdentity();
-				gluOrtho2D(0,1,0,1);
-
+				gluOrtho2D(-1,1,-1,1);
 				glDisable(GL_LIGHTING);
 				glEnable(GL_TEXTURE_2D);
 				glColor4f(1,1,1,1);
 				m_defaultBackground.textures[0]->bind();
 				glBegin(GL_QUADS);
-					glTexCoord2f(0,0); glVertex2f(0,0);
-					glTexCoord2f(1,0); glVertex2f(1,0);
-					glTexCoord2f(1,1); glVertex2f(1,1);
-					glTexCoord2f(0,1); glVertex2f(0,1);
+					glTexCoord2f(0,0); glVertex2f(-1,-1);
+					glTexCoord2f(1,0); glVertex2f( 1,-1);
+					glTexCoord2f(1,1); glVertex2f( 1, 1);
+					glTexCoord2f(0,1); glVertex2f(-1, 1);
 				glEnd();
 				glDisable(GL_TEXTURE_2D);
 				glEnable(GL_LIGHTING);
@@ -1147,6 +1155,11 @@ void RenderManager::takeScreenshot(QString path)
 	{
 		m_context->takeScreenshot(path);
 	}
+}
+
+GLWidget* RenderManager::getContext()
+{
+	return m_context;
 }
 
 #ifdef WITH_TOOLS

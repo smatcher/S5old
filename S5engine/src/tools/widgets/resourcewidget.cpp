@@ -4,19 +4,16 @@
 #include <QVBoxLayout>
 #include <QLabel>
 
-ResourceWidget::ResourceWidget(ResourceData &resource) : QWidget(), m_resource(resource)
+ResourceWidget::ResourceWidget(ResourceData &resource) : QGroupBox(resource.name()), m_resource(resource)
 {
-	QVBoxLayout* layout = new QVBoxLayout();
+	m_layout = new QVBoxLayout();
 
-	QLabel* label = new QLabel(m_resource.name());
-	label->setFrameStyle(QFrame::StyledPanel | QFrame::Raised);
-	layout->addWidget(label);
-	label = new QLabel((m_resource.m_state == ResourceData::STATE_LOADED)?"Loaded":"Not Loaded");
-	layout->addWidget(label);
-	layout->addStretch();
+	QLabel* label = new QLabel(QString("Status : ")+((m_resource.m_state == ResourceData::STATE_LOADED)?"Loaded":"Not Loaded"));
+	m_layout->addWidget(label);
+	m_layout->addStretch();
 
 	setMinimumWidth(240);
-	setLayout(layout);
+	setLayout(m_layout);
 }
 
 ResourceWidget::~ResourceWidget()

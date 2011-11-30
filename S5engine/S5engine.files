@@ -199,3 +199,4 @@ include/tools/widgets/shaderwidget.h
 include/tools/widgets/materialwidget.h
 include/tools/widgets/meshwidget.h
 src/tools/widgets/resourcewidget.cpp
+src/tools/widgets/texturewidget.cpp

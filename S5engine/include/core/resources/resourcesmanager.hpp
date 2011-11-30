@@ -203,12 +203,16 @@ QVariant ResourceManagerModel<Resource, Handle>::data(const QModelIndex &parent,
 				}
 				else
 				{
+					/*
 					QColor textColor = QApplication::palette().text().color();
 					QColor backgroundColor = QApplication::palette().background().color();
+					*/
 					QColor mix;
-					mix.setRgb( static_cast<int>(0.3 * textColor.red()   + 0.7 * backgroundColor.red()),
+					mix.setRgb( 255, 0, 0);
+					/*
 					 static_cast<int>(0.5 * textColor.green() + 0.5 * backgroundColor.green()),
 					 static_cast<int>(0.5 * textColor.blue()  + 0.5 * backgroundColor.blue()));
+					 */
 					return mix;
 				}
 			}

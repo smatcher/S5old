@@ -1,16 +1,18 @@
 #ifndef RESOURCEWIDGET_H
 #define RESOURCEWIDGET_H
 
-#include <QWidget>
+#include <QGroupBox>
 
 class ResourceData;
+class QVBoxLayout;
 
-class ResourceWidget : public QWidget
+class ResourceWidget : public QGroupBox
 {
 	Q_OBJECT
 
-private:
+protected:
 	ResourceData& m_resource;
+	QVBoxLayout*  m_layout;
 
 public:
 	ResourceWidget(ResourceData& resource);
