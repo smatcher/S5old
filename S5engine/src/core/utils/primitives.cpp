@@ -1,6 +1,8 @@
 #include <QtOpenGL>
 #include "core/utils/primitives.h"
 #include "core/maths/trigo.h"
+#include "core/maths/aabb.h"
+#include "core/maths/boundingsphere.h"
 
 PrimitiveMesh::PrimitiveMesh(QString name) :
 	RawMesh(name,"",NULL)
@@ -134,6 +136,9 @@ PrimitiveMesh* PrimitiveMesh::buildCube()
 
 	delete[] indices;
 
+	ret->m_nbVertices = 8;
+	ret->m_boundingVolume = new AABB(Vector3f(0,0,0),Vector3f(0.5,0.5,0.5));
+
 	ret->m_state = STATE_LOADED;
 
 	debugGL("While building a cube primitive");
@@ -257,6 +262,9 @@ PrimitiveMesh* PrimitiveMesh::buildSphere(int rings, int segments)
 	delete[] texcoords;
 	delete[] indices;
 
+	ret->m_nbVertices = nbVertex;
+	ret->m_boundingVolume = new BoundingSphere(Vector3f(0,0,0),0.5);
+
 	ret->m_state = STATE_LOADED;
 
 	debugGL("While build a sphere primitive");
@@ -346,6 +354,9 @@ PrimitiveMesh* PrimitiveMesh::buildPlane()
 
 	ret->m_indices.release();
 	ret->m_texcoords.release();
+
+	ret->m_nbVertices = 4;
+	ret->m_boundingVolume = new AABB(Vector3f(0,0,0),Vector3f(0.5,0.5,0.01));
 
 	ret->m_state = STATE_LOADED;
 

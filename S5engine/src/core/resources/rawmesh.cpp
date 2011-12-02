@@ -11,7 +11,8 @@ RawMesh::RawMesh(const QString &name, const QString &path, IResourceFactory *fac
 	m_tangents(),
 	m_bitangents(),
 	m_indices(QGLBuffer::IndexBuffer),
-	m_nbFaces(0)
+	m_nbFaces(0),
+	m_boundingVolume(NULL)
 {
 }
 
@@ -26,6 +27,12 @@ bool RawMesh::unload()
 	m_indices.destroy();
 
 	m_nbFaces = 0;
+
+	if(m_boundingVolume)
+	{
+		delete m_boundingVolume;
+		m_boundingVolume = NULL;
+	}
 
 	return true;
 }
@@ -134,3 +141,58 @@ unsigned int RawMesh::nbSubmeshes()
 	return 1;
 }
 
+int RawMesh::getNbVertices()
+{
+	return m_nbVertices;
+}
+
+const BoundingVolume* RawMesh::getBoundingVolume()
+{
+	return m_boundingVolume;
+}
+
+#ifdef WITH_TOOLS
+void RawMesh::drawPreview()
+{
+	bool wireframe = false;//flags & WIREFRAME;
+
+	if(wireframe) {
+		glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+	}
+
+	if(!m_vertices.isCreated() || !m_indices.isCreated())
+		return;
+
+	if(m_normals.isCreated() && !wireframe)
+	{
+		glEnable(GL_LIGHTING);
+		glShadeModel(GL_SMOOTH);
+		glEnableClientState(GL_NORMAL_ARRAY);
+		m_normals.bind();
+		glNormalPointer(GL_FLOAT, 0, NULL);
+	}
+
+	glEnableClientState(GL_VERTEX_ARRAY);
+	m_vertices.bind();
+	glVertexPointer(3, GL_FLOAT, 0, NULL);
+
+	glEnableClientState(GL_INDEX_ARRAY);
+	m_indices.bind();
+	glIndexPointer(GL_SHORT, 0, NULL);
+
+	glDrawElements(GL_TRIANGLES, 3*m_nbFaces, GL_UNSIGNED_SHORT, NULL);
+
+	m_indices.release();
+	m_vertices.release();
+
+	glDisableClientState(GL_VERTEX_ARRAY);
+	glDisableClientState(GL_NORMAL_ARRAY);
+	glDisableClientState(GL_INDEX_ARRAY);
+
+	if(wireframe) {
+		glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+	}
+
+	debugGL("while rendering" << name() << "preview");
+}
+#endif

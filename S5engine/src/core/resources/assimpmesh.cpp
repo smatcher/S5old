@@ -1,6 +1,7 @@
 #include "core/resources/assimpmesh.h"
 #include <QtOpenGL>
 
+#include "core/maths/aabb.h"
 #include "core/managers/rendermanager.h"
 
 #include <assimp.h>
@@ -8,7 +9,8 @@
 
 AssimpMesh::AssimpMesh(const QString& name, const QString& path, IResourceFactory* factory) :
 	MeshData(name,path,factory),
-	m_skeleton(NULL)
+	m_skeleton(NULL),
+	m_boundingVolume(NULL)
 {
 	m_state = STATE_UNLOADED;
 }
@@ -21,9 +23,86 @@ bool AssimpMesh::unload()
 
 void AssimpMesh::buildVBOs()
 {
+	m_nbVertices = 0;
 	for(int i=0 ; i<m_submeshes.size() ; i++) {
 		m_submeshes[i]->buildVBO(name());
+		m_nbVertices += m_submeshes[i]->m_mesh->mNumVertices;
 	}
+}
+
+void AssimpMesh::Submesh::buildAABB(float& minX,float& maxX, float& minY, float& maxY, float& minZ, float& maxZ)
+{
+
+	if(m_mesh->mNumVertices > 0) {
+		minX = m_mesh->mVertices[0].x;
+		maxX = m_mesh->mVertices[0].x;
+		minY = m_mesh->mVertices[0].y;
+		maxY = m_mesh->mVertices[0].y;
+		minZ = m_mesh->mVertices[0].z;
+		maxZ = m_mesh->mVertices[0].z;
+
+		for(int i=1 ; i<m_mesh->mNumVertices ; i++) {
+			if(m_mesh->mVertices[i].x < minX)
+				minX = m_mesh->mVertices[i].x;
+			else if(m_mesh->mVertices[i].x > maxX)
+				maxX = m_mesh->mVertices[i].x;
+			if(m_mesh->mVertices[i].y < minY)
+				minY = m_mesh->mVertices[i].y;
+			else if(m_mesh->mVertices[i].y > maxY)
+				maxY = m_mesh->mVertices[i].y;
+			if(m_mesh->mVertices[i].z < minZ)
+				minZ = m_mesh->mVertices[i].z;
+			else if(m_mesh->mVertices[i].z > maxZ)
+				maxZ = m_mesh->mVertices[i].z;
+		}
+
+	} else {
+		minX = 0;
+		maxX = 0;
+		minY = 0;
+		maxY = 0;
+		minZ = 0;
+		maxZ = 0;
+	}
+
+	Vector3f min(minX,minY,minZ);
+	Vector3f max(maxX,maxY,maxZ);
+
+	min = m_transform.apply(min);
+	max = m_transform.apply(max);
+}
+
+void AssimpMesh::buildAABB()
+{
+	float minX, maxX, minY, maxY, minZ, maxZ;
+	for(int i=0 ; i<m_submeshes.size() ; i++) {
+		float _minX, _maxX, _minY, _maxY, _minZ, _maxZ;
+		m_submeshes[i]->buildAABB(_minX,_maxX,_minY,_maxY,_minZ,_maxZ);
+		if(i==0) {
+			minX = _minX;
+			maxX = _maxX;
+			minY = _minY;
+			maxY = _maxY;
+			minZ = _minZ;
+			maxZ = _maxZ;
+		} else {
+			if(_minX < minX) minX = _minX;
+			if(_maxX > maxX) maxX = _maxX;
+			if(_minY < minY) minY = _minY;
+			if(_maxY > maxY) maxY = _maxY;
+			if(_minZ < minZ) minZ = _minZ;
+			if(_maxZ > maxZ) maxZ = _maxZ;
+		}
+	}
+
+	if(m_boundingVolume)
+		delete m_boundingVolume;
+
+	Vector3f min(minX,minY,minZ);
+	Vector3f max(maxX,maxY,maxZ);
+	Vector3f center = (max+min)/2;
+	Vector3f halfdim = (max-min)/2;
+	m_boundingVolume = new AABB(center,halfdim);
 }
 
 void AssimpMesh::Submesh::buildVBO(QString name)
@@ -481,7 +560,69 @@ unsigned int AssimpMesh::nbSubmeshes()
 	return m_submeshes.size();
 }
 
+int AssimpMesh::getNbVertices()
+{
+	return m_nbVertices;
+}
+
+const BoundingVolume* AssimpMesh::getBoundingVolume()
+{
+	return m_boundingVolume;
+}
+
 Skeleton* AssimpMesh::getSkeleton()
 {
 	return m_skeleton;
 }
+
+#ifdef WITH_TOOLS
+void AssimpMesh::drawPreview()
+{
+	bool wireframe = false;//flags & WIREFRAME;
+
+	if(wireframe) {
+		glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+	}
+
+	for(int i=0 ; i<nbSubmeshes() ; i++) {
+		glPushMatrix();
+		m_submeshes[i]->m_transform.glMultf();
+
+		if(!m_submeshes[i]->m_vertices.isCreated() || !m_submeshes[i]->m_indices.isCreated())
+			return;
+
+		if(m_submeshes[i]->m_normals.isCreated() && !wireframe)
+		{
+			glEnable(GL_LIGHTING);
+			glShadeModel(GL_SMOOTH);
+			glEnableClientState(GL_NORMAL_ARRAY);
+			m_submeshes[i]->m_normals.bind();
+			glNormalPointer(GL_FLOAT, 0, NULL);
+		}
+
+		glEnableClientState(GL_VERTEX_ARRAY);
+		m_submeshes[i]->m_vertices.bind();
+		glVertexPointer(3, GL_FLOAT, 0, NULL);
+
+		glEnableClientState(GL_INDEX_ARRAY);
+		m_submeshes[i]->m_indices.bind();
+		glIndexPointer(GL_SHORT, 0, NULL);
+
+		glDrawElements(GL_TRIANGLES, 3*m_submeshes[i]->m_nbFaces, GL_UNSIGNED_SHORT, NULL);
+
+		m_submeshes[i]->m_indices.release();
+		m_submeshes[i]->m_vertices.release();
+
+		glDisableClientState(GL_VERTEX_ARRAY);
+		glDisableClientState(GL_NORMAL_ARRAY);
+		glDisableClientState(GL_INDEX_ARRAY);
+		glPopMatrix();
+	}
+
+	if(wireframe) {
+		glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+	}
+
+	debugGL("while rendering" << name() << "preview");
+}
+#endif

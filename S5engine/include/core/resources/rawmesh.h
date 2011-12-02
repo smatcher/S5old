@@ -15,6 +15,13 @@ public:
 	virtual void draw(unsigned int submesh, const QMap<QString, Matrix4f>& matrix_palette, int flags = NONE);
 	virtual unsigned int nbSubmeshes();
 
+	virtual const BoundingVolume* getBoundingVolume();
+	virtual int getNbVertices();
+
+	#ifdef WITH_TOOLS
+		virtual void drawPreview();
+	#endif
+
 protected:
 
 	QGLBuffer m_vertices;
@@ -25,6 +32,9 @@ protected:
 	QGLBuffer m_bitangents;
 	QGLBuffer m_indices;
 	int m_nbFaces;
+	int m_nbVertices;
+
+	BoundingVolume* m_boundingVolume;
 };
 
 #endif // RAWMESH_H

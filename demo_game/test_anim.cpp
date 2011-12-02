@@ -36,7 +36,7 @@ int main(int argc, char *argv[])
 
 	Camera* cam = new Camera(100,1,200);
 	nCam->addProperty(cam);
-	nLight->addProperty(new Light(true));
+	nLight->addProperty(new Light(false));
 
 	sg->link(nActor);
 	sg->link(nActor2);

@@ -52,12 +52,15 @@ private:
 		m_transform(transform) {}
 
 		void buildVBO(QString name);
+		void buildAABB(float& minX,float& maxX, float& minY, float& maxY, float& minZ, float& maxZ);
 		void draw(QGLShaderProgram* program, int flags);
 		void skin(const QMap<QString, Matrix4f>& matrix_palette);
 	};
 
 	QVector<Submesh*> m_submeshes;
 	Skeleton* m_skeleton;
+	int m_nbVertices;
+	BoundingVolume* m_boundingVolume;
 	const aiScene* m_scene;
 
 
@@ -65,11 +68,19 @@ public :
 	AssimpMesh(const QString& name, const QString& path, IResourceFactory* factory);
 
 	void buildVBOs();
+	void buildAABB();
 	virtual bool unload();
 
 	virtual void draw(unsigned int submesh, int flags = NONE);
 	virtual void draw(unsigned int submesh, const QMap<QString, Matrix4f>& matrix_palette, int flags = NONE);
 	virtual unsigned int nbSubmeshes();
+
+	virtual const BoundingVolume* getBoundingVolume();
+	virtual int getNbVertices();
+
+	#ifdef WITH_TOOLS
+		virtual void drawPreview();
+	#endif
 
 	virtual Skeleton* getSkeleton();
 };

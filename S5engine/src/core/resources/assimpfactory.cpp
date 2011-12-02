@@ -123,6 +123,7 @@ void AssimpFactory::load(ResourceData* resource)
 			}
 
 			meshresource->buildVBOs();
+			meshresource->buildAABB();
 
 			// Give scene ownership to the resource
 			scene = m_importer.GetOrphanedScene();

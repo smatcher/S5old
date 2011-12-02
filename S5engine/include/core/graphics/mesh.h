@@ -3,6 +3,11 @@
 
 #include "core/resources/resource.h"
 #include "core/maths/matrix4.h"
+#include "core/maths/boundingvolume.h"
+
+#ifdef WITH_TOOLS
+	#include "tools/widgets/meshwidget.h"
+#endif
 
 #include <QtOpenGL>
 #include <QMap>
@@ -15,6 +20,9 @@ class MeshData : public ResourceData
 {
 	friend class ResourceHandle<MeshData>;
 	friend class ResourceManager<MeshData,Mesh>;
+	#ifdef WITH_TOOLS
+		friend class MeshWidget;
+	#endif
 
 public:
 
@@ -31,6 +39,20 @@ public:
 	virtual unsigned int nbSubmeshes() = 0;
 
 	virtual Skeleton* getSkeleton() {return NULL;}
+	virtual const BoundingVolume* getBoundingVolume() = 0;
+	virtual int getNbVertices() = 0;
+
+#ifdef WITH_TOOLS
+	virtual void drawPreview() = 0;
+
+	virtual ResourceWidget* getWidget()
+	{
+		if(!m_widget)
+			m_widget = new MeshWidget(*this);
+
+		return m_widget;
+	}
+#endif
 };
 
 class Mesh : public ResourceHandle<MeshData>
