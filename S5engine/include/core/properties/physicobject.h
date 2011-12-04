@@ -22,6 +22,8 @@ public:
 	{
 		float mass;
 		float restitution;
+		float linDamping;
+		float angDamping;
 		ColliderShape shape;
 		QString mesh_name;
 		bool is_kinematic;
@@ -29,6 +31,8 @@ public:
 		Properties() :
 			mass(0.0),
 			restitution(0.0),
+			linDamping(0.0),
+			angDamping(0.0),
 			shape(BOX),
 			is_kinematic(false)
 		{}

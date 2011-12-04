@@ -42,6 +42,7 @@ RenderManager::RenderManager() :
 	m_inverse_projection(NULL),
 	m_projection(NULL),
 	m_screen_size(NULL),
+	m_scene_ambient(NULL),
 	m_rendering(false),
 	m_normalmap(NULL),
 	m_diffusemap(NULL),
@@ -255,33 +256,37 @@ void RenderManager::init(GLWidget* context)
 	glEnable(GL_BLEND);
 
 	// setting up engine uniforms hash
-	m_inverse_modelview = new QMatrix4x4();
+	if(!m_inverse_modelview) m_inverse_modelview = new QMatrix4x4();
 	m_engine_uniforms.insert(
 		"inverse_modelview",
 		new ShaderProgramData::Uniform<QMatrix4x4>("inverse_modelview",m_inverse_modelview, 1, 1)
 	);
-	m_modelview = new QMatrix4x4();
+
+	if(!m_modelview) m_modelview = new QMatrix4x4();
 	m_engine_uniforms.insert(
 		"modelview",
 		new ShaderProgramData::Uniform<QMatrix4x4>("modelview",m_modelview, 1, 1)
 	);
-	m_inverse_projection = new QMatrix4x4();
+
+	if(!m_inverse_projection) m_inverse_projection = new QMatrix4x4();
 	m_engine_uniforms.insert(
 		"inverse_projection",
 		new ShaderProgramData::Uniform<QMatrix4x4>("inverse_projection",m_inverse_projection, 1, 1)
 	);
-	m_projection = new QMatrix4x4();
+
+	if(!m_projection) m_projection = new QMatrix4x4();
 	m_engine_uniforms.insert(
 		"projection",
 		new ShaderProgramData::Uniform<QMatrix4x4>("modelview",m_projection, 1, 1)
 	);
-	m_screen_size = new QVector2D();
+
+	if(!m_screen_size) m_screen_size = new QVector2D();
 	m_engine_uniforms.insert(
 		"screen_size",
 		new ShaderProgramData::Uniform<QVector2D>("screen_size",m_screen_size, 1, 1)
 	);
 
-	m_scene_ambient = new QVector3D(0.1,0.1,0.1);
+	if(!m_scene_ambient)	m_scene_ambient = new QVector3D(0.1,0.1,0.1);
 	m_engine_uniforms.insert(
 		"scene_ambient",
 		new ShaderProgramData::Uniform<QVector3D>("scene_ambient",m_scene_ambient, 1, 1)
@@ -519,6 +524,11 @@ void RenderManager::render(double elapsed_time, SceneGraph* sg)
 
 	glBlendFunc(GL_ONE, GL_ZERO);
 	glEnable(GL_DEPTH_TEST);
+
+	{
+		RenderTarget srt(viewpoint);
+		drawDebug(sg,srt);
+	}
 
 	int xpos = 0;
 
@@ -767,7 +777,36 @@ void RenderManager::renderTarget(SceneGraph* sg, RenderTarget& target)
 			glPopMatrix();
 		}
 
-		if(m_drawDebug && target.isOnScreen())	{
+		target.passDone();
+	}
+
+	target.release();
+}
+
+void RenderManager::drawDebug(SceneGraph* sg, RenderTarget& target)
+{
+	Viewpoint* viewpoint = target.getViewpoint();
+
+	if(viewpoint == NULL) {
+		logError("No viewpoint to render from, you must set a camera");
+		return;
+	}
+
+	target.bind();
+
+	for(int pass_nb=0 ; pass_nb<target.getNbPass() ; pass_nb++) {
+
+		target.setupPass(pass_nb);
+
+		if(m_context == NULL) {
+			return;
+		}
+
+		setupProjection(target,pass_nb);
+		glLoadIdentity();
+		viewpoint->applyTransform(pass_nb);
+
+		if(m_drawDebug)	{
 			glDisable(GL_LIGHTING);
 			glDisable(GL_TEXTURE_2D);
 			for(int i=0 ; i<sg->childCount() ; i++) {
@@ -782,9 +821,7 @@ void RenderManager::renderTarget(SceneGraph* sg, RenderTarget& target)
 		}
 
 		#ifdef WITH_TOOLS
-			if(target.isOnScreen()) {
-				sg->getManipulator()->draw(m_context);
-			}
+			sg->getManipulator()->draw(m_context);
 		#endif
 
 		target.passDone();
@@ -924,6 +961,14 @@ void RenderManager::setCurrentCamera(Camera* cam)
 	#ifdef WITH_TOOLS
 		getDebugView()->activeCameraChanged(m_camera);
 	#endif
+}
+
+void RenderManager::setAmbient(Vector3f ambient)
+{
+	if(!m_scene_ambient)
+		m_scene_ambient = new QVector3D();
+
+	*m_scene_ambient = QVector3D(ambient.x, ambient.y, ambient.z);
 }
 
 void RenderManager::setDrawDebug(bool draw)

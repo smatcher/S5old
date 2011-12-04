@@ -4,6 +4,13 @@
 #include <QDir>
 #include <QtXml>
 
+void IResourceFactory::reload(ResourceData *resource)
+{
+	if(resource->unload()) {
+		resource->load();
+	}
+}
+
 QList<ResourceData*> IResourceFactory::searchDir(const QString& path, bool recursive)
 {
 	QList<ResourceData*> ret;
@@ -112,3 +119,4 @@ void IResourceFactory::parseRuleFile(QString path, QHash<QString,QString>& folde
 		}
 	}
 }
+

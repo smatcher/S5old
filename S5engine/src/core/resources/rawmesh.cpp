@@ -54,6 +54,7 @@ void RawMesh::draw(unsigned int, int flags)
 	{
 		glEnable(GL_TEXTURE_2D);
 		glEnableClientState(GL_TEXTURE_COORD_ARRAY);
+		glClientActiveTexture(GL_TEXTURE0);
 		m_texcoords.bind();
 		glTexCoordPointer(2, GL_FLOAT, 0, NULL);
 	}

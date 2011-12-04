@@ -21,8 +21,13 @@ GLSLShaderProgram::~GLSLShaderProgram()
 
 bool GLSLShaderProgram::unload()
 {
-	debug("IMPLEMENTATION","Not implemented yet");
-	return false;
+	if(m_program != NULL)
+	{
+		delete m_program;
+		m_program = NULL;
+	}
+
+	return true;
 }
 
 void GLSLShaderProgram::use()
@@ -240,8 +245,13 @@ GLSLShader::GLSLShader(const QString &name, const QString &path, IResourceFactor
 
 bool GLSLShader::unload()
 {
-	debug("IMPLEMENTATION","Not implemented yet");
-	return false;
+	if(m_shader)
+	{
+		delete m_shader;
+		m_shader = NULL;
+	}
+
+	return true;
 }
 
 QGLShader* GLSLShader::shader()

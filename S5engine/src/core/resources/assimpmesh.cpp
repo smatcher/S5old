@@ -326,6 +326,7 @@ void AssimpMesh::Submesh::draw(QGLShaderProgram* program, int flags)
 	{
 		glEnable(GL_COLOR_MATERIAL);
 		glEnableClientState(GL_COLOR_ARRAY);
+		glClientActiveTexture(GL_TEXTURE0);
 		m_colors.bind();
 		glColorPointer(4, GL_FLOAT, 0, NULL);
 	}

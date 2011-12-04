@@ -39,6 +39,8 @@ class MeshWidget : public ResourceWidget
 public:
 	MeshWidget(MeshData& resource);
 	virtual ~MeshWidget();
+
+	virtual void updateData();
 };
 
 #endif // MESHWIDGET_H

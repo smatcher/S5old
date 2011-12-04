@@ -110,6 +110,7 @@ int main(int argc, char *argv[])
 	//nDuckGrid->addProperty(new Grid(1.0f, 1.0f, 40, 40));
 	nCam->addProperty(new Camera(70,1,200));
 	nCamFollow->addProperty(new Camera(90,1,200));
+
 	nHead->addProperty(new DummyUpdatable());
 	Light* light;
 	light = new Light(shadow_mapping);

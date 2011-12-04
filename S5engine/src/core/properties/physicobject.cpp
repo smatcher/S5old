@@ -50,6 +50,8 @@ void PhysicObject::onLinked(PropertySet*)
 {
 	btScalar mass = m_properties.mass;
 	btScalar restitution = m_properties.restitution;
+	btScalar linDamping = m_properties.linDamping;
+	btScalar angDamping = m_properties.angDamping;
 	btVector3 localInertia(0,0,0);
 	btTransform myTransform;
 	/*
@@ -97,6 +99,7 @@ void PhysicObject::onLinked(PropertySet*)
 	btRigidBody::btRigidBodyConstructionInfo myBoxInfo(mass, this, m_shape, localInertia);
 	m_body = new btRigidBody(myBoxInfo);
 	m_body->setRestitution(restitution);
+	m_body->setDamping(linDamping,angDamping);
 
 	if(mass == 0.0 && m_properties.is_kinematic)
 	{

@@ -220,3 +220,17 @@ void Light::setSpecularColor(Vector4f color)
 {
 	m_specular_color = color;
 }
+
+void Light::setAttenuation(float constant, float linear, float quadratic)
+{
+	m_constant_attenuation = constant;
+	m_linear_attenuation = linear;
+	m_quadratic_attenuation = quadratic;
+}
+
+void Light::getAttenuation(float& constant, float& linear, float& quadratic)
+{
+	constant = m_constant_attenuation;
+	linear = m_linear_attenuation;
+	quadratic = m_quadratic_attenuation;
+}

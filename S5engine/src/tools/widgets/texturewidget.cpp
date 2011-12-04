@@ -6,20 +6,17 @@
 
 #include <QLabel>
 
-TextureWidget::TextureWidget(TextureData &resource) : ResourceWidget(resource), m_preview(NULL), m_resolution_info(NULL)
+TextureWidget::TextureWidget(TextureData &resource) : ResourceWidget(resource), m_preview(NULL), m_resolution_info(NULL), m_openglId_info(NULL)
 {
 	if(resource.m_state == ResourceData::STATE_LOADED)
 	{
 		TextureData* texture = (TextureData*)&resource;
-		QWidget* wid;
 
 		m_resolution_info = new QLabel("Resolution : "+QString().setNum(resource.m_width)+"x"+QString().setNum(resource.m_height));
 		m_layout->addWidget(m_resolution_info);
-		wid = new QLabel("OpenGL ID : "+QString().setNum(texture->getGLId()));
-		m_layout->addWidget(wid);
+		m_openglId_info = new QLabel("OpenGL ID : "+QString().setNum(texture->getGLId()));
+		m_layout->addWidget(m_openglId_info);
 		m_preview = new TexturePreview((QGLWidget*)RENDER_MANAGER.getContext(),texture->getGLId());
-		m_preview->setMinimumHeight(200);
-		m_preview->setMinimumWidth(200);
 		m_layout->addWidget(m_preview);
 
 		m_layout->addStretch(1);
@@ -33,6 +30,14 @@ TextureWidget::~TextureWidget()
 TextureWidget::TexturePreview::TexturePreview(QGLWidget *shared, GLint glId) : QGLWidget(NULL,shared)
 {
 	this->glId = glId;
+	setMinimumHeight(200);
+	setMinimumWidth(200);
+}
+
+void TextureWidget::TexturePreview::setGLId(GLint glId)
+{
+	this->glId = glId;
+	updateGL();
 }
 
 void TextureWidget::TexturePreview::paintGL()
@@ -56,12 +61,30 @@ void TextureWidget::TexturePreview::paintGL()
 
 void TextureWidget::updateData()
 {
-	if(m_resolution_info)
-	{
-		TextureData* texture = (TextureData*)&m_resource;
-		m_resolution_info->setText("Resolution : "+QString().setNum(texture->m_width)+"x"+QString().setNum(texture->m_height));
-	}
+	ResourceWidget::updateData();
+	TextureData* texture = (TextureData*)&m_resource;
 
-	if(m_preview)
-		m_preview->update();
+	if(texture->m_state == ResourceData::STATE_LOADED) {
+
+		if(m_resolution_info) {
+			m_resolution_info->setText("Resolution : "+QString().setNum(texture->m_width)+"x"+QString().setNum(texture->m_height));
+		} else {
+			m_resolution_info = new QLabel("Resolution : "+QString().setNum(texture->m_width)+"x"+QString().setNum(texture->m_height));
+			m_layout->addWidget(m_resolution_info);
+		}
+
+		if(m_openglId_info) {
+			m_openglId_info->setText("OpenGL ID : "+QString().setNum(texture->getGLId()));
+		} else {
+			m_openglId_info = new QLabel("OpenGL ID : "+QString().setNum(texture->getGLId()));
+			m_layout->addWidget(m_openglId_info);
+		}
+		if(m_preview) {
+			m_preview->setGLId(texture->getGLId());
+		} else {
+			m_preview = new TexturePreview((QGLWidget*)RENDER_MANAGER.getContext(),texture->getGLId());
+			m_layout->addWidget(m_preview);
+			m_layout->addStretch(1);
+		}
+	}
 }

@@ -28,7 +28,9 @@ public:
 protected:
 	QList<ShaderProgramData::UniformBase*> m_uniforms;
 	QString m_vertex_shader;
+	QString m_vertex_shader_file;
 	QString m_fragment_shader;
+	QString m_fragment_shader_file;
 
 private:
 	virtual void compileCurrentState();
@@ -38,6 +40,7 @@ class GLSLUberShaderFactory : public IResourceFactory
 {
 public:
 	virtual void load(ResourceData* resource);
+	virtual void reload(ResourceData* resource);
 
 protected:
 	virtual void parseFile(const QString& path, QList<ResourceData*>& content, const QHash<QString,QString>& rules);

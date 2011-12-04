@@ -19,10 +19,12 @@ private:
 	public :
 		TexturePreview(QGLWidget* shared, GLint glId);
 		virtual void paintGL();
+		void setGLId(GLint glId);
 	};
 
 	TexturePreview* m_preview;
 	QLabel* m_resolution_info;
+	QLabel* m_openglId_info;
 
 public:
 	TextureWidget(TextureData& resource);

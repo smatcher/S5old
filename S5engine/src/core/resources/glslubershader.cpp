@@ -18,8 +18,16 @@ GLSLUberShader::~GLSLUberShader()
 
 bool GLSLUberShader::unload()
 {
-	debug("IMPLEMENTATION","Not implemented yet");
-	return false;
+	m_uniforms.clear();
+	m_vertex_shader.clear();
+	m_fragment_shader.clear();
+	delete m_tree;
+	m_tree = new UberShaderNode();
+	for(int i=0 ; i<UberShaderDefine::NB_DEFINES ; i++) {
+		m_defines[i] = false;
+	}
+	m_current = NULL;
+	return true;
 }
 
 void GLSLUberShader::setUniform(const UniformBase* uniform)
@@ -170,8 +178,10 @@ void GLSLUberShaderFactory::load(ResourceData *resource)
 					QGLShader* qgl_shader = shader->shader();
 					if(qgl_shader->shaderType() == QGLShader::Fragment) {
 						program->m_fragment_shader = qgl_shader->sourceCode();
+						program->m_fragment_shader_file = shader_name;
 					} else {
 						program->m_vertex_shader = qgl_shader->sourceCode();
+						program->m_vertex_shader_file = shader_name;
 					}
 				}
 				else
@@ -244,6 +254,18 @@ void GLSLUberShaderFactory::load(ResourceData *resource)
 	logInfo("GLSLUberShader loaded" << program->name());
 
 	debugGL("while loading shader program" << program->m_path);
+}
+
+void GLSLUberShaderFactory::reload(ResourceData *resource)
+{
+	GLSLUberShader* program = dynamic_cast<GLSLUberShader*>(resource);
+
+	if(program) {
+		SHADER_MANAGER.get(program->m_vertex_shader_file)->reload();
+		SHADER_MANAGER.get(program->m_fragment_shader_file)->reload();
+		program->unload();
+		program->load();
+	}
 }
 
 void GLSLUberShaderFactory::parseFile(const QString &path, QList<ResourceData *> &content, const QHash<QString,QString>&)

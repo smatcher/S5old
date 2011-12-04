@@ -18,22 +18,9 @@ MeshWidget::MeshWidget(MeshData &resource) : ResourceWidget(resource), m_preview
 		m_info = new QLabel("Nb vertices : " + QString().setNum(mesh->getNbVertices()));
 		m_layout->addWidget(m_info);
 		m_preview = new MeshPreview((QGLWidget*)RENDER_MANAGER.getContext(),mesh);
-		m_preview->setMinimumHeight(200);
-		m_preview->setMinimumWidth(200);
 		m_layout->addWidget(m_preview);
 
 		m_layout->addStretch(1);
-
-		const BoundingVolume* boundvol = mesh->getBoundingVolume();
-		const AABB* aabb = dynamic_cast<const AABB*>(boundvol);
-		if(aabb) {
-			Vector3f halfdim = aabb->getHalfDimensions();
-			Vector3f center = aabb->getCenter();
-			float scale = 0.5f/qMax(halfdim.x,qMax(halfdim.y,halfdim.z));
-
-			m_preview->m_transform.move(-scale*center);
-			m_preview->m_transform.setScale(Vector3f(scale,scale,scale));
-		}
 	}
 }
 
@@ -45,6 +32,19 @@ MeshWidget::MeshPreview::MeshPreview(QGLWidget *shared, MeshData* mesh) : QGLWid
 {
 	this->m_mesh = mesh;
 	m_last_pressed = false;
+	setMinimumHeight(200);
+	setMinimumWidth(200);
+
+	const BoundingVolume* boundvol = mesh->getBoundingVolume();
+	const AABB* aabb = dynamic_cast<const AABB*>(boundvol);
+	if(aabb) {
+		Vector3f halfdim = aabb->getHalfDimensions();
+		Vector3f center = aabb->getCenter();
+		float scale = 0.5f/qMax(halfdim.x,qMax(halfdim.y,halfdim.z));
+
+		m_transform.move(-scale*center);
+		m_transform.setScale(Vector3f(scale,scale,scale));
+	}
 }
 
 void MeshWidget::MeshPreview::paintGL()
@@ -92,5 +92,29 @@ void MeshWidget::MeshPreview::mouseMoveEvent(QMouseEvent *event)
 		m_transform.rotate(/*inverse_transform.apply*/(Vector3f(1.0,0.0,0.0)),dy);
 
 		updateGL();
+	}
+}
+
+void MeshWidget::updateData()
+{
+	ResourceWidget::updateData();
+	MeshData* mesh = (MeshData*)&m_resource;
+
+	if(mesh->m_state == ResourceData::STATE_LOADED) {
+
+		if(m_info) {
+			m_info->setText("Nb vertices : " + QString().setNum(mesh->getNbVertices()));
+		} else {
+			m_info = new QLabel("Nb vertices : " + QString().setNum(mesh->getNbVertices()));
+			m_layout->addWidget(m_info);
+		}
+
+		if(m_preview) {
+			m_preview->updateGL();
+		} else {
+			m_preview = new MeshPreview((QGLWidget*)RENDER_MANAGER.getContext(),mesh);
+			m_layout->addWidget(m_preview);
+			m_layout->addStretch(1);
+		}
 	}
 }

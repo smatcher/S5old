@@ -148,6 +148,7 @@ private :
 
 	void clearTexture(RenderTexture* texture);
 	void renderTarget(SceneGraph* sg, RenderTarget& target);
+	void drawDebug(SceneGraph* sg, RenderTarget& target);
 	void postprocessPass(RenderTexture* target_texture, QList<Texture> input_textures);
 	void postprocessPass(QList< QPair<RenderTexture*, FrameBufferObject::AttachmentPoint> > target_textures, QList<Texture> input_textures);
 	void debugDisplayTexture(Texture texture, int x, int y, int width, int height);
@@ -167,6 +168,7 @@ public:
 	void takeScreenshot(QString path="screen.png");
 
 	void setCurrentCamera(Camera* cam);
+	void setAmbient(Vector3f ambient);
 
 	void setDrawDebug(bool draw);
 	void setDrawDebugFilter(const DebugGizmosFilter& filter);

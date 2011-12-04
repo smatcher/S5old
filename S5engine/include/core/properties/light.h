@@ -37,6 +37,8 @@ public:
 
 	void setDiffuseColor(Vector4f color);
 	void setSpecularColor(Vector4f color);
+	void setAttenuation(float constant, float linear, float quadratic);
+	void getAttenuation(float& constant, float& linear, float& quadratic);
 
 	bool castsShadows();
 	RenderTexture* getRenderTexture();

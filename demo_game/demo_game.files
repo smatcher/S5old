@@ -9,3 +9,5 @@ media/textures/skybox/stormy/rules.db
 test_nyan.cpp
 dummyjumper.h
 dummyjumper.cpp
+planecontroller.h
+planecontroller.cpp

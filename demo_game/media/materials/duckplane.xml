@@ -1,0 +1,18 @@
+<material>
+	<diffuse>1.0 1.0 1.0 1.0</diffuse>
+	<specular>0.3 0.3 0.3 1.0</specular>
+	<ambient>0.5 0.5 0.5 1.0</ambient>
+	<emission>0.0 0.0 0.0 1.0</emission>
+	<shininess>0.1</shininess>
+	<layers>
+		<layer id="0">
+			<texture type="colormap">plane.tga</texture>
+		</layer>
+		<layer id="1">
+			<texture type="colormap">plane.tga</texture>
+		</layer>
+		<layer id="2">
+			<texture type="colormap">duck.tga</texture>
+		</layer>
+	</layers>
+</material>

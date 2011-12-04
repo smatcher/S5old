@@ -113,7 +113,9 @@ void XmlMaterial::unset(unsigned int layer)
 
 bool XmlMaterial::unload()
 {
-	return false;
+	m_default_attributes = MaterialAttributes();
+	m_layers.clear();
+	return true;
 }
 
 void XmlMaterialFactory::load(ResourceData* resource)

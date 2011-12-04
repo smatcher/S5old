@@ -32,6 +32,7 @@ protected:
 class ResourceData
 {
 
+	friend class IResourceFactory;
 #ifdef WITH_TOOLS
 	friend class ResourceWidget;
 #endif
@@ -60,8 +61,9 @@ public:
 	const QString& path() {return m_path;}
 	State state()         {return m_state;}
 
-	virtual void load()   {m_factory->load(this);}
+	virtual void load()   {if(m_factory)m_factory->load(this);}
 	bool isLoaded() {return m_state == STATE_LOADED;}
+	virtual bool reload() {if(m_factory)m_factory->reload(this);}
 
 protected:
 	IResourceFactory* m_factory;

@@ -40,6 +40,7 @@ bool StbImage::unload()
 	m_data = NULL;
 	m_hasgltex = false;
 	m_state = STATE_UNLOADED;
+
 	return true;
 }
 
@@ -168,7 +169,6 @@ void StbImageFactory::load(ResourceData *resource)
 	{
 		logWarn( "StbImage failed to load " << resource->name() << "\n" << stbi_failure_reason());
 	}
-
 }
 
 void StbImageFactory::parseFile(const QString &path, QList<ResourceData *> &content, const QHash<QString,QString>& rules)

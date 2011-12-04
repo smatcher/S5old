@@ -11,6 +11,7 @@ class IResourceFactory
 {
 public:
 	virtual void load(ResourceData* resource) = 0;
+	virtual void reload(ResourceData* resource);
 	virtual QList<ResourceData*> searchDir(const QString& path, bool recursive);
 
 protected:
