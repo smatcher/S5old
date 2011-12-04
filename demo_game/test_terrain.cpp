@@ -84,8 +84,8 @@ int main(int argc, char *argv[])
 	prop.is_kinematic = false;
 	prop.mass = 100.0;
 	prop.restitution = 0.1;
-	prop.linDamping = 0.3;
-	prop.angDamping = 0.1;
+	prop.linDamping = 0.6;
+	prop.angDamping = 0.3;
 	prop.shape = PhysicObject::MESH;
 	prop.mesh_name = "duckplane";
 	PhysicObject* phyobj = new PhysicObject(prop);

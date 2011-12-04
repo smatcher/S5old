@@ -16,21 +16,21 @@ void PlaneController::update(double elapsed_time)
 {
 	btRigidBody* rgdBody = m_physicobject->getRigidBody();
 	InputManager& manager  = INPUT_MANAGER;
-	Vector3f globalForce = node()->apply(Vector3f(0,1000,-1000));
+	Vector3f globalForce = node()->apply(Vector3f(0,1000,-2000));
 	rgdBody->applyCentralForce(btVector3(globalForce.x, globalForce.y, globalForce.z));
 	Vector3f globalTorque;
 	bool apply = FALSE;
 	if(manager.getButtonStatus(m_control_forward) == InputManager::Held) {
-		globalTorque.x -= 600; apply = TRUE;
+		globalTorque.x -= 900; apply = TRUE;
 	}
 	if(manager.getButtonStatus(m_control_backward) == InputManager::Held) {
-		globalTorque.x += 600; apply = TRUE;
+		globalTorque.x += 900; apply = TRUE;
 	}
 	if(manager.getButtonStatus(m_control_left) == InputManager::Held) {
-		globalTorque.z += 600; apply = TRUE;
+		globalTorque.z += 1100; apply = TRUE;
 	}
 	if(manager.getButtonStatus(m_control_right) == InputManager::Held) {
-		globalTorque.z -= 600; apply = TRUE;
+		globalTorque.z -= 1100; apply = TRUE;
 	}
 	if(apply) {
 		globalTorque = node()->apply(globalTorque);
