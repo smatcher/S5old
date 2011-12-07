@@ -1,0 +1,4 @@
+<ubershader>
+	<shader source="forward.vert"/>
+	<shader source="forward.frag"/>
+</ubershader>

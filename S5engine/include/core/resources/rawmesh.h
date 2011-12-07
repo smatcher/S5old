@@ -17,6 +17,7 @@ public:
 
 	virtual const BoundingVolume* getBoundingVolume();
 	virtual int getNbVertices();
+	virtual int getNbFaces();
 
 	#ifdef WITH_TOOLS
 		virtual void drawPreview();

@@ -147,6 +147,11 @@ int RawMesh::getNbVertices()
 	return m_nbVertices;
 }
 
+int RawMesh::getNbFaces()
+{
+	return m_nbFaces;
+}
+
 const BoundingVolume* RawMesh::getBoundingVolume()
 {
 	return m_boundingVolume;

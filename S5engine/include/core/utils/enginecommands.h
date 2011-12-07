@@ -11,6 +11,7 @@ bool bind_key(QStringList);
 bool exit_engine(QStringList);
 bool toggle_pause_engine(QStringList);
 bool take_screenshot(QStringList);
+bool renderer_command(QStringList);
 
 void registerEngineCommands(Engine* engine)
 {
@@ -19,6 +20,7 @@ void registerEngineCommands(Engine* engine)
 	COMMAND_MANAGER.registerCommand("bind",bind_key,"bind a key to a control. Usage is \"bind key control\"");
 	COMMAND_MANAGER.registerCommand("exit",exit_engine,"leaves the program");
 	COMMAND_MANAGER.registerCommand("pause",toggle_pause_engine,"pauses/unpauses the game");
+	COMMAND_MANAGER.registerCommand("renderer",renderer_command,"followed by shadows or pipeline and an appropriate value, changes the renderer options");
 	COMMAND_MANAGER.registerCommand("screenshot",take_screenshot,"takes a screenshot, you can specify a path for the screenshot");
 }
 
@@ -73,6 +75,34 @@ bool take_screenshot(QStringList args)
 	}
 
 	return true;
+}
+
+bool renderer_command(QStringList args)
+{
+	if(args.count() > 2) {
+		if(args.at(1) == "shadows") {
+			if(args.at(2).toLower() == "true" || args.at(2) == "1") {
+				RENDER_MANAGER.setShadowsEnabled(true);
+				return TRUE;
+			}
+			else if(args.at(2).toLower() == "false" || args.at(2) == "0") {
+				RENDER_MANAGER.setShadowsEnabled(false);
+				return TRUE;
+			}
+		}
+		else if(args.at(1) == "pipeline") {
+			if(args.at(2).toLower() == "deferred") {
+				RENDER_MANAGER.setRenderPipeline(RenderManager::DEFERRED_PIPELINE);
+				return TRUE;
+			}
+			else if(args.at(2).toLower() == "forward") {
+				RENDER_MANAGER.setRenderPipeline(RenderManager::FORWARD_PIPELINE);
+				return TRUE;
+			}
+		}
+	}
+
+	return FALSE;
 }
 
 #endif // ENGINECOMMANDS_H

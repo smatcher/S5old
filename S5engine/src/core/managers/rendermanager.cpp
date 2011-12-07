@@ -200,6 +200,16 @@ void RenderManager::createResources()
 			logError("The depth_only shader is not an ubershader");
 		}
 	}
+	shader = SHADER_PROGRAM_MANAGER.get("forward");
+	if(shader.isValid() && shader->isUber()) {
+		m_forward = UberShader(*(static_cast<UberShaderData*>(*shader)));
+	} else {
+		if(!shader.isValid()) {
+			logError("Could not find the forward ubershader");
+		} else if(!shader->isUber()) {
+			logError("The forward shader is not an ubershader");
+		}
+	}
 
 	// Deferred shading resources
 	m_positionmap = new RenderTexture2D("DEF_Positionmap", size.height(), size.width(), GL_RGBA, GL_UNSIGNED_BYTE);
@@ -297,58 +307,8 @@ void RenderManager::init(GLWidget* context)
 	#endif
 }
 
-void RenderManager::render(double elapsed_time, SceneGraph* sg)
-/* Deferred version */
+void RenderManager::renderDeferred(SceneGraph* sg, Viewpoint* viewpoint)
 {
-	m_context->makeCurrent();
-
-	m_rendering = true;
-
-	m_passinfo.context = m_context;
-	m_passinfo.background_enabled = true;
-	m_passinfo.setup_texture_matrices = false;
-	m_passinfo.texturing_enabled = true;
-	m_passinfo.type = FINAL_PASS;
-
-	testViewportResize();
-
-	// Frame Begin
-	for(QVector<IRenderable*>::iterator it = registeredManagees.begin();
-		it != registeredManagees.end();
-		it++) {
-		(*it)->frameBegin(elapsed_time);
-	}
-
-	debug("PASS_INFO","begin");
-
-	Viewpoint* viewpoint = m_camera;
-	if(m_camera == NULL) {
-		viewpoint = m_context->getViewpoint();
-	}
-
-	/// Render shadowmaps
-	for(int i = 0 ; i<LIGHTING_MANAGER.managees().count() ; i++) {
-		// Render depthmap
-		Light* light = LIGHTING_MANAGER.managees().at(i);
-
-		if(light->castsShadows()) {
-			RenderTexture* depthtex = light->getRenderTexture();
-
-			if(depthtex != NULL) {
-				FrameBufferObject fbo(depthtex->getWidth(), depthtex->getHeight(), false, false);
-				RenderTarget srt(light, &fbo, depthtex, FrameBufferObject::DEPTH_ATTACHMENT, false, false);
-				debug("PASS_INFO","cast light " + QString().setNum(i));
-				glCullFace(GL_FRONT);
-				m_passinfo.setup_texture_matrices = true;
-				m_passinfo.ubershader_used = m_depth;
-				m_passinfo.type = CAST_SHADOW_PASS;
-				renderTarget(sg, srt);
-				m_passinfo.setup_texture_matrices = false;
-				glCullFace(GL_BACK);
-			}
-		}
-	}
-
 	/// Cleans
 	clearTexture(m_bloommap);
 	clearTexture(m_colormap);
@@ -404,6 +364,7 @@ void RenderManager::render(double elapsed_time, SceneGraph* sg)
 	glEnd();
 	m_diffusemap->release(0);
 	m_passinfo.ubershader_used->unset();
+
 /*
 	QList<Texture> input_textures;
 	input_textures.push_back(*m_diffusemap);
@@ -435,11 +396,13 @@ void RenderManager::render(double elapsed_time, SceneGraph* sg)
 		//postprocessPass(mrts,input_textures);
 		//postprocessPass(NULL,input_textures);
 
-		m_passinfo.ubershader_used->setParamValue(UberShaderDefine::SHADOWED, light->castsShadows());
+		bool shadow = light->castsShadows() && m_options.m_shadows_enabled;
+
+		m_passinfo.ubershader_used->setParamValue(UberShaderDefine::SHADOWED, shadow);
 		m_passinfo.ubershader_used->use();
 		m_passinfo.ubershader_used->setAllUniforms();
 
-		if(light->castsShadows())
+		if(shadow)
 		{
 			m_postprocessfbo->clearAttachments();
 			m_postprocessfbo->attachTexture(m_shadowmap, FrameBufferObject::COLOR_ATTACHMENT_0);
@@ -525,15 +488,94 @@ void RenderManager::render(double elapsed_time, SceneGraph* sg)
 	glBlendFunc(GL_ONE, GL_ZERO);
 	glEnable(GL_DEPTH_TEST);
 
-	{
-		RenderTarget srt(viewpoint);
-		drawDebug(sg,srt);
+}
+
+void RenderManager::renderForward(SceneGraph* sg, Viewpoint* viewpoint)
+{
+	RenderTarget srt(viewpoint);
+	m_passinfo.ubershader_used = m_forward;
+	m_passinfo.type = FINAL_PASS;
+	renderTarget(sg, srt);
+}
+
+void RenderManager::renderShadowmaps(SceneGraph* sg)
+{
+	for(int i = 0 ; i<LIGHTING_MANAGER.managees().count() ; i++) {
+		// Render depthmap
+		Light* light = LIGHTING_MANAGER.managees().at(i);
+
+		if(light->castsShadows()) {
+			RenderTexture* depthtex = light->getRenderTexture();
+
+			if(depthtex != NULL) {
+				FrameBufferObject fbo(depthtex->getWidth(), depthtex->getHeight(), false, false);
+				RenderTarget srt(light, &fbo, depthtex, FrameBufferObject::DEPTH_ATTACHMENT, false, false);
+				debug("PASS_INFO","cast light " + QString().setNum(i));
+				glCullFace(GL_FRONT);
+				m_passinfo.setup_texture_matrices = true;
+				m_passinfo.ubershader_used = m_depth;
+				m_passinfo.type = CAST_SHADOW_PASS;
+				renderTarget(sg, srt);
+				m_passinfo.setup_texture_matrices = false;
+				glCullFace(GL_BACK);
+			}
+		}
 	}
+}
+
+void RenderManager::render(double elapsed_time, SceneGraph* sg)
+{
+	m_context->makeCurrent();
+
+	m_rendering = true;
+
+	m_passinfo.context = m_context;
+	m_passinfo.background_enabled = true;
+	m_passinfo.setup_texture_matrices = false;
+	m_passinfo.texturing_enabled = true;
+	m_passinfo.type = FINAL_PASS;
+
+	testViewportResize();
+
+	// Frame Begin
+	for(QVector<IRenderable*>::iterator it = registeredManagees.begin();
+		it != registeredManagees.end();
+		it++) {
+		(*it)->frameBegin(elapsed_time);
+	}
+
+	debug("PASS_INFO","begin");
+
+	Viewpoint* viewpoint = m_camera;
+	if(m_camera == NULL) {
+		viewpoint = m_context->getViewpoint();
+	}
+
+	if(m_options.m_shadows_enabled) {
+		renderShadowmaps(sg);
+	}
+
+	switch(m_options.m_pipeline)
+	{
+		case DEFERRED_PIPELINE:
+			renderDeferred(sg,viewpoint);
+			break;
+		case FORWARD_PIPELINE:
+			renderForward(sg,viewpoint);
+			break;
+		default:
+			logError("Wrong pipeline value, will not render");
+			abort();
+	}
+
+	// DrawDebug
+	RenderTarget srt(viewpoint);
+	drawDebug(sg,srt);
 
 	int xpos = 0;
 
 /*
-	//debugDisplayTexture(*m_shadowmap,xpos,0,256,256); xpos += 256;
+	debugDisplayTexture(*m_shadowmap,xpos,0,256,256); xpos += 256;
 	debugDisplayTexture(*m_normalmap,xpos,0,256,256); xpos += 256;
 	debugDisplayTexture(*m_diffusemap,xpos,0,256,256); xpos += 256;
 	debugDisplayTexture(*m_specularmap,xpos,0,256,256); xpos += 256;
@@ -559,126 +601,6 @@ void RenderManager::render(double elapsed_time, SceneGraph* sg)
 
 	m_rendering = false;
 }
-/* Normal version
-{
-	RenderPassInfo pass_info;
-	pass_info.setup_texture_matrices = false;
-
-	// Frame Begin
-	for(QVector<IRenderable*>::iterator it = registeredManagees.begin();
-		it != registeredManagees.end();
-		it++) {
-		(*it)->frameBegin(elapsed_time);
-	}
-
-	debug("PASS_INFO","begin");
-
-	//clear shadowmap
-	Material clear_material = MATERIAL_MANAGER.get("clear_target");
-	postprocessPass(m_shadowmap, clear_material);
-	/// Render shadowmap
-	for(int i = 0 ; i<LIGHTING_MANAGER.managees().count() ; i++) {
-		// Render depthmap
-		Light* light = LIGHTING_MANAGER.managees().at(i);
-
-		Material cast_shadow_material = MATERIAL_MANAGER.get("shadow_cast");
-		Material receive_shadow_material = MATERIAL_MANAGER.get("shadow_receive");
-
-		Texture depthtex = TEXTURE_MANAGER.get("Omni_Lightmap");
-
-		if(depthtex.isValid()) {
-			RenderTexture* rt;
-			rt = static_cast<RenderTexture*>(*depthtex);
-			FrameBufferObject fbo(rt->getWidth(), rt->getHeight(), false, false);
-			RenderTarget srt(light, &fbo, rt, FrameBufferObject::DEPTH_ATTACHMENT, false, false);
-			debug("PASS_INFO","cast light " + QString().setNum(i));
-			glCullFace(GL_FRONT);
-			pass_info.setup_texture_matrices = true;
-			pass_info.forced_material = cast_shadow_material;
-			pass_info.type = CAST_SHADOW_PASS;
-			renderTarget(sg, srt, pass_info);
-			pass_info.setup_texture_matrices = false;
-			glCullFace(GL_BACK);
-		}
-
-		{
-			FrameBufferObject fbo(m_shadowmap->getWidth(), m_shadowmap->getHeight(), false, true);
-			Viewpoint* viewpoint = m_camera;
-			if(m_camera == NULL) {
-				viewpoint = m_context->getViewpoint();
-			}
-			RenderTarget srt(viewpoint, &fbo, m_shadowmap, FrameBufferObject::COLOR_ATTACHMENT_0, false, true);
-			debug("PASS_INFO","receive light " + QString().setNum(i));
-			pass_info.forced_material = receive_shadow_material;
-			pass_info.type = RECEIVE_SHADOW_PASS;
-			renderTarget(sg, srt, pass_info);
-		}
-	}
-
-	//blur shadowmap
-	Material blur_material = MATERIAL_MANAGER.get("blur_shadowmap");
-	postprocessPass(m_shadowmap, blur_material);
-	postprocessPass(m_shadowmap, blur_material);
-
-	// Render
-	for(int i=0 ; i<m_rts.length() ; i++) {
-		RenderTarget* rt = m_rts[i];
-		if(rt != NULL) {
-			debug("PASS_INFO","rtt " + QString().setNum(i));
-			pass_info.forced_material = Material();
-			pass_info.type = FINAL_PASS;
-			renderTarget(sg, *rt, pass_info);
-		}
-	}
-	Viewpoint* viewpoint = m_camera;
-	if(m_camera == NULL) {
-		viewpoint = m_context->getViewpoint();
-	}
-
-	{
-		FrameBufferObject fbo(m_shadowmap->getWidth(), m_shadowmap->getHeight(), false, true);
-		Viewpoint* viewpoint = m_camera;
-		if(m_camera == NULL) {
-			viewpoint = m_context->getViewpoint();
-		}
-		QList< QPair<RenderTexture*, FrameBufferObject::AttachmentPoint> > mrts;
-		mrts.push_back(QPair<RenderTexture*, FrameBufferObject::AttachmentPoint>(m_colormap, FrameBufferObject::COLOR_ATTACHMENT_0));
-		mrts.push_back(QPair<RenderTexture*, FrameBufferObject::AttachmentPoint>(m_bloommap, FrameBufferObject::COLOR_ATTACHMENT_1));
-		RenderTarget srt(viewpoint, &fbo, mrts, false, true);
-		debug("PASS_INFO","mrt color bloom");
-		pass_info.forced_material = Material();
-		pass_info.type = FINAL_PASS;
-		renderTarget(sg, srt, pass_info);
-	}
-
-	//blur bloommap
-	blur_material = MATERIAL_MANAGER.get("blur");
-	postprocessPass(m_bloommap, blur_material);
-	postprocessPass(m_bloommap, blur_material);
-
-	Material compose_bloom = MATERIAL_MANAGER.get("compose_bloom");
-	postprocessPass(NULL, compose_bloom);
-
-	debugDisplayTexture(*m_bloommap,0,0,256,256);
-
-	m_context->swapBuffers();
-
-	// Frame End
-	for(QVector<IRenderable*>::iterator it = registeredManagees.begin();
-		it != registeredManagees.end();
-		it++) {
-		(*it)->frameEnd();
-	}
-
-	// Debug errors
-	GLenum error = glGetError();
-	if(error != GL_NO_ERROR) {
-		const char* msg = (char*)gluErrorString(error);
-		logError( QString(msg) );
-	}
-
-}
-*/
 
 void RenderManager::renderTarget(SceneGraph* sg, RenderTarget& target)
 {
@@ -751,6 +673,7 @@ void RenderManager::renderTarget(SceneGraph* sg, RenderTarget& target)
 			LIGHTING_MANAGER.managees().at(index)->sendParameters(index);
 		}
 */
+		glDisable(GL_BLEND);
 		for(QVector<IRenderable*>::iterator it = registeredManagees.begin();
 			it != registeredManagees.end();
 			it++) {
@@ -769,6 +692,8 @@ void RenderManager::renderTarget(SceneGraph* sg, RenderTarget& target)
 			glPopMatrix();
 		}
 
+		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+		glEnable(GL_BLEND);
 		for(QList<IRenderable*>::iterator it = transparent_renderables.begin();
 			it != transparent_renderables.end();
 			it++) {
@@ -1205,6 +1130,30 @@ void RenderManager::takeScreenshot(QString path)
 GLWidget* RenderManager::getContext()
 {
 	return m_context;
+}
+
+void RenderManager::setShadowsEnabled(bool enabled)
+{
+	if(!m_rendering) {
+		if(m_options.m_shadows_enabled && !enabled)
+		{
+			if(m_shadowmap && m_postprocessfbo)
+				clearTexture(m_shadowmap);
+		}
+
+		m_options.m_shadows_enabled = enabled;
+	} else {
+		logWarn("can't switch shadows enabled during rendering, TODO ; delay this kind of command");
+	}
+}
+
+void RenderManager::setRenderPipeline(RenderPipeline pipeline)
+{
+	if(!m_rendering) {
+		m_options.m_pipeline = pipeline;
+	} else {
+		logWarn("can't switch pipeline during rendering, TODO ; delay this kind of command");
+	}
 }
 
 #ifdef WITH_TOOLS

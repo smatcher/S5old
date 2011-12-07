@@ -41,6 +41,7 @@ public:
 	virtual Skeleton* getSkeleton() {return NULL;}
 	virtual const BoundingVolume* getBoundingVolume() = 0;
 	virtual int getNbVertices() = 0;
+	virtual int getNbFaces() = 0;
 
 #ifdef WITH_TOOLS
 	virtual void drawPreview() = 0;

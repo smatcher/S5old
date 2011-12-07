@@ -15,7 +15,7 @@ MeshWidget::MeshWidget(MeshData &resource) : ResourceWidget(resource), m_preview
 		MeshData* mesh = (MeshData*)&resource;
 		//QWidget* wid;
 
-		m_info = new QLabel("Nb vertices : " + QString().setNum(mesh->getNbVertices()));
+		m_info = new QLabel("Nb poly : " + QString().setNum(mesh->getNbFaces()));
 		m_layout->addWidget(m_info);
 		m_preview = new MeshPreview((QGLWidget*)RENDER_MANAGER.getContext(),mesh);
 		m_layout->addWidget(m_preview);
@@ -103,9 +103,9 @@ void MeshWidget::updateData()
 	if(mesh->m_state == ResourceData::STATE_LOADED) {
 
 		if(m_info) {
-			m_info->setText("Nb vertices : " + QString().setNum(mesh->getNbVertices()));
+			m_info->setText("Nb poly : " + QString().setNum(mesh->getNbFaces()));
 		} else {
-			m_info = new QLabel("Nb vertices : " + QString().setNum(mesh->getNbVertices()));
+			m_info = new QLabel("Nb poly : " + QString().setNum(mesh->getNbFaces()));
 			m_layout->addWidget(m_info);
 		}
 

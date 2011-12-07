@@ -52,7 +52,7 @@ bool spawn_duck(QStringList args)
 
 int main(int argc, char *argv[])
 {
-	bool shadow_mapping = false;
+	bool shadow_mapping = true;
 
 	#ifdef Q_WS_X11
 		XInitThreads();

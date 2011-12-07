@@ -10,6 +10,8 @@
 AssimpMesh::AssimpMesh(const QString& name, const QString& path, IResourceFactory* factory) :
 	MeshData(name,path,factory),
 	m_skeleton(NULL),
+	m_nbVertices(0),
+	m_nbFaces(0),
 	m_boundingVolume(NULL)
 {
 	m_state = STATE_UNLOADED;
@@ -24,9 +26,11 @@ bool AssimpMesh::unload()
 void AssimpMesh::buildVBOs()
 {
 	m_nbVertices = 0;
+	m_nbFaces = 0;
 	for(int i=0 ; i<m_submeshes.size() ; i++) {
 		m_submeshes[i]->buildVBO(name());
 		m_nbVertices += m_submeshes[i]->m_mesh->mNumVertices;
+		m_nbFaces += m_submeshes[i]->m_nbFaces;
 	}
 }
 
@@ -564,6 +568,11 @@ unsigned int AssimpMesh::nbSubmeshes()
 int AssimpMesh::getNbVertices()
 {
 	return m_nbVertices;
+}
+
+int AssimpMesh::getNbFaces()
+{
+	return m_nbFaces;
 }
 
 const BoundingVolume* AssimpMesh::getBoundingVolume()

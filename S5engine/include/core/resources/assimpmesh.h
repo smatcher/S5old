@@ -60,6 +60,7 @@ private:
 	QVector<Submesh*> m_submeshes;
 	Skeleton* m_skeleton;
 	int m_nbVertices;
+	int m_nbFaces;
 	BoundingVolume* m_boundingVolume;
 	const aiScene* m_scene;
 
@@ -77,6 +78,7 @@ public :
 
 	virtual const BoundingVolume* getBoundingVolume();
 	virtual int getNbVertices();
+	virtual int getNbFaces();
 
 	#ifdef WITH_TOOLS
 		virtual void drawPreview();

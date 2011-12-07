@@ -60,6 +60,12 @@ public :
 		FINAL_PASS
 	};
 
+	enum RenderPipeline
+	{
+		FORWARD_PIPELINE,
+		DEFERRED_PIPELINE
+	};
+
 	struct RenderPassInfo
 	{
 		const QGLWidget* context;
@@ -131,6 +137,7 @@ private :
 	UberShader m_deferred_geometry;
 	UberShader m_deferred_ambient;
 	UberShader m_deferred_lighting;
+	UberShader m_forward;
 	UberShader m_generate_shadowmap;
 	UberShader m_vertical_blur;
 	UberShader m_horizontal_blur;
@@ -145,6 +152,21 @@ private :
 	FrameBufferObject* m_postprocessfbo;
 
 	QList<RenderTarget*> m_rts;
+
+	struct RendererOptions {
+		RenderPipeline m_pipeline;
+		bool           m_shadows_enabled;
+
+		RendererOptions() :
+			m_pipeline(DEFERRED_PIPELINE),
+			m_shadows_enabled(true)
+		{}
+	};
+	RendererOptions m_options;
+
+	void renderShadowmaps(SceneGraph* sg);
+	void renderDeferred(SceneGraph* sg, Viewpoint* viewpoint);
+	void renderForward(SceneGraph* sg, Viewpoint* viewpoint);
 
 	void clearTexture(RenderTexture* texture);
 	void renderTarget(SceneGraph* sg, RenderTarget& target);
@@ -169,6 +191,8 @@ public:
 
 	void setCurrentCamera(Camera* cam);
 	void setAmbient(Vector3f ambient);
+	void setShadowsEnabled(bool enabled);
+	void setRenderPipeline(RenderPipeline pipeline);
 
 	void setDrawDebug(bool draw);
 	void setDrawDebugFilter(const DebugGizmosFilter& filter);
