@@ -28,7 +28,7 @@
 #define GL_MULTISAMPLE  0x809D
 #endif
 
-#define POSTPROCESS_RESOLUTION 2048
+#define MAX_LIGHTS 4
 
 //#define SHOW_PASS_INFO
 
@@ -495,6 +495,24 @@ void RenderManager::renderForward(SceneGraph* sg, Viewpoint* viewpoint)
 	RenderTarget srt(viewpoint);
 	m_passinfo.ubershader_used = m_forward;
 	m_passinfo.type = FINAL_PASS;
+	for(int i = 0 ; i<MAX_LIGHTS ; i++) {
+		if(i<LIGHTING_MANAGER.managees().count())
+		{
+			// Render depthmap
+			Light* light = LIGHTING_MANAGER.managees().at(i);
+			light->sendParameters(i);
+
+			m_passinfo.ubershader_used->setParamValue(UberShaderDefine::Type(UberShaderDefine::LIGHT_OMNI_0+i),true);
+			m_passinfo.ubershader_used->setParamValue(UberShaderDefine::Type(UberShaderDefine::LIGHT_SPOT_0+i),false);
+			m_passinfo.ubershader_used->setParamValue(UberShaderDefine::Type(UberShaderDefine::LIGHT_SUN_0+i),false);
+		}
+		else
+		{
+			m_passinfo.ubershader_used->setParamValue(UberShaderDefine::Type(UberShaderDefine::LIGHT_OMNI_0+i),false);
+			m_passinfo.ubershader_used->setParamValue(UberShaderDefine::Type(UberShaderDefine::LIGHT_SPOT_0+i),false);
+			m_passinfo.ubershader_used->setParamValue(UberShaderDefine::Type(UberShaderDefine::LIGHT_SUN_0+i),false);
+		}
+	}
 	renderTarget(sg, srt);
 }
 
@@ -666,13 +684,6 @@ void RenderManager::renderTarget(SceneGraph* sg, RenderTarget& target)
 			m_screen_size->setY(target.getHeight());
 		}
 
-/*      Disabled for now, we use deferred shading
-
-		glEnable(GL_LIGHTING);
-		for(int index = 0; index < LIGHTING_MANAGER.managees().count(); index++) {
-			LIGHTING_MANAGER.managees().at(index)->sendParameters(index);
-		}
-*/
 		glDisable(GL_BLEND);
 		for(QVector<IRenderable*>::iterator it = registeredManagees.begin();
 			it != registeredManagees.end();

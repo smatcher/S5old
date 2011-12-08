@@ -113,14 +113,17 @@ int main(int argc, char *argv[])
 
 	nHead->addProperty(new DummyUpdatable());
 	Light* light;
-	light = new Light(shadow_mapping);
-	light->setDiffuseColor(Vector4f(1.0,0.2,0.2,1.0));
-	light->setSpecularColor(Vector4f(1.0,0.2,0.2,1.0));
-	nLight->addProperty(light);
+
 	light = new Light(shadow_mapping);
 	light->setDiffuseColor(Vector4f(0.2,1.0,0.2,1.0));
 	light->setSpecularColor(Vector4f(0.2,1.0,0.2,1.0));
 	nLight2->addProperty(light);
+
+	light = new Light(shadow_mapping);
+	light->setDiffuseColor(Vector4f(1.0,0.2,0.2,1.0));
+	light->setSpecularColor(Vector4f(1.0,0.2,0.2,1.0));
+	nLight->addProperty(light);
+
 
 	Mesh plane = MESH_MANAGER.get("Plane");
 	Mesh cube = MESH_MANAGER.get("Cube");
@@ -233,7 +236,7 @@ int main(int argc, char *argv[])
 		if(first) {
 			light = new Light(shadow_mapping);
 			light->setDiffuseColor(Vector4f(0.2,0.2,1.0,1.0));
-			light->setSpecularColor(Vector4f(0.2,0.2,1.0,1.0));
+			light->setSpecularColor(Vector4f(1.0,0.2,0.0,1.0));
 			(*it)->addProperty(light);
 			first = false;
 		}

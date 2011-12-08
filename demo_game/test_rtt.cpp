@@ -59,7 +59,10 @@ int main(int argc, char *argv[])
 	*/
 	nRot->addProperty(new DummyUpdatable(0.5));
 	//nLight->addProperty(new Light(false));
-	nLight->addProperty(new Light(true));
+	Light* light = new Light(true);
+	light->setDiffuseColor(Vector4f(1.0,0.0,0.0,1.0));
+	light->setSpecularColor(Vector4f(0.0,1.0,0.0,1.0));
+	nLight->addProperty(light);
 
 	/*
 	sg->link(nRttCube);

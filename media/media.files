@@ -27,3 +27,6 @@ textures/rules.db
 shaders/deferred_pipeline/DEF_shadowmap_pass.ush
 shaders/deferred_pipeline/DEF_shadowmap_pass.frag
 shaders/deferred_pipeline/DEF_shadowmap_pass.vert
+shaders/forward.vert
+shaders/forward.ush
+shaders/forward.frag
