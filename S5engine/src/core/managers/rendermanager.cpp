@@ -322,6 +322,7 @@ void RenderManager::renderDeferred(SceneGraph* sg, Viewpoint* viewpoint)
 	RenderTarget srt(viewpoint, m_postprocessfbo, mrts , false, true);
 	debug("PASS_INFO","geom pass");
 	m_passinfo.ubershader_used = m_deferred_geometry;
+	m_passinfo.lighting_enabled = false;
 	m_passinfo.type = FINAL_PASS;
 	glBlendFunc(GL_ONE, GL_ZERO);
 	renderTarget(sg, srt);
@@ -494,25 +495,8 @@ void RenderManager::renderForward(SceneGraph* sg, Viewpoint* viewpoint)
 {
 	RenderTarget srt(viewpoint);
 	m_passinfo.ubershader_used = m_forward;
+	m_passinfo.lighting_enabled = true;
 	m_passinfo.type = FINAL_PASS;
-	for(int i = 0 ; i<MAX_LIGHTS ; i++) {
-		if(i<LIGHTING_MANAGER.managees().count())
-		{
-			// Render depthmap
-			Light* light = LIGHTING_MANAGER.managees().at(i);
-			light->sendParameters(i);
-
-			m_passinfo.ubershader_used->setParamValue(UberShaderDefine::Type(UberShaderDefine::LIGHT_OMNI_0+i),true);
-			m_passinfo.ubershader_used->setParamValue(UberShaderDefine::Type(UberShaderDefine::LIGHT_SPOT_0+i),false);
-			m_passinfo.ubershader_used->setParamValue(UberShaderDefine::Type(UberShaderDefine::LIGHT_SUN_0+i),false);
-		}
-		else
-		{
-			m_passinfo.ubershader_used->setParamValue(UberShaderDefine::Type(UberShaderDefine::LIGHT_OMNI_0+i),false);
-			m_passinfo.ubershader_used->setParamValue(UberShaderDefine::Type(UberShaderDefine::LIGHT_SPOT_0+i),false);
-			m_passinfo.ubershader_used->setParamValue(UberShaderDefine::Type(UberShaderDefine::LIGHT_SUN_0+i),false);
-		}
-	}
 	renderTarget(sg, srt);
 }
 
@@ -551,6 +535,7 @@ void RenderManager::render(double elapsed_time, SceneGraph* sg)
 	m_passinfo.background_enabled = true;
 	m_passinfo.setup_texture_matrices = false;
 	m_passinfo.texturing_enabled = true;
+	m_passinfo.lighting_enabled = true;
 	m_passinfo.type = FINAL_PASS;
 
 	testViewportResize();
@@ -682,6 +667,27 @@ void RenderManager::renderTarget(SceneGraph* sg, RenderTarget& target)
 		} else {
 			m_screen_size->setX(target.getWidth());
 			m_screen_size->setY(target.getHeight());
+		}
+
+		if(m_passinfo.lighting_enabled) {
+			for(int i = 0 ; i<MAX_LIGHTS ; i++) {
+				if(i<LIGHTING_MANAGER.managees().count())
+				{
+					// Render depthmap
+					Light* light = LIGHTING_MANAGER.managees().at(i);
+					light->sendParameters(i);
+
+					m_passinfo.ubershader_used->setParamValue(UberShaderDefine::Type(UberShaderDefine::LIGHT_OMNI_0+i),true);
+					m_passinfo.ubershader_used->setParamValue(UberShaderDefine::Type(UberShaderDefine::LIGHT_SPOT_0+i),false);
+					m_passinfo.ubershader_used->setParamValue(UberShaderDefine::Type(UberShaderDefine::LIGHT_SUN_0+i),false);
+				}
+				else
+				{
+					m_passinfo.ubershader_used->setParamValue(UberShaderDefine::Type(UberShaderDefine::LIGHT_OMNI_0+i),false);
+					m_passinfo.ubershader_used->setParamValue(UberShaderDefine::Type(UberShaderDefine::LIGHT_SPOT_0+i),false);
+					m_passinfo.ubershader_used->setParamValue(UberShaderDefine::Type(UberShaderDefine::LIGHT_SUN_0+i),false);
+				}
+			}
 		}
 
 		glDisable(GL_BLEND);
@@ -1153,18 +1159,42 @@ void RenderManager::setShadowsEnabled(bool enabled)
 		}
 
 		m_options.m_shadows_enabled = enabled;
+
+		#ifdef WITH_TOOLS
+			if(m_widget)
+			{
+				m_widget->setShadowsEnabled(enabled);
+			}
+		#endif
 	} else {
 		logWarn("can't switch shadows enabled during rendering, TODO ; delay this kind of command");
 	}
+}
+
+bool RenderManager::getShadowsEnabled()
+{
+	return m_options.m_shadows_enabled;
 }
 
 void RenderManager::setRenderPipeline(RenderPipeline pipeline)
 {
 	if(!m_rendering) {
 		m_options.m_pipeline = pipeline;
+
+		#ifdef WITH_TOOLS
+			if(m_widget)
+			{
+				m_widget->setRenderPipeline(pipeline);
+			}
+		#endif
 	} else {
 		logWarn("can't switch pipeline during rendering, TODO ; delay this kind of command");
 	}
+}
+
+RenderManager::RenderPipeline RenderManager::getRenderPipeline()
+{
+	return m_options.m_pipeline;
 }
 
 #ifdef WITH_TOOLS

@@ -49,7 +49,11 @@ void main()
 	#endif
 
 	#ifdef COLOR_MAP
-		vec4 diffuse = texture2D(colormap, gl_TexCoord[0].st) * gl_FrontMaterial.diffuse;
+		#ifdef SKY
+			vec4 diffuse = texture2D(colormap, gl_TexCoord[0].st);
+		#else
+			vec4 diffuse = texture2D(colormap, gl_TexCoord[0].st) * gl_FrontMaterial.diffuse;
+		#endif
 	#else
 		#ifdef SPLATTING
 			vec4 color;

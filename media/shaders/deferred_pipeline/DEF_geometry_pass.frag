@@ -32,7 +32,11 @@ void main()
 		gl_FragData[0] = vec4(normalize(normal),1.0);
 	#endif
 	#ifdef COLOR_MAP
-		gl_FragData[1] = texture2D(colormap, gl_TexCoord[0].st) * gl_FrontMaterial.diffuse;
+		#ifdef SKY
+			gl_FragData[1] = texture2D(colormap, gl_TexCoord[0].st);
+		#else
+			gl_FragData[1] = texture2D(colormap, gl_TexCoord[0].st) * gl_FrontMaterial.diffuse;
+		#endif
 	#else
 		#ifdef SPLATTING
 			vec4 color;

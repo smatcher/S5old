@@ -73,6 +73,7 @@ public :
 		bool setup_texture_matrices;
 		bool background_enabled;
 		bool texturing_enabled;
+		bool lighting_enabled;
 		UberShader ubershader_used;
 	};
 
@@ -191,8 +192,12 @@ public:
 
 	void setCurrentCamera(Camera* cam);
 	void setAmbient(Vector3f ambient);
+
 	void setShadowsEnabled(bool enabled);
+	bool getShadowsEnabled();
+
 	void setRenderPipeline(RenderPipeline pipeline);
+	RenderPipeline getRenderPipeline();
 
 	void setDrawDebug(bool draw);
 	void setDrawDebugFilter(const DebugGizmosFilter& filter);

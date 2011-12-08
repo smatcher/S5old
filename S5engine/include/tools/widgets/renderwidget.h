@@ -21,11 +21,18 @@ public :
 
 	void setDrawDebug(bool draw);
 	void setDrawDebugFilter(const RenderManager::DebugGizmosFilter& filter);
+	void setShadowsEnabled(bool enabled);
+	void setRenderPipeline(RenderManager::RenderPipeline pipeline);
 
 public slots :
 	void drawDebugChanged();
 	void drawDebugFilterChanged();
 	void showDebugMenu();
+
+	void optionShadowsChanged();
+	void optionPipelineToForward();
+	void optionPipelineToDeferred();
+	void showOptionsMenu();
 
 private:
 	QComboBox* m_cameras_combo;
@@ -37,6 +44,12 @@ private:
 	QAction* m_draw_skeletons;
 	QAction* m_draw_cameras;
 	QAction* m_draw_colliders;
+
+	QPushButton* m_options_button;
+	QMenu*   m_options_menu;
+	QAction* m_options_forward_pipeline;
+	QAction* m_options_deferred_pipeline;
+	QAction* m_options_shadows;
 };
 
 #endif // RENDERWIDGET_H
