@@ -157,10 +157,12 @@ private :
 	struct RendererOptions {
 		RenderPipeline m_pipeline;
 		bool           m_shadows_enabled;
+		bool           m_bloom_enabled;
 
 		RendererOptions() :
 			m_pipeline(DEFERRED_PIPELINE),
-			m_shadows_enabled(true)
+			m_shadows_enabled(true),
+			m_bloom_enabled(false)
 		{}
 	};
 	RendererOptions m_options;
@@ -195,6 +197,9 @@ public:
 
 	void setShadowsEnabled(bool enabled);
 	bool getShadowsEnabled();
+
+	void setBloomEnabled(bool enabled);
+	bool getBloomEnabled();
 
 	void setRenderPipeline(RenderPipeline pipeline);
 	RenderPipeline getRenderPipeline();

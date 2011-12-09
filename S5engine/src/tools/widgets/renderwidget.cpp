@@ -39,6 +39,9 @@ RenderWidget::RenderWidget()
 	m_options_shadows = m_options_menu->addAction("shadows");
 	m_options_shadows->setCheckable(true);
 	m_options_shadows->setChecked(RENDER_MANAGER.getShadowsEnabled());
+	m_options_bloom = m_options_menu->addAction("bloom");
+	m_options_bloom->setCheckable(true);
+	m_options_bloom->setChecked(RENDER_MANAGER.getBloomEnabled());
 	m_options_forward_pipeline = m_options_menu->addAction("Forward pipeline");
 	m_options_forward_pipeline->setCheckable(true);
 	m_options_deferred_pipeline = m_options_menu->addAction("Deferred pipeline");
@@ -74,6 +77,7 @@ RenderWidget::RenderWidget()
 
 	connect(m_options_button, SIGNAL(clicked()), this, SLOT(showOptionsMenu()));
 	connect(m_options_shadows, SIGNAL(triggered()), this, SLOT(optionShadowsChanged()));
+	connect(m_options_bloom, SIGNAL(triggered()), this, SLOT(optionBloomChanged()));
 	connect(m_options_forward_pipeline, SIGNAL(triggered()), this, SLOT(optionPipelineToForward()));
 	connect(m_options_deferred_pipeline, SIGNAL(triggered()), this, SLOT(optionPipelineToDeferred()));
 }
@@ -137,6 +141,11 @@ void RenderWidget::setDrawDebugFilter(const RenderManager::DebugGizmosFilter& fi
 	m_draw_colliders->setChecked(filter.draw_colliders);
 }
 
+void RenderWidget::optionBloomChanged()
+{
+	RENDER_MANAGER.setBloomEnabled(m_options_bloom->isChecked());
+}
+
 void RenderWidget::optionShadowsChanged()
 {
 	RENDER_MANAGER.setShadowsEnabled(m_options_shadows->isChecked());
@@ -162,6 +171,11 @@ void RenderWidget::showOptionsMenu()
 void RenderWidget::setShadowsEnabled(bool enabled)
 {
 	m_options_shadows->setChecked(enabled);
+}
+
+void RenderWidget::setBloomEnabled(bool enabled)
+{
+	m_options_bloom->setChecked(enabled);
 }
 
 void RenderWidget::setRenderPipeline(RenderManager::RenderPipeline pipeline)

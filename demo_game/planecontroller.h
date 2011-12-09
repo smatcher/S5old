@@ -16,6 +16,10 @@ private:
 	int m_control_backward;
 	int m_control_left;
 	int m_control_right;
+
+	float m_liftFactor;
+	float m_dragFactor;
+	float m_propulsionFactor;
 };
 
 #endif // PLANECONTROLLER_H

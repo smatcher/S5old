@@ -373,7 +373,7 @@ void RenderManager::renderDeferred(SceneGraph* sg, Viewpoint* viewpoint)
 */
 	//// For each light => light
 	m_passinfo.ubershader_used = m_deferred_lighting;
-	m_passinfo.ubershader_used->setParamValue(UberShaderDefine::BLOOM, true);
+	m_passinfo.ubershader_used->setParamValue(UberShaderDefine::BLOOM, m_options.m_bloom_enabled);
 /*
 	input_textures.push_front(*m_normalmap);
 	input_textures.push_back(*m_specularmap);
@@ -429,21 +429,24 @@ void RenderManager::renderDeferred(SceneGraph* sg, Viewpoint* viewpoint)
 				glVertex3d(-1,1,0.0f);
 			glEnd();
 
-			m_passinfo.ubershader_used->unset();
-			m_passinfo.ubershader_used = m_deferred_lighting;
-			m_passinfo.ubershader_used->use();
-			m_passinfo.ubershader_used->setAllUniforms();
-			m_shadowmap->swap();
-			m_postprocessfbo->clearAttachments();
-			m_postprocessfbo->attachTexture(m_colormap, FrameBufferObject::COLOR_ATTACHMENT_0);
-			m_postprocessfbo->attachTexture(m_bloommap, FrameBufferObject::COLOR_ATTACHMENT_1);
-			m_postprocessfbo->commitTextures(0);
-			m_normalmap->bind(0);
-			m_diffusemap->bind(1);
-			m_specularmap->bind(2);
-			m_depthmap->bind(3);
-			m_shadowmap->bind(4);
 		}
+
+		m_passinfo.ubershader_used->unset();
+		m_passinfo.ubershader_used = m_deferred_lighting;
+		m_passinfo.ubershader_used->use();
+		m_passinfo.ubershader_used->setAllUniforms();
+		m_shadowmap->swap();
+		m_postprocessfbo->clearAttachments();
+		m_postprocessfbo->attachTexture(m_colormap, FrameBufferObject::COLOR_ATTACHMENT_0);
+		if(m_options.m_bloom_enabled) {
+			m_postprocessfbo->attachTexture(m_bloommap, FrameBufferObject::COLOR_ATTACHMENT_1);
+		}
+		m_postprocessfbo->commitTextures(0);
+		m_normalmap->bind(0);
+		m_diffusemap->bind(1);
+		m_specularmap->bind(2);
+		m_depthmap->bind(3);
+		m_shadowmap->bind(4);
 
 		glViewport(0,0,width,height);
 		glBegin(GL_QUADS);
@@ -470,14 +473,21 @@ void RenderManager::renderDeferred(SceneGraph* sg, Viewpoint* viewpoint)
 	m_postprocessfbo->clearAttachments();
 
 	QList<Texture> input_textures;
-	input_textures.push_back(*m_bloommap);
+	if(m_options.m_bloom_enabled)
+	{
+		input_textures.push_back(*m_bloommap);
 
-	glBlendFunc(GL_ONE, GL_ZERO);
-	for(int i=0 ; i<2 ; i++) {
-		m_passinfo.ubershader_used = m_vertical_blur;
-		postprocessPass(m_bloommap,input_textures);
-		m_passinfo.ubershader_used = m_horizontal_blur;
-		postprocessPass(m_bloommap,input_textures);
+		glBlendFunc(GL_ONE, GL_ZERO);
+		for(int i=0 ; i<2 ; i++) {
+			m_passinfo.ubershader_used = m_vertical_blur;
+			postprocessPass(m_bloommap,input_textures);
+			m_passinfo.ubershader_used = m_horizontal_blur;
+			postprocessPass(m_bloommap,input_textures);
+		}
+	}
+	else
+	{
+		input_textures.push_back(*m_bloommap);
 	}
 
 	glBlendFunc(GL_ONE, GL_ONE);
@@ -1147,6 +1157,33 @@ void RenderManager::takeScreenshot(QString path)
 GLWidget* RenderManager::getContext()
 {
 	return m_context;
+}
+
+void RenderManager::setBloomEnabled(bool enabled)
+{
+	if(!m_rendering) {
+		if(m_options.m_bloom_enabled && !enabled)
+		{
+			if(m_bloommap && m_postprocessfbo)
+				clearTexture(m_bloommap);
+		}
+
+		m_options.m_bloom_enabled = enabled;
+
+		#ifdef WITH_TOOLS
+			if(m_widget)
+			{
+				m_widget->setBloomEnabled(enabled);
+			}
+		#endif
+	} else {
+		logWarn("can't switch bloom enabled during rendering, TODO ; delay this kind of command");
+	}
+}
+
+bool RenderManager::getBloomEnabled()
+{
+	return m_options.m_bloom_enabled;
 }
 
 void RenderManager::setShadowsEnabled(bool enabled)

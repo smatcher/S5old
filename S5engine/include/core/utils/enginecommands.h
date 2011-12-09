@@ -90,6 +90,16 @@ bool renderer_command(QStringList args)
 				return TRUE;
 			}
 		}
+		else if(args.at(1) == "bloom") {
+			if(args.at(2).toLower() == "true" || args.at(2) == "1") {
+				RENDER_MANAGER.setBloomEnabled(true);
+				return TRUE;
+			}
+			else if(args.at(2).toLower() == "false" || args.at(2) == "0") {
+				RENDER_MANAGER.setBloomEnabled(false);
+				return TRUE;
+			}
+		}
 		else if(args.at(1) == "pipeline") {
 			if(args.at(2).toLower() == "deferred") {
 				RENDER_MANAGER.setRenderPipeline(RenderManager::DEFERRED_PIPELINE);

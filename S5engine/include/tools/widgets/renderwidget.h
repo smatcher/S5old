@@ -22,6 +22,7 @@ public :
 	void setDrawDebug(bool draw);
 	void setDrawDebugFilter(const RenderManager::DebugGizmosFilter& filter);
 	void setShadowsEnabled(bool enabled);
+	void setBloomEnabled(bool enabled);
 	void setRenderPipeline(RenderManager::RenderPipeline pipeline);
 
 public slots :
@@ -30,6 +31,7 @@ public slots :
 	void showDebugMenu();
 
 	void optionShadowsChanged();
+	void optionBloomChanged();
 	void optionPipelineToForward();
 	void optionPipelineToDeferred();
 	void showOptionsMenu();
@@ -50,6 +52,7 @@ private:
 	QAction* m_options_forward_pipeline;
 	QAction* m_options_deferred_pipeline;
 	QAction* m_options_shadows;
+	QAction* m_options_bloom;
 };
 
 #endif // RENDERWIDGET_H
