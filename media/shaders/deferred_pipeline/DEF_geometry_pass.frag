@@ -60,5 +60,5 @@ void main()
 		gl_FragData[1].a = 1.0;
 	#endif
 	gl_FragData[2] = gl_FrontMaterial.specular;
-	gl_FragData[2].a = gl_FrontMaterial.shininess;
+	gl_FragData[2].a = gl_FrontMaterial.shininess/128.0;
 }

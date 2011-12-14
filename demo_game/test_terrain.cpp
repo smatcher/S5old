@@ -120,7 +120,7 @@ int main(int argc, char *argv[])
 	sg->link(nBase);
 
 	RenderManager::Background background;
-	background.type = RenderManager::COLOR;
+	background.type = RenderManager::Background::COLOR;
 	background.color = Vector3f(0,0,0);
 /*	background.textures[0] = TEXTURE_MANAGER.get("stormy_front.tga");
 	background.textures[1] = TEXTURE_MANAGER.get("stormy_left.tga");
@@ -135,7 +135,7 @@ int main(int argc, char *argv[])
 	background.textures[3] = TEXTURE_MANAGER.get("interstellar_bk.tga");
 	background.textures[4] = TEXTURE_MANAGER.get("interstellar_up.tga");
 	background.textures[5] = TEXTURE_MANAGER.get("interstellar_dn.tga");
-	background.type = RenderManager::SKYBOX;
+	background.type = RenderManager::Background::SKYBOX;
 
 	RENDER_MANAGER.setBackground(background);
 	RENDER_MANAGER.setCurrentCamera(cam);

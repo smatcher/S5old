@@ -61,6 +61,7 @@ public:
 
 protected:
 	virtual void parseFile(const QString& path, QList<ResourceData*>& content, const QHash<QString,QString>& rules);
+	void precompile(const QString& path, QString& output) const;
 };
 
 #endif // GLSLSHADER_H

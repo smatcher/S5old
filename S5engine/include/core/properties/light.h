@@ -13,6 +13,15 @@ class RenderTexture;
 
 class Light : public IProperty, public Managee<LightingManager>, public Viewpoint
 {
+public:
+
+	enum Type
+	{
+		OMNI,
+		SPOT,
+		SUN
+	};
+
 private:
 	bool m_casts_shadows;
 	RenderTexture* m_shadowmap;
@@ -22,6 +31,8 @@ private:
 	float m_quadratic_attenuation;
 	Vector4f m_diffuse_color;
 	Vector4f m_specular_color;
+
+	Type m_type;
 
 public:
 	Light(bool casts_shadows = false);
@@ -39,6 +50,9 @@ public:
 	void setSpecularColor(Vector4f color);
 	void setAttenuation(float constant, float linear, float quadratic);
 	void getAttenuation(float& constant, float& linear, float& quadratic);
+
+	void setType(Type type);
+	Type getType();
 
 	bool castsShadows();
 	RenderTexture* getRenderTexture();

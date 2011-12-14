@@ -129,7 +129,7 @@ int main(int argc, char *argv[])
 	RENDER_MANAGER.setDrawDebug(true);
 	RENDER_MANAGER.setCurrentCamera(static_cast<Camera*>(nCam->properties().child("Camera")));
 	RenderManager::Background background;
-	background.type = RenderManager::COLOR;
+	background.type = RenderManager::Background::COLOR;
 	background.color = Vector3f(0.2, 0.2, 0.2);
 	RENDER_MANAGER.setBackground(background);
 

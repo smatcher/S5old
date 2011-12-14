@@ -62,6 +62,8 @@ Light::Light(bool casts_shadows) : m_casts_shadows(casts_shadows), m_shadowmap(N
 
 	m_diffuse_color = Vector4f(1.0,1.0,1.0,1.0);
 	m_specular_color = Vector4f(1.0,1.0,1.0,1.0);
+
+	m_type = OMNI;
 }
 
 void Light::sendParameters(int lightid)
@@ -73,6 +75,10 @@ void Light::sendParameters(int lightid)
 	Matrix4f trans = node()->getGlobalTransform();
 	Vector3<GLfloat> pos(trans[12],trans[13],trans[14]);
 	GLfloat lightPosition[4] = { 0.0, 0.0, 0.0, 1.0 };
+
+	if(m_type == SUN)
+		lightPosition[3] = 0.0;
+
 	for(int i=0 ; i<3 ; i++) {
 		lightPosition[i] = pos[i];
 	}
@@ -82,6 +88,12 @@ void Light::sendParameters(int lightid)
 	glLightf(GL_LIGHT0 + lightid, GL_QUADRATIC_ATTENUATION, m_quadratic_attenuation);
 	glLightfv(GL_LIGHT0 + lightid, GL_DIFFUSE, m_diffuse_color.coords);
 	glLightfv(GL_LIGHT0 + lightid, GL_SPECULAR, m_specular_color.coords);
+
+	if(m_type == SPOT) {
+		GLfloat lightDirection[4] = { trans[0], trans[1], trans[2], 1.0 };
+		glLightf(GL_LIGHT0 + lightid, GL_SPOT_CUTOFF,30.f);
+		glLightfv(GL_LIGHT0 + lightid, GL_SPOT_DIRECTION,lightDirection);
+	}
 
 	debugGL("while sending light parameters for light" << lightid);
 }
@@ -233,4 +245,14 @@ void Light::getAttenuation(float& constant, float& linear, float& quadratic)
 	constant = m_constant_attenuation;
 	linear = m_linear_attenuation;
 	quadratic = m_quadratic_attenuation;
+}
+
+void Light::setType(Type type)
+{
+	m_type = type;
+}
+
+Light::Type Light::getType()
+{
+	return m_type;
 }

@@ -67,7 +67,7 @@ int main(int argc, char *argv[])
 	// Beurk ! Mais je peux le faire alors je me prive pas ^^
 	RENDER_MANAGER.setCurrentCamera(static_cast<Camera*>(nCamFollow->properties().child("Camera")));
 	RenderManager::Background background;
-	background.type = RenderManager::COLOR;
+	background.type = RenderManager::Background::COLOR;
 	background.color = Vector3f(0.031,0.259,0.451);
 	/*
 	background.textures[0] = TEXTURE_MANAGER.get("interstellar_lf.tga");

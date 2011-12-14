@@ -21,18 +21,11 @@ varying vec3 normal;
 
 varying vec3 eyeVec;
 
-#ifdef LIGHT_OMNI_0
-	varying vec3 lightDir0;
-#endif
-#ifdef LIGHT_OMNI_1
-	varying vec3 lightDir1;
-#endif
-#ifdef LIGHT_OMNI_2
-	varying vec3 lightDir2;
-#endif
-#ifdef LIGHT_OMNI_3
-	varying vec3 lightDir3;
-#endif
+#for 0 7
+	#if defined LIGHT_OMNI_@ || defined LIGHT_SPOT_@ || defined LIGHT_SUN_@
+		varying vec3 lightDir@;
+	#endif
+#endfor
 
 void main()
 {
@@ -78,75 +71,31 @@ void main()
 		vec4 final_color = vec4(scene_ambient,1.0) * diffuse;
 
 		vec3 E = normalize(eyeVec);
-		#ifdef LIGHT_OMNI_0
-		{
-			vec3 L0 = normalize(lightDir0);
-			vec3 HalfVec0 = normalize(lightDir0 + eyeVec);
+		#for 0 7
+			#if defined LIGHT_OMNI_@ || defined LIGHT_SPOT_@ || defined LIGHT_SUN_@
+			{
+				vec3 L@ = normalize(lightDir@);
+				vec3 HalfVec@ = normalize(lightDir@ + eyeVec);
 
-			float dist0 = length(lightDir0);
-			float attenuation0 = 1.0/ (
-					gl_LightSource[0].constantAttenuation +
-					gl_LightSource[0].linearAttenuation*dist0 +
-					gl_LightSource[0].quadraticAttenuation*dist0*dist0
-			);
+				float dist@ = length(lightDir@);
+				float attenuation@ = 1.0/ (
+						gl_LightSource[@].constantAttenuation +
+						gl_LightSource[@].linearAttenuation*dist@ +
+						gl_LightSource[@].quadraticAttenuation*dist@*dist@
+				);
 
-			vec3 idiff0 = clamp(dot(L0, N) * gl_LightSource[0].diffuse.rgb * diffuse.rgb, 0.0, 1.0);
-			vec3 ispec0 = pow(clamp(dot(HalfVec0,N),0.0,1.0),gl_FrontMaterial.shininess) * gl_LightSource[0].specular.rgb * gl_FrontMaterial.specular.rgb;
-			final_color.rgb += (idiff0+ispec0) * attenuation0;
-		}
-		#endif
-		#ifdef LIGHT_OMNI_1
-		{
-			vec3 L1 = normalize(lightDir1);
-			vec3 HalfVec1 = normalize(lightDir1 + eyeVec);
+				#ifdef LIGHT_SPOT_@
+					float spotAngle@ = dot(L@,normalize(gl_LightSource[@].spotDirection));
+					if(spotAngle@ < gl_LightSource[@].spotCosCutoff)
+						attenuation@ = 0.0;
+				#endif
 
-			float dist1 = length(lightDir1);
-			float attenuation1 = 1.0/ (
-					gl_LightSource[1].constantAttenuation +
-					gl_LightSource[1].linearAttenuation*dist1 +
-					gl_LightSource[1].quadraticAttenuation*dist1*dist1
-			);
-
-			vec3 idiff1 = clamp(dot(L1, N) * gl_LightSource[1].diffuse.rgb * diffuse.rgb, 0.0, 1.0);
-			vec3 ispec1 = pow(clamp(dot(HalfVec1,N),0.0,1.0),gl_FrontMaterial.shininess) * gl_LightSource[1].specular.rgb * gl_FrontMaterial.specular.rgb;
-			final_color.rgb += (idiff1+ispec1) * attenuation1;
-		}
-		#endif
-		#ifdef LIGHT_OMNI_2
-		{
-			vec3 L2 = normalize(lightDir2);
-			vec3 HalfVec2 = normalize(lightDir2 + eyeVec);
-
-			float dist2 = length(lightDir2);
-			float attenuation2 = 1.0/ (
-					gl_LightSource[2].constantAttenuation +
-					gl_LightSource[2].linearAttenuation*dist2 +
-					gl_LightSource[2].quadraticAttenuation*dist2*dist2
-			);
-
-			vec3 idiff2 = clamp(dot(L2, N) * gl_LightSource[2].diffuse.rgb * diffuse.rgb, 0.0, 1.0);
-			vec3 ispec2 = pow(clamp(dot(HalfVec2,N),0.0,1.0),gl_FrontMaterial.shininess) * gl_LightSource[2].specular.rgb * gl_FrontMaterial.specular.rgb;
-			final_color.rgb += (idiff2+ispec2) * attenuation2;
-
-		}
-		#endif
-		#ifdef LIGHT_OMNI_3
-		{
-			vec3 L3 = normalize(lightDir3);
-			vec3 HalfVec3 = normalize(lightDir3 + eyeVec);
-
-			float dist3 = length(lightDir3);
-			float attenuation3 = 1.0/ (
-					gl_LightSource[3].constantAttenuation +
-					gl_LightSource[3].linearAttenuation*dist3 +
-					gl_LightSource[3].quadraticAttenuation*dist3*dist3
-			);
-
-			vec3 idiff3= clamp(dot(L3, N) * gl_LightSource[3].diffuse.rgb * diffuse.rgb, 0.0, 1.0);
-			vec3 ispec3= pow(clamp(dot(HalfVec3,N),0.0,1.0),gl_FrontMaterial.shininess) * gl_LightSource[3].specular.rgb * gl_FrontMaterial.specular.rgb;
-			final_color.rgb += (idiff3+ispec3) * attenuation3;
-		}
-		#endif
+				vec3 idiff@ = clamp(dot(L@, N) * gl_LightSource[@].diffuse.rgb * diffuse.rgb, 0.0, 1.0);
+				vec3 ispec@ = pow(clamp(dot(HalfVec@,N),0.0,1.0),gl_FrontMaterial.shininess) * gl_LightSource[@].specular.rgb * gl_FrontMaterial.specular.rgb;
+				final_color.rgb += (idiff@+ispec@) * attenuation@;
+			}
+			#endif
+		#endfor
 	#endif //SKY
 
 	#ifdef BLOOM

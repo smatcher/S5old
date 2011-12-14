@@ -11,6 +11,10 @@ uniform mat4 inverse_modelview;
 	uniform sampler2D shadowmap;
 #endif
 
+#ifdef LIGHT_SPOT
+	varying vec3 eyespotdir;
+#endif
+
 void main()
 {
 	vec4 depthsample = texture2D(gbuffer_depth, screen_pos);
@@ -27,7 +31,7 @@ void main()
 	vec3 halfvec = normalize(lightvec + viewvec);
 	vec3 normal = texture2D(gbuffer_normal, screen_pos).rgb;
 	vec4 diffuse = texture2D(gbuffer_diffuse, screen_pos);	// rgb:diffuse a:sky (if 0)
-	vec4 specular = texture2D(gbuffer_specular, screen_pos); // rgb:specularity a:shininess
+	vec4 specular = texture2D(gbuffer_specular, screen_pos); // rgb:specularity a:shininess/128.0
 
 	float dist = length(lightvec);
 	float attenuation = 1.0/ (
@@ -42,7 +46,13 @@ void main()
 
 	lightvec = normalize(lightvec);
 	vec3 idiff = clamp(dot(lightvec, normal) * gl_LightSource[0].diffuse.rgb * diffuse.rgb, 0.0, 1.0);
-	vec3 ispec = pow(clamp(dot(halfvec,normal),0.0,1.0),specular.a) * gl_LightSource[0].specular.rgb * specular.rgb;
+	vec3 ispec = pow(clamp(dot(halfvec,normal),0.0,1.0),128.0*specular.a) * gl_LightSource[0].specular.rgb * specular.rgb;
+
+	#ifdef LIGHT_SPOT
+	float spotAngle = dot(lightvec,eyespotdir);
+	if(spotAngle < gl_LightSource[0].spotCosCutoff)
+		attenuation = 0.0;
+	#endif
 
 	#ifdef BLOOM
 		gl_FragData[0] = vec4((idiff+ispec) * attenuation * diffuse.a, 1.0);

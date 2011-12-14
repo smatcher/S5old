@@ -28,7 +28,7 @@
 #define GL_MULTISAMPLE  0x809D
 #endif
 
-#define MAX_LIGHTS 4
+#define MAX_LIGHTS 8
 
 //#define SHOW_PASS_INFO
 
@@ -53,7 +53,7 @@ RenderManager::RenderManager() :
 	m_colormap(NULL),
 	m_postprocessfbo(NULL)
 {
-	m_defaultBackground.type = NO_CLEAR;
+	m_defaultBackground.type = Background::NO_CLEAR;
 
 	#ifdef WITH_TOOLS
 		m_widget = NULL;
@@ -323,7 +323,7 @@ void RenderManager::renderDeferred(SceneGraph* sg, Viewpoint* viewpoint)
 	debug("PASS_INFO","geom pass");
 	m_passinfo.ubershader_used = m_deferred_geometry;
 	m_passinfo.lighting_enabled = false;
-	m_passinfo.type = FINAL_PASS;
+	m_passinfo.type = RenderPassInfo::DEF_GEOMETRY_PASS;
 	glBlendFunc(GL_ONE, GL_ZERO);
 	renderTarget(sg, srt);
 	m_postprocessfbo->clearAttachments();
@@ -332,6 +332,7 @@ void RenderManager::renderDeferred(SceneGraph* sg, Viewpoint* viewpoint)
 	//// Modulate ambient
 	m_passinfo.ubershader_used = m_deferred_ambient;
 	m_passinfo.ubershader_used->setParamValue(UberShaderDefine::BLOOM, true);
+	m_passinfo.type = RenderPassInfo::DEF_LIGHTING_PASS;
 	m_postprocessfbo->bind();
 	m_postprocessfbo->attachTexture(m_colormap, FrameBufferObject::COLOR_ATTACHMENT_0);
 	m_postprocessfbo->attachTexture(m_bloommap, FrameBufferObject::COLOR_ATTACHMENT_1);
@@ -396,6 +397,10 @@ void RenderManager::renderDeferred(SceneGraph* sg, Viewpoint* viewpoint)
 		light->sendParameters(0);
 		//postprocessPass(mrts,input_textures);
 		//postprocessPass(NULL,input_textures);
+
+		m_passinfo.ubershader_used->setParamValue(UberShaderDefine::Type(UberShaderDefine::LIGHT_OMNI),light->getType() == Light::OMNI);
+		m_passinfo.ubershader_used->setParamValue(UberShaderDefine::Type(UberShaderDefine::LIGHT_SPOT),light->getType() == Light::SPOT);
+		m_passinfo.ubershader_used->setParamValue(UberShaderDefine::Type(UberShaderDefine::LIGHT_SUN),light->getType() == Light::SUN);
 
 		bool shadow = light->castsShadows() && m_options.m_shadows_enabled;
 
@@ -506,7 +511,7 @@ void RenderManager::renderForward(SceneGraph* sg, Viewpoint* viewpoint)
 	RenderTarget srt(viewpoint);
 	m_passinfo.ubershader_used = m_forward;
 	m_passinfo.lighting_enabled = true;
-	m_passinfo.type = FINAL_PASS;
+	m_passinfo.type = RenderPassInfo::FINAL_PASS;
 	renderTarget(sg, srt);
 }
 
@@ -526,7 +531,7 @@ void RenderManager::renderShadowmaps(SceneGraph* sg)
 				glCullFace(GL_FRONT);
 				m_passinfo.setup_texture_matrices = true;
 				m_passinfo.ubershader_used = m_depth;
-				m_passinfo.type = CAST_SHADOW_PASS;
+				m_passinfo.type = RenderPassInfo::CAST_SHADOW_PASS;
 				renderTarget(sg, srt);
 				m_passinfo.setup_texture_matrices = false;
 				glCullFace(GL_BACK);
@@ -546,7 +551,7 @@ void RenderManager::render(double elapsed_time, SceneGraph* sg)
 	m_passinfo.setup_texture_matrices = false;
 	m_passinfo.texturing_enabled = true;
 	m_passinfo.lighting_enabled = true;
-	m_passinfo.type = FINAL_PASS;
+	m_passinfo.type = RenderPassInfo::FINAL_PASS;
 
 	testViewportResize();
 
@@ -636,7 +641,7 @@ void RenderManager::renderTarget(SceneGraph* sg, RenderTarget& target)
 			return;
 		}
 
-		if(m_defaultBackground.type == SKYBOX) {
+		if(m_defaultBackground.type == Background::SKYBOX) {
 			setupProjection(target,pass_nb);
 			glLoadIdentity();
 			applyBackground(target,pass_nb);
@@ -687,9 +692,9 @@ void RenderManager::renderTarget(SceneGraph* sg, RenderTarget& target)
 					Light* light = LIGHTING_MANAGER.managees().at(i);
 					light->sendParameters(i);
 
-					m_passinfo.ubershader_used->setParamValue(UberShaderDefine::Type(UberShaderDefine::LIGHT_OMNI_0+i),true);
-					m_passinfo.ubershader_used->setParamValue(UberShaderDefine::Type(UberShaderDefine::LIGHT_SPOT_0+i),false);
-					m_passinfo.ubershader_used->setParamValue(UberShaderDefine::Type(UberShaderDefine::LIGHT_SUN_0+i),false);
+					m_passinfo.ubershader_used->setParamValue(UberShaderDefine::Type(UberShaderDefine::LIGHT_OMNI_0+i),light->getType() == Light::OMNI);
+					m_passinfo.ubershader_used->setParamValue(UberShaderDefine::Type(UberShaderDefine::LIGHT_SPOT_0+i),light->getType() == Light::SPOT);
+					m_passinfo.ubershader_used->setParamValue(UberShaderDefine::Type(UberShaderDefine::LIGHT_SUN_0+i),light->getType() == Light::SUN);
 				}
 				else
 				{
@@ -705,9 +710,9 @@ void RenderManager::renderTarget(SceneGraph* sg, RenderTarget& target)
 			it != registeredManagees.end();
 			it++) {
 
-			if(m_passinfo.type == CAST_SHADOW_PASS && !((*it)->castsShadows()))
+			if(m_passinfo.type == RenderPassInfo::CAST_SHADOW_PASS && !((*it)->castsShadows()))
 				continue;
-			if(m_passinfo.type == RECEIVE_SHADOW_PASS && !((*it)->receivesShadows()))
+			if(m_passinfo.type == RenderPassInfo::RECEIVE_SHADOW_PASS && !((*it)->receivesShadows()))
 				continue;
 
 			glPushMatrix();
@@ -982,7 +987,8 @@ void RenderManager::applyBackground(RenderTarget& target, int projection_nb)
 
 	switch(m_defaultBackground.type)
 	{
-		case COLOR :
+		case Background::COLOR :
+		{
 			m_passinfo.ubershader_used->setParamValue(UberShaderDefine::SKY, true);
 			m_passinfo.ubershader_used->setParamValue(UberShaderDefine::COLORMAPPED, false);
 			m_passinfo.ubershader_used->use();
@@ -993,7 +999,12 @@ void RenderManager::applyBackground(RenderTarget& target, int projection_nb)
 				glDisable(GL_LIGHTING);
 				glDisable(GL_TEXTURE_2D);
 				//glColor4f(m_defaultBackground.color.r,m_defaultBackground.color.g,m_defaultBackground.color.b,1);
-				glMaterialfv(GL_FRONT_AND_BACK, GL_DIFFUSE,  m_defaultBackground.color.coords);
+				GLfloat sky_color[] = {
+					m_defaultBackground.color.r,
+					m_defaultBackground.color.g,
+					m_defaultBackground.color.b, 1.0
+				};
+				glMaterialfv(GL_FRONT_AND_BACK, GL_DIFFUSE, sky_color);
 				glBegin(GL_QUADS);
 					glVertex2f(-1,-1);
 					glVertex2f( 1,-1);
@@ -1004,12 +1015,9 @@ void RenderManager::applyBackground(RenderTarget& target, int projection_nb)
 			glPopMatrix();
 			glMatrixMode(GL_MODELVIEW);
 			break;
-/*
-			glClearColor(m_defaultBackground.color.r, m_defaultBackground.color.g, m_defaultBackground.color.b, 1.0f);
-			glClear(GL_COLOR_BUFFER_BIT);
-			break;
-*/
-		case SINGLE_TEXTURE :
+		}
+		case Background::SINGLE_TEXTURE :
+		{
 			m_passinfo.ubershader_used->setParamValue(UberShaderDefine::SKY, true);
 			m_passinfo.ubershader_used->setParamValue(UberShaderDefine::COLORMAPPED, true);
 			m_passinfo.ubershader_used->use();
@@ -1033,7 +1041,9 @@ void RenderManager::applyBackground(RenderTarget& target, int projection_nb)
 			glPopMatrix();
 			glMatrixMode(GL_MODELVIEW);
 			break;
-		case SKYBOX :
+		}
+		case Background::SKYBOX :
+		{
 			m_passinfo.ubershader_used->setParamValue(UberShaderDefine::SKY, true);
 			m_passinfo.ubershader_used->setParamValue(UberShaderDefine::COLORMAPPED, true);
 			m_passinfo.ubershader_used->use();
@@ -1103,6 +1113,7 @@ void RenderManager::applyBackground(RenderTarget& target, int projection_nb)
 				glEnable(GL_LIGHTING);
 			glPopMatrix();
 			break;
+		}
 		default :
 			break;
 	}

@@ -268,7 +268,9 @@ void GLSLShaderFactory::load(ResourceData *resource)
 	else
 		shader->m_shader = new QGLShader(QGLShader::Fragment);
 
-	bool ok = shader->m_shader->compileSourceFile(shader->m_path);
+	QString source;
+	precompile(shader->m_path,source);
+	bool ok = shader->m_shader->compileSourceCode(source);
 
 	if(ok)
 	{
@@ -318,3 +320,70 @@ void GLSLShaderFactory::parseFile(const QString &path, QList<ResourceData *> &co
 	}
 }
 
+void GLSLShaderFactory::precompile(const QString& path, QString& output) const
+{
+	bool inFor = false;
+	int forStart, forEnd;
+	QString forContent;
+	QFile file(path);
+	output.clear();
+
+	if(file.open(QIODevice::ReadOnly | QIODevice::Text))
+	{
+		QTextStream t(&file);
+		while(!t.atEnd())
+		{
+			QString line = t.readLine();
+			line = line.trimmed();
+
+			if(!line.isEmpty())
+			{
+				if(!inFor)
+				{
+					if(line.startsWith("#for"))
+					{
+						// For starts
+						QStringList strlist = line.split(QRegExp("\\s+"));
+						if(strlist.count()<3)
+						{
+							logError("Error while parsing a for " << line << "is not valid, should be #for begin end (begin and end being integers)");
+							abort();
+						}
+						forStart = strlist.at(1).toInt();
+						forEnd = strlist.at(2).toInt();
+						inFor = true;
+						forContent.clear();
+					}
+					else
+					{
+						// Regular line
+						output.append(line + "\n");
+					}
+				}
+				else
+				{
+					if(line.startsWith("#endfor"))
+					{
+						// For ends
+						inFor = false;
+
+						for(int i=forStart ; i<=forEnd ; i++)
+						{
+							QString toAdd = forContent;
+							output.append(toAdd.replace('@',QString().setNum(i)));
+						}
+					}
+					else
+					{
+						// Line inside for
+						forContent.append(line + "\n");
+					}
+				}
+			}
+		}
+	}
+	else
+	{
+		logError("Can't open the file" << path);
+	}
+}

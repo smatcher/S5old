@@ -52,8 +52,6 @@ bool spawn_duck(QStringList args)
 
 int main(int argc, char *argv[])
 {
-	bool shadow_mapping = true;
-
 	#ifdef Q_WS_X11
 		XInitThreads();
 	#endif
@@ -99,7 +97,7 @@ int main(int argc, char *argv[])
 	for(int i=0 ; i<4 ; i++) {
 		walls.push_back(new Node("Wall" + QString().setNum(i+1)));
 	}
-	for(int i=0 ; i<5 ; i++) {
+	for(int i=0 ; i<15 ; i++) {
 		balls.push_back(new Node("Ball" + QString().setNum(i+1)));
 	}
 
@@ -114,12 +112,15 @@ int main(int argc, char *argv[])
 	nHead->addProperty(new DummyUpdatable());
 	Light* light;
 
-	light = new Light(shadow_mapping);
+	light = new Light(true);
+	light->setType(Light::SPOT);
 	light->setDiffuseColor(Vector4f(0.2,1.0,0.2,1.0));
 	light->setSpecularColor(Vector4f(0.2,1.0,0.2,1.0));
+
 	nLight2->addProperty(light);
 
-	light = new Light(shadow_mapping);
+	light = new Light(true);
+	light->setType(Light::SPOT);
 	light->setDiffuseColor(Vector4f(1.0,0.2,0.2,1.0));
 	light->setSpecularColor(Vector4f(1.0,0.2,0.2,1.0));
 	nLight->addProperty(light);
@@ -227,18 +228,26 @@ int main(int argc, char *argv[])
 	prop.is_kinematic = false;
 	prop.mass = 100.0;
 	prop.restitution = 0.1;
-	bool first = true;
+	int nbDuckLight = 0;
 	//prop.shape = PhysicObject::SPHERE;
 	for(QVector<Node*>::iterator it=balls.begin() ; it != balls.end() ; it++) {
 		(*it)->addProperty(new PhysicObject(prop));
 		prop.mass += 1.0;
 		(*it)->addProperty(new MeshRenderer(mesh,duck));
-		if(first) {
-			light = new Light(shadow_mapping);
-			light->setDiffuseColor(Vector4f(0.2,0.2,1.0,1.0));
-			light->setSpecularColor(Vector4f(1.0,0.2,0.0,1.0));
+		if(nbDuckLight < 5) {
+			light = new Light(true);
+			if(nbDuckLight % 3 == 0) {
+				light->setDiffuseColor(Vector4f(0.2,0.2,1.0,1.0));
+				light->setSpecularColor(Vector4f(0.2,0.2,1.0,1.0));
+			} else if(nbDuckLight % 3 == 1) {
+				light->setDiffuseColor(Vector4f(1.0,0.2,0.2,1.0));
+				light->setSpecularColor(Vector4f(1.0,0.2,0.2,1.0));
+			} else {
+				light->setDiffuseColor(Vector4f(0.2,1.0,0.2,1.0));
+				light->setSpecularColor(Vector4f(0.2,1.0,0.2,1.0));
+			}
 			(*it)->addProperty(light);
-			first = false;
+			nbDuckLight++;
 		}
 	}
 
@@ -246,7 +255,7 @@ int main(int argc, char *argv[])
 	//RENDER_MANAGER.setCurrentCamera(static_cast<Camera*>(nCamFollow->properties().child("Camera")));
 	RENDER_MANAGER.setCurrentCamera(static_cast<Camera*>(nCamFollow->properties().child("Camera")));
 	RenderManager::Background background;
-	background.type = RenderManager::SKYBOX;
+	background.type = RenderManager::Background::SKYBOX;
 	background.color = Vector3f(1,1,0);
 	background.textures[0] = TEXTURE_MANAGER.get("stormy_front.tga");
 	background.textures[1] = TEXTURE_MANAGER.get("stormy_left.tga");

@@ -172,7 +172,7 @@ int main(int argc, char *argv[])
 
 	RENDER_MANAGER.setDrawDebug(true);
 	RenderManager::Background background;
-	background.type = RenderManager::SKYBOX;
+	background.type = RenderManager::Background::SKYBOX;
 	background.textures[0] = TEXTURE_MANAGER.get("stormy_front.tga");
 	background.textures[1] = TEXTURE_MANAGER.get("stormy_left.tga");
 	background.textures[2] = TEXTURE_MANAGER.get("stormy_back.tga");

@@ -9,18 +9,11 @@ varying vec3 normal;
 
 varying vec3 eyeVec;
 
-#ifdef LIGHT_OMNI_0
-	varying vec3 lightDir0;
-#endif
-#ifdef LIGHT_OMNI_1
-	varying vec3 lightDir1;
-#endif
-#ifdef LIGHT_OMNI_2
-	varying vec3 lightDir2;
-#endif
-#ifdef LIGHT_OMNI_3
-	varying vec3 lightDir3;
-#endif
+#for 0 7
+	#if defined LIGHT_OMNI_@ || defined LIGHT_SPOT_@ || defined LIGHT_SUN_@
+		varying vec3 lightDir@;
+	#endif
+#endfor
 
 void main()
 {
@@ -39,18 +32,11 @@ void main()
 	vec3 vVertex = vec3(gl_ModelViewMatrix * gl_Vertex);
 	eyeVec = -vVertex;
 
-	#ifdef LIGHT_OMNI_0
-		lightDir0 = vec3(gl_LightSource[0].position.xyz - vVertex);
-	#endif
-	#ifdef LIGHT_OMNI_1
-		lightDir1 = vec3(gl_LightSource[1].position.xyz - vVertex);
-	#endif
-	#ifdef LIGHT_OMNI_2
-		lightDir2 = vec3(gl_LightSource[2].position.xyz - vVertex);
-	#endif
-	#ifdef LIGHT_OMNI_3
-		lightDir3 = vec3(gl_LightSource[3].position.xyz - vVertex);
-	#endif
+	#for 0 7
+		#if defined LIGHT_OMNI_@ || defined LIGHT_SPOT_@ || defined LIGHT_SUN_@
+			lightDir@ = vec3(gl_LightSource[@].position.xyz - vVertex);
+		#endif
+	#endfor
 
 	gl_Position = ftransform();
 }

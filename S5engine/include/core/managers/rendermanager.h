@@ -37,27 +37,19 @@ class RenderManager : public Manager<IRenderable>
 
 public :
 
-	enum BackgroundType
-	{
-		NO_CLEAR,
-		COLOR,
-		SINGLE_TEXTURE,
-		SKYBOX
-	};
-
 	struct Background
 	{
-		BackgroundType type;
+		enum Type
+		{
+			NO_CLEAR,
+			COLOR,
+			SINGLE_TEXTURE,
+			SKYBOX
+		};
+
+		Background::Type type;
 		Texture textures[6];
 		Vector3f color;
-	};
-
-	enum RenderPassType
-	{
-		DEF_GEOMETRY_PASS,
-		CAST_SHADOW_PASS,
-		RECEIVE_SHADOW_PASS,
-		FINAL_PASS
 	};
 
 	enum RenderPipeline
@@ -68,8 +60,17 @@ public :
 
 	struct RenderPassInfo
 	{
+		enum Type
+		{
+			DEF_GEOMETRY_PASS,
+			DEF_LIGHTING_PASS,
+			CAST_SHADOW_PASS,
+			RECEIVE_SHADOW_PASS,
+			FINAL_PASS
+		};
+
 		const QGLWidget* context;
-		RenderPassType type;
+		Type type;
 		bool setup_texture_matrices;
 		bool background_enabled;
 		bool texturing_enabled;
