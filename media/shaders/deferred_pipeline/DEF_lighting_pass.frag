@@ -54,10 +54,5 @@ void main()
 		attenuation = 0.0;
 	#endif
 
-	#ifdef BLOOM
-		gl_FragData[0] = vec4((idiff+ispec) * attenuation * diffuse.a, 1.0);
-		gl_FragData[1] = vec4((ispec) * attenuation * diffuse.a , 1.0);
-	#else
-		gl_FragColor = vec4((idiff+ispec) * attenuation * diffuse.a, 1.0);
-	#endif
+	gl_FragColor = vec4((idiff+ispec) * attenuation * diffuse.a, 1.0);
 }

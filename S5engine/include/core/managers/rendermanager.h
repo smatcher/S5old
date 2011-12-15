@@ -152,6 +152,7 @@ private :
 	// shadowmap render textures
 	RenderTexture* m_shadowmap;
 	FrameBufferObject* m_postprocessfbo;
+	FrameBufferObject* m_lowres_postprocessfbo;
 
 	QList<RenderTarget*> m_rts;
 
@@ -175,8 +176,8 @@ private :
 	void clearTexture(RenderTexture* texture);
 	void renderTarget(SceneGraph* sg, RenderTarget& target);
 	void drawDebug(SceneGraph* sg, RenderTarget& target);
-	void postprocessPass(RenderTexture* target_texture, QList<Texture> input_textures);
-	void postprocessPass(QList< QPair<RenderTexture*, FrameBufferObject::AttachmentPoint> > target_textures, QList<Texture> input_textures);
+	void postprocessPass(RenderTexture* target_texture, QList<Texture> input_textures, bool lowres = false);
+	void postprocessPass(QList< QPair<RenderTexture*, FrameBufferObject::AttachmentPoint> > target_textures, QList<Texture> input_textures, bool lowres = false);
 	void debugDisplayTexture(Texture texture, int x, int y, int width, int height);
 	void setupProjection(RenderTarget& target, int projection_nb);
 	void applyBackground(RenderTarget& target, int projection_nb);

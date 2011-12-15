@@ -51,7 +51,8 @@ RenderManager::RenderManager() :
 	m_bloommap(NULL),
 	m_shadowmap(NULL),
 	m_colormap(NULL),
-	m_postprocessfbo(NULL)
+	m_postprocessfbo(NULL),
+	m_lowres_postprocessfbo(NULL)
 {
 	m_defaultBackground.type = Background::NO_CLEAR;
 
@@ -108,6 +109,10 @@ void RenderManager::setupProjection(RenderTarget& target, int projection_nb)
 void RenderManager::createResources()
 {
 	QSize size = m_context->size();
+	QSize halfsize = size;
+	halfsize.setHeight(size.height()/2);
+	halfsize.setWidth(size.width()/2);
+
 	// Setting up shadow textures
 	m_shadowmap = new RenderTexture2D("Shadowmap", size.height(), size.width(), GL_RGBA, GL_UNSIGNED_BYTE);
 
@@ -115,10 +120,11 @@ void RenderManager::createResources()
 	m_colormap = new RenderTexture2D("Colormap", size.height(), size.width(), GL_RGBA, GL_UNSIGNED_BYTE);
 
 	// Setting up bloom map
-	m_bloommap = new RenderTexture2D("Bloommap", size.height(), size.width(), GL_RGBA, GL_UNSIGNED_BYTE);
+	m_bloommap = new RenderTexture2D("Bloommap", halfsize.height(), halfsize.width(), GL_RGBA, GL_UNSIGNED_BYTE);
 
 	// Setting up postprocessing FBO
 	m_postprocessfbo = new FrameBufferObject(size.height(), size.width(), false, false);
+	m_lowres_postprocessfbo = new FrameBufferObject(halfsize.height(), halfsize.width(), false, false);
 
 	ShaderProgram shader = SHADER_PROGRAM_MANAGER.get("DEF_geometry_pass");
 	if(shader.isValid() && shader->isUber()) {
@@ -237,9 +243,10 @@ void RenderManager::testViewportResize()
 void RenderManager::updateResources(int new_height, int new_width)
 {
 	m_postprocessfbo->resize(new_height, new_width);
+	m_lowres_postprocessfbo->resize(new_height/2, new_width/2);
 	m_shadowmap->resize(new_height, new_width);
 	m_colormap->resize(new_height, new_width);
-	m_bloommap->resize(new_height, new_width);
+	m_bloommap->resize(new_height/2, new_width/2);
 	m_positionmap->resize(new_height, new_width);
 	m_normalmap->resize(new_height, new_width);
 	m_diffusemap->resize(new_height, new_width);
@@ -335,7 +342,6 @@ void RenderManager::renderDeferred(SceneGraph* sg, Viewpoint* viewpoint)
 	m_passinfo.type = RenderPassInfo::DEF_LIGHTING_PASS;
 	m_postprocessfbo->bind();
 	m_postprocessfbo->attachTexture(m_colormap, FrameBufferObject::COLOR_ATTACHMENT_0);
-	m_postprocessfbo->attachTexture(m_bloommap, FrameBufferObject::COLOR_ATTACHMENT_1);
 	m_postprocessfbo->commitTextures(0);
 
 	glDisable(GL_DEPTH_TEST);
@@ -443,9 +449,6 @@ void RenderManager::renderDeferred(SceneGraph* sg, Viewpoint* viewpoint)
 		m_shadowmap->swap();
 		m_postprocessfbo->clearAttachments();
 		m_postprocessfbo->attachTexture(m_colormap, FrameBufferObject::COLOR_ATTACHMENT_0);
-		if(m_options.m_bloom_enabled) {
-			m_postprocessfbo->attachTexture(m_bloommap, FrameBufferObject::COLOR_ATTACHMENT_1);
-		}
 		m_postprocessfbo->commitTextures(0);
 		m_normalmap->bind(0);
 		m_diffusemap->bind(1);
@@ -480,14 +483,15 @@ void RenderManager::renderDeferred(SceneGraph* sg, Viewpoint* viewpoint)
 	QList<Texture> input_textures;
 	if(m_options.m_bloom_enabled)
 	{
-		input_textures.push_back(*m_bloommap);
-
 		glBlendFunc(GL_ONE, GL_ZERO);
-		for(int i=0 ; i<2 ; i++) {
+		input_textures.push_back(*m_colormap);
+		for(int i=0 ; i<3 ; i++) {
 			m_passinfo.ubershader_used = m_vertical_blur;
-			postprocessPass(m_bloommap,input_textures);
+			postprocessPass(m_bloommap,input_textures,true);
 			m_passinfo.ubershader_used = m_horizontal_blur;
-			postprocessPass(m_bloommap,input_textures);
+			input_textures.clear();
+			input_textures.push_back(*m_bloommap);
+			postprocessPass(m_bloommap,input_textures,true);
 		}
 	}
 	else
@@ -503,16 +507,50 @@ void RenderManager::renderDeferred(SceneGraph* sg, Viewpoint* viewpoint)
 
 	glBlendFunc(GL_ONE, GL_ZERO);
 	glEnable(GL_DEPTH_TEST);
-
 }
 
 void RenderManager::renderForward(SceneGraph* sg, Viewpoint* viewpoint)
 {
-	RenderTarget srt(viewpoint);
+	/// Cleans
+	clearTexture(m_bloommap);
+	clearTexture(m_colormap);
+
+	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+	QList< QPair<RenderTexture*, FrameBufferObject::AttachmentPoint> > mrts;
+	mrts.push_back(QPair<RenderTexture*, FrameBufferObject::AttachmentPoint>(m_colormap, FrameBufferObject::COLOR_ATTACHMENT_0));
+	mrts.push_back(QPair<RenderTexture*, FrameBufferObject::AttachmentPoint>(m_depthmap, FrameBufferObject::DEPTH_ATTACHMENT));
+	RenderTarget srt(viewpoint, m_postprocessfbo, mrts , false, true);
 	m_passinfo.ubershader_used = m_forward;
 	m_passinfo.lighting_enabled = true;
 	m_passinfo.type = RenderPassInfo::FINAL_PASS;
 	renderTarget(sg, srt);
+
+	QList<Texture> input_textures;
+	if(m_options.m_bloom_enabled)
+	{
+		glBlendFunc(GL_ONE, GL_ZERO);
+		input_textures.push_back(*m_colormap);
+		for(int i=0 ; i<3 ; i++) {
+			m_passinfo.ubershader_used = m_vertical_blur;
+			postprocessPass(m_bloommap,input_textures,true);
+			m_passinfo.ubershader_used = m_horizontal_blur;
+			input_textures.clear();
+			input_textures.push_back(*m_bloommap);
+			postprocessPass(m_bloommap,input_textures,true);
+		}
+	}
+	else
+	{
+		input_textures.push_back(*m_bloommap);
+	}
+
+	glBlendFunc(GL_ONE, GL_ONE);
+	m_passinfo.ubershader_used = m_bloom;
+	input_textures.push_front(*m_colormap);
+	glClear(GL_COLOR_BUFFER_BIT);
+	postprocessPass(NULL,input_textures);
+
+	glBlendFunc(GL_ONE, GL_ZERO);
 }
 
 void RenderManager::renderShadowmaps(SceneGraph* sg)
@@ -791,23 +829,30 @@ void RenderManager::clearTexture(RenderTexture* texture)
 {
 	debugGL("before clean");
 
-	m_postprocessfbo->bind();
-	m_postprocessfbo->attachTexture(texture, FrameBufferObject::COLOR_ATTACHMENT_0, GL_TEXTURE_2D);
+	FrameBufferObject* fbo = m_postprocessfbo;
 
-	m_postprocessfbo->commitTextures(0);
+	if(texture == m_bloommap)
+	{
+		fbo = m_lowres_postprocessfbo;
+	}
+
+	fbo->bind();
+	fbo->attachTexture(texture, FrameBufferObject::COLOR_ATTACHMENT_0, GL_TEXTURE_2D);
+
+	fbo->commitTextures(0);
 	glClear(GL_COLOR_BUFFER_BIT);
-	m_postprocessfbo->swapTextures();
+	fbo->swapTextures();
 
-	m_postprocessfbo->commitTextures(0);
+	fbo->commitTextures(0);
 	glClear(GL_COLOR_BUFFER_BIT);
-	m_postprocessfbo->swapTextures();
+	fbo->swapTextures();
 
-	m_postprocessfbo->release();
+	fbo->release();
 
 	debugGL("after clean");
 }
 
-void RenderManager::postprocessPass(RenderTexture* target_texture, QList<Texture> input_textures)
+void RenderManager::postprocessPass(RenderTexture* target_texture, QList<Texture> input_textures, bool lowres)
 {
 	QList< QPair<RenderTexture* , FrameBufferObject::AttachmentPoint> > target_textures;
 
@@ -815,21 +860,27 @@ void RenderManager::postprocessPass(RenderTexture* target_texture, QList<Texture
 		target_textures.push_back(QPair<RenderTexture*, FrameBufferObject::AttachmentPoint>(target_texture, FrameBufferObject::COLOR_ATTACHMENT_0));
 	}
 
-	postprocessPass(target_textures, input_textures);
+	postprocessPass(target_textures, input_textures, lowres);
 }
 
-void RenderManager::postprocessPass(QList< QPair<RenderTexture* , FrameBufferObject::AttachmentPoint> > target_textures, QList<Texture> input_textures)
+void RenderManager::postprocessPass(QList< QPair<RenderTexture* , FrameBufferObject::AttachmentPoint> > target_textures, QList<Texture> input_textures, bool lowres)
 {
 	debugGL("before postprocessing");
 
+	FrameBufferObject* fbo = NULL;
+	if(lowres)
+		fbo = m_lowres_postprocessfbo;
+	else
+		fbo = m_postprocessfbo;
+
 	if(target_textures.size() > 0) {
-		m_postprocessfbo->bind();
+		fbo->bind();
 		for(int i = 0 ; i< target_textures.size() ; i++) {
-			m_postprocessfbo->attachTexture(target_textures[i].first,
+			fbo->attachTexture(target_textures[i].first,
 											target_textures[i].second,
 											GL_TEXTURE_2D);
 		}
-		m_postprocessfbo->commitTextures(0);
+		fbo->commitTextures(0);
 	}
 
 	debugGL("preparing FBO for postprocessing");
@@ -847,8 +898,8 @@ void RenderManager::postprocessPass(QList< QPair<RenderTexture* , FrameBufferObj
 	int height;
 
 	if(target_textures.size() > 0) {
-		width = m_postprocessfbo->getWidth();
-		height = m_postprocessfbo->getHeight();
+		width = fbo->getWidth();
+		height = fbo->getHeight();
 	} else {
 		QRect geom = m_context->geometry();
 		width = geom.width();
@@ -878,8 +929,8 @@ void RenderManager::postprocessPass(QList< QPair<RenderTexture* , FrameBufferObj
 	m_passinfo.ubershader_used->unset();
 
 	if(target_textures.size() > 0) {
-		m_postprocessfbo->swapTextures();
-		m_postprocessfbo->release();
+		fbo->swapTextures();
+		fbo->release();
 	}
 }
 
