@@ -98,10 +98,5 @@ void main()
 		#endfor
 	#endif //SKY
 
-	#ifdef BLOOM
-	//	gl_FragData[0] = vec4((idiff+ispec) * attenuation * diffuse.a, 1.0);
-	//	gl_FragData[1] = vec4((ispec) * attenuation * diffuse.a , 1.0);
-	#else
-		gl_FragColor = final_color;
-	#endif
+	gl_FragColor = final_color;
 }

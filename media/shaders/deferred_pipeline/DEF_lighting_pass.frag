@@ -28,7 +28,7 @@ void main()
 
 	vec3 lightvec = eyelightpos - eyepos.xyz;
 	vec3 viewvec = normalize(eyepos.rgb);
-	vec3 halfvec = normalize(lightvec + viewvec);
+	vec3 halfvec = normalize(lightvec - eyepos.rgb);
 	vec3 normal = texture2D(gbuffer_normal, screen_pos).rgb;
 	vec4 diffuse = texture2D(gbuffer_diffuse, screen_pos);	// rgb:diffuse a:sky (if 0)
 	vec4 specular = texture2D(gbuffer_specular, screen_pos); // rgb:specularity a:shininess/128.0
