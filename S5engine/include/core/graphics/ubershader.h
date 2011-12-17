@@ -144,6 +144,12 @@ public:
 	}
 	virtual ~UberShaderData() {if(m_tree!=NULL) {delete m_tree;}}
 	void setParamValue(UberShaderDefine::Type param, bool value) {m_defines[param] = value; m_current = NULL;}
+	void resetParams() {
+		for(int i=0 ; i<UberShaderDefine::NB_DEFINES ; i++) {
+			m_defines[i] = false;
+		}
+		m_current = NULL;
+	}
 	virtual bool isUber() {return true;}
 	virtual void compile() {
 		UberShaderNode* node = getCurrentNode();

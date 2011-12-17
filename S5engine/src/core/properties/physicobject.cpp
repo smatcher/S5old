@@ -93,7 +93,8 @@ void PhysicObject::onLinked(PropertySet*)
 	}
 	if(mass)
 	{
-		m_shape->calculateLocalInertia( mass, localInertia );
+		if(m_shape)
+			m_shape->calculateLocalInertia( mass, localInertia );
 	}
 
 	btRigidBody::btRigidBodyConstructionInfo myBoxInfo(mass, this, m_shape, localInertia);

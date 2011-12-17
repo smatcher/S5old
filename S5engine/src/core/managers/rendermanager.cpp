@@ -329,6 +329,7 @@ void RenderManager::renderDeferred(SceneGraph* sg, Viewpoint* viewpoint)
 	RenderTarget srt(viewpoint, m_postprocessfbo, mrts , false, true);
 	debug("PASS_INFO","geom pass");
 	m_passinfo.ubershader_used = m_deferred_geometry;
+	m_passinfo.ubershader_used->resetParams();
 	m_passinfo.lighting_enabled = false;
 	m_passinfo.type = RenderPassInfo::DEF_GEOMETRY_PASS;
 	glBlendFunc(GL_ONE, GL_ZERO);
@@ -338,7 +339,7 @@ void RenderManager::renderDeferred(SceneGraph* sg, Viewpoint* viewpoint)
 	/// Second pass - lighting postprocess
 	//// Modulate ambient
 	m_passinfo.ubershader_used = m_deferred_ambient;
-	m_passinfo.ubershader_used->setParamValue(UberShaderDefine::BLOOM, true);
+	m_passinfo.ubershader_used->resetParams();
 	m_passinfo.type = RenderPassInfo::DEF_LIGHTING_PASS;
 	m_postprocessfbo->bind();
 	m_postprocessfbo->attachTexture(m_colormap, FrameBufferObject::COLOR_ATTACHMENT_0);
@@ -380,6 +381,7 @@ void RenderManager::renderDeferred(SceneGraph* sg, Viewpoint* viewpoint)
 */
 	//// For each light => light
 	m_passinfo.ubershader_used = m_deferred_lighting;
+	m_passinfo.ubershader_used->resetParams();
 	m_passinfo.ubershader_used->setParamValue(UberShaderDefine::BLOOM, m_options.m_bloom_enabled);
 /*
 	input_textures.push_front(*m_normalmap);
@@ -521,6 +523,7 @@ void RenderManager::renderForward(SceneGraph* sg, Viewpoint* viewpoint)
 	mrts.push_back(QPair<RenderTexture*, FrameBufferObject::AttachmentPoint>(m_depthmap, FrameBufferObject::DEPTH_ATTACHMENT));
 	RenderTarget srt(viewpoint, m_postprocessfbo, mrts , false, true);
 	m_passinfo.ubershader_used = m_forward;
+	m_passinfo.ubershader_used->resetParams();
 	m_passinfo.lighting_enabled = true;
 	m_passinfo.type = RenderPassInfo::FINAL_PASS;
 	renderTarget(sg, srt);
@@ -551,6 +554,7 @@ void RenderManager::renderForward(SceneGraph* sg, Viewpoint* viewpoint)
 	postprocessPass(NULL,input_textures);
 
 	glBlendFunc(GL_ONE, GL_ZERO);
+	glEnable(GL_DEPTH_TEST);
 }
 
 void RenderManager::renderShadowmaps(SceneGraph* sg)

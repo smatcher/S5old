@@ -1,7 +1,7 @@
 <material>
 	<diffuse>1.0 1.0 1.0 1.0</diffuse>
 	<specular>1.0 1.0 1.0 1.0</specular>
-	<ambient>0.3 0.3 0.3 1.0</ambient>
+	<ambient>1.0 1.0 1.0 1.0</ambient>
 	<emission>0.0 0.0 0.0 1.0</emission>
 	<shininess>30.0</shininess>
 </material>

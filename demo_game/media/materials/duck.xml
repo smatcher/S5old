@@ -4,5 +4,5 @@
 	<specular>0.3 0.3 0.3 1.0</specular>
 	<ambient>0.5 0.5 0.5 1.0</ambient>
 	<emission>0.0 0.0 0.0 1.0</emission>
-	<shininess>0.1</shininess>
+	<shininess>30</shininess>
 </material>
