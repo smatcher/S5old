@@ -111,6 +111,9 @@ void GLSLUberShader::use()
 		if(m_current->m_texunits[UberShaderTextureType::NORMAL_MAP] >= 0)
 			_program->setUniformValue("normalmap",m_current->m_texunits[UberShaderTextureType::NORMAL_MAP]);
 
+		if(m_current->m_texunits[UberShaderTextureType::SPECULAR_MAP] >= 0)
+			_program->setUniformValue("specularmap",m_current->m_texunits[UberShaderTextureType::SPECULAR_MAP]);
+
 		if(m_current->m_texunits[UberShaderTextureType::SPLATTING] >= 0)
 			_program->setUniformValue("spatting",m_current->m_texunits[UberShaderTextureType::SPLATTING]);
 

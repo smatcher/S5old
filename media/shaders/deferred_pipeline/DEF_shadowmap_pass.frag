@@ -1,4 +1,9 @@
-uniform sampler2D eye_depth, light_depth0, light_depth1, light_depth2, light_depth3, light_depth4, light_depth5;
+uniform sampler2D eye_depth, light_depth0;
+
+#ifdef LIGHT_OMNI
+	uniform sampler2D light_depth1, light_depth2, light_depth3, light_depth4, light_depth5;
+#endif
+
 uniform mat4 inverse_projection;
 uniform mat4 inverse_modelview;
 varying vec2 screen_pos;
@@ -17,6 +22,7 @@ void main()
 	shadowcoord0.xyz = shadowcoord0.xyz/shadowcoord0.w;
 	shadowcoord0.z += 0.0005;
 
+#ifdef LIGHT_OMNI
 	vec4 shadowcoord1 = gl_TextureMatrix[2] * worldpos;
 	shadowcoord1.xyz = shadowcoord1.xyz/shadowcoord1.w;
 	shadowcoord1.z += 0.0005;
@@ -36,6 +42,7 @@ void main()
 	vec4 shadowcoord5 = gl_TextureMatrix[6] * worldpos;
 	shadowcoord5.xyz = shadowcoord5.xyz/shadowcoord5.w;
 	shadowcoord5.z += 0.0005;
+#endif
 
 	float sampdtl = texture2D(light_depth0, shadowcoord0.st).z;
 	float fragdtl = shadowcoord0.z;
@@ -47,6 +54,7 @@ void main()
 				&& shadowcoord0.t <= 1.0
 				&& sampdtl > fragdtl);
 
+#ifdef LIGHT_OMNI
 	sampdtl = texture2D(light_depth1, shadowcoord1.st).z;
 	fragdtl = shadowcoord1.z;
 	lit += float(
@@ -96,6 +104,7 @@ void main()
 		&& shadowcoord5.t >= 0.0
 		&& shadowcoord5.t <= 1.0
 		&& sampdtl > fragdtl);
+#endif
 
 	lit = clamp(lit, 0.0, 1.0);
 	gl_FragColor = vec4(lit,lit,lit,1.0);

@@ -793,6 +793,9 @@ void RenderManager::drawDebug(SceneGraph* sg, RenderTarget& target)
 
 	target.bind();
 
+	glClear(GL_DEPTH_BUFFER_BIT);
+
+
 	for(int pass_nb=0 ; pass_nb<target.getNbPass() ; pass_nb++) {
 
 		target.setupPass(pass_nb);

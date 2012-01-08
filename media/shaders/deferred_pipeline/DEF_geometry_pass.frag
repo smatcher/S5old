@@ -16,13 +16,17 @@
 	uniform sampler2D normalmap;
 #endif
 
+#ifdef SPECULAR_MAP
+	uniform sampler2D specularmap;
+#endif
+
 varying vec3 normal;
 
 void main()
 {
 	#ifdef NORMAL_MAP
 		vec3 eyespacenormal = vec3(1.0,1.0,1.0);
-    	vec3 tanspacenormal = texture2D(normalmap, gl_TexCoord[0].st).rgb * 2.0 - 1.0;
+		vec3 tanspacenormal = texture2D(normalmap, gl_TexCoord[0].st).rgb * 2.0 - 1.0;
 		eyespacenormal =  tanspacenormal.x * eyetangent;
 		eyespacenormal += tanspacenormal.y * eyebitangent;
 		eyespacenormal += tanspacenormal.z * normal;
@@ -61,4 +65,8 @@ void main()
 	#endif
 	gl_FragData[2] = gl_FrontMaterial.specular;
 	gl_FragData[2].a = gl_FrontMaterial.shininess/128.0;
+	#ifdef SPECULAR_MAP
+		vec4 specMap = texture2D(specularmap, gl_TexCoord[0].st);
+		gl_FragData[2] *= gl_FrontMaterial.specular * specMap;
+	#endif
 }

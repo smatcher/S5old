@@ -21,6 +21,7 @@ public:
 	virtual bool castsShadows(unsigned int layer) = 0;
 	virtual bool usesColorMap(unsigned int layer) = 0;
 	virtual bool usesNormalMap(unsigned int layer) = 0;
+	virtual bool usesSpecularMap(unsigned int layer) = 0;
 };
 
 class Material : public ResourceHandle<MaterialData>

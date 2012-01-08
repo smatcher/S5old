@@ -29,10 +29,14 @@ private:
 	float m_constant_attenuation;
 	float m_linear_attenuation;
 	float m_quadratic_attenuation;
+	float m_cos_spot_cutoff;
+	float m_spot_cutoff;
 	Vector4f m_diffuse_color;
 	Vector4f m_specular_color;
 
 	Type m_type;
+
+	void computeLightFrustum(Matrix4d& mat) const;
 
 public:
 	Light(bool casts_shadows = false);
@@ -53,6 +57,8 @@ public:
 
 	void setType(Type type);
 	Type getType();
+
+	void setSpotCutoff(float degAngle);
 
 	bool castsShadows();
 	RenderTexture* getRenderTexture();

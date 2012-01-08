@@ -71,7 +71,7 @@ void ResourceManager<Resource, Handle>::parseDir(const QString& path, bool recur
 			}
 			else
 			{
-				logError( "Resource named " << (*it2)->name() << " discarded because an other resource add the same name" );
+				logError( "Resource named " << (*it2)->name() << " discarded because an other resource had the same name" );
 			}
 		}
 	}

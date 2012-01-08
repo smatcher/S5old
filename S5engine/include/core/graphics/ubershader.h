@@ -13,6 +13,7 @@ namespace UberShaderDefine
 		SKINNED = 0,
 		COLORMAPPED,
 		NORMALMAPPED,
+		SPECULARMAPPED,
 		LIGHT_OMNI,
 		LIGHT_OMNI_0,
 		LIGHT_OMNI_1,
@@ -54,6 +55,7 @@ namespace UberShaderDefine
 		"SKINNED",
 		"COLOR_MAP",
 		"NORMAL_MAP",
+		"SPECULAR_MAP",
 		"LIGHT_OMNI",
 		"LIGHT_OMNI_0",
 		"LIGHT_OMNI_1",
@@ -101,6 +103,7 @@ namespace UberShaderTextureType
 	{
 		COLOR_MAP = 0,
 		NORMAL_MAP,
+		SPECULAR_MAP,
 		SPLATTING,
 		SPLATTING_R,
 		SPLATTING_G,
@@ -113,6 +116,7 @@ namespace UberShaderTextureType
 	{
 		"COLOR_MAP",
 		"NORMAL_MAP",
+		"SPECULAR_MAP",
 		"SPLATTING",
 		"SPLATTING_R",
 		"SPLATTING_G",
@@ -215,12 +219,13 @@ protected:
 	void buildTexunitsList(int* texunits) {
 		int texunit = 0;
 
-		texunits[UberShaderTextureType::COLOR_MAP]   = m_defines[UberShaderDefine::COLORMAPPED] ? texunit++ : -1;
-		texunits[UberShaderTextureType::NORMAL_MAP]  = m_defines[UberShaderDefine::NORMALMAPPED] ? texunit++ : -1;
-		texunits[UberShaderTextureType::SPLATTING]   = m_defines[UberShaderDefine::SPLATTING] ? texunit++ : -1;
-		texunits[UberShaderTextureType::SPLATTING_R] = m_defines[UberShaderDefine::SPLATTING] ? texunit++ : -1;
-		texunits[UberShaderTextureType::SPLATTING_G] = m_defines[UberShaderDefine::SPLATTING] ? texunit++ : -1;
-		texunits[UberShaderTextureType::SPLATTING_B] = m_defines[UberShaderDefine::SPLATTING] ? texunit++ : -1;
+		texunits[UberShaderTextureType::COLOR_MAP]    = m_defines[UberShaderDefine::COLORMAPPED]    ? texunit++ : -1;
+		texunits[UberShaderTextureType::NORMAL_MAP]   = m_defines[UberShaderDefine::NORMALMAPPED]   ? texunit++ : -1;
+		texunits[UberShaderTextureType::SPECULAR_MAP] = m_defines[UberShaderDefine::SPECULARMAPPED] ? texunit++ : -1;
+		texunits[UberShaderTextureType::SPLATTING]    = m_defines[UberShaderDefine::SPLATTING]      ? texunit++ : -1;
+		texunits[UberShaderTextureType::SPLATTING_R]  = m_defines[UberShaderDefine::SPLATTING]      ? texunit++ : -1;
+		texunits[UberShaderTextureType::SPLATTING_G]  = m_defines[UberShaderDefine::SPLATTING]      ? texunit++ : -1;
+		texunits[UberShaderTextureType::SPLATTING_B]  = m_defines[UberShaderDefine::SPLATTING]      ? texunit++ : -1;
 	}
 
 	UberShaderNode* getCurrentNode(int param_read = 0, UberShaderNode* current_branch = NULL) {

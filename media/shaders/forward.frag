@@ -16,6 +16,10 @@
 	uniform sampler2D normalmap;
 #endif
 
+#ifdef SPECULAR_MAP
+	uniform sampler2D specularmap;
+#endif
+
 uniform vec3 scene_ambient;
 varying vec3 normal;
 
@@ -70,12 +74,20 @@ void main()
 	#else
 		vec4 final_color = vec4(scene_ambient,1.0) * diffuse;
 
+		vec3 matSpec = gl_FrontMaterial.specular.rgb;
+		float matShininess = gl_FrontMaterial.shininess;
+		#ifdef SPECULAR_MAP
+			vec4 specMap = texture2D(specularmap, gl_TexCoord[0].st);
+			matSpec *= specMap.rgb;
+			matShininess *= specMap.a;
+		#endif
+
 		vec3 E = normalize(eyeVec);
 		#for 0 7
 			#if defined LIGHT_OMNI_@ || defined LIGHT_SPOT_@ || defined LIGHT_SUN_@
 			{
 				vec3 L@ = normalize(lightDir@);
-				vec3 HalfVec@ = normalize(lightDir@ + eyeVec);
+				vec3 HalfVec@ = normalize(L@ + E);
 
 				float dist@ = length(lightDir@);
 				float attenuation@ = 1.0/ (
@@ -86,12 +98,12 @@ void main()
 
 				#ifdef LIGHT_SPOT_@
 					float spotAngle@ = dot(L@,normalize(gl_LightSource[@].spotDirection));
-					if(spotAngle@ < gl_LightSource[@].spotCosCutoff)
+					if(spotAngle@ < gl_LightSource[@].spotCutoff)
 						attenuation@ = 0.0;
 				#endif
 
 				vec3 idiff@ = clamp(dot(L@, N) * gl_LightSource[@].diffuse.rgb * diffuse.rgb, 0.0, 1.0);
-				vec3 ispec@ = pow(clamp(dot(HalfVec@,N),0.0,1.0),gl_FrontMaterial.shininess) * gl_LightSource[@].specular.rgb * gl_FrontMaterial.specular.rgb;
+				vec3 ispec@ = pow(clamp(dot(HalfVec@,N),0.0,1.0),matShininess) * gl_LightSource[@].specular.rgb * matSpec;
 				final_color.rgb += (idiff@+ispec@) * attenuation@;
 			}
 			#endif

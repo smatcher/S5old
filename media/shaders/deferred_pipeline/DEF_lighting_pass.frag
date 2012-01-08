@@ -28,7 +28,6 @@ void main()
 
 	vec3 lightvec = eyelightpos - eyepos.xyz;
 	vec3 viewvec = normalize(eyepos.rgb);
-	vec3 halfvec = normalize(lightvec - eyepos.rgb);
 	vec3 normal = texture2D(gbuffer_normal, screen_pos).rgb;
 	vec4 diffuse = texture2D(gbuffer_diffuse, screen_pos);	// rgb:diffuse a:sky (if 0)
 	vec4 specular = texture2D(gbuffer_specular, screen_pos); // rgb:specularity a:shininess/128.0
@@ -45,12 +44,13 @@ void main()
 	#endif
 
 	lightvec = normalize(lightvec);
+	vec3 halfvec = normalize(lightvec - viewvec);
 	vec3 idiff = clamp(dot(lightvec, normal) * gl_LightSource[0].diffuse.rgb * diffuse.rgb, 0.0, 1.0);
 	vec3 ispec = pow(clamp(dot(halfvec,normal),0.0,1.0),128.0*specular.a) * gl_LightSource[0].specular.rgb * specular.rgb;
 
 	#ifdef LIGHT_SPOT
 	float spotAngle = dot(lightvec,eyespotdir);
-	if(spotAngle < gl_LightSource[0].spotCosCutoff)
+	if(spotAngle < gl_LightSource[0].spotCutoff)
 		attenuation = 0.0;
 	#endif
 

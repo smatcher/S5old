@@ -43,6 +43,7 @@ void XmlMaterial::apply(unsigned int layer)
 	UberShader shader = RENDER_MANAGER.getRenderPassInfo()->ubershader_used;
 	shader->setParamValue(UberShaderDefine::COLORMAPPED, target->m_colormap.isValid());
 	shader->setParamValue(UberShaderDefine::NORMALMAPPED, target->m_normalmap.isValid());
+	shader->setParamValue(UberShaderDefine::SPECULARMAPPED, target->m_specularmap.isValid());
 	shader->setParamValue(UberShaderDefine::SPLATTING, target->m_splattingmap.isValid());
 	// Bind UberShader
 	shader->use();
@@ -54,6 +55,10 @@ void XmlMaterial::apply(unsigned int layer)
 
 	if(target->m_normalmap.isValid()) {
 		target->m_normalmap->bind(shader->getTexUnit(UberShaderTextureType::NORMAL_MAP));
+	}
+
+	if(target->m_specularmap.isValid()) {
+		target->m_specularmap->bind(shader->getTexUnit(UberShaderTextureType::SPECULAR_MAP));
 	}
 
 	if(target->m_splattingmap.isValid()) {
@@ -92,6 +97,10 @@ void XmlMaterial::unset(unsigned int layer)
 
 	if(target->m_normalmap.isValid()) {
 		target->m_normalmap->release(shader->getTexUnit(UberShaderTextureType::NORMAL_MAP));
+	}
+
+	if(target->m_specularmap.isValid()) {
+		target->m_specularmap->release(shader->getTexUnit(UberShaderTextureType::SPECULAR_MAP));
 	}
 
 	if(target->m_splattingmap.isValid()) {
@@ -215,6 +224,8 @@ void XmlMaterialFactory::parseTag(const QString& tag, QDomNode* node, XmlMateria
 				target->m_colormap = tex;
 			} else if(type == "normalmap") {
 				target->m_normalmap = tex;
+			} else if(type == "specularmap") {
+				target->m_specularmap = tex;
 			} else if(type == "splatting") {
 				target->m_splattingmap = tex;
 			} else if(type == "splat_R") {
@@ -225,7 +236,7 @@ void XmlMaterialFactory::parseTag(const QString& tag, QDomNode* node, XmlMateria
 				target->m_splatting_blue = tex;
 			} else {
 				logError("texture tag line "<< node->lineNumber() << "in file" << xmlresource->m_path << "misses the attribute type or has a wrong type");
-				logInfo("valid texture types are colormap and normalmap");
+				logInfo("valid texture types are colormap, normalmap, specularmap, splatting");
 			}
 		}
 		else
@@ -422,4 +433,17 @@ bool XmlMaterial::usesNormalMap(unsigned int layer)
 	}
 	return target->m_normalmap.isValid();
 }
+
+bool XmlMaterial::usesSpecularMap(unsigned int layer)
+{
+	MaterialAttributes* target;
+
+	if(m_layers.size() <= layer) {
+		target = &m_default_attributes;
+	} else {
+		target = &m_layers[layer];
+	}
+	return target->m_specularmap.isValid();
+}
+
 
