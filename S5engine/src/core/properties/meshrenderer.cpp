@@ -77,7 +77,7 @@ bool MeshRenderer::isTransparent()
 {
 	bool ret = false;
 
-	if(m_material.isValid())
+	if(m_material.isValid() && m_mesh.isValid())
 	{
 		for(unsigned int i=0 ; i<m_mesh->nbSubmeshes() ; i++) {
 			if(m_material->isTransparent(i)) {
@@ -94,7 +94,7 @@ bool MeshRenderer::receivesShadows()
 {
 	bool ret = false;
 
-	if(m_material.isValid())
+	if(m_material.isValid() && m_mesh.isValid())
 	{
 		for(unsigned int i=0 ; i<m_mesh->nbSubmeshes() ; i++) {
 			if(m_material->receivesShadows(i)) {
@@ -111,7 +111,7 @@ bool MeshRenderer::castsShadows()
 {
 	bool ret = false;
 
-	if(m_material.isValid())
+	if(m_material.isValid() && m_mesh.isValid())
 	{
 		for(unsigned int i=0 ; i<m_mesh->nbSubmeshes() ; i++) {
 			if(m_material->castsShadows(i)) {

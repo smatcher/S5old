@@ -64,6 +64,9 @@ private:
 	BoundingVolume* m_boundingVolume;
 	const aiScene* m_scene;
 
+	// Loading infos
+	QVector<QString> m_file_nodes;
+	bool m_insidelib;
 
 public :
 	AssimpMesh(const QString& name, const QString& path, IResourceFactory* factory);
@@ -85,6 +88,11 @@ public :
 	#endif
 
 	virtual Skeleton* getSkeleton();
+
+	void setInsideLib(bool inside);
+	bool isInsideLib();
+	void addSubmeshNode(QString node);
+	const QVector<QString>& getSubmeshNodes();
 };
 
 

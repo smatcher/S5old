@@ -15,6 +15,7 @@ AssimpMesh::AssimpMesh(const QString& name, const QString& path, IResourceFactor
 	m_boundingVolume(NULL)
 {
 	m_state = STATE_UNLOADED;
+	m_insidelib = false;
 }
 
 
@@ -583,6 +584,26 @@ const BoundingVolume* AssimpMesh::getBoundingVolume()
 Skeleton* AssimpMesh::getSkeleton()
 {
 	return m_skeleton;
+}
+
+void AssimpMesh::setInsideLib(bool inside)
+{
+	m_insidelib = inside;
+}
+
+bool AssimpMesh::isInsideLib()
+{
+	return m_insidelib;
+}
+
+void AssimpMesh::addSubmeshNode(QString node)
+{
+	m_file_nodes.push_back(node);
+}
+
+const QVector<QString>& AssimpMesh::getSubmeshNodes()
+{
+	return m_file_nodes;
 }
 
 #ifdef WITH_TOOLS

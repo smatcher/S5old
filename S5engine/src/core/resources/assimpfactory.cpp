@@ -11,10 +11,11 @@
 
 #include <QVector>
 #include <QMap>
+#include <QtXml>
 
 #include <core/managers/physicsmanager.h>
 
-void AssimpFactory::buildSubMeshes(QVector<AssimpMesh::Submesh*>& submeshes, const aiNode* node, const aiScene* scene, Transformf parent_transform)
+void AssimpFactory::buildSubMeshes(QVector<AssimpMesh::Submesh*>& submeshes, const aiNode* node, const aiScene* scene, QVector<QString> wanted, Transformf parent_transform)
 {
 	aiVector3D scaling;
 	aiQuaternion rotation;
@@ -26,13 +27,22 @@ void AssimpFactory::buildSubMeshes(QVector<AssimpMesh::Submesh*>& submeshes, con
 
 	Transformf transform = parent_transform * Transformf(_rotation, _position, _scaling);
 
-	for(int i=0 ; i<node->mNumMeshes ; i++) {
-		const aiMesh* aimesh = scene->mMeshes[node->mMeshes[i]];
-		submeshes.push_back(new AssimpMesh::Submesh(aimesh,transform));
+	bool filtered = false;
+	if(wanted.size() == 0 || wanted.contains(QString(node->mName.data)))
+	{
+		for(int i=0 ; i<node->mNumMeshes ; i++) {
+			const aiMesh* aimesh = scene->mMeshes[node->mMeshes[i]];
+			submeshes.push_back(new AssimpMesh::Submesh(aimesh,transform));
+		}
+
+		filtered = true;
 	}
 
 	for(int i=0 ; i<node->mNumChildren ; i++) {
-		buildSubMeshes(submeshes, node->mChildren[i], scene, transform);
+		if(filtered)
+			buildSubMeshes(submeshes, node->mChildren[i], scene, QVector<QString>(), transform);
+		else
+			buildSubMeshes(submeshes, node->mChildren[i], scene, wanted, Transformf());
 	}
 }
 
@@ -48,7 +58,10 @@ void AssimpFactory::load(ResourceData* resource)
 		if(scene != NULL)
 		{
 			// Build submeshes
-			buildSubMeshes(meshresource->m_submeshes, scene->mRootNode , scene);
+			if(meshresource->isInsideLib())
+				buildSubMeshes(meshresource->m_submeshes, scene->mRootNode, scene, QVector<QString>(meshresource->getSubmeshNodes()));
+			else
+				buildSubMeshes(meshresource->m_submeshes, scene->mRootNode , scene);
 
 			// Link bones
 			for(unsigned i=0 ; i<scene->mNumMeshes ; i++)
@@ -142,18 +155,19 @@ void AssimpFactory::parseFile(const QString& path, QList<ResourceData*>& content
 {
 	QDir dir(path);
 	QString name = dir.dirName();
+	QString meta_path = path+".meta";
 
 	// Chop extension
 	int id = name.lastIndexOf(".");
-	if(id > 1)
+	if(id >= 1)
 	{
-		QString extension = name.right(id).toLower();
+		QString extension = name.mid(id+1).toLower();
 		if(extension != "x"
 		&& extension != "blend"
 		&& extension != "dae") {
-			name.chop(name.length() - id);
-		} else {
 			return; // Not an assimp model
+		} else {
+			name.chop(name.length() - id);
 		}
 	} else {
 		return; // No extension
@@ -162,9 +176,16 @@ void AssimpFactory::parseFile(const QString& path, QList<ResourceData*>& content
 	dir.cdUp();
 	if(dir.exists())
 	{
-		debug( "RESOURCE PARSING" , "AssimpMesh found " << name);
-		AssimpMesh* mesh = new AssimpMesh(name,path,this);
-		content.push_back(mesh);
+		if(QFile(meta_path).exists())
+		{
+			parseMetaFile(meta_path, path, content);
+		}
+		else
+		{
+			debug( "RESOURCE PARSING" , "AssimpMesh found " << name);
+			AssimpMesh* mesh = new AssimpMesh(name,path,this);
+			content.push_back(mesh);
+		}
 	}
 	else
 	{
@@ -232,4 +253,69 @@ Skeleton* AssimpFactory::buildSkeleton(aiNode* node)
 	buildBone(&ret->m_root_bone,node);
 	ret->computeInversedGlobalPoses();
 	return ret;
+}
+
+void AssimpFactory::parseMetaFile(QString meta_path, QString path, QList<ResourceData*>& content)
+{
+	QFile file(meta_path);
+
+	if(!file.open(QIODevice::ReadOnly | QIODevice::Text))
+	{
+		logWarn("AssimpFactory : Can't open file" << meta_path);
+		return;
+	}
+
+	QDomDocument doc;
+	QString errorMsg;
+	int errorLine;
+	int errorColumn;
+	if(!doc.setContent(&file,NULL,&errorMsg,&errorLine,&errorColumn))
+	{
+		logWarn("AssimpFactory : Can't parse file" << meta_path << " " << errorMsg << "at line" << errorLine);
+		return;
+	}
+
+	QDomNodeList models = doc.elementsByTagName("model");
+
+	if(models.length() < 1)
+	{
+		logWarn("AssimpFactory : No model tag in file" << meta_path);
+		return;
+	}
+
+	for(int i=0 ; i<models.size() ; i++)
+	{
+		QDomNode model_node = models.at(i);
+		QDomNode name_attribute = model_node.attributes().namedItem("name");
+
+		if(name_attribute.isNull())
+		{
+			continue;
+		}
+
+		QString name = name_attribute.nodeValue();
+
+		debug( "RESOURCE PARSING" , "AssimpMesh found " << name);
+		AssimpMesh* mesh = new AssimpMesh(name,path,this);
+		mesh->setInsideLib(true);
+		content.push_back(mesh);
+
+		QDomNodeList nodes = model_node.childNodes();
+		// Parse submeshes
+		for(int j=0 ; j < nodes.length() ; j++)
+		{
+			QDomNode node = nodes.at(j);
+			QString tag = node.nodeName();
+
+			if(tag == "submesh") {
+				QDomNode node_attribute = node.attributes().namedItem("node"); //Node name in the Assimp file
+				if(node_attribute.isNull())
+				{
+					continue;
+				}
+
+				mesh->addSubmeshNode(node_attribute.nodeValue());
+			}
+		}
+	}
 }

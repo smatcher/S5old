@@ -25,7 +25,9 @@ private:
 
 	QString findMeshName(unsigned int meshNumber, aiNode* node);
 	aiNode* findBone(QString name, aiNode* node);
-	void buildSubMeshes(QVector<AssimpMesh::Submesh*>& submeshes, const aiNode* node, const aiScene* scene, Transformf parent_transform = Transformf());
+	void buildSubMeshes(QVector<AssimpMesh::Submesh*>& submeshes, const aiNode* node, const aiScene* scene, QVector<QString> wanted = QVector<QString>(), Transformf parent_transform = Transformf());
+
+	void parseMetaFile(QString meta_path, QString path, QList<ResourceData*>& content);
 };
 
 #endif // ASSIMPFACTORY_H
