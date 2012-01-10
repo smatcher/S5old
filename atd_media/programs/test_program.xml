@@ -1,0 +1,6 @@
+<program>
+	<shader type="vertex" source="glsl/test.vert"/>
+	<shader type="fragment" source="glsl/test.frag"/>
+	<uniform name="color" value="0.0 0.0 1.0 1.0" type="float" behavior="constant"/>
+	<!--uniform name="t" value="1.0" type="float" behavior="time_factor"/-->
+</program>

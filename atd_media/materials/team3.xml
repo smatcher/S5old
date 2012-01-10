@@ -1,0 +1,10 @@
+<material name="suzanne">
+	<texture texunit="0">team3.tga</texture>
+	<basic>
+		<ambient>0 0 0 1</ambient>
+		<diffuse>0 0 0 1</diffuse>
+		<specular>0 0 0 1</specular>
+		<emission>1 1 1 1</emission>
+		<shininess>1</shininess>
+	</basic>
+</material>

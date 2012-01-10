@@ -1,0 +1,44 @@
+<document>
+	<model name="bat1">
+		<submesh node="bat1"/>
+	</model>
+	<model name="bat2">
+		<submesh node="bat2"/>
+	</model>
+	<model name="bat3">
+		<submesh node="bat3"/>
+	</model>
+	<model name="bat4">
+		<submesh node="bat4"/>
+	</model>
+	<model name="bat5">
+		<submesh node="bat5"/>
+	</model>
+	<model name="bat6">
+		<submesh node="bat6"/>
+	</model>
+	<model name="office1">
+		<submesh node="office1"/>
+	</model>
+	<model name="office2">
+		<submesh node="office2"/>
+	</model>
+	<model name="office3">
+		<submesh node="office3"/>
+	</model>
+	<model name="office4">
+		<submesh node="office4"/>
+	</model>
+	<model name="office5">
+		<submesh node="office5"/>
+	</model>
+	<model name="office6">
+		<submesh node="office6"/>
+	</model>
+	<model name="sol">
+		<submesh node="sol"/>
+	</model>
+	<model name="tiles">
+		<submesh node="sol"/>
+	</model>
+</document>

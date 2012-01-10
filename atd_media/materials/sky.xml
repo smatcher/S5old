@@ -1,0 +1,3 @@
+<material name="suzanne">
+	<texture type="colormap">sky.tga</texture>
+</material>

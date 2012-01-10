@@ -1,0 +1,23 @@
+K 25
+svn:wc:ra_dav:version-url
+V 41
+/codinsa/!svn/ver/51/trunk/media/programs
+END
+test_program.xml
+K 25
+svn:wc:ra_dav:version-url
+V 58
+/codinsa/!svn/ver/51/trunk/media/programs/test_program.xml
+END
+fur.xml
+K 25
+svn:wc:ra_dav:version-url
+V 49
+/codinsa/!svn/ver/51/trunk/media/programs/fur.xml
+END
+bump_mapping.xml
+K 25
+svn:wc:ra_dav:version-url
+V 58
+/codinsa/!svn/ver/51/trunk/media/programs/bump_mapping.xml
+END

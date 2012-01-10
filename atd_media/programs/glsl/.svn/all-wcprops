@@ -1,0 +1,149 @@
+K 25
+svn:wc:ra_dav:version-url
+V 46
+/codinsa/!svn/ver/51/trunk/media/programs/glsl
+END
+shadow_mapping.vert
+K 25
+svn:wc:ra_dav:version-url
+V 66
+/codinsa/!svn/ver/51/trunk/media/programs/glsl/shadow_mapping.vert
+END
+blur.frag
+K 25
+svn:wc:ra_dav:version-url
+V 56
+/codinsa/!svn/ver/51/trunk/media/programs/glsl/blur.frag
+END
+blur.vert
+K 25
+svn:wc:ra_dav:version-url
+V 56
+/codinsa/!svn/ver/51/trunk/media/programs/glsl/blur.vert
+END
+shadow_mapping_self.frag
+K 25
+svn:wc:ra_dav:version-url
+V 71
+/codinsa/!svn/ver/51/trunk/media/programs/glsl/shadow_mapping_self.frag
+END
+shadow_mapping_self.vert
+K 25
+svn:wc:ra_dav:version-url
+V 71
+/codinsa/!svn/ver/51/trunk/media/programs/glsl/shadow_mapping_self.vert
+END
+bump_mapping.frag
+K 25
+svn:wc:ra_dav:version-url
+V 64
+/codinsa/!svn/ver/51/trunk/media/programs/glsl/bump_mapping.frag
+END
+pssm_first_pass.frag
+K 25
+svn:wc:ra_dav:version-url
+V 67
+/codinsa/!svn/ver/51/trunk/media/programs/glsl/pssm_first_pass.frag
+END
+parallax_mapping.frag
+K 25
+svn:wc:ra_dav:version-url
+V 68
+/codinsa/!svn/ver/51/trunk/media/programs/glsl/parallax_mapping.frag
+END
+bump_mapping.vert
+K 25
+svn:wc:ra_dav:version-url
+V 64
+/codinsa/!svn/ver/51/trunk/media/programs/glsl/bump_mapping.vert
+END
+test.frag
+K 25
+svn:wc:ra_dav:version-url
+V 56
+/codinsa/!svn/ver/51/trunk/media/programs/glsl/test.frag
+END
+pssm_first_pass.vert
+K 25
+svn:wc:ra_dav:version-url
+V 67
+/codinsa/!svn/ver/51/trunk/media/programs/glsl/pssm_first_pass.vert
+END
+parallax_mapping.vert
+K 25
+svn:wc:ra_dav:version-url
+V 68
+/codinsa/!svn/ver/51/trunk/media/programs/glsl/parallax_mapping.vert
+END
+test.vert
+K 25
+svn:wc:ra_dav:version-url
+V 56
+/codinsa/!svn/ver/51/trunk/media/programs/glsl/test.vert
+END
+water.frag
+K 25
+svn:wc:ra_dav:version-url
+V 57
+/codinsa/!svn/ver/51/trunk/media/programs/glsl/water.frag
+END
+water.vert
+K 25
+svn:wc:ra_dav:version-url
+V 57
+/codinsa/!svn/ver/51/trunk/media/programs/glsl/water.vert
+END
+glowed_components.frag
+K 25
+svn:wc:ra_dav:version-url
+V 69
+/codinsa/!svn/ver/51/trunk/media/programs/glsl/glowed_components.frag
+END
+glowed_components.vert
+K 25
+svn:wc:ra_dav:version-url
+V 69
+/codinsa/!svn/ver/51/trunk/media/programs/glsl/glowed_components.vert
+END
+soft_shadow_mapping.frag
+K 25
+svn:wc:ra_dav:version-url
+V 71
+/codinsa/!svn/ver/51/trunk/media/programs/glsl/soft_shadow_mapping.frag
+END
+fur.frag
+K 25
+svn:wc:ra_dav:version-url
+V 55
+/codinsa/!svn/ver/51/trunk/media/programs/glsl/fur.frag
+END
+soft_shadow_mapping.vert
+K 25
+svn:wc:ra_dav:version-url
+V 71
+/codinsa/!svn/ver/51/trunk/media/programs/glsl/soft_shadow_mapping.vert
+END
+fur.vert
+K 25
+svn:wc:ra_dav:version-url
+V 55
+/codinsa/!svn/ver/51/trunk/media/programs/glsl/fur.vert
+END
+GTWater_adapted.frag
+K 25
+svn:wc:ra_dav:version-url
+V 67
+/codinsa/!svn/ver/51/trunk/media/programs/glsl/GTWater_adapted.frag
+END
+shadow_mapping.frag
+K 25
+svn:wc:ra_dav:version-url
+V 66
+/codinsa/!svn/ver/51/trunk/media/programs/glsl/shadow_mapping.frag
+END
+GTWater_adapted.vert
+K 25
+svn:wc:ra_dav:version-url
+V 67
+/codinsa/!svn/ver/51/trunk/media/programs/glsl/GTWater_adapted.vert
+END

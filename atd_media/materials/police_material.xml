@@ -1,0 +1,10 @@
+<material>
+	<texture type="colormap">police.tga</texture>
+	<basic>
+		<ambient>0.2 0.2 0.2 1</ambient>
+		<diffuse>0.8 0.8 0.8 1</diffuse>
+		<specular>0 0 0 1</specular>
+		<emission>0.1 0.1 0.1 1</emission>
+		<shininess>1</shininess>
+	</basic>
+</material>

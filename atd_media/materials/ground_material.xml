@@ -1,0 +1,10 @@
+<material>
+	<texture type="colormap">sol2.tga</texture>
+<!--	<texture type="normalmap">solnorm.tga</texture> -->
+	<texture type="specularmap">solspec.tga</texture>
+	<ambient>0.2 0.2 0.2 1</ambient>
+	<diffuse>0.8 0.8 0.8 1</diffuse>
+	<specular>1 1 1 1</specular>
+	<emission>0.0 0.0 0.0 1</emission>
+	<shininess>128</shininess>
+</material>

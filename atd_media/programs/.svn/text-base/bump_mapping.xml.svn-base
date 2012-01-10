@@ -1,0 +1,4 @@
+<program>
+	<shader type="vertex" source="glsl/bump_mapping.vert"/>
+	<shader type="fragment" source="glsl/bump_mapping.frag"/>
+</program>

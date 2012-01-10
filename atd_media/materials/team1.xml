@@ -1,0 +1,8 @@
+<material>
+	<texture type="colormap">team1.tga</texture>
+	<ambient>0 0 0 1</ambient>
+	<diffuse>0 0 0 1</diffuse>
+	<specular>0 0 0 1</specular>
+	<emission>1 1 1 1</emission>
+	<shininess>1</shininess>
+</material>
