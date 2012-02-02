@@ -111,18 +111,25 @@ int main(int argc, char *argv[])
 
 	nHead->addProperty(new DummyUpdatable());
 	Light* light;
-
+/*
 	light = new Light(true);
 	light->setType(Light::SPOT);
-	light->setDiffuseColor(Vector4f(0.2,1.0,0.2,1.0));
-	light->setSpecularColor(Vector4f(0.2,1.0,0.2,1.0));
+	//light->setDiffuseColor(Vector4f(0.2,1.0,0.2,1.0));
+	//light->setSpecularColor(Vector4f(0.2,1.0,0.2,1.0));
+	light->setDiffuseColor(Vector4f(1.0,1.0,0.0,1.0));
+	light->setSpecularColor(Vector4f(1.0,1.0,1.0,1.0));
 
 	nLight2->addProperty(light);
+	*/
 
 	light = new Light(true);
 	light->setType(Light::SPOT);
-	light->setDiffuseColor(Vector4f(1.0,0.2,0.2,1.0));
-	light->setSpecularColor(Vector4f(1.0,0.2,0.2,1.0));
+	/*
+	light->setDiffuseColor(Vector4f(1.0,1.0,1.0,1.0));
+	light->setSpecularColor(Vector4f(1.0,1.0,1.0,1.0));
+	*/
+	//light->setDiffuseColor(Vector4f(1.0,0.2,0.2,1.0));
+	//light->setSpecularColor(Vector4f(1.0,0.2,0.2,1.0));
 	nLight->addProperty(light);
 
 
@@ -135,6 +142,12 @@ int main(int argc, char *argv[])
 	Material star = MATERIAL_MANAGER.get("star");
 	Material gargoyle = MATERIAL_MANAGER.get("gargoyle");
 	Material sand = MATERIAL_MANAGER.get("sand");
+
+	Material gradientmats[4];
+	gradientmats[0] = MATERIAL_MANAGER.get("grad1");
+	gradientmats[1] = MATERIAL_MANAGER.get("grad2");
+	gradientmats[2] = MATERIAL_MANAGER.get("grad3");
+	gradientmats[3] = MATERIAL_MANAGER.get("grad4");
 
 	Sample sample = SAMPLE_MANAGER.get("quacking.wav");
 
@@ -229,11 +242,12 @@ int main(int argc, char *argv[])
 	prop.mass = 100.0;
 	prop.restitution = 0.1;
 	int nbDuckLight = 0;
-	//prop.shape = PhysicObject::SPHERE;
+	prop.shape = PhysicObject::BOX;
 	for(QVector<Node*>::iterator it=balls.begin() ; it != balls.end() ; it++) {
 		(*it)->addProperty(new PhysicObject(prop));
 		prop.mass += 1.0;
-		(*it)->addProperty(new MeshRenderer(mesh,duck));
+		(*it)->addProperty(new MeshRenderer(cube,gradientmats[nbDuckLight%4]));
+		/*
 		if(nbDuckLight < 5) {
 			light = new Light(true);
 			if(nbDuckLight % 3 == 0) {
@@ -247,8 +261,9 @@ int main(int argc, char *argv[])
 				light->setSpecularColor(Vector4f(0.2,1.0,0.2,1.0));
 			}
 			(*it)->addProperty(light);
-			nbDuckLight++;
 		}
+		*/
+		nbDuckLight++;
 	}
 
 	// Beurk ! Mais je peux le faire alors je me prive pas ^^
@@ -264,6 +279,7 @@ int main(int argc, char *argv[])
 	background.textures[4] = TEXTURE_MANAGER.get("stormy_top.tga");
 	background.textures[5] = TEXTURE_MANAGER.get("stormy_bottom.tga");
 	RENDER_MANAGER.setBackground(background);
+	RENDER_MANAGER.setAmbient(Vector3f(0.8,0.8,0.8));
 
 	COMMAND_MANAGER.registerCommand("spawn_duck",spawn_duck);
 	COMMAND_MANAGER.readFile("config.cfg");

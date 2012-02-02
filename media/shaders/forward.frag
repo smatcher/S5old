@@ -1,5 +1,8 @@
 #ifdef COLOR_MAP
 	uniform sampler2D colormap;
+	#ifdef GRADIENT_MAP
+		uniform sampler2D gradientmap;
+	#endif
 #else
 	#ifdef SPLATTING
 	uniform sampler2D splatting;
@@ -49,7 +52,12 @@ void main()
 		#ifdef SKY
 			vec4 diffuse = texture2D(colormap, gl_TexCoord[0].st);
 		#else
-			vec4 diffuse = texture2D(colormap, gl_TexCoord[0].st) * gl_FrontMaterial.diffuse;
+			#ifdef GRADIENT_MAP
+				float gradient = texture2D(colormap, gl_TexCoord[0].st).r;
+				vec4 diffuse = texture2D(gradientmap, vec2(gradient,0.0)) * gl_FrontMaterial.diffuse;
+			#else
+				vec4 diffuse = texture2D(colormap, gl_TexCoord[0].st) * gl_FrontMaterial.diffuse;
+			#endif
 		#endif
 	#else
 		#ifdef SPLATTING

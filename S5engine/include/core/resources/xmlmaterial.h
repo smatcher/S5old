@@ -30,6 +30,7 @@ protected:
 		Texture  m_colormap;
 		Texture  m_normalmap;
 		Texture  m_specularmap;
+		Texture  m_gradientmap;
 		Texture  m_splattingmap;
 		Texture  m_splatting_red;
 		Texture  m_splatting_green;
@@ -63,6 +64,7 @@ public:
 	virtual bool usesColorMap(unsigned int layer);
 	virtual bool usesNormalMap(unsigned int layer);
 	virtual bool usesSpecularMap(unsigned int layer);
+	virtual bool usesGradientMap(unsigned int layer);
 };
 
 class XmlMaterialFactory : public IResourceFactory
