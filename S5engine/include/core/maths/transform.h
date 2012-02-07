@@ -12,7 +12,7 @@
 #define TRANSFORM_OPENGL_SUPPORT
 
 #ifdef TRANSFORM_OPENGL_SUPPORT
-	#include <QtOpenGL>
+	#include <GL/gl.h>
 #endif
 
 enum TransformSpace

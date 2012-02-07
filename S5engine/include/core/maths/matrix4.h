@@ -6,7 +6,7 @@
 #include <iostream>
 #include "core/maths/vector4.h"
 #include "core/maths/matrix3.h"
-#include <QtOpenGL>
+#include <GL/gl.h>
 
 template <class T>
 class Matrix4

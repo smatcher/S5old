@@ -1,5 +1,6 @@
 #include "core/resources/assimpmesh.h"
 #include <QtOpenGL>
+#include <GL/glu.h>
 
 #include "core/maths/aabb.h"
 #include "core/managers/rendermanager.h"

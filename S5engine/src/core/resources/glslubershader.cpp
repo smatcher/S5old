@@ -1,5 +1,6 @@
 #include "core/resources/glslubershader.h"
 #include <QtOpenGL>
+#include <GL/glu.h>
 #include "core/log/log.h"
 #include <QtXml/QtXml>
 #include "core/resources/managers.h"

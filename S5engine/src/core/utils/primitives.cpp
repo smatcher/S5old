@@ -1,4 +1,5 @@
 #include <QtOpenGL>
+#include <GL/glu.h>
 #include "core/utils/primitives.h"
 #include "core/maths/trigo.h"
 #include "core/maths/aabb.h"

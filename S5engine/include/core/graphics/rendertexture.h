@@ -4,7 +4,7 @@
 #include "core/graphics/texture.h"
 #include "core/maths/matrix4.h"
 
-#include <QtOpenGL>
+#include <GL/gl.h>
 
 class RenderTexture : public TextureData
 {

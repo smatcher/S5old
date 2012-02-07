@@ -1,4 +1,5 @@
 #include <QtOpenGL>
+#include <GL/glu.h>
 #include "core/resources/rawmesh.h"
 #include "core/managers/rendermanager.h"
 

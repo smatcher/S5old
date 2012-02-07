@@ -1,5 +1,6 @@
 #include <core/properties/trailrenderer.h>
 #include <core/scenegraph/node.h>
+#include <GL/glu.h>
 
 #define TRAIL_MAX_QUADS 50
 

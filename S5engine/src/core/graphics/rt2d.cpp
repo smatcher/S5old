@@ -1,9 +1,8 @@
 #include <GL/glew.h>
+#include <GL/gl.h>
 
 #include "core/graphics/rt2d.h"
 #include "core/resources/managers.h"
-
-#include <QtOpenGL>
 
 RenderTexture2D::RenderTexture2D(QString name, int height, int width, GLenum format, GLenum type)
 	: RenderTexture(name, height, width)

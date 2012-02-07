@@ -2,7 +2,7 @@
 #define FRAMEBUFFEROBJECT_H
 
 #include <core/graphics/rendertexture.h>
-#include <QtOpenGL>
+#include <GL/gl.h>
 
 class FrameBufferObject
 {

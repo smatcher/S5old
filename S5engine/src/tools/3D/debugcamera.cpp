@@ -1,6 +1,7 @@
 #include "tools/3D/debugcamera.h"
 #include "core/maths/transform.h"
 #include "core/log/log.h"
+#include <GL/glu.h>
 
 #include <QDateTime>
 

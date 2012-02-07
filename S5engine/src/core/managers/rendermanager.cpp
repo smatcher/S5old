@@ -14,6 +14,7 @@
 #include <core/resources/managers.h>
 
 #include <QtOpenGL>
+#include <GL/glu.h>
 #include <QRect>
 #include <math.h>
 

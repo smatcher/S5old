@@ -1,9 +1,9 @@
 #include <GL/glew.h>
+#include <GL/gl.h>
 
 #include <core/graphics/rtcubemap.h>
 #include "core/resources/managers.h"
 
-#include <QtOpenGL>
 
 static GLenum cubemap_targets[] = {
 	GL_TEXTURE_CUBE_MAP_POSITIVE_X,

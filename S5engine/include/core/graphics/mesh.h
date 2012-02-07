@@ -9,7 +9,7 @@
 	#include "tools/widgets/meshwidget.h"
 #endif
 
-#include <QtOpenGL>
+#include <GL/gl.h>
 #include <QMap>
 
 class Mesh;

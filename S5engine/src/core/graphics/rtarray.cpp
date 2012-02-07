@@ -1,9 +1,14 @@
+/*
 #include <GL/glew.h>
+#include <GL/gl.h>
+*/
+
+#include <QtOpenGL>
+#include <GL/glu.h>
 
 #include <core/graphics/rtarray.h>
 #include "core/resources/managers.h"
 
-#include <QtOpenGL>
 
 RenderTextureArray::RenderTextureArray(QString name, int height, int width, int depth, GLenum format, GLenum type)
 	: RenderTexture(name, height, width), m_depth(depth)

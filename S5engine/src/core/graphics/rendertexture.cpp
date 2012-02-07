@@ -1,8 +1,7 @@
 #include <GL/glew.h>
+#include <GL/gl.h>
 
 #include "core/graphics/rendertexture.h"
-
-#include <QtOpenGL>
 
 RenderTexture::RenderTexture(QString name, int height, int width) : TextureData(name, "none", NULL)
 {

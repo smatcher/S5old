@@ -3,6 +3,7 @@
 #include "core/log/log.h"
 #include "core/resources/managers.h"
 #include <core/graphics/rtarray.h>
+#include <GL/glu.h>
 
 #define OMNIDEPTH_RESOLUTION 256
 

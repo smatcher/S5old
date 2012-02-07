@@ -2,7 +2,7 @@
 #define TEXTURE_H
 
 #include "core/resources/resource.h"
-#include <QtOpenGL>
+#include <GL/gl.h>
 
 #ifdef WITH_TOOLS
 	#include "tools/widgets/texturewidget.h"
