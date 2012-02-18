@@ -224,6 +224,10 @@ void RenderManager::createResources()
 	m_diffusemap = new RenderTexture2D("DEF_Diffusemap", size.height(), size.width(), GL_RGBA, GL_UNSIGNED_BYTE);
 	m_specularmap = new RenderTexture2D("DEF_Specularmap", size.height(), size.width(), GL_RGBA, GL_UNSIGNED_BYTE);
 	m_depthmap = new RenderTexture2D("DEF_Depthmap", size.height(), size.width(), GL_DEPTH_COMPONENT, GL_FLOAT);
+
+	// SSS resources
+	m_sssbuffer = new RenderTexture2D("SSS", 512, 512, GL_RGBA, GL_UNSIGNED_BYTE);
+	m_sss_fbo = new FrameBufferObject(512, 512, false, false);
 }
 
 void RenderManager::testViewportResize()
@@ -634,16 +638,11 @@ void RenderManager::render(double elapsed_time, SceneGraph* sg)
 	drawDebug(sg,srt);
 
 	int xpos = 0;
+	for(int i = 0 ; i< m_debugTextures.size() ; i++)
+	{
+		debugDisplayTexture(m_debugTextures[i],xpos,0,256,256); xpos += 256;
+	}
 
-/*
-	debugDisplayTexture(*m_shadowmap,xpos,0,256,256); xpos += 256;
-	debugDisplayTexture(*m_normalmap,xpos,0,256,256); xpos += 256;
-	debugDisplayTexture(*m_diffusemap,xpos,0,256,256); xpos += 256;
-	debugDisplayTexture(*m_specularmap,xpos,0,256,256); xpos += 256;
-	debugDisplayTexture(*m_depthmap,xpos,0,256,256); xpos += 256;
-	debugDisplayTexture(*m_colormap,xpos,0,256,256); xpos += 256;
-	debugDisplayTexture(*m_bloommap,xpos,0,256,256); xpos += 256;
-*/
 	m_context->swapBuffers();
 
 	// Frame End
@@ -678,6 +677,7 @@ void RenderManager::renderTarget(SceneGraph* sg, RenderTarget& target)
 
 		target.setupPass(pass_nb);
 
+		QList<IRenderable*> sss_renderables;
 		QList<IRenderable*> transparent_renderables;
 
 		if(m_context == NULL) {
@@ -758,13 +758,112 @@ void RenderManager::renderTarget(SceneGraph* sg, RenderTarget& target)
 			if(m_passinfo.type == RenderPassInfo::RECEIVE_SHADOW_PASS && !((*it)->receivesShadows()))
 				continue;
 
-			glPushMatrix();
-			if((*it)->isTransparent()){
+			if((*it)->usesSSS() && getSSSEnabled()){
+				sss_renderables.push_back(*it); // SSS renderables are deferred for later rendering
+			} else if((*it)->isTransparent()){
 				transparent_renderables.push_back(*it); // Transparent renderables are deferred for later rendering
 			} else {
+				glPushMatrix();
 				(*it)->render();
+				glPopMatrix();
 			}
+		}
+
+		for(QList<IRenderable*>::iterator it = sss_renderables.begin();
+			it != sss_renderables.end();
+			it++) {
+
+
+			/// Prepass
+			// Render SSS map
+			m_sss_fbo->bind();
+			m_sss_fbo->attachTexture(m_sssbuffer,FrameBufferObject::COLOR_ATTACHMENT_0);
+			m_sss_fbo->commitTextures(0);
+			m_passinfo.ubershader_used->setParamValue(UberShaderDefine::SSS_PREPASS,true);
+			glViewport(0,0,m_sssbuffer->getWidth(), m_sssbuffer->getHeight());
+			glPushMatrix();
+			(*it)->render();
 			glPopMatrix();
+			m_passinfo.ubershader_used->setParamValue(UberShaderDefine::SSS_PREPASS,false);
+			m_sss_fbo->release();
+			m_sssbuffer->swap();
+
+			glMatrixMode(GL_PROJECTION);
+			glPushMatrix();
+			glMatrixMode(GL_MODELVIEW);
+			glPushMatrix();
+			glBlendFunc(GL_ONE, GL_ZERO);
+			UberShader old_shader = m_passinfo.ubershader_used;
+			QList<Texture> input_textures;
+			input_textures.push_back(*m_sssbuffer);
+			for(int i=0 ; i<3 ; i++) {
+				m_passinfo.ubershader_used = m_vertical_blur;
+				postprocessPassOnFBO(m_sssbuffer,input_textures,m_sss_fbo);
+				m_passinfo.ubershader_used = m_horizontal_blur;
+				postprocessPassOnFBO(m_sssbuffer,input_textures,m_sss_fbo);
+			}
+			m_passinfo.ubershader_used = old_shader;
+			glMatrixMode(GL_PROJECTION);
+			glPopMatrix();
+			glMatrixMode(GL_MODELVIEW);
+			glPopMatrix();
+/*
+			glMatrixMode(GL_MODELVIEW);
+			glPushMatrix();
+			glLoadIdentity();
+			glMatrixMode(GL_PROJECTION);
+			glPushMatrix();
+			glLoadIdentity();
+			// HBlur SSS map
+			m_sss_fbo->release();
+			m_sss_fbo->bind();
+			m_sss_fbo->attachTexture(m_sssbuffer,FrameBufferObject::COLOR_ATTACHMENT_0);
+			m_sss_fbo->commitTextures(0);
+			m_horizontal_blur->use();
+			m_horizontal_blur->setAllUniforms();
+			glBegin(GL_QUADS);
+				glTexCoord2f(0.0f,0.0f);
+				glVertex3d(-1,-1,0.0f);
+				glTexCoord2f(1.0f,0.0f);
+				glVertex3d(1,-1,0.0f);
+				glTexCoord2f(1.0f,1.0f);
+				glVertex3d(1,1,0.0f);
+				glTexCoord2f(0.0f,1.0f);
+				glVertex3d(-1,1,0.0f);
+			glEnd();
+			m_sssbuffer->swap();
+			// VBlur SSS map
+			m_sss_fbo->release();
+			m_sss_fbo->bind();
+			m_sss_fbo->attachTexture(m_sssbuffer,FrameBufferObject::COLOR_ATTACHMENT_0);
+			m_sss_fbo->commitTextures(0);
+			m_vertical_blur->use();
+			m_vertical_blur->setAllUniforms();
+			glBegin(GL_QUADS);
+				glTexCoord2f(0.0f,0.0f);
+				glVertex3d(-1,-1,0.0f);
+				glTexCoord2f(1.0f,0.0f);
+				glVertex3d(1,-1,0.0f);
+				glTexCoord2f(1.0f,1.0f);
+				glVertex3d(1,1,0.0f);
+				glTexCoord2f(0.0f,1.0f);
+				glVertex3d(-1,1,0.0f);
+			glEnd();
+			m_sssbuffer->swap();
+			m_sss_fbo->release();
+			// Restore matrices
+			glPopMatrix();
+			glMatrixMode(GL_MODELVIEW);
+			glPopMatrix();
+*/
+			// Final draw
+			target.bind();
+			m_passinfo.ubershader_used->setParamValue(UberShaderDefine::SSS_FINAL,true);
+			glViewport(0,0,m_screen_size->x(), m_screen_size->y());
+			glPushMatrix();
+			(*it)->render();
+			glPopMatrix();
+			m_passinfo.ubershader_used->setParamValue(UberShaderDefine::SSS_FINAL,false);
 		}
 
 		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
@@ -871,15 +970,34 @@ void RenderManager::postprocessPass(RenderTexture* target_texture, QList<Texture
 	postprocessPass(target_textures, input_textures, lowres);
 }
 
-void RenderManager::postprocessPass(QList< QPair<RenderTexture* , FrameBufferObject::AttachmentPoint> > target_textures, QList<Texture> input_textures, bool lowres)
+void RenderManager::postprocessPass(QList< QPair<RenderTexture*, FrameBufferObject::AttachmentPoint> > target_textures, QList<Texture> input_textures, bool lowres)
+{
+	if(lowres)
+		postprocessPassOnFBO(target_textures, input_textures, m_lowres_postprocessfbo);
+	else
+		postprocessPassOnFBO(target_textures, input_textures, m_postprocessfbo);
+}
+
+void RenderManager::postprocessPassOnFBO(RenderTexture* target_texture, QList<Texture> input_textures, FrameBufferObject* fbo)
+{
+	QList< QPair<RenderTexture* , FrameBufferObject::AttachmentPoint> > target_textures;
+
+	if(target_texture != NULL) {
+		target_textures.push_back(QPair<RenderTexture*, FrameBufferObject::AttachmentPoint>(target_texture, FrameBufferObject::COLOR_ATTACHMENT_0));
+	}
+
+	postprocessPassOnFBO(target_textures, input_textures,fbo);
+}
+
+void RenderManager::postprocessPassOnFBO(QList< QPair<RenderTexture*, FrameBufferObject::AttachmentPoint> > target_textures, QList<Texture> input_textures, FrameBufferObject* fbo)
 {
 	debugGL("before postprocessing");
 
-	FrameBufferObject* fbo = NULL;
-	if(lowres)
-		fbo = m_lowres_postprocessfbo;
-	else
-		fbo = m_postprocessfbo;
+	if(fbo == NULL)
+	{
+		logError("Post processing with NULL fbo");
+		return;
+	}
 
 	if(target_textures.size() > 0) {
 		fbo->bind();
@@ -944,29 +1062,32 @@ void RenderManager::postprocessPass(QList< QPair<RenderTexture* , FrameBufferObj
 
 void RenderManager::debugDisplayTexture(Texture texture, int x, int y, int width, int height)
 {
-	glClear(GL_DEPTH_BUFFER_BIT);
+	if(texture.isValid())
+	{
+		glClear(GL_DEPTH_BUFFER_BIT);
 
-	glDisable(GL_LIGHTING);
+		glDisable(GL_LIGHTING);
 
-	glMatrixMode(GL_PROJECTION);
-	glLoadIdentity();
-	glMatrixMode(GL_MODELVIEW);
-	glLoadIdentity();
+		glMatrixMode(GL_PROJECTION);
+		glLoadIdentity();
+		glMatrixMode(GL_MODELVIEW);
+		glLoadIdentity();
 
-	glViewport(x,y,width,height);
-	texture->bind();
-	glBegin(GL_QUADS);
-		glTexCoord2f(0.0f,0.0f);
-		glVertex3d(-1,-1,0.0f);
-		glTexCoord2f(1.0f,0.0f);
-		glVertex3d(1,-1,0.0f);
-		glTexCoord2f(1.0f,1.0f);
-		glVertex3d(1,1,0.0f);
-		glTexCoord2f(0.0f,1.0f);
-		glVertex3d(-1,1,0.0f);
-	glEnd();
+		glViewport(x,y,width,height);
+		texture->bind();
+		glBegin(GL_QUADS);
+			glTexCoord2f(0.0f,0.0f);
+			glVertex3d(-1,-1,0.0f);
+			glTexCoord2f(1.0f,0.0f);
+			glVertex3d(1,-1,0.0f);
+			glTexCoord2f(1.0f,1.0f);
+			glVertex3d(1,1,0.0f);
+			glTexCoord2f(0.0f,1.0f);
+			glVertex3d(-1,1,0.0f);
+		glEnd();
 
-	glEnable(GL_LIGHTING);
+		glEnable(GL_LIGHTING);
+	}
 }
 
 void RenderManager::setCurrentCamera(Camera* cam)
@@ -1302,6 +1423,68 @@ void RenderManager::setRenderPipeline(RenderPipeline pipeline)
 RenderManager::RenderPipeline RenderManager::getRenderPipeline()
 {
 	return m_options.m_pipeline;
+}
+
+bool RenderManager::getSSSEnabled()
+{
+	return m_options.m_sss_enabled;
+}
+
+void RenderManager::setSSSEnabled(bool enabled)
+{
+	m_options.m_sss_enabled = enabled;
+
+	#ifdef WITH_TOOLS
+		if(m_widget)
+		{
+			m_widget->setSSSEnabled(enabled);
+		}
+	#endif
+}
+
+bool RenderManager::getNormalMappingEnabled()
+{
+	return m_options.m_normalmapping_enabled;
+}
+
+void RenderManager::setNormalMappingEnabled(bool enabled)
+{
+	m_options.m_normalmapping_enabled = enabled;
+
+	#ifdef WITH_TOOLS
+		if(m_widget)
+		{
+			m_widget->setNormalMappingEnabled(enabled);
+		}
+	#endif
+}
+
+bool RenderManager::getSpecularMappingEnabled()
+{
+	return m_options.m_specularmapping_enabled;
+}
+
+void RenderManager::setSpecularMappingEnabled(bool enabled)
+{
+	m_options.m_specularmapping_enabled = enabled;
+
+	#ifdef WITH_TOOLS
+		if(m_widget)
+		{
+			m_widget->setSpecularMappingEnabled(enabled);
+		}
+	#endif
+}
+
+void RenderManager::addDebugTexture(Texture texture)
+{
+	if(texture.isValid())
+		m_debugTextures.push_back(texture);
+}
+
+void RenderManager::clearDebugTextures()
+{
+	m_debugTextures.clear();
 }
 
 #ifdef WITH_TOOLS

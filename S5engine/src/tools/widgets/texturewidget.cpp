@@ -12,6 +12,8 @@ TextureWidget::TextureWidget(TextureData &resource) : ResourceWidget(resource), 
 	{
 		TextureData* texture = (TextureData*)&resource;
 
+		m_debug = new QPushButton("Add to debug");
+		m_layout->addWidget(m_debug);
 		m_resolution_info = new QLabel("Resolution : "+QString().setNum(resource.m_width)+"x"+QString().setNum(resource.m_height));
 		m_layout->addWidget(m_resolution_info);
 		m_openglId_info = new QLabel("OpenGL ID : "+QString().setNum(texture->getGLId()));
@@ -20,6 +22,8 @@ TextureWidget::TextureWidget(TextureData &resource) : ResourceWidget(resource), 
 		m_layout->addWidget(m_preview);
 
 		m_layout->addStretch(1);
+
+		connect(m_debug,SIGNAL(clicked()),this,SLOT(addToDebug()));
 	}
 }
 
@@ -87,4 +91,10 @@ void TextureWidget::updateData()
 			m_layout->addStretch(1);
 		}
 	}
+}
+
+void TextureWidget::addToDebug()
+{
+	TextureData* texture = (TextureData*)&m_resource;
+	RENDER_MANAGER.addDebugTexture(Texture(*texture));
 }

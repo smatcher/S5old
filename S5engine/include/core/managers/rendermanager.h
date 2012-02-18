@@ -154,17 +154,29 @@ private :
 	FrameBufferObject* m_postprocessfbo;
 	FrameBufferObject* m_lowres_postprocessfbo;
 
+	// SSS stuff
+	RenderTexture* m_sssbuffer;
+	FrameBufferObject* m_sss_fbo;
+
 	QList<RenderTarget*> m_rts;
+
+	QList<Texture> m_debugTextures;
 
 	struct RendererOptions {
 		RenderPipeline m_pipeline;
 		bool           m_shadows_enabled;
 		bool           m_bloom_enabled;
+		bool           m_sss_enabled;
+		bool           m_normalmapping_enabled;
+		bool           m_specularmapping_enabled;
 
 		RendererOptions() :
 			m_pipeline(DEFERRED_PIPELINE),
 			m_shadows_enabled(true),
-			m_bloom_enabled(false)
+			m_bloom_enabled(false),
+			m_sss_enabled(false),
+			m_normalmapping_enabled(true),
+			m_specularmapping_enabled(true)
 		{}
 	};
 	RendererOptions m_options;
@@ -178,6 +190,8 @@ private :
 	void drawDebug(SceneGraph* sg, RenderTarget& target);
 	void postprocessPass(RenderTexture* target_texture, QList<Texture> input_textures, bool lowres = false);
 	void postprocessPass(QList< QPair<RenderTexture*, FrameBufferObject::AttachmentPoint> > target_textures, QList<Texture> input_textures, bool lowres = false);
+	void postprocessPassOnFBO(RenderTexture* target_texture, QList<Texture> input_textures, FrameBufferObject* fbo);
+	void postprocessPassOnFBO(QList< QPair<RenderTexture*, FrameBufferObject::AttachmentPoint> > target_textures, QList<Texture> input_textures, FrameBufferObject* fbo);
 	void debugDisplayTexture(Texture texture, int x, int y, int width, int height);
 	void setupProjection(RenderTarget& target, int projection_nb);
 	void applyBackground(RenderTarget& target, int projection_nb);
@@ -203,6 +217,15 @@ public:
 	void setBloomEnabled(bool enabled);
 	bool getBloomEnabled();
 
+	void setSSSEnabled(bool enabled);
+	bool getSSSEnabled();
+
+	void setNormalMappingEnabled(bool enabled);
+	bool getNormalMappingEnabled();
+
+	void setSpecularMappingEnabled(bool enabled);
+	bool getSpecularMappingEnabled();
+
 	void setRenderPipeline(RenderPipeline pipeline);
 	RenderPipeline getRenderPipeline();
 
@@ -222,6 +245,9 @@ public:
 	const QHash<QString, ShaderProgramData::UniformBase*>& getEngineUniforms();
 
 	RenderPassInfo* getRenderPassInfo();
+
+	void addDebugTexture(Texture texture);
+	void clearDebugTextures();
 };
 
 typedef Singleton<RenderManager> SingletonRenderManager;

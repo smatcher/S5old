@@ -101,6 +101,23 @@ bool SkinnedMeshRenderer::isTransparent()
 	return ret;
 }
 
+bool SkinnedMeshRenderer::usesSSS()
+{
+	bool ret = false;
+
+	if(m_material.isValid())
+	{
+		for(unsigned int i=0 ; i<m_mesh->nbSubmeshes() ; i++) {
+			if(m_material->usesSSS(i)) {
+				ret = true;
+				break;
+			}
+		}
+	}
+
+	return ret;
+}
+
 bool SkinnedMeshRenderer::receivesShadows()
 {
 	bool ret = false;

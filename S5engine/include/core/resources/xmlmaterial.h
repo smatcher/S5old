@@ -27,6 +27,7 @@ protected:
 		bool     m_receive_shadow;
 		bool     m_cast_shadow;
 		bool     m_doublesided;
+		bool     m_uses_sss;
 		Texture  m_colormap;
 		Texture  m_normalmap;
 		Texture  m_specularmap;
@@ -35,6 +36,7 @@ protected:
 		Texture  m_splatting_red;
 		Texture  m_splatting_green;
 		Texture  m_splatting_blue;
+		Texture  m_sssmap;
 		QList<ShaderProgramData::UniformBase*> m_uniforms;
 
 		MaterialAttributes() :
@@ -46,7 +48,8 @@ protected:
 			m_transparent(false),
 			m_receive_shadow(true),
 			m_cast_shadow(true),
-			m_doublesided(false) {}
+			m_doublesided(false),
+			m_uses_sss(false) {}
 	};
 
 	MaterialAttributes m_default_attributes;
@@ -61,10 +64,12 @@ public:
 	virtual bool isTransparent(unsigned int layer);
 	virtual bool receivesShadows(unsigned int layer);
 	virtual bool castsShadows(unsigned int layer);
+	virtual bool usesSSS(unsigned int layer);
 	virtual bool usesColorMap(unsigned int layer);
 	virtual bool usesNormalMap(unsigned int layer);
 	virtual bool usesSpecularMap(unsigned int layer);
 	virtual bool usesGradientMap(unsigned int layer);
+	virtual bool usesSSSMap(unsigned int layer);
 };
 
 class XmlMaterialFactory : public IResourceFactory

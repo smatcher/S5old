@@ -4,6 +4,7 @@
 #include "core/framework/engine.h"
 #include "core/managers/commandmanager.h"
 #include "core/inputs/inputmanager.h"
+#include "core/resources/managers.h"
 
 Engine* g_engine_instance = NULL;
 
@@ -12,6 +13,8 @@ bool exit_engine(QStringList);
 bool toggle_pause_engine(QStringList);
 bool take_screenshot(QStringList);
 bool renderer_command(QStringList);
+bool texture_dbg(QStringList);
+bool clr_texture_dbg(QStringList);
 
 void registerEngineCommands(Engine* engine)
 {
@@ -22,6 +25,8 @@ void registerEngineCommands(Engine* engine)
 	COMMAND_MANAGER.registerCommand("pause",toggle_pause_engine,"pauses/unpauses the game");
 	COMMAND_MANAGER.registerCommand("renderer",renderer_command,"followed by shadows or pipeline and an appropriate value, changes the renderer options");
 	COMMAND_MANAGER.registerCommand("screenshot",take_screenshot,"takes a screenshot, you can specify a path for the screenshot");
+	COMMAND_MANAGER.registerCommand("texture_dbg",texture_dbg,"displays the specified texture in the corner");
+	COMMAND_MANAGER.registerCommand("clr_texture_dbg",clr_texture_dbg,"remove the textures in the corner");
 }
 
 bool bind_key(QStringList args)
@@ -113,6 +118,25 @@ bool renderer_command(QStringList args)
 	}
 
 	return FALSE;
+}
+
+bool texture_dbg(QStringList args)
+{
+	if(args.count() > 1) {
+		Texture texture = TEXTURE_MANAGER.get(args.at(1));
+		if(texture.isValid())
+		{
+			RENDER_MANAGER.addDebugTexture(texture);
+			return TRUE;
+		}
+	}
+	return FALSE;
+}
+
+bool clr_texture_dbg(QStringList)
+{
+	RENDER_MANAGER.clearDebugTextures();
+	return TRUE;
 }
 
 #endif // ENGINECOMMANDS_H

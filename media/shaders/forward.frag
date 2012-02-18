@@ -84,7 +84,7 @@ void main()
 
 		vec3 matSpec = gl_FrontMaterial.specular.rgb;
 		float matShininess = gl_FrontMaterial.shininess;
-		#ifdef SPECULAR_MAP
+		#ifdef SPECULAR_MAP && !SSS_PREPASS
 			vec4 specMap = texture2D(specularmap, gl_TexCoord[0].st);
 			matSpec *= specMap.rgb;
 			matShininess *= specMap.a;
@@ -95,7 +95,6 @@ void main()
 			#if defined LIGHT_OMNI_@ || defined LIGHT_SPOT_@ || defined LIGHT_SUN_@
 			{
 				vec3 L@ = normalize(lightDir@);
-				vec3 HalfVec@ = normalize(L@ + E);
 
 				float dist@ = length(lightDir@);
 				float attenuation@ = 1.0/ (
@@ -111,8 +110,14 @@ void main()
 				#endif
 
 				vec3 idiff@ = clamp(dot(L@, N) * gl_LightSource[@].diffuse.rgb * diffuse.rgb, 0.0, 1.0);
-				vec3 ispec@ = pow(clamp(dot(HalfVec@,N),0.0,1.0),matShininess) * gl_LightSource[@].specular.rgb * matSpec;
-				final_color.rgb += (idiff@+ispec@) * attenuation@;
+
+				#ifdef SSS_PREPASS
+					final_color.rgb += (idiff@) * attenuation@;
+				#else
+					vec3 HalfVec@ = normalize(L@ + E);
+					vec3 ispec@ = pow(clamp(dot(HalfVec@,N),0.0,1.0),matShininess) * gl_LightSource[@].specular.rgb * matSpec;
+					final_color.rgb += (idiff@+ispec@) * attenuation@;
+				#endif
 			}
 			#endif
 		#endfor

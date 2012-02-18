@@ -42,6 +42,15 @@ RenderWidget::RenderWidget()
 	m_options_bloom = m_options_menu->addAction("bloom");
 	m_options_bloom->setCheckable(true);
 	m_options_bloom->setChecked(RENDER_MANAGER.getBloomEnabled());
+	m_options_sss = m_options_menu->addAction("SSS");
+	m_options_sss->setCheckable(true);
+	m_options_sss->setChecked(RENDER_MANAGER.getSSSEnabled());
+	m_options_normalmapping = m_options_menu->addAction("Normal mapping");
+	m_options_normalmapping->setCheckable(true);
+	m_options_normalmapping->setChecked(RENDER_MANAGER.getNormalMappingEnabled());
+	m_options_specularmapping = m_options_menu->addAction("Specular mapping");
+	m_options_specularmapping->setCheckable(true);
+	m_options_specularmapping->setChecked(RENDER_MANAGER.getSpecularMappingEnabled());
 	m_options_forward_pipeline = m_options_menu->addAction("Forward pipeline");
 	m_options_forward_pipeline->setCheckable(true);
 	m_options_deferred_pipeline = m_options_menu->addAction("Deferred pipeline");
@@ -78,6 +87,9 @@ RenderWidget::RenderWidget()
 	connect(m_options_button, SIGNAL(clicked()), this, SLOT(showOptionsMenu()));
 	connect(m_options_shadows, SIGNAL(triggered()), this, SLOT(optionShadowsChanged()));
 	connect(m_options_bloom, SIGNAL(triggered()), this, SLOT(optionBloomChanged()));
+	connect(m_options_sss, SIGNAL(triggered()), this, SLOT(optionSSSChanged()));
+	connect(m_options_normalmapping, SIGNAL(triggered()), this, SLOT(optionNormalMappingChanged()));
+	connect(m_options_specularmapping, SIGNAL(triggered()), this, SLOT(optionSpecularMappingChanged()));
 	connect(m_options_forward_pipeline, SIGNAL(triggered()), this, SLOT(optionPipelineToForward()));
 	connect(m_options_deferred_pipeline, SIGNAL(triggered()), this, SLOT(optionPipelineToDeferred()));
 }
@@ -151,6 +163,21 @@ void RenderWidget::optionShadowsChanged()
 	RENDER_MANAGER.setShadowsEnabled(m_options_shadows->isChecked());
 }
 
+void RenderWidget::optionSSSChanged()
+{
+	RENDER_MANAGER.setSSSEnabled(m_options_sss->isChecked());
+}
+
+void RenderWidget::optionNormalMappingChanged()
+{
+	RENDER_MANAGER.setNormalMappingEnabled(m_options_normalmapping->isChecked());
+}
+
+void RenderWidget::optionSpecularMappingChanged()
+{
+	RENDER_MANAGER.setSpecularMappingEnabled(m_options_specularmapping->isChecked());
+}
+
 void RenderWidget::optionPipelineToForward()
 {
 	RENDER_MANAGER.setRenderPipeline(RenderManager::FORWARD_PIPELINE);
@@ -176,6 +203,21 @@ void RenderWidget::setShadowsEnabled(bool enabled)
 void RenderWidget::setBloomEnabled(bool enabled)
 {
 	m_options_bloom->setChecked(enabled);
+}
+
+void RenderWidget::setSSSEnabled(bool enabled)
+{
+	m_options_sss->setChecked(enabled);
+}
+
+void RenderWidget::setNormalMappingEnabled(bool enabled)
+{
+	m_options_normalmapping->setChecked(enabled);
+}
+
+void RenderWidget::setSpecularMappingEnabled(bool enabled)
+{
+	m_options_specularmapping->setChecked(enabled);
 }
 
 void RenderWidget::setRenderPipeline(RenderManager::RenderPipeline pipeline)

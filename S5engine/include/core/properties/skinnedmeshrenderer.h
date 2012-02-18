@@ -19,6 +19,7 @@ public:
 
 	virtual void render();
 	bool isTransparent();
+	virtual bool usesSSS();
 	bool receivesShadows();
 	bool castsShadows();
 

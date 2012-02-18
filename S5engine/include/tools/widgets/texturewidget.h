@@ -10,6 +10,8 @@ class QLabel;
 
 class TextureWidget : public ResourceWidget
 {
+	Q_OBJECT
+
 private:
 
 	class TexturePreview : public QGLWidget
@@ -22,6 +24,7 @@ private:
 		void setGLId(GLint glId);
 	};
 
+	QPushButton* m_debug;
 	TexturePreview* m_preview;
 	QLabel* m_resolution_info;
 	QLabel* m_openglId_info;
@@ -31,6 +34,9 @@ public:
 	virtual ~TextureWidget();
 
 	virtual void updateData();
+
+public slots:
+	void addToDebug();
 };
 
 #endif // TEXTUREWIDGET_H

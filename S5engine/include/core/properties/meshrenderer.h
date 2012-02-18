@@ -16,6 +16,7 @@ public:
 	MeshRenderer(Mesh& mesh, Material& material);
 	void render();
 	bool isTransparent();
+	virtual bool usesSSS();
 	bool receivesShadows();
 	bool castsShadows();
 

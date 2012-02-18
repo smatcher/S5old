@@ -15,6 +15,9 @@ namespace UberShaderDefine
 		NORMALMAPPED,
 		SPECULARMAPPED,
 		GRADIENTMAPPED,
+		SSS_PREPASS,
+		SSS_FINAL,
+		SSS_MAP,
 		LIGHT_OMNI,
 		LIGHT_OMNI_0,
 		LIGHT_OMNI_1,
@@ -58,6 +61,9 @@ namespace UberShaderDefine
 		"NORMAL_MAP",
 		"SPECULAR_MAP",
 		"GRADIENT_MAP",
+		"SSS_PREPASS",
+		"SSS_FINAL",
+		"SSS_MAP",
 		"LIGHT_OMNI",
 		"LIGHT_OMNI_0",
 		"LIGHT_OMNI_1",
@@ -112,6 +118,7 @@ namespace UberShaderTextureType
 		SPLATTING_R,
 		SPLATTING_G,
 		SPLATTING_B,
+		SSS_MAP,
 		NB_TEXTURES,
 		UNKNOWN
 	};
@@ -127,6 +134,7 @@ namespace UberShaderTextureType
 		"SPLATTING_R",
 		"SPLATTING_G",
 		"SPLATTING_B",
+		"SSS_MAP",
 		"NB_TEXTURES",
 		"UNKNOWN"
 	};
@@ -229,6 +237,7 @@ protected:
 		texunits[UberShaderTextureType::NORMAL_MAP]      = m_defines[UberShaderDefine::NORMALMAPPED]      ? texunit++ : -1;
 		texunits[UberShaderTextureType::SPECULAR_MAP]    = m_defines[UberShaderDefine::SPECULARMAPPED]    ? texunit++ : -1;
 		texunits[UberShaderTextureType::GRADIENT_MAP]    = m_defines[UberShaderDefine::GRADIENTMAPPED]    ? texunit++ : -1;
+		texunits[UberShaderTextureType::SSS_MAP]         = m_defines[UberShaderDefine::SSS_MAP]           ? texunit++ : -1;
 		texunits[UberShaderTextureType::ENVIRONMENT_MAP] = m_defines[UberShaderDefine::ENVIRONMENTMAPPED] ? texunit++ : -1;
 		texunits[UberShaderTextureType::SPLATTING]       = m_defines[UberShaderDefine::SPLATTING]         ? texunit++ : -1;
 		texunits[UberShaderTextureType::SPLATTING_R]     = m_defines[UberShaderDefine::SPLATTING]         ? texunit++ : -1;

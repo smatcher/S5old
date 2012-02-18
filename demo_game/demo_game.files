@@ -12,3 +12,4 @@ dummyjumper.cpp
 planecontroller.h
 planecontroller.cpp
 test_atd.cpp
+test_sss.cpp

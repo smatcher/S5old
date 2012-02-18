@@ -20,6 +20,7 @@ public:
 	virtual void frameEnd() {}
 
 	virtual bool isTransparent() {return false;}
+	virtual bool usesSSS() {return false;}
 	virtual bool receivesShadows() {return false;}
 	virtual bool castsShadows() {return false;}
 };

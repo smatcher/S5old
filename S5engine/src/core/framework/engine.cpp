@@ -115,7 +115,8 @@ int Engine::start()
 
 		if(lastFpsTime.msecsTo(time) > 1000)
 		{
-			m_window.setWindowTitle("S5 - Engine : " + QString().setNum(nb_frames) + " FPS");
+			Vector2i vpSize = RENDER_MANAGER.getCurrentViewportSize();
+			m_window.setWindowTitle("S5 - Engine : " + QString().setNum(nb_frames) + " FPS " + QString().setNum(vpSize.y) + "x" + QString().setNum(vpSize.x));
 			lastFpsTime = time;
 			nb_frames = 0;
 		}

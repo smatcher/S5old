@@ -42,10 +42,11 @@ void XmlMaterial::apply(unsigned int layer)
 	// Set ubershader parameters
 	UberShader shader = RENDER_MANAGER.getRenderPassInfo()->ubershader_used;
 	shader->setParamValue(UberShaderDefine::COLORMAPPED, target->m_colormap.isValid());
-	shader->setParamValue(UberShaderDefine::NORMALMAPPED, target->m_normalmap.isValid());
-	shader->setParamValue(UberShaderDefine::SPECULARMAPPED, target->m_specularmap.isValid());
+	shader->setParamValue(UberShaderDefine::NORMALMAPPED, target->m_normalmap.isValid() && RENDER_MANAGER.getNormalMappingEnabled());
+	shader->setParamValue(UberShaderDefine::SPECULARMAPPED, target->m_specularmap.isValid() && RENDER_MANAGER.getSpecularMappingEnabled());
 	shader->setParamValue(UberShaderDefine::GRADIENTMAPPED, target->m_gradientmap.isValid());
 	shader->setParamValue(UberShaderDefine::SPLATTING, target->m_splattingmap.isValid());
+	shader->setParamValue(UberShaderDefine::SSS_MAP, target->m_sssmap.isValid());
 	// Bind UberShader
 	shader->use();
 	shader->setAllUniforms();
@@ -54,11 +55,11 @@ void XmlMaterial::apply(unsigned int layer)
 		target->m_colormap->bind(shader->getTexUnit(UberShaderTextureType::COLOR_MAP));
 	}
 
-	if(target->m_normalmap.isValid()) {
+	if(target->m_normalmap.isValid() && RENDER_MANAGER.getNormalMappingEnabled()) {
 		target->m_normalmap->bind(shader->getTexUnit(UberShaderTextureType::NORMAL_MAP));
 	}
 
-	if(target->m_specularmap.isValid()) {
+	if(target->m_specularmap.isValid() && RENDER_MANAGER.getSpecularMappingEnabled()) {
 		target->m_specularmap->bind(shader->getTexUnit(UberShaderTextureType::SPECULAR_MAP));
 	}
 
@@ -79,6 +80,11 @@ void XmlMaterial::apply(unsigned int layer)
 			target->m_splatting_blue->bind(shader->getTexUnit(UberShaderTextureType::SPLATTING_B));
 		}
 	}
+
+	if(target->m_sssmap.isValid()) {
+		target->m_sssmap->bind(shader->getTexUnit(UberShaderTextureType::SSS_MAP));
+	}
+
 }
 
 void XmlMaterial::unset(unsigned int layer)
@@ -100,11 +106,11 @@ void XmlMaterial::unset(unsigned int layer)
 		target->m_colormap->release(shader->getTexUnit(UberShaderTextureType::COLOR_MAP));
 	}
 
-	if(target->m_normalmap.isValid()) {
+	if(target->m_normalmap.isValid() && RENDER_MANAGER.getNormalMappingEnabled()) {
 		target->m_normalmap->release(shader->getTexUnit(UberShaderTextureType::NORMAL_MAP));
 	}
 
-	if(target->m_specularmap.isValid()) {
+	if(target->m_specularmap.isValid() && RENDER_MANAGER.getSpecularMappingEnabled()) {
 		target->m_specularmap->release(shader->getTexUnit(UberShaderTextureType::SPECULAR_MAP));
 	}
 
@@ -124,6 +130,10 @@ void XmlMaterial::unset(unsigned int layer)
 		if(target->m_splatting_blue.isValid()) {
 			target->m_splatting_blue->release(shader->getTexUnit(UberShaderTextureType::SPLATTING_B));
 		}
+	}
+
+	if(target->m_sssmap.isValid()) {
+		target->m_sssmap->release(shader->getTexUnit(UberShaderTextureType::SSS_MAP));
 	}
 
 	shader->unset();
@@ -237,6 +247,8 @@ void XmlMaterialFactory::parseTag(const QString& tag, QDomNode* node, XmlMateria
 				target->m_specularmap = tex;
 			} else if(type == "gradientmap") {
 				target->m_gradientmap = tex;
+			} else if(type == "sssmap") {
+				target->m_sssmap = tex;
 			} else if(type == "splatting") {
 				target->m_splattingmap = tex;
 			} else if(type == "splat_R") {
@@ -247,7 +259,7 @@ void XmlMaterialFactory::parseTag(const QString& tag, QDomNode* node, XmlMateria
 				target->m_splatting_blue = tex;
 			} else {
 				logError("texture tag line "<< node->lineNumber() << "in file" << xmlresource->m_path << "misses the attribute type or has a wrong type");
-				logInfo("valid texture types are colormap, normalmap, gradientmap, specularmap, splatting");
+				logInfo("valid texture types are colormap, normalmap, gradientmap, specularmap, splatting, sssmap");
 			}
 		}
 		else
@@ -349,6 +361,13 @@ void XmlMaterialFactory::parseTag(const QString& tag, QDomNode* node, XmlMateria
 				   content.at(0).nodeValue() == "1";
 		target->m_doublesided= val;
 	}
+	else if(tag == "sss")
+	{
+		QDomNodeList content = node->childNodes();
+		bool val = content.at(0).nodeValue() == "true" ||
+				   content.at(0).nodeValue() == "1";
+		target->m_uses_sss= val;
+	}
 	else if(tag == "uniform")
 	{
 
@@ -421,6 +440,18 @@ bool XmlMaterial::castsShadows(unsigned int layer)
 	return target->m_cast_shadow;
 }
 
+bool XmlMaterial::usesSSS(unsigned int layer)
+{
+	MaterialAttributes* target;
+
+	if(m_layers.size() <= layer) {
+		target = &m_default_attributes;
+	} else {
+		target = &m_layers[layer];
+	}
+	return target->m_uses_sss;
+}
+
 bool XmlMaterial::usesColorMap(unsigned int layer)
 {
 	MaterialAttributes* target;
@@ -468,5 +499,18 @@ bool XmlMaterial::usesGradientMap(unsigned int layer)
 	}
 	return target->m_gradientmap.isValid();
 }
+
+bool XmlMaterial::usesSSSMap(unsigned int layer)
+{
+	MaterialAttributes* target;
+
+	if(m_layers.size() <= layer) {
+		target = &m_default_attributes;
+	} else {
+		target = &m_layers[layer];
+	}
+	return target->m_sssmap.isValid();
+}
+
 
 

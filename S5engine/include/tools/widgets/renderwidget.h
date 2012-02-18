@@ -23,6 +23,9 @@ public :
 	void setDrawDebugFilter(const RenderManager::DebugGizmosFilter& filter);
 	void setShadowsEnabled(bool enabled);
 	void setBloomEnabled(bool enabled);
+	void setSSSEnabled(bool enabled);
+	void setNormalMappingEnabled(bool enabled);
+	void setSpecularMappingEnabled(bool enabled);
 	void setRenderPipeline(RenderManager::RenderPipeline pipeline);
 
 public slots :
@@ -32,6 +35,9 @@ public slots :
 
 	void optionShadowsChanged();
 	void optionBloomChanged();
+	void optionSSSChanged();
+	void optionNormalMappingChanged();
+	void optionSpecularMappingChanged();
 	void optionPipelineToForward();
 	void optionPipelineToDeferred();
 	void showOptionsMenu();
@@ -53,6 +59,9 @@ private:
 	QAction* m_options_deferred_pipeline;
 	QAction* m_options_shadows;
 	QAction* m_options_bloom;
+	QAction* m_options_sss;
+	QAction* m_options_normalmapping;
+	QAction* m_options_specularmapping;
 };
 
 #endif // RENDERWIDGET_H

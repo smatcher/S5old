@@ -38,6 +38,12 @@ void main()
 		#endif
 	#endfor
 
-	gl_Position = ftransform();
+	#ifndef SSS_PREPASS
+		gl_Position = ftransform();
+	#else
+		vec2 uv = gl_MultiTexCoord0.st;
+		uv = vec2(-1.0,-1.0) + 2.0*uv;
+		gl_Position = vec4(uv,0.0,1.0);
+	#endif
 }
 

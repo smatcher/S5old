@@ -36,12 +36,13 @@ int main(int argc, char* argv[])
 
 	Mesh taxi_mesh = MESH_MANAGER.get("taxi");
 	Mesh plane = MESH_MANAGER.get("Plane");
-	Mesh tiles_mesh = MESH_MANAGER.get("tiles");
+	Mesh tiles_mesh = MESH_MANAGER.get("sol");
+	Mesh bat_mesh = MESH_MANAGER.get("office1");
 	Material taxi_material = MATERIAL_MANAGER.get("taxi_material");
-	Material ground_material = MATERIAL_MANAGER.get("ground_material");
-	Material bat_material = MATERIAL_MANAGER.get("bat1_material");
+	Material ground_material = MATERIAL_MANAGER.get("routes_material");
+	Material bat_material = MATERIAL_MANAGER.get("office_material");
 
-	tiles->addProperty(new MeshRenderer(tiles_mesh,bat_material));
+	tiles->addProperty(new MeshRenderer(tiles_mesh,ground_material));
 	tiles->moveTo(Vector3f(0,-0.5,0));
 	tiles->setScale(Vector3f(10,10,10));
 	tiles->rotate(Vector3f(1,0,0),-90);
@@ -54,8 +55,8 @@ int main(int argc, char* argv[])
 	taxi2->addProperty(new MeshRenderer(taxi_mesh,taxi_material));
 	taxi2->moveTo(Vector3f(0,-0.1,0.0));
 
-	//ground->addProperty(new MeshRenderer(plane, ground_material));
-	ground->moveTo(Vector3f(0,-0.5,0));
+	ground->addProperty(new MeshRenderer(bat_mesh, bat_material));
+	ground->moveTo(Vector3f(10,-0.5,0));
 	ground->setScale(Vector3f(10,10,10));
 	ground->rotate(Vector3f(1,0,0),-90);
 
@@ -80,6 +81,7 @@ int main(int argc, char* argv[])
 	background.type = RenderManager::Background::COLOR;
 	background.color = Vector3f(0.0,0.0,0.0);
 	RENDER_MANAGER.setBackground(background);
+	RENDER_MANAGER.setAmbient(Vector3f(0.5,0.5,0.5));
 
 	return engine.start();
 }

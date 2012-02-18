@@ -19,10 +19,12 @@ public:
 	virtual bool isTransparent(unsigned int layer) = 0;
 	virtual bool receivesShadows(unsigned int layer) = 0;
 	virtual bool castsShadows(unsigned int layer) = 0;
+	virtual bool usesSSS(unsigned int layer) = 0;
 	virtual bool usesColorMap(unsigned int layer) = 0;
 	virtual bool usesNormalMap(unsigned int layer) = 0;
 	virtual bool usesSpecularMap(unsigned int layer) = 0;
 	virtual bool usesGradientMap(unsigned int layer) = 0;
+	virtual bool usesSSSMap(unsigned int layer) = 0;
 };
 
 class Material : public ResourceHandle<MaterialData>
