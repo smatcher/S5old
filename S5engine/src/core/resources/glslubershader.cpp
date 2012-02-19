@@ -118,8 +118,14 @@ void GLSLUberShader::use()
 		if(m_current->m_texunits[UberShaderTextureType::GRADIENT_MAP] >= 0)
 			_program->setUniformValue("gradientmap",m_current->m_texunits[UberShaderTextureType::GRADIENT_MAP]);
 
-		if(m_current->m_texunits[UberShaderTextureType::SSS] >= 0)
-			_program->setUniformValue("sss",m_current->m_texunits[UberShaderTextureType::SSS]);
+		if(m_current->m_texunits[UberShaderTextureType::SSS1] >= 0)
+			_program->setUniformValue("sss1",m_current->m_texunits[UberShaderTextureType::SSS1]);
+
+		if(m_current->m_texunits[UberShaderTextureType::SSS2] >= 0)
+			_program->setUniformValue("sss2",m_current->m_texunits[UberShaderTextureType::SSS2]);
+
+		if(m_current->m_texunits[UberShaderTextureType::SSS3] >= 0)
+			_program->setUniformValue("sss3",m_current->m_texunits[UberShaderTextureType::SSS3]);
 
 		if(m_current->m_texunits[UberShaderTextureType::SSS_MAP] >= 0)
 			_program->setUniformValue("sssmap",m_current->m_texunits[UberShaderTextureType::SSS_MAP]);

@@ -43,7 +43,7 @@ int main(int argc, char* argv[])
 	background.type = RenderManager::Background::COLOR;
 	background.color = Vector3f(0.0,0.0,0.0);
 	RENDER_MANAGER.setBackground(background);
-	RENDER_MANAGER.setAmbient(Vector3f(0.2,0.2,0.2));
+	RENDER_MANAGER.setAmbient(Vector3f(0.0,0.0,0.0));
 	RENDER_MANAGER.setRenderPipeline(RenderManager::FORWARD_PIPELINE);
 
 	//RENDER_MANAGER.addDebugTexture(TEXTURE_MANAGER.get("SSS")); // Texture does not exist at this point

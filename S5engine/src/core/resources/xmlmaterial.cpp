@@ -85,8 +85,16 @@ void XmlMaterial::apply(unsigned int layer)
 		target->m_sssmap->bind(shader->getTexUnit(UberShaderTextureType::SSS_MAP));
 	}
 
-	if(shader->getTexUnit(UberShaderTextureType::SSS) >= 0) {
-		TEXTURE_MANAGER.get("SSS")->bind(shader->getTexUnit(UberShaderTextureType::SSS));
+	if(shader->getTexUnit(UberShaderTextureType::SSS1) >= 0) {
+		TEXTURE_MANAGER.get("SSS1")->bind(shader->getTexUnit(UberShaderTextureType::SSS1));
+	}
+
+	if(shader->getTexUnit(UberShaderTextureType::SSS2) >= 0) {
+		TEXTURE_MANAGER.get("SSS2")->bind(shader->getTexUnit(UberShaderTextureType::SSS2));
+	}
+
+	if(shader->getTexUnit(UberShaderTextureType::SSS3) >= 0) {
+		TEXTURE_MANAGER.get("SSS3")->bind(shader->getTexUnit(UberShaderTextureType::SSS3));
 	}
 }
 
@@ -139,8 +147,16 @@ void XmlMaterial::unset(unsigned int layer)
 		target->m_sssmap->release(shader->getTexUnit(UberShaderTextureType::SSS_MAP));
 	}
 
-	if(shader->getTexUnit(UberShaderTextureType::SSS) >= 0) {
-		TEXTURE_MANAGER.get("SSS")->release(shader->getTexUnit(UberShaderTextureType::SSS));
+	if(shader->getTexUnit(UberShaderTextureType::SSS1) >= 0) {
+		TEXTURE_MANAGER.get("SSS1")->release(shader->getTexUnit(UberShaderTextureType::SSS1));
+	}
+
+	if(shader->getTexUnit(UberShaderTextureType::SSS2) >= 0) {
+		TEXTURE_MANAGER.get("SSS2")->release(shader->getTexUnit(UberShaderTextureType::SSS2));
+	}
+
+	if(shader->getTexUnit(UberShaderTextureType::SSS3) >= 0) {
+		TEXTURE_MANAGER.get("SSS3")->release(shader->getTexUnit(UberShaderTextureType::SSS3));
 	}
 
 	shader->unset();

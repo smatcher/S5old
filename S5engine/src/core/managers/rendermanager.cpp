@@ -226,7 +226,9 @@ void RenderManager::createResources()
 	m_depthmap = new RenderTexture2D("DEF_Depthmap", size.height(), size.width(), GL_DEPTH_COMPONENT, GL_FLOAT);
 
 	// SSS resources
-	m_sssbuffer = new RenderTexture2D("SSS", 512, 512, GL_RGBA, GL_UNSIGNED_BYTE);
+	m_sssbuffer[0] = new RenderTexture2D("SSS1", 512, 512, GL_RGBA, GL_UNSIGNED_BYTE);
+	m_sssbuffer[1] = new RenderTexture2D("SSS2", 512, 512, GL_RGBA, GL_UNSIGNED_BYTE);
+	m_sssbuffer[2] = new RenderTexture2D("SSS3", 512, 512, GL_RGBA, GL_UNSIGNED_BYTE);
 	m_sss_fbo = new FrameBufferObject(512, 512, false, false);
 }
 
@@ -777,16 +779,16 @@ void RenderManager::renderTarget(SceneGraph* sg, RenderTarget& target)
 			/// Prepass
 			// Render SSS map
 			m_sss_fbo->bind();
-			m_sss_fbo->attachTexture(m_sssbuffer,FrameBufferObject::COLOR_ATTACHMENT_0);
+			m_sss_fbo->attachTexture(m_sssbuffer[0],FrameBufferObject::COLOR_ATTACHMENT_0);
 			m_sss_fbo->commitTextures(0);
 			m_passinfo.ubershader_used->setParamValue(UberShaderDefine::SSS_PREPASS,true);
-			glViewport(0,0,m_sssbuffer->getWidth(), m_sssbuffer->getHeight());
+			glViewport(0,0,m_sssbuffer[0]->getWidth(), m_sssbuffer[0]->getHeight());
 			glPushMatrix();
 			(*it)->render();
 			glPopMatrix();
 			m_passinfo.ubershader_used->setParamValue(UberShaderDefine::SSS_PREPASS,false);
 			m_sss_fbo->release();
-			m_sssbuffer->swap();
+			m_sssbuffer[0]->swap();
 
 			glMatrixMode(GL_PROJECTION);
 			glPushMatrix();
@@ -795,12 +797,15 @@ void RenderManager::renderTarget(SceneGraph* sg, RenderTarget& target)
 			glBlendFunc(GL_ONE, GL_ZERO);
 			UberShader old_shader = m_passinfo.ubershader_used;
 			QList<Texture> input_textures;
-			input_textures.push_back(*m_sssbuffer);
 			for(int i=0 ; i<3 ; i++) {
+				input_textures.clear();
+				input_textures.push_back(*m_sssbuffer[qMax(i-1,0)]);
 				m_passinfo.ubershader_used = m_vertical_blur;
-				postprocessPassOnFBO(m_sssbuffer,input_textures,m_sss_fbo);
+				postprocessPassOnFBO(m_sssbuffer[i],input_textures,m_sss_fbo);
+				input_textures.clear();
+				input_textures.push_back(*m_sssbuffer[i]);
 				m_passinfo.ubershader_used = m_horizontal_blur;
-				postprocessPassOnFBO(m_sssbuffer,input_textures,m_sss_fbo);
+				postprocessPassOnFBO(m_sssbuffer[i],input_textures,m_sss_fbo);
 			}
 			m_passinfo.ubershader_used = old_shader;
 			glMatrixMode(GL_PROJECTION);
@@ -857,6 +862,7 @@ void RenderManager::renderTarget(SceneGraph* sg, RenderTarget& target)
 			glPopMatrix();
 */
 			// Final draw
+			glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 			target.bind();
 			m_passinfo.ubershader_used->setParamValue(UberShaderDefine::SSS_FINAL,true);
 			glViewport(0,0,m_screen_size->x(), m_screen_size->y());

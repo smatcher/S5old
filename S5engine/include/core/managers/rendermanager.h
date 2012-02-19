@@ -155,7 +155,7 @@ private :
 	FrameBufferObject* m_lowres_postprocessfbo;
 
 	// SSS stuff
-	RenderTexture* m_sssbuffer;
+	RenderTexture* m_sssbuffer[3];
 	FrameBufferObject* m_sss_fbo;
 
 	QList<RenderTarget*> m_rts;

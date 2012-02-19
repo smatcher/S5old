@@ -24,7 +24,9 @@
 #endif
 
 #ifdef SSS_FINAL
-	uniform sampler2D sss;
+	uniform sampler2D sss1;
+	uniform sampler2D sss2;
+	uniform sampler2D sss3;
 #endif
 #ifdef SSS_MAP
 	uniform sampler2D sssmap;
@@ -134,10 +136,20 @@ void main()
 	#ifndef SSS_FINAL
 		gl_FragColor = final_color;
 	#else
-		float ratio = 0.2;
+		vec4 ratio = vec4(1.0, 1.0, 1.0, 0.2);
 		#ifdef SSS_MAP
-			ratio = texture2D(sssmap, gl_TexCoord[0].st).x;
+			ratio = texture2D(sssmap, gl_TexCoord[0].st);
 		#endif
-		gl_FragColor = (1.0-ratio) * final_color + ratio * texture2D(sss, gl_TexCoord[0].st);
+			vec3 SSScontribution = mix(texture2D(sss3, gl_TexCoord[0].st).rgb, vec3(0.0, 0.0, 0.0), ratio.a);
+			SSScontribution = mix(texture2D(sss2, gl_TexCoord[0].st).rgb, SSScontribution * ratio.rgb, ratio.a);
+			SSScontribution = mix(texture2D(sss1, gl_TexCoord[0].st).rgb, SSScontribution * ratio.rgb,ratio.a);
+			gl_FragColor = vec4(mix(final_color.rgb,SSScontribution * ratio.rgb, ratio.a),final_color.a);//(ratio.r * final_color + ratio.g * layer1 + ratio.b * layer2 + ratio.a * layer3) / sum;
+/*
+//				vec4 layer1 = texture2D(sss1, gl_TexCoord[0].st);
+	//			vec4 layer2 = texture2D(sss2, gl_TexCoord[0].st);
+		//		vec4 layer3 = texture2D(sss3, gl_TexCoord[0].st);
+			//	float sum = ratio.r + ratio.g + ratio.b + ratio.a;
+		//gl_FragColor = texture2D(sss1, gl_TexCoord[0].st);
+*/
 	#endif
 }

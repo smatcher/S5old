@@ -7,4 +7,7 @@
 		<rule name="mipmap" value="false"/>
 		<rule name="filtering" value="false"/>
 	</file>
+	<file name="head_sss.tga">
+		<rule name="alpha" value="true"/>
+	</file>
 </rules>
