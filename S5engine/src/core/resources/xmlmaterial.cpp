@@ -85,6 +85,9 @@ void XmlMaterial::apply(unsigned int layer)
 		target->m_sssmap->bind(shader->getTexUnit(UberShaderTextureType::SSS_MAP));
 	}
 
+	if(shader->getTexUnit(UberShaderTextureType::SSS) >= 0) {
+		TEXTURE_MANAGER.get("SSS")->bind(shader->getTexUnit(UberShaderTextureType::SSS));
+	}
 }
 
 void XmlMaterial::unset(unsigned int layer)
@@ -134,6 +137,10 @@ void XmlMaterial::unset(unsigned int layer)
 
 	if(target->m_sssmap.isValid()) {
 		target->m_sssmap->release(shader->getTexUnit(UberShaderTextureType::SSS_MAP));
+	}
+
+	if(shader->getTexUnit(UberShaderTextureType::SSS) >= 0) {
+		TEXTURE_MANAGER.get("SSS")->release(shader->getTexUnit(UberShaderTextureType::SSS));
 	}
 
 	shader->unset();

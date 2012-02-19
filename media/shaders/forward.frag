@@ -23,6 +23,14 @@
 	uniform sampler2D specularmap;
 #endif
 
+#ifdef SSS_FINAL
+	uniform sampler2D sss;
+#endif
+#ifdef SSS_MAP
+	uniform sampler2D sssmap;
+#endif
+
+
 uniform vec3 scene_ambient;
 varying vec3 normal;
 
@@ -123,5 +131,13 @@ void main()
 		#endfor
 	#endif //SKY
 
-	gl_FragColor = final_color;
+	#ifndef SSS_FINAL
+		gl_FragColor = final_color;
+	#else
+		float ratio = 0.2;
+		#ifdef SSS_MAP
+			ratio = texture2D(sssmap, gl_TexCoord[0].st).x;
+		#endif
+		gl_FragColor = (1.0-ratio) * final_color + ratio * texture2D(sss, gl_TexCoord[0].st);
+	#endif
 }

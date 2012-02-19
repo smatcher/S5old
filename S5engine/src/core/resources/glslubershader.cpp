@@ -118,6 +118,12 @@ void GLSLUberShader::use()
 		if(m_current->m_texunits[UberShaderTextureType::GRADIENT_MAP] >= 0)
 			_program->setUniformValue("gradientmap",m_current->m_texunits[UberShaderTextureType::GRADIENT_MAP]);
 
+		if(m_current->m_texunits[UberShaderTextureType::SSS] >= 0)
+			_program->setUniformValue("sss",m_current->m_texunits[UberShaderTextureType::SSS]);
+
+		if(m_current->m_texunits[UberShaderTextureType::SSS_MAP] >= 0)
+			_program->setUniformValue("sssmap",m_current->m_texunits[UberShaderTextureType::SSS_MAP]);
+
 		if(m_current->m_texunits[UberShaderTextureType::SPLATTING] >= 0)
 			_program->setUniformValue("spatting",m_current->m_texunits[UberShaderTextureType::SPLATTING]);
 

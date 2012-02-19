@@ -1,5 +1,5 @@
 <material>
-	<specular>0.3 0.3 0.3 20.0</specular>
+	<specular>0.3 0.3 0.3 1.0</specular>
 <!--
 	<texture type="colormap">head_diff.jpg</texture>
 	<texture type="normalmap">head_norm.jpg</texture>

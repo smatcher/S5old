@@ -118,6 +118,7 @@ namespace UberShaderTextureType
 		SPLATTING_R,
 		SPLATTING_G,
 		SPLATTING_B,
+		SSS,
 		SSS_MAP,
 		NB_TEXTURES,
 		UNKNOWN
@@ -134,6 +135,7 @@ namespace UberShaderTextureType
 		"SPLATTING_R",
 		"SPLATTING_G",
 		"SPLATTING_B",
+		"SSS",
 		"SSS_MAP",
 		"NB_TEXTURES",
 		"UNKNOWN"
@@ -162,6 +164,7 @@ public:
 	}
 	virtual ~UberShaderData() {if(m_tree!=NULL) {delete m_tree;}}
 	void setParamValue(UberShaderDefine::Type param, bool value) {m_defines[param] = value; m_current = NULL;}
+	bool getParamValue(UberShaderDefine::Type param) {return m_defines[param];}
 	void resetParams() {
 		for(int i=0 ; i<UberShaderDefine::NB_DEFINES ; i++) {
 			m_defines[i] = false;
@@ -237,6 +240,7 @@ protected:
 		texunits[UberShaderTextureType::NORMAL_MAP]      = m_defines[UberShaderDefine::NORMALMAPPED]      ? texunit++ : -1;
 		texunits[UberShaderTextureType::SPECULAR_MAP]    = m_defines[UberShaderDefine::SPECULARMAPPED]    ? texunit++ : -1;
 		texunits[UberShaderTextureType::GRADIENT_MAP]    = m_defines[UberShaderDefine::GRADIENTMAPPED]    ? texunit++ : -1;
+		texunits[UberShaderTextureType::SSS]             = m_defines[UberShaderDefine::SSS_FINAL]         ? texunit++ : -1;
 		texunits[UberShaderTextureType::SSS_MAP]         = m_defines[UberShaderDefine::SSS_MAP]           ? texunit++ : -1;
 		texunits[UberShaderTextureType::ENVIRONMENT_MAP] = m_defines[UberShaderDefine::ENVIRONMENTMAPPED] ? texunit++ : -1;
 		texunits[UberShaderTextureType::SPLATTING]       = m_defines[UberShaderDefine::SPLATTING]         ? texunit++ : -1;

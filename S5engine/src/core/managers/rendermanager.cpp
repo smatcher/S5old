@@ -1067,6 +1067,7 @@ void RenderManager::debugDisplayTexture(Texture texture, int x, int y, int width
 		glClear(GL_DEPTH_BUFFER_BIT);
 
 		glDisable(GL_LIGHTING);
+		glColor4f(1.0,1.0,1.0,1.0);
 
 		glMatrixMode(GL_PROJECTION);
 		glLoadIdentity();
