@@ -8,6 +8,10 @@
 
 #include <QtOpenGL>
 
+#ifdef _WIN32
+	void __ClientActiveTexture(int);
+#endif
+
 TerrainPatch::TerrainPatch(int start_x, int start_y, int dim, int lod, int theight, int twidth) :
 	m_indices(QGLBuffer::IndexBuffer),
 	m_offsetx(start_x),
@@ -254,13 +258,13 @@ void TerrainRenderer::render() {
 	{
 		glEnable(GL_TEXTURE_2D);
 		glEnableClientState(GL_TEXTURE_COORD_ARRAY);
-		glClientActiveTexture(GL_TEXTURE0);
+		__ClientActiveTexture(GL_TEXTURE0);
 		m_texcoords.bind();
 		glTexCoordPointer(2, GL_FLOAT, 0, NULL);
 
 		glEnable(GL_TEXTURE_2D);
 		glEnableClientState(GL_TEXTURE_COORD_ARRAY);
-		glClientActiveTexture(GL_TEXTURE1);
+		__ClientActiveTexture(GL_TEXTURE1);
 		m_stexcoords.bind();
 		glTexCoordPointer(2, GL_FLOAT, 0, NULL);
 	}

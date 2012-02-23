@@ -2,7 +2,8 @@
 #define TEXTURE_H
 
 #include "core/resources/resource.h"
-#include <GL/gl.h>
+#include <QtOpenGL>
+#include <QGLFunctions>
 
 #ifdef WITH_TOOLS
 	#include "tools/widgets/texturewidget.h"
@@ -11,7 +12,7 @@
 class Texture;
 template <class R, class H> class ResourceManager;
 
-class TextureData : public ResourceData
+class TextureData : public ResourceData, protected QGLFunctions
 {
 	friend class ResourceHandle<TextureData>;
 	friend class ResourceManager<TextureData,Texture>;
@@ -26,7 +27,11 @@ protected:
 	bool m_hasgltex;
 
 public:
-	TextureData(const QString& name, const QString& path, IResourceFactory* factory) : ResourceData(name,path,factory), m_hasgltex(false) {}
+	TextureData(const QString& name, const QString& path, IResourceFactory* factory) : ResourceData(name,path,factory), m_hasgltex(false)
+	{
+		initializeGLFunctions();
+	}
+
 	virtual void bind(int i=0)
 	{
 		if(m_hasgltex)

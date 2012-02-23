@@ -2,7 +2,6 @@
 #define GLSLSHADER_H
 
 #include "core/graphics/shader.h"
-#include  <QtOpenGL>
 
 class GLSLShaderProgramFactory;
 

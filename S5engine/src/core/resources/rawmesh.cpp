@@ -3,6 +3,10 @@
 #include "core/resources/rawmesh.h"
 #include "core/managers/rendermanager.h"
 
+#ifdef _WIN32
+	void __ClientActiveTexture(int texid);
+#endif
+
 RawMesh::RawMesh(const QString &name, const QString &path, IResourceFactory *factory) :
 	MeshData(name,path,factory),
 	m_vertices(),
@@ -55,7 +59,7 @@ void RawMesh::draw(unsigned int, int flags)
 	{
 		glEnable(GL_TEXTURE_2D);
 		glEnableClientState(GL_TEXTURE_COORD_ARRAY);
-		glClientActiveTexture(GL_TEXTURE0);
+		__ClientActiveTexture(GL_TEXTURE0);
 		m_texcoords.bind();
 		glTexCoordPointer(2, GL_FLOAT, 0, NULL);
 	}

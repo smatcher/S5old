@@ -201,3 +201,5 @@ include/tools/widgets/meshwidget.h
 src/tools/widgets/resourcewidget.cpp
 src/tools/widgets/texturewidget.cpp
 src/tools/widgets/meshwidget.cpp
+src/core/graphics/framebufferobject_noglew.cpp
+src/core/utils/glewhack.cpp

@@ -9,6 +9,9 @@
 #include <core/graphics/rtarray.h>
 #include "core/resources/managers.h"
 
+#ifdef _WIN32
+	#define GL_GENERATE_MIPMAP 0x8191
+#endif
 
 RenderTextureArray::RenderTextureArray(QString name, int height, int width, int depth, GLenum format, GLenum type)
 	: RenderTexture(name, height, width), m_depth(depth)

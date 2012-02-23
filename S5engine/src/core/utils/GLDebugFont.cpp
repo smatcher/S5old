@@ -35,7 +35,7 @@ subject to the following restrictions:
 
 
 
-#ifdef _WINDOWS
+#ifdef _WIN32
 #include <windows.h>
 #include <GL/gl.h>
 #include <GL/glu.h>

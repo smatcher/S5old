@@ -7,6 +7,10 @@
 
 #define OMNIDEPTH_RESOLUTION 256
 
+#ifdef _WIN32
+	#define GL_MULTISAMPLE 0x809D
+#endif
+
 const double posx[] = {
 	 1, 0, 0, 0,
 	 0,-1, 0, 0,

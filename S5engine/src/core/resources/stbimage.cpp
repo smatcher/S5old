@@ -3,6 +3,10 @@
 
 #include "core/log/log.h"
 
+#ifdef _WIN32
+	#define GL_GENERATE_MIPMAP 0x8191
+#endif
+
 /*
 
  DATA

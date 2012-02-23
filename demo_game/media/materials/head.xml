@@ -1,11 +1,12 @@
 <material>
 	<specular>0.0 0.0 0.0 1.0</specular>
+	<!--
 	<texture type="colormap">head_diff.jpg</texture>
 	<texture type="normalmap">head_norm.jpg</texture>
-<!--
+-->
 	<texture type="colormap">head_diff.tga</texture>
 	<texture type="normalmap">head_norm.tga</texture>
--->
+
 	<texture type="specularmap">head_spec.tga</texture>
 	<texture type="sssmap">head_sss.tga</texture>
 	<sss>true</sss>

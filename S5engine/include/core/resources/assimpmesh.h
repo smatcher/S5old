@@ -4,6 +4,7 @@
 #include "core/graphics/mesh.h"
 #include "core/maths/transform.h"
 #include <QtOpenGL>
+#include <QGLFunctions>
 
 class aiMesh;
 class aiScene;
@@ -16,7 +17,7 @@ class AssimpMesh : public MeshData
 
 private:
 
-	struct Submesh {
+	struct Submesh : protected QGLFunctions {
 		const aiMesh* m_mesh;
 
 		QGLBuffer m_vertices;
@@ -49,7 +50,10 @@ private:
 		m_skinned_tangents(),
 		m_skinned_bitangents(),
 		m_nbFaces(0),
-		m_transform(transform) {}
+		m_transform(transform)
+		{
+			initializeGLFunctions();
+		}
 
 		void buildVBO(QString name);
 		void buildAABB(float& minX,float& maxX, float& minY, float& maxY, float& minZ, float& maxZ);

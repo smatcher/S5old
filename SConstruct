@@ -63,22 +63,40 @@ env.Append(RPATH=[os.path.join(qtdir, 'lib')])
 # core
 env.Append(LIBS=['-lpthread','-lm'])
 # gui
-env.Append(LIBS=['-lXext','-lX11'])
+if sys.platform.startswith("linux"):
+	env.Append(LIBS=['-lXext','-lX11'])
 # opengl
-env.Append(LIBS=['-lGL','-lGLU','-lGLEW'])
+if env['PLATFORM'] == 'win32':
+	env.Append(LIBPATH=['dep/glew/lib-win32'])
+	env.Append(CPPPATH = ['dep/glew/include'])
+	env.Append(LIBS=['-lopengl32','-lglew32','-lglu32'])
+else:
+	env.Append(LIBS=['-lGL','-lGLU','-lGLEW'])
 # openal
-env.Append(LIBS=['-lopenal','-lalut'])
+if env['PLATFORM'] == 'win32':
+	env.Append(CPPPATH=['dep/openal/include'])
+	env.Append(LIBPATH=['dep/openal/lib-win32'])
+	env.Append(LIBS=['-lOpenAL32','-lalut'])
+else:
+	env.Append(LIBS=['-lopenal','-lalut'])
 # assimp
-env.Append(LIBPATH=['dep/assimp/lib'])
+if env['PLATFORM'] == 'win32':
+	env.Append(LIBPATH=['dep/assimp/lib-win32'])
+else:
+	env.Append(LIBPATH=['dep/assimp/lib'])
 env.Append(CPPPATH = ['dep/assimp/include'])
 env.Append(LIBS=['-lassimp'])
 # bullet
 env.Append(LIBS=
 		['BulletSoftBody',
 		'BulletDynamics',
-		'BulletCollision'])
-#		'BulletMath'])
-env.ParseConfig('pkg-config bullet --cflags --libs')
+		'BulletCollision',
+		'LinearMath'])
+if env['PLATFORM'] == 'win32':
+	env.Append(CPPPATH=['dep/bullet/src'])
+	env.Append(LIBPATH=['dep/bullet/lib-win32'])
+else:
+	env.ParseConfig('pkg-config bullet --cflags --libs')
 
 SConscript('SConscript_S5engine','env')
 SConscript('SConscript_demo_game','env')

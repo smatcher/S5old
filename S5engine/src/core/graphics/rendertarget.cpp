@@ -1,6 +1,7 @@
 #include <GL/glew.h>
 
 #include "core/graphics/rendertarget.h"
+#include "core/graphics/rendertexture.h"
 #include "core/managers/rendermanager.h"
 #include "core/maths/vector2.h"
 

@@ -1,12 +1,16 @@
 #include "core/resources/assimpmesh.h"
-#include <QtOpenGL>
-#include <GL/glu.h>
 
 #include "core/maths/aabb.h"
 #include "core/managers/rendermanager.h"
 
 #include <assimp.h>
 #include <aiMesh.h>
+
+#include <GL/glu.h>
+
+#ifdef _WIN32
+	void __ClientActiveTexture(int texid);
+#endif
 
 AssimpMesh::AssimpMesh(const QString& name, const QString& path, IResourceFactory* factory) :
 	MeshData(name,path,factory),
@@ -332,7 +336,7 @@ void AssimpMesh::Submesh::draw(QGLShaderProgram* program, int flags)
 	{
 		glEnable(GL_COLOR_MATERIAL);
 		glEnableClientState(GL_COLOR_ARRAY);
-		glClientActiveTexture(GL_TEXTURE0);
+		__ClientActiveTexture(GL_TEXTURE0);
 		m_colors.bind();
 		glColorPointer(4, GL_FLOAT, 0, NULL);
 	}

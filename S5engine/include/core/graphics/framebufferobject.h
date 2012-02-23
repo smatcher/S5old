@@ -1,8 +1,24 @@
 #ifndef FRAMEBUFFEROBJECT_H
 #define FRAMEBUFFEROBJECT_H
 
-#include <core/graphics/rendertexture.h>
+#ifdef _WIN32
+	#define GL_COLOR_ATTACHMENT0 0x8CE0
+	#define GL_COLOR_ATTACHMENT1 0x8CE1
+	#define GL_COLOR_ATTACHMENT2 0x8CE2
+	#define GL_COLOR_ATTACHMENT3 0x8CE3
+	#define GL_COLOR_ATTACHMENT4 0x8CE4
+	#define GL_COLOR_ATTACHMENT5 0x8CE5
+	#define GL_COLOR_ATTACHMENT6 0x8CE6
+	#define GL_COLOR_ATTACHMENT7 0x8CE7
+	#define GL_DEPTH_ATTACHMENT 0x8D00
+	#define GL_STENCIL_ATTACHMENT 0x8D20
+#endif
+
 #include <GL/gl.h>
+#include <QList>
+
+//#include <core/graphics/rendertexture.h>
+class RenderTexture;
 
 class FrameBufferObject
 {
@@ -50,6 +66,8 @@ private:
 		GLenum textarget;
 	};
 	QList<Attachment> m_textures;
+
+	int GLEW_HACK_getRTIdForPass(RenderTexture* tex, int passNb);
 };
 
 #endif // FRAMEBUFFEROBJECT_H

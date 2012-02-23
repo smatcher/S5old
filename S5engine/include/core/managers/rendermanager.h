@@ -5,10 +5,10 @@
 #include "core/utils/singleton.h"
 
 #include "core/graphics/texture.h"
+#include "core/graphics/framebufferobject.h"
 #include "core/graphics/shader.h"
 #include "core/graphics/ubershader.h"
 #include "core/graphics/material.h"
-#include "core/graphics/framebufferobject.h"
 #include "core/maths/vector3.h"
 #include "core/maths/vector2.h"
 
