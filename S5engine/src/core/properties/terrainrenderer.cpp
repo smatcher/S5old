@@ -75,7 +75,7 @@ TerrainRenderer::TerrainRenderer(Texture& hm, Material& mat, float yscale, float
 
 	logInfo( "Creating terrain from " << hm->name() );
 
-	/* Pas terrible, vue que la Texture n'est pas FORCEMENT une StbImage, à améliorer donc... */
+	/* Pas terrible, vue que la Texture n'est pas FORCEMENT une StbImage, �  améliorer donc... */
 	stbi_uc* image = ((StbImage*)*hm)->getData();
 
 	GLfloat* vertices;
@@ -88,7 +88,7 @@ TerrainRenderer::TerrainRenderer(Texture& hm, Material& mat, float yscale, float
 	int comp = ((StbImage*)*hm)->getComp();
 
 
-
+    logInfo("Vertices");
 	/**** VERTICES ****/
 	vertices = new GLfloat[m_height * m_width * 3]();
 	for(int x = 0; x<m_height; x++) {;
@@ -104,6 +104,8 @@ TerrainRenderer::TerrainRenderer(Texture& hm, Material& mat, float yscale, float
 	m_vertices.setUsagePattern(QGLBuffer::StaticDraw);
 	m_vertices.allocate(vertices, m_height * m_width * 3 * sizeof(GLfloat));
 
+
+    logInfo("Normals");
 	/**** NORMALS ****/
 	normals = new GLfloat[m_height * m_width * 3]();
 	for(int x = 0; x<m_height; x++) {;
@@ -159,7 +161,7 @@ TerrainRenderer::TerrainRenderer(Texture& hm, Material& mat, float yscale, float
 						   vertices[(x+(z-1)*m_height)*3 + 2] - vertices[(x+z*m_height)*3 + 2]);
 			}
 
-			normal *= -1.0f; /* Ouais j'ai calculé les normales à l'envers, a corriger quand j'aurais pas la fleme */
+			normal *= -1.0f; /* Ouais j'ai calculé les normales �  l'envers, a corriger quand j'aurais pas la fleme */
 			normal.normalize();
 
 			normals[index*3] = normal.x;
@@ -176,6 +178,7 @@ TerrainRenderer::TerrainRenderer(Texture& hm, Material& mat, float yscale, float
 
 	/**** BITENGENT ****/
 
+    logInfo("TexCoord");
 	/**** TEXCOORD ****/
 	texcoords = new GLfloat[m_height * m_width * 2]();
 	for(int x = 0; x<m_height; x++) {
@@ -191,6 +194,7 @@ TerrainRenderer::TerrainRenderer(Texture& hm, Material& mat, float yscale, float
 	m_texcoords.setUsagePattern(QGLBuffer::StaticDraw);
 	m_texcoords.allocate(texcoords, m_height * m_width * 2 * sizeof(float));
 
+    logInfo("StexCoord");
 	/**** STEXCOORD ****/
 	stexcoords = new GLfloat[m_height * m_width * 2]();
 
@@ -207,31 +211,34 @@ TerrainRenderer::TerrainRenderer(Texture& hm, Material& mat, float yscale, float
 	m_stexcoords.setUsagePattern(QGLBuffer::StaticDraw);
 	m_stexcoords.allocate(stexcoords, m_height * m_width * 2 * sizeof(float));
 
+    logInfo("Indices");
 	/**** INDICES ****/
-	indices = new GLint[3*((m_height-1)*(m_width-1)*2)]();
-	for(int x = 0; x<m_height-1; x++) {
-		for(int z = 0; z<m_width-1; z++) {
-			index = (x + z*m_height)*6;
+//	indices = new GLint[3*((m_height-1)*(m_width-1)*2)]();
+//	for(int x = 0; x<m_height-1; x++) {
+//		for(int z = 0; z<m_width-1; z++) {
+//			index = (x + z*m_height)*6;/
 
 			/* Triangle 1 */
-			indices[index]	 = (x+z*m_height);
-			indices[index+1] = (x+(z+1)*m_height);
-			indices[index+2] = ((x+1)+z*m_height);
-			/* Triangle 2 */
-			indices[index+3] = (x+(z+1)*m_height);
-			indices[index+4] = ((x+1)+(z+1)*m_height);
-			indices[index+5] = ((x+1)+z*m_height);
-		}
-	}
-	m_indices.create();
-	m_indices.bind();
-	m_indices.setUsagePattern(QGLBuffer::StaticDraw);
-	m_indices.allocate(indices, 3*((m_height-1)*(m_width-1)*2)*sizeof(GLint));
+//			indices[index]	 = (x+z*m_height);
+//			indices[index+1] = (x+(z+1)*m_height);
+//			indices[index+2] = ((x+1)+z*m_height);
+//			/* Triangle 2 */
+//			indices[index+3] = (x+(z+1)*m_height);
+//			indices[index+4] = ((x+1)+(z+1)*m_height);
+//			indices[index+5] = ((x+1)+z*m_height);
+//		}
+//	}
+
+
+//	m_indices.create();
+//	m_indices.bind();
+//	m_indices.setUsagePattern(QGLBuffer::StaticDraw);
+//	m_indices.allocate(indices, 3*((m_height-1)*(m_width-1)*2)*sizeof(GLint));
 
 	m_stexcoords.release();
-	m_indices.release();
-
-	delete[] indices;
+    //m_indices.release();
+    logInfo("End");
+    //delete[] indices;
 
 	buildQuadTree(5);
 
@@ -240,7 +247,7 @@ TerrainRenderer::TerrainRenderer(Texture& hm, Material& mat, float yscale, float
 void TerrainRenderer::render() {
 	node()->getGlobalTransform().glMultf();
 
-	if(!m_vertices.isCreated() || !m_indices.isCreated()) {
+    if(!m_vertices.isCreated() /*|| !m_indices.isCreated()*/) {
 		return;
 	}
 
@@ -308,6 +315,7 @@ void TerrainRenderer::render() {
 
 	//m_quadtree->getValue()->render();
 	renderQuadTree(m_quadtree);
+
 	if(m_wireframe) {
 		glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 	}
