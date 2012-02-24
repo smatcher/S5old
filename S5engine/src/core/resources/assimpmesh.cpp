@@ -8,9 +8,9 @@
 
 #include <GL/glu.h>
 
-#ifdef _WIN32
+//#ifdef _WIN32
 	void __ClientActiveTexture(int texid);
-#endif
+//#endif
 
 AssimpMesh::AssimpMesh(const QString& name, const QString& path, IResourceFactory* factory) :
 	MeshData(name,path,factory),
