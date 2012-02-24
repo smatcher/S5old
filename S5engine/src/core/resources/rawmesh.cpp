@@ -3,9 +3,9 @@
 #include "core/resources/rawmesh.h"
 #include "core/managers/rendermanager.h"
 
-#ifdef _WIN32
+//#ifdef _WIN32
 	void __ClientActiveTexture(int texid);
-#endif
+//#endif
 
 RawMesh::RawMesh(const QString &name, const QString &path, IResourceFactory *factory) :
 	MeshData(name,path,factory),

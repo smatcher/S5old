@@ -8,9 +8,9 @@
 
 #include <QtOpenGL>
 
-#ifdef _WIN32
+//#ifdef _WIN32
 	void __ClientActiveTexture(int);
-#endif
+//#endif
 
 TerrainPatch::TerrainPatch(int start_x, int start_y, int dim, int lod, int theight, int twidth) :
 	m_indices(QGLBuffer::IndexBuffer),
