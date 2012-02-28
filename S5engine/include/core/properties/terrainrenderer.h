@@ -27,6 +27,10 @@ public:
 
 	/* Niveau de détail du patch */
 	int m_lod;
+
+    /* Debug info */
+    float y_min;
+    float y_max;
 };
 
 class TerrainRenderer : public IRenderable
@@ -44,7 +48,7 @@ protected:
 
 	void buildQuadTree(int max_lod);
 	void _buildQuadTree(TerrainNode* node, int theight, int twidth);
-	void renderQuadTree(TerrainNode* node);
+    void renderQuadTree(TerrainNode* node, Node* position);
 
 	float* m_heightmap;
 	int m_height;

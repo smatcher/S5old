@@ -3,6 +3,8 @@
 
 #include <core/managers/rendermanager.h>
 
+#include <core/properties/iproperty.h>
+
 #include "core/scenegraph/node.h"
 #include "core/utils/quadtree.h"
 
@@ -87,8 +89,6 @@ TerrainRenderer::TerrainRenderer(Texture& hm, Material& mat, float yscale, float
 	int index;
 	int comp = ((StbImage*)*hm)->getComp();
 
-
-    logInfo("Vertices");
 	/**** VERTICES ****/
 	vertices = new GLfloat[m_height * m_width * 3]();
 	for(int x = 0; x<m_height; x++) {;
@@ -104,8 +104,6 @@ TerrainRenderer::TerrainRenderer(Texture& hm, Material& mat, float yscale, float
 	m_vertices.setUsagePattern(QGLBuffer::StaticDraw);
 	m_vertices.allocate(vertices, m_height * m_width * 3 * sizeof(GLfloat));
 
-
-    logInfo("Normals");
 	/**** NORMALS ****/
 	normals = new GLfloat[m_height * m_width * 3]();
 	for(int x = 0; x<m_height; x++) {;
@@ -178,7 +176,6 @@ TerrainRenderer::TerrainRenderer(Texture& hm, Material& mat, float yscale, float
 
 	/**** BITENGENT ****/
 
-    logInfo("TexCoord");
 	/**** TEXCOORD ****/
 	texcoords = new GLfloat[m_height * m_width * 2]();
 	for(int x = 0; x<m_height; x++) {
@@ -194,7 +191,6 @@ TerrainRenderer::TerrainRenderer(Texture& hm, Material& mat, float yscale, float
 	m_texcoords.setUsagePattern(QGLBuffer::StaticDraw);
 	m_texcoords.allocate(texcoords, m_height * m_width * 2 * sizeof(float));
 
-    logInfo("StexCoord");
 	/**** STEXCOORD ****/
 	stexcoords = new GLfloat[m_height * m_width * 2]();
 
@@ -211,40 +207,18 @@ TerrainRenderer::TerrainRenderer(Texture& hm, Material& mat, float yscale, float
 	m_stexcoords.setUsagePattern(QGLBuffer::StaticDraw);
 	m_stexcoords.allocate(stexcoords, m_height * m_width * 2 * sizeof(float));
 
-    logInfo("Indices");
-	/**** INDICES ****/
-//	indices = new GLint[3*((m_height-1)*(m_width-1)*2)]();
-//	for(int x = 0; x<m_height-1; x++) {
-//		for(int z = 0; z<m_width-1; z++) {
-//			index = (x + z*m_height)*6;/
-
-			/* Triangle 1 */
-//			indices[index]	 = (x+z*m_height);
-//			indices[index+1] = (x+(z+1)*m_height);
-//			indices[index+2] = ((x+1)+z*m_height);
-//			/* Triangle 2 */
-//			indices[index+3] = (x+(z+1)*m_height);
-//			indices[index+4] = ((x+1)+(z+1)*m_height);
-//			indices[index+5] = ((x+1)+z*m_height);
-//		}
-//	}
-
-
-//	m_indices.create();
-//	m_indices.bind();
-//	m_indices.setUsagePattern(QGLBuffer::StaticDraw);
-//	m_indices.allocate(indices, 3*((m_height-1)*(m_width-1)*2)*sizeof(GLint));
-
 	m_stexcoords.release();
-    //m_indices.release();
-    logInfo("End");
-    //delete[] indices;
 
-	buildQuadTree(5);
+    buildQuadTree(8);
 
 }
 
-void TerrainRenderer::render() {
+void TerrainRenderer::render() {   
+    static Node* cam_node = 0;
+    IProperty* cam = (IProperty*)RENDER_MANAGER.getCurrentCamera();
+    if(cam!=0)
+        cam_node = cam->node();
+
 	node()->getGlobalTransform().glMultf();
 
     if(!m_vertices.isCreated() /*|| !m_indices.isCreated()*/) {
@@ -314,7 +288,7 @@ void TerrainRenderer::render() {
 	}
 
 	//m_quadtree->getValue()->render();
-	renderQuadTree(m_quadtree);
+    renderQuadTree(m_quadtree, cam_node);
 
 	if(m_wireframe) {
 		glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
@@ -367,13 +341,23 @@ void TerrainRenderer::_buildQuadTree(TerrainNode* node, int theight, int twidth)
 
 }
 
-void TerrainRenderer::renderQuadTree(TerrainNode* node) {
-	if((node->getValue()->m_lod*50*node->getValue()->m_lod*50 > (node->getValue()->m_offsetx+(node->getValue()->m_dim/2)-256)*(node->getValue()->m_offsetx+(node->getValue()->m_dim/2)-256) +
-									(node->getValue()->m_offsety+(node->getValue()->m_dim/2)-256)*(node->getValue()->m_offsety+(node->getValue()->m_dim/2)-256)) && node->getValue()->m_lod>0) {
-		renderQuadTree(node->child(TerrainNode::NORTH_WEST));
-		renderQuadTree(node->child(TerrainNode::SOUTH_WEST));
-		renderQuadTree(node->child(TerrainNode::NORTH_EAST));
-		renderQuadTree(node->child(TerrainNode::SOUTH_EAST));
+void TerrainRenderer::renderQuadTree(TerrainNode* node, Node* position) {
+    Transformf cam_t(position->getGlobalTransform());
+    Transformf terrain_t(this->node()->getGlobalTransform());
+
+    float patch_x=this->m_scale*(node->getValue()->m_offsetx+(node->getValue()->m_dim/2));
+    float patch_y=this->m_scale*(node->getValue()->m_offsety+(node->getValue()->m_dim/2));
+
+    float limite = node->getValue()->m_lod*60*node->getValue()->m_lod*60;
+    float norme = (patch_x-cam_t.getPosition().x)*(patch_x-cam_t.getPosition().x) +
+                  (patch_y-cam_t.getPosition().z)*(patch_y-cam_t.getPosition().z);
+
+    if( limite > norme && node->getValue()->m_lod>0) {
+
+        renderQuadTree(node->child(TerrainNode::NORTH_WEST), position);
+        renderQuadTree(node->child(TerrainNode::SOUTH_WEST), position);
+        renderQuadTree(node->child(TerrainNode::NORTH_EAST), position);
+        renderQuadTree(node->child(TerrainNode::SOUTH_EAST), position);
 
 	}
 	else {

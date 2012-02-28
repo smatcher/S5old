@@ -63,6 +63,7 @@ int main(int argc, char *argv[])
 	Node* nRot = new Node("Rotating node");
 	Node* nLight = new Node("Light");
 	Node* nPlane = new Node("Plane");
+    Node* nCentre = new Node("Centre");
 	Node* nCamFollow = new Node("Camera Follow");
 
 	Texture heightmap;
@@ -88,47 +89,41 @@ int main(int argc, char *argv[])
 	//prop.angDamping = 0.3;
 	prop.shape = PhysicObject::MESH;
 	prop.mesh_name = "duckplane";
-	PhysicObject* phyobj = new PhysicObject(prop);
-	sg->link(nPlane);
-	nPlane->addProperty(phyobj);
-	nPlane->addProperty(new PlaneController(phyobj));
+    sg->link(nCentre);
+    nCentre->link(nPlane);
+    nCentre->move(Vector3f(512.0,50.0,512.0));
 	nPlane->addProperty(new MeshRenderer(mesh,duckmat));
+    nPlane->rotate(Vector3f(0.0,0.0,1.0), 20.0);
+    nPlane->move(Vector3f(256.0,20.0,0.0));
+    nCentre->addProperty(new DummyUpdatable(0.1));
 
-	Camera* cam = new Camera(90,1,200);
+    Camera* cam = new Camera(90,1,1024);
 	nCamFollow->addProperty(cam);
 	nCamFollow->move(Vector3f(0,2,5));
 	nCamFollow->rotate(Vector3f(-1,0,0),15);
 	nPlane->link(nCamFollow);
 
-	nTerrain->addProperty(new TerrainRenderer(heightmap, terrain, 70.0f, 1.f,20.f));
-	nTerrain->move(Vector3f(-256.f, -100.f, -256.f));
+    nTerrain->addProperty(new TerrainRenderer(heightmap, terrain, 70.0f, 2.f,20.f));
 
 	Light* light = new Light();
 	light->setAttenuation(0,1.f/100.f,0);
 	nLight->addProperty(light);
 	nLight->addProperty(new MeshRenderer(sphere,mat));
-	nLight->moveTo(Vector3f(0, 0.0f, -512.0f));
+    nLight->move(Vector3d(0.0, 60.0, 0.0));
 
-	//nRot->addProperty(new DummyUpdatable());
 
 	nBase->rotate(Vector3f(1,0,0),90);
 	nBase->rotate(Vector3f(0,1,0),-45);
 
 	sg->link(nTerrain);
-	nRot->link(nLight);
+    nCentre->link(nLight);
 	nBase->link(nRot);
 	sg->link(nBase);
 
 	RenderManager::Background background;
 	background.type = RenderManager::Background::COLOR;
 	background.color = Vector3f(0,0,0);
-/*	background.textures[0] = TEXTURE_MANAGER.get("stormy_front.tga");
-	background.textures[1] = TEXTURE_MANAGER.get("stormy_left.tga");
-	background.textures[2] = TEXTURE_MANAGER.get("stormy_back.tga");
-	background.textures[3] = TEXTURE_MANAGER.get("stormy_right.tga");
-	background.textures[4] = TEXTURE_MANAGER.get("stormy_top.tga");
-	background.textures[5] = TEXTURE_MANAGER.get("stormy_bottom.tga");
-	*/
+
 	background.textures[0] = TEXTURE_MANAGER.get("interstellar_lf.tga");
 	background.textures[1] = TEXTURE_MANAGER.get("interstellar_ft.tga");
 	background.textures[2] = TEXTURE_MANAGER.get("interstellar_rt.tga");
