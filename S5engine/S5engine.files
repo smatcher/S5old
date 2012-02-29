@@ -203,3 +203,6 @@ src/tools/widgets/texturewidget.cpp
 src/tools/widgets/meshwidget.cpp
 src/core/graphics/framebufferobject_noglew.cpp
 src/core/utils/glewhack.cpp
+include/core/abstraction/irenderdevice.h
+include/core/abstraction/gl2renderdevice.h
+include/core/abstraction/dx9renderdevice.h
