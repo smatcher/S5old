@@ -12,12 +12,14 @@ PlaneController::PlaneController(PhysicObject* physicobject)
 	m_control_right = manager.getControlId("droite");
 
 	m_dragFactor = 0.06f;
-	m_liftFactor = 100.0f;
-	m_propulsionFactor = 1000.0f;
+	m_liftFactor = 80.0f;
+	m_propulsionFactor = 300.0f;
 }
 
 void PlaneController::update(double elapsed_time)
 {
+	static bool firstUpdate = true;
+
 	btRigidBody* rgdBody = m_physicobject->getRigidBody();
 	btVector3 _linearVelocity = rgdBody->getLinearVelocity();
 	Matrix3f rotation = node()->getRotation(); // WARNING WONT WORK IF NODE HAS A ROTATED PARENT
@@ -56,5 +58,11 @@ void PlaneController::update(double elapsed_time)
 	if(apply) {
 		globalTorque = rotation*globalTorque;
 		rgdBody->applyTorque(btVector3(globalTorque.x, globalTorque.y, globalTorque.z));
+	}
+
+	if(firstUpdate)
+	{
+		rgdBody->setLinearVelocity(btVector3(0,0,-30));
+		firstUpdate = false;
 	}
 }
