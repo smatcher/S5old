@@ -17,6 +17,7 @@ static GLenum cubemap_targets[] = {
 RenderTextureCubemap::RenderTextureCubemap(QString name, int height, int width, GLenum format, GLenum type)
 	: RenderTexture(name, height, width)
 {
+	/*
 	m_hasgltex = true;
 	m_state = STATE_LOADED;
 	m_format = format;
@@ -56,17 +57,21 @@ RenderTextureCubemap::RenderTextureCubemap(QString name, int height, int width, 
 	glBindTexture(GL_TEXTURE_CUBE_MAP, 0);
 
 	TEXTURE_MANAGER.add(this);
+	*/
 }
 
 RenderTextureCubemap::~RenderTextureCubemap()
 {
+	/*
 	glDeleteTextures(1, &m_render_cube);
 	glDeleteTextures(1, &m_gltexture);
 	TEXTURE_MANAGER.remove(this);
+	*/
 }
 
 void RenderTextureCubemap::resize(int height, int width)
 {
+	/*
 	m_height = height;
 	m_width = width;
 
@@ -81,6 +86,7 @@ void RenderTextureCubemap::resize(int height, int width)
 	}
 
 	glBindTexture(GL_TEXTURE_CUBE_MAP, 0);
+	*/
 }
 
 bool RenderTextureCubemap::unload()
@@ -88,15 +94,17 @@ bool RenderTextureCubemap::unload()
 	return false;
 }
 
-GLuint RenderTextureCubemap::getRenderTextureId(int i)
+IRD::Texture* RenderTextureCubemap::getBackTexture(int i)
 {
-	return m_render_cube;
+	return 0;//m_render_cube;
 }
 
 void RenderTextureCubemap::swap()
 {
+	/*
 	GLuint tmp = m_gltexture;
 	m_gltexture = m_render_cube;
 	m_render_cube = tmp;
+	*/
 }
 

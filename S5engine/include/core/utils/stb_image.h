@@ -18,7 +18,7 @@
 // Basic usage (see HDR discussion below):
 //    int x,y,n;
 //    unsigned char *data = stbi_load(filename, &x, &y, &n, 0);
-//    // ... process data if not NULL ... 
+//    // ... process data if not 0 ... 
 //    // ... x = width, y = height, n = # 8-bit components per pixel ...
 //    // ... replace '0' with '1'..'4' to force that many components per pixel
 //    stbi_image_free(data)
@@ -48,7 +48,7 @@
 //       3           red, green, blue
 //       4           red, green, blue, alpha
 //
-// If image loading fails for any reason, the return value will be NULL,
+// If image loading fails for any reason, the return value will be 0,
 // and *x, *y, *comp will be unchanged. The function stbi_failure_reason()
 // can be queried for an extremely brief, end-user unfriendly explanation
 // of why the load failed. Define STBI_NO_FAILURE_STRINGS to avoid

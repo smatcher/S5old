@@ -65,7 +65,7 @@ Viewpoint* GLWidget::getViewpoint()
 	#ifdef WITH_TOOLS
 		return &m_camera;
 	#else
-		return NULL;
+		return 0;
 	#endif
 }
 
@@ -88,7 +88,7 @@ bool GLWidget::event(QEvent *e)
 
 void GLWidget::mousePressEvent(QMouseEvent *event)
 {
-	if(RENDER_MANAGER.getCurrentCamera() == NULL)
+	if(RENDER_MANAGER.getCurrentCamera() == 0)
 	{
 		#ifdef WITH_TOOLS
 			m_camera.updateMouse(event->buttons() & Qt::LeftButton,
@@ -105,7 +105,7 @@ void GLWidget::mousePressEvent(QMouseEvent *event)
 
 void GLWidget::mouseReleaseEvent(QMouseEvent *event)
 {
-	if(RENDER_MANAGER.getCurrentCamera() == NULL)
+	if(RENDER_MANAGER.getCurrentCamera() == 0)
 	{
 		#ifdef WITH_TOOLS
 			m_camera.updateMouse(event->buttons() & Qt::LeftButton,
@@ -122,7 +122,7 @@ void GLWidget::mouseReleaseEvent(QMouseEvent *event)
 
 void GLWidget::mouseMoveEvent(QMouseEvent *event)
 {
-	if(RENDER_MANAGER.getCurrentCamera() == NULL)
+	if(RENDER_MANAGER.getCurrentCamera() == 0)
 	{
 		#ifdef WITH_TOOLS
 			m_camera.updateMouse(event->buttons() & Qt::LeftButton,
@@ -143,7 +143,7 @@ void GLWidget::keyPressEvent(QKeyEvent *e)
 		window()->close();
 	else
 	{
-		if(RENDER_MANAGER.getCurrentCamera() == NULL)
+		if(RENDER_MANAGER.getCurrentCamera() == 0)
 		{
 			#ifdef WITH_TOOLS
 				int key = e->key();
@@ -188,7 +188,7 @@ void GLWidget::keyReleaseEvent(QKeyEvent *e)
 		close();
 	else
 	{
-		if(RENDER_MANAGER.getCurrentCamera() == NULL)
+		if(RENDER_MANAGER.getCurrentCamera() == 0)
 		{
 			#ifdef WITH_TOOLS
 				int key = e->key();

@@ -26,7 +26,7 @@ void MeshRenderer::render()
 		for(unsigned int i=0 ; i<m_mesh->nbSubmeshes() ; i++) {
 
 			#ifdef WITH_TOOLS
-				if(node() != NULL && node()->isSelected()) {
+				if(node() != 0 && node()->isSelected()) {
 					glClearStencil(0);
 					glClear( GL_STENCIL_BUFFER_BIT );
 					glEnable( GL_STENCIL_TEST );
@@ -49,7 +49,7 @@ void MeshRenderer::render()
 			}
 
 			#ifdef WITH_TOOLS
-				if(node() != NULL && node()->isSelected()) {
+				if(node() != 0 && node()->isSelected()) {
 					// Set the stencil buffer to only allow writing
 					// to the screen when the value of the
 					// stencil buffer is not 1
@@ -145,7 +145,7 @@ bool MeshRenderer::castsShadows()
 
 PropertyWidget* MeshRenderer::getWidget()
 {
-	if(m_widget == NULL)
+	if(m_widget == 0)
 		m_widget = new MeshRendererWidget(this);
 
 	return m_widget;

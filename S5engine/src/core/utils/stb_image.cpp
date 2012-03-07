@@ -243,8 +243,8 @@ static int e(const char *str)
    #define e(x,y)  e(x)
 #endif
 
-#define epf(x,y)   ((float *) (e(x,y)?NULL:NULL))
-#define epuc(x,y)  ((unsigned char *) (e(x,y)?NULL:NULL))
+#define epf(x,y)   ((float *) (e(x,y)?0:0))
+#define epuc(x,y)  ((unsigned char *) (e(x,y)?0:0))
 
 void stbi_image_free(void *retval_from_stbi_load)
 {
@@ -263,7 +263,7 @@ int stbi_register_loader(stbi_loader *loader)
       if (loaders[i] == loader)
          return 1;
       // end of the list?
-      if (loaders[i] == NULL) {
+      if (loaders[i] == 0) {
          loaders[i] = loader;
          max_loaders = i+1;
          return 1;
@@ -473,7 +473,7 @@ static void start_file(stbi *s, FILE *f)
 static void start_mem(stbi *s, uint8 const *buffer, int len)
 {
 #ifndef STBI_NO_STDIO
-   s->img_file = NULL;
+   s->img_file = 0;
    s->from_file = 0;
 #endif
    s->img_buffer = (uint8 *) buffer;
@@ -612,7 +612,7 @@ static unsigned char *convert_format(unsigned char *data, int img_n, int req_com
    assert(req_comp >= 1 && req_comp <= 4);
 
    good = (unsigned char *) malloc(req_comp * x * y);
-   if (good == NULL) {
+   if (good == 0) {
       free(data);
       return epuc("outofmem", "Out of memory");
    }
@@ -652,7 +652,7 @@ static float   *ldr_to_hdr(stbi_uc *data, int x, int y, int comp)
 {
    int i,k,n;
    float *output = (float *) malloc(x * y * comp * sizeof(float));
-   if (output == NULL) { free(data); return epf("outofmem", "Out of memory"); }
+   if (output == 0) { free(data); return epf("outofmem", "Out of memory"); }
    // compute number of non-alpha components
    if (comp & 1) n = comp; else n = comp-1;
    for (i=0; i < x*y; ++i) {
@@ -670,7 +670,7 @@ static stbi_uc *hdr_to_ldr(float   *data, int x, int y, int comp)
 {
    int i,k,n;
    stbi_uc *output = (stbi_uc *) malloc(x * y * comp);
-   if (output == NULL) { free(data); return epuc("outofmem", "Out of memory"); }
+   if (output == 0) { free(data); return epuc("outofmem", "Out of memory"); }
    // compute number of non-alpha components
    if (comp & 1) n = comp; else n = comp-1;
    for (i=0; i < x*y; ++i) {
@@ -1302,8 +1302,8 @@ static int process_frame_header(jpeg *z, int scan)
    if (c != 3 && c != 1) return e("bad component count","Corrupt JPEG");    // JFIF requires
    s->img_n = c;
    for (i=0; i < c; ++i) {
-      z->img_comp[i].data = NULL;
-      z->img_comp[i].linebuf = NULL;
+      z->img_comp[i].data = 0;
+      z->img_comp[i].linebuf = 0;
    }
 
    if (Lf != 8+3*s->img_n) return e("bad SOF len","Corrupt JPEG");
@@ -1347,16 +1347,16 @@ static int process_frame_header(jpeg *z, int scan)
       z->img_comp[i].w2 = z->img_mcu_x * z->img_comp[i].h * 8;
       z->img_comp[i].h2 = z->img_mcu_y * z->img_comp[i].v * 8;
       z->img_comp[i].raw_data = malloc(z->img_comp[i].w2 * z->img_comp[i].h2+15);
-      if (z->img_comp[i].raw_data == NULL) {
+      if (z->img_comp[i].raw_data == 0) {
          for(--i; i >= 0; --i) {
             free(z->img_comp[i].raw_data);
-            z->img_comp[i].data = NULL;
+            z->img_comp[i].data = 0;
          }
          return e("outofmem", "Out of memory");
       }
       // align blocks for installable-idct using mmx/sse
       z->img_comp[i].data = (uint8*) (((size_t) z->img_comp[i].raw_data + 15) & ~15);
-      z->img_comp[i].linebuf = NULL;
+      z->img_comp[i].linebuf = 0;
    }
 
    return 1;
@@ -1558,11 +1558,11 @@ static void cleanup_jpeg(jpeg *j)
    for (i=0; i < j->s.img_n; ++i) {
       if (j->img_comp[i].data) {
          free(j->img_comp[i].raw_data);
-         j->img_comp[i].data = NULL;
+         j->img_comp[i].data = 0;
       }
       if (j->img_comp[i].linebuf) {
          free(j->img_comp[i].linebuf);
-         j->img_comp[i].linebuf = NULL;
+         j->img_comp[i].linebuf = 0;
       }
    }
 }
@@ -1585,7 +1585,7 @@ static uint8 *load_jpeg_image(jpeg *z, int *out_x, int *out_y, int *comp, int re
    z->s.img_n = 0;
 
    // load a jpeg image from whichever source
-   if (!decode_jpeg_image(z)) { cleanup_jpeg(z); return NULL; }
+   if (!decode_jpeg_image(z)) { cleanup_jpeg(z); return 0; }
 
    // determine actual number of components to generate
    n = req_comp ? req_comp : z->s.img_n;
@@ -1689,7 +1689,7 @@ unsigned char *stbi_jpeg_load(char const *filename, int *x, int *y, int *comp, i
 {
    unsigned char *data;
    FILE *f = fopen(filename, "rb");
-   if (!f) return NULL;
+   if (!f) return 0;
    data = stbi_jpeg_load_from_file(f,x,y,comp,req_comp);
    fclose(f);
    return data;
@@ -1943,7 +1943,7 @@ static int expand(zbuf *z, int n)  // need to make room for n bytes
    while (cur + n > limit)
       limit *= 2;
    q = (char *) realloc(z->zout_start, limit);
-   if (q == NULL) return e("outofmem", "Out of memory");
+   if (q == 0) return e("outofmem", "Out of memory");
    z->zout_start = q;
    z->zout       = q + cur;
    z->zout_end   = q + limit;
@@ -2139,7 +2139,7 @@ char *stbi_zlib_decode_malloc_guesssize(const char *buffer, int len, int initial
 {
    zbuf a;
    char *p = (char *) malloc(initial_size);
-   if (p == NULL) return NULL;
+   if (p == 0) return 0;
    a.zbuffer = (uint8 *) buffer;
    a.zbuffer_end = (uint8 *) buffer + len;
    if (do_zlib(&a, p, initial_size, 1, 1)) {
@@ -2147,7 +2147,7 @@ char *stbi_zlib_decode_malloc_guesssize(const char *buffer, int len, int initial
       return a.zout_start;
    } else {
       free(a.zout_start);
-      return NULL;
+      return 0;
    }
 }
 
@@ -2160,7 +2160,7 @@ char *stbi_zlib_decode_malloc_guesssize_headerflag(const char *buffer, int len, 
 {
    zbuf a;
    char *p = (char *) malloc(initial_size);
-   if (p == NULL) return NULL;
+   if (p == 0) return 0;
    a.zbuffer = (uint8 *) buffer;
    a.zbuffer_end = (uint8 *) buffer + len;
    if (do_zlib(&a, p, initial_size, 1, parse_header)) {
@@ -2168,7 +2168,7 @@ char *stbi_zlib_decode_malloc_guesssize_headerflag(const char *buffer, int len, 
       return a.zout_start;
    } else {
       free(a.zout_start);
-      return NULL;
+      return 0;
    }
 }
 
@@ -2187,7 +2187,7 @@ char *stbi_zlib_decode_noheader_malloc(char const *buffer, int len, int *outlen)
 {
    zbuf a;
    char *p = (char *) malloc(16384);
-   if (p == NULL) return NULL;
+   if (p == 0) return 0;
    a.zbuffer = (uint8 *) buffer;
    a.zbuffer_end = (uint8 *) buffer+len;
    if (do_zlib(&a, p, 16384, 1, 0)) {
@@ -2195,7 +2195,7 @@ char *stbi_zlib_decode_noheader_malloc(char const *buffer, int len, int *outlen)
       return a.zout_start;
    } else {
       free(a.zout_start);
-      return NULL;
+      return 0;
    }
 }
 
@@ -2424,7 +2424,7 @@ static int expand_palette(png *a, uint8 *palette, int len, int pal_img_n)
    uint8 *p, *temp_out, *orig = a->out;
 
    p = (uint8 *) malloc(pixel_count * pal_img_n);
-   if (p == NULL) return e("outofmem", "Out of memory");
+   if (p == 0) return e("outofmem", "Out of memory");
 
    // between here and free(out) below, exitting would leak
    temp_out = p;
@@ -2599,7 +2599,7 @@ static int parse_png_file(png *z, int scan, int req_comp)
                if (idata_limit == 0) idata_limit = c.length > 4096 ? c.length : 4096;
                while (ioff + c.length > idata_limit)
                   idata_limit *= 2;
-               p = (uint8 *) realloc(z->idata, idata_limit); if (p == NULL) return e("outofmem", "Out of memory");
+               p = (uint8 *) realloc(z->idata, idata_limit); if (p == 0) return e("outofmem", "Out of memory");
                z->idata = p;
             }
             if (!getn(s, z->idata+ioff,c.length)) return e("outofdata","Corrupt PNG");
@@ -2611,10 +2611,10 @@ static int parse_png_file(png *z, int scan, int req_comp)
             uint32 raw_len;
             if (first) return e("first not IHDR", "Corrupt PNG");
             if (scan != SCAN_load) return 1;
-            if (z->idata == NULL) return e("no IDAT","Corrupt PNG");
+            if (z->idata == 0) return e("no IDAT","Corrupt PNG");
             z->expanded = (uint8 *) stbi_zlib_decode_malloc_guesssize_headerflag((char *) z->idata, ioff, 16384, (int *) &raw_len, !iphone);
-            if (z->expanded == NULL) return 0; // zlib should set error
-            free(z->idata); z->idata = NULL;
+            if (z->expanded == 0) return 0; // zlib should set error
+            free(z->idata); z->idata = 0;
             if ((req_comp == s->img_n+1 && req_comp != 3 && !pal_img_n) || has_trans)
                s->img_out_n = s->img_n+1;
             else
@@ -2632,7 +2632,7 @@ static int parse_png_file(png *z, int scan, int req_comp)
                if (!expand_palette(z, palette, pal_len, s->img_out_n))
                   return 0;
             }
-            free(z->expanded); z->expanded = NULL;
+            free(z->expanded); z->expanded = 0;
             return 1;
          }
 
@@ -2660,26 +2660,26 @@ static int parse_png_file(png *z, int scan, int req_comp)
 
 static unsigned char *do_png(png *p, int *x, int *y, int *n, int req_comp)
 {
-   unsigned char *result=NULL;
-   p->expanded = NULL;
-   p->idata = NULL;
-   p->out = NULL;
+   unsigned char *result=0;
+   p->expanded = 0;
+   p->idata = 0;
+   p->out = 0;
    if (req_comp < 0 || req_comp > 4) return epuc("bad req_comp", "Internal error");
    if (parse_png_file(p, SCAN_load, req_comp)) {
       result = p->out;
-      p->out = NULL;
+      p->out = 0;
       if (req_comp && req_comp != p->s.img_out_n) {
          result = convert_format(result, p->s.img_out_n, req_comp, p->s.img_x, p->s.img_y);
          p->s.img_out_n = req_comp;
-         if (result == NULL) return result;
+         if (result == 0) return result;
       }
       *x = p->s.img_x;
       *y = p->s.img_y;
       if (n) *n = p->s.img_n;
    }
-   free(p->out);      p->out      = NULL;
-   free(p->expanded); p->expanded = NULL;
-   free(p->idata);    p->idata    = NULL;
+   free(p->out);      p->out      = 0;
+   free(p->expanded); p->expanded = 0;
+   free(p->idata);    p->idata    = 0;
 
    return result;
 }
@@ -2696,7 +2696,7 @@ unsigned char *stbi_png_load(char const *filename, int *x, int *y, int *comp, in
 {
    unsigned char *data;
    FILE *f = fopen(filename, "rb");
-   if (!f) return NULL;
+   if (!f) return 0;
    data = stbi_png_load_from_file(f,x,y,comp,req_comp);
    fclose(f);
    return data;
@@ -3031,7 +3031,7 @@ static stbi_uc *bmp_load(stbi *s, int *x, int *y, int *comp, int req_comp)
 
    if (req_comp && req_comp != target) {
       out = convert_format(out, target, req_comp, s->img_x, s->img_y);
-      if (out == NULL) return out; // convert_format frees input on failure
+      if (out == 0) return out; // convert_format frees input on failure
    }
 
    *x = s->img_x;
@@ -3045,7 +3045,7 @@ stbi_uc *stbi_bmp_load             (char const *filename,           int *x, int 
 {
    stbi_uc *data;
    FILE *f = fopen(filename, "rb");
-   if (!f) return NULL;
+   if (!f) return 0;
    data = stbi_bmp_load_from_file(f, x,y,comp,req_comp);
    fclose(f);
    return data;
@@ -3175,7 +3175,7 @@ static stbi_uc *tga_load(stbi *s, int *x, int *y, int *comp, int req_comp)
    int tga_inverted = get8u(s);
    //   image data
    unsigned char *tga_data;
-   unsigned char *tga_palette = NULL;
+   unsigned char *tga_palette = 0;
    int i, j;
    unsigned char raw_data[4];
    unsigned char trans_data[4];
@@ -3200,7 +3200,7 @@ static stbi_uc *tga_load(stbi *s, int *x, int *y, int *comp, int req_comp)
       (tga_bits_per_pixel != 24) && (tga_bits_per_pixel != 32))
       )
    {
-      return NULL;
+      return 0;
    }
 
    //   If I'm paletted, then I'll use the number of bits from the palette
@@ -3234,7 +3234,7 @@ static stbi_uc *tga_load(stbi *s, int *x, int *y, int *comp, int req_comp)
       //   load the palette
       tga_palette = (unsigned char*)malloc( tga_palette_len * tga_palette_bits / 8 );
       if (!getn(s, tga_palette, tga_palette_len * tga_palette_bits / 8 ))
-         return NULL;
+         return 0;
    }
    //   load the data
    trans_data[0] = trans_data[1] = trans_data[2] = trans_data[3] = 0;
@@ -3366,7 +3366,7 @@ static stbi_uc *tga_load(stbi *s, int *x, int *y, int *comp, int req_comp)
       }
    }
    //   clear my palette, if I had one
-   if ( tga_palette != NULL )
+   if ( tga_palette != 0 )
    {
       free( tga_palette );
    }
@@ -3383,7 +3383,7 @@ stbi_uc *stbi_tga_load             (char const *filename,           int *x, int 
 {
    stbi_uc *data;
    FILE *f = fopen(filename, "rb");
-   if (!f) return NULL;
+   if (!f) return 0;
    data = stbi_tga_load_from_file(f, x,y,comp,req_comp);
    fclose(f);
    return data;
@@ -3581,7 +3581,7 @@ static stbi_uc *psd_load(stbi *s, int *x, int *y, int *comp, int req_comp)
 
    if (req_comp && req_comp != 4) {
       out = convert_format(out, 4, req_comp, w, h);
-      if (out == NULL) return out; // convert_format frees input on failure
+      if (out == 0) return out; // convert_format frees input on failure
    }
 
    if (comp) *comp = channelCount;
@@ -3596,7 +3596,7 @@ stbi_uc *stbi_psd_load(char const *filename, int *x, int *y, int *comp, int req_
 {
    stbi_uc *data;
    FILE *f = fopen(filename, "rb");
-   if (!f) return NULL;
+   if (!f) return 0;
    data = stbi_psd_load_from_file(f, x,y,comp,req_comp);
    fclose(f);
    return data;
@@ -4161,7 +4161,7 @@ static uint8 *stbi_gif_load_next(stbi *s, stbi_gif *g, int *comp, int req_comp)
                return epuc("missing color table", "Corrupt GIF");
    
             o = stbi_process_gif_raster(s, g);
-            if (o == NULL) return NULL;
+            if (o == 0) return 0;
 
             if (req_comp && req_comp != 4)
                o = convert_format(o, 4, req_comp, g->w, g->h);
@@ -4201,7 +4201,7 @@ stbi_uc *stbi_gif_load             (char const *filename,           int *x, int 
 {
    uint8 *data;
    FILE *f = fopen(filename, "rb");
-   if (!f) return NULL;
+   if (!f) return 0;
    data = stbi_gif_load_from_file(f, x,y,comp,req_comp);
    fclose(f);
    return data;
@@ -4392,7 +4392,7 @@ static float *hdr_load(stbi *s, int *x, int *y, int *comp, int req_comp)
    while (*token == ' ') ++token;
    if (strncmp(token, "+X ", 3))  return epf("unsupported data layout", "Unsupported HDR format");
    token += 3;
-   width = strtol(token, NULL, 10);
+   width = strtol(token, 0, 10);
 
    *x = width;
    *y = height;
@@ -4417,7 +4417,7 @@ static float *hdr_load(stbi *s, int *x, int *y, int *comp, int req_comp)
       }
    } else {
       // Read RLE-encoded data
-      scanline = NULL;
+      scanline = 0;
 
       for (j = 0; j < height; ++j) {
          c1 = get8(s);
@@ -4440,7 +4440,7 @@ static float *hdr_load(stbi *s, int *x, int *y, int *comp, int req_comp)
          len <<= 8;
          len |= get8(s);
          if (len != width) { free(hdr_data); free(scanline); return epf("invalid decoded scanline length", "corrupt HDR"); }
-         if (scanline == NULL) scanline = (stbi_uc *) malloc(width * 4);
+         if (scanline == 0) scanline = (stbi_uc *) malloc(width * 4);
             
          for (k = 0; k < 4; ++k) {
             i = 0;
@@ -4606,7 +4606,7 @@ int stbi_info_from_memory(stbi_uc const *buffer, int len, int *x, int *y, int *c
                       than 16 available
       0.56   fix bug: zlib uncompressed mode len vs. nlen
       0.55   fix bug: restart_interval not initialized to 0
-      0.54   allow NULL for 'int *comp'
+      0.54   allow 0 for 'int *comp'
       0.53   fix bug in png 3->4; speedup png decoding
       0.52   png handles req_comp=3,4 directly; minor cleanup; jpeg comments
       0.51   obey req_comp requests, 1-component jpegs return as 1-component,

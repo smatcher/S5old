@@ -4,33 +4,33 @@
 #include "resource.h"
 
 template <class Resource>
-ResourceHandle<Resource>::ResourceHandle() : m_data(NULL) {}
+ResourceHandle<Resource>::ResourceHandle() : m_data(0) {}
 
 template <class Resource>
 ResourceHandle<Resource>::ResourceHandle(Resource& from) : m_data(&from)
 {
-	if(m_data != NULL)
+	if(m_data != 0)
 		m_data->incRef();
 }
 
 template <class Resource>
 ResourceHandle<Resource>::ResourceHandle(const ResourceHandle<Resource>& copy) : m_data(copy.m_data)
 {
-	if(m_data != NULL)
+	if(m_data != 0)
 		m_data->incRef();
 }
 
 template <class Resource>
 ResourceHandle<Resource>::~ResourceHandle()
 {
-	if(m_data != NULL)
+	if(m_data != 0)
 		m_data->decRef();
 }
 
 template <class Resource>
 bool ResourceHandle<Resource>::isValid()
 {
-	return m_data != NULL;
+	return m_data != 0;
 }
 
 template <class Resource>
@@ -48,12 +48,12 @@ Resource* ResourceHandle<Resource>::operator*()
 template <class Resource>
 ResourceHandle<Resource>& ResourceHandle<Resource>::operator=(const ResourceHandle<Resource>& handle)
 {
-	if(m_data != NULL)
+	if(m_data != 0)
 		m_data->decRef();
 
 	m_data = handle.m_data;
 
-	if(m_data != NULL)
+	if(m_data != 0)
 		m_data->incRef();
 
 	return (*this);

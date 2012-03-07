@@ -17,7 +17,7 @@ RawMesh::RawMesh(const QString &name, const QString &path, IResourceFactory *fac
 	m_bitangents(),
 	m_indices(QGLBuffer::IndexBuffer),
 	m_nbFaces(0),
-	m_boundingVolume(NULL)
+	m_boundingVolume(0)
 {
 }
 
@@ -36,7 +36,7 @@ bool RawMesh::unload()
 	if(m_boundingVolume)
 	{
 		delete m_boundingVolume;
-		m_boundingVolume = NULL;
+		m_boundingVolume = 0;
 	}
 
 	return true;
@@ -61,7 +61,7 @@ void RawMesh::draw(unsigned int, int flags)
 		glEnableClientState(GL_TEXTURE_COORD_ARRAY);
 		__ClientActiveTexture(GL_TEXTURE0);
 		m_texcoords.bind();
-		glTexCoordPointer(2, GL_FLOAT, 0, NULL);
+		glTexCoordPointer(2, GL_FLOAT, 0, 0);
 	}
 	else
 	{
@@ -73,7 +73,7 @@ void RawMesh::draw(unsigned int, int flags)
 		glEnable(GL_COLOR_MATERIAL);
 		glEnableClientState(GL_COLOR_ARRAY);
 		m_colors.bind();
-		glColorPointer(4, GL_FLOAT, 0, NULL);
+		glColorPointer(4, GL_FLOAT, 0, 0);
 	}
 	else
 	{
@@ -86,14 +86,14 @@ void RawMesh::draw(unsigned int, int flags)
 		glShadeModel(GL_SMOOTH);
 		glEnableClientState(GL_NORMAL_ARRAY);
 		m_normals.bind();
-		glNormalPointer(GL_FLOAT, 0, NULL);
+		glNormalPointer(GL_FLOAT, 0, 0);
 	}
 	else
 	{
 		glDisable(GL_LIGHTING);
 	}
 
-	if(program != NULL && !wireframe)
+	if(program != 0 && !wireframe)
 	{
 		int location = program->attributeLocation("tangent");
 		if(location != -1)
@@ -113,13 +113,13 @@ void RawMesh::draw(unsigned int, int flags)
 
 	glEnableClientState(GL_VERTEX_ARRAY);
 	m_vertices.bind();
-	glVertexPointer(3, GL_FLOAT, 0, NULL);
+	glVertexPointer(3, GL_FLOAT, 0, 0);
 
 	glEnableClientState(GL_INDEX_ARRAY);
 	m_indices.bind();
-	glIndexPointer(GL_SHORT, 0, NULL);
+	glIndexPointer(GL_SHORT, 0, 0);
 
-	glDrawElements(GL_TRIANGLES, 3*m_nbFaces, GL_UNSIGNED_SHORT, NULL);
+	glDrawElements(GL_TRIANGLES, 3*m_nbFaces, GL_UNSIGNED_SHORT, 0);
 
 	m_indices.release();
 	m_vertices.release();
@@ -180,18 +180,18 @@ void RawMesh::drawPreview()
 		glShadeModel(GL_SMOOTH);
 		glEnableClientState(GL_NORMAL_ARRAY);
 		m_normals.bind();
-		glNormalPointer(GL_FLOAT, 0, NULL);
+		glNormalPointer(GL_FLOAT, 0, 0);
 	}
 
 	glEnableClientState(GL_VERTEX_ARRAY);
 	m_vertices.bind();
-	glVertexPointer(3, GL_FLOAT, 0, NULL);
+	glVertexPointer(3, GL_FLOAT, 0, 0);
 
 	glEnableClientState(GL_INDEX_ARRAY);
 	m_indices.bind();
-	glIndexPointer(GL_SHORT, 0, NULL);
+	glIndexPointer(GL_SHORT, 0, 0);
 
-	glDrawElements(GL_TRIANGLES, 3*m_nbFaces, GL_UNSIGNED_SHORT, NULL);
+	glDrawElements(GL_TRIANGLES, 3*m_nbFaces, GL_UNSIGNED_SHORT, 0);
 
 	m_indices.release();
 	m_vertices.release();

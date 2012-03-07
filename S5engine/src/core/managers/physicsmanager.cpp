@@ -98,10 +98,10 @@ void PhysicsManager::buildConvexCollider(QString name, float* vertices, int nb_v
 btCollisionShape* PhysicsManager::getCollider(QString name)
 {
 	if(m_concave_colliders.contains(name)) {
-		return m_concave_colliders.value(name, NULL);
+		return m_concave_colliders.value(name, 0);
 	} else {
-		btConvexPointCloudShape* shape = m_convex_colliders.value(name, NULL);
-		if(shape != NULL) {
+		btConvexPointCloudShape* shape = m_convex_colliders.value(name, 0);
+		if(shape != 0) {
 			shape = new btConvexPointCloudShape(*shape);
 		}
 		return shape;
@@ -110,19 +110,19 @@ btCollisionShape* PhysicsManager::getCollider(QString name)
 
 void PhysicsManager::update(double elapsed)
 {
-	if(m_discreteDynamicsWorld != NULL)
+	if(m_discreteDynamicsWorld != 0)
 		m_discreteDynamicsWorld->stepSimulation(elapsed);
 }
 
 void PhysicsManager::onManageeLinked(PhysicObject *managee)
 {
-	if(m_discreteDynamicsWorld != NULL && managee != NULL) {
+	if(m_discreteDynamicsWorld != 0 && managee != 0) {
 		m_discreteDynamicsWorld->addRigidBody(managee->getRigidBody());
 	}
 }
 
 void PhysicsManager::debugDraw()
 {
-	if(m_discreteDynamicsWorld != NULL)
+	if(m_discreteDynamicsWorld != 0)
 		m_discreteDynamicsWorld->debugDrawWorld();
 }

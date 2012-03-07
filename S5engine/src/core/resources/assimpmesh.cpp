@@ -14,10 +14,10 @@
 
 AssimpMesh::AssimpMesh(const QString& name, const QString& path, IResourceFactory* factory) :
 	MeshData(name,path,factory),
-	m_skeleton(NULL),
+	m_skeleton(0),
 	m_nbVertices(0),
 	m_nbFaces(0),
-	m_boundingVolume(NULL)
+	m_boundingVolume(0)
 {
 	m_state = STATE_UNLOADED;
 	m_insidelib = false;
@@ -138,7 +138,7 @@ void AssimpMesh::Submesh::buildVBO(QString name)
 		logError("Assimp Mesh" << name << "contains faces that are neither triangles or quad, thay will not display");
 	}
 
-	if(m_mesh->mVertices != NULL) {
+	if(m_mesh->mVertices != 0) {
 		GLfloat* array = new GLfloat[3 * m_mesh->mNumVertices]();
 		for(unsigned int i=0 ; i < m_mesh->mNumVertices ; i++) {
 			memcpy(&(array[3*i]),&m_mesh->mVertices[i].x,3 * sizeof(GLfloat));
@@ -157,7 +157,7 @@ void AssimpMesh::Submesh::buildVBO(QString name)
 		delete[] array;
 	}
 
-	if(m_mesh->mNormals != NULL) {
+	if(m_mesh->mNormals != 0) {
 		GLfloat* array = new GLfloat[3 * m_mesh->mNumVertices]();
 		for(unsigned int i=0 ; i < m_mesh->mNumVertices ; i++) {
 			memcpy(&(array[3*i]),&m_mesh->mNormals[i].x,3 * sizeof(GLfloat));
@@ -176,7 +176,7 @@ void AssimpMesh::Submesh::buildVBO(QString name)
 		delete[] array;
 	}
 
-	if(m_mesh->mColors[0] != NULL) {
+	if(m_mesh->mColors[0] != 0) {
 		GLfloat* array = new GLfloat[4 * m_mesh->mNumVertices]();
 		for(unsigned int i=0 ; i < m_mesh->mNumVertices ; i++) {
 			array[0 + 4*i] = m_mesh->mColors[0][i].r;
@@ -193,7 +193,7 @@ void AssimpMesh::Submesh::buildVBO(QString name)
 		delete[] array;
 	}
 
-	if(m_mesh->mTextureCoords[0] != NULL) {
+	if(m_mesh->mTextureCoords[0] != 0) {
 		GLfloat* array = new GLfloat[2 * m_mesh->mNumVertices]();
 		for(unsigned int i=0 ; i < m_mesh->mNumVertices ; i++) {
 			memcpy(&(array[2*i]),&m_mesh->mTextureCoords[0][i].x,2 * sizeof(GLfloat));
@@ -207,7 +207,7 @@ void AssimpMesh::Submesh::buildVBO(QString name)
 		delete[] array;
 	}
 
-	if(m_mesh->mTangents != NULL) {
+	if(m_mesh->mTangents != 0) {
 		GLfloat* array = new GLfloat[3 * m_mesh->mNumVertices]();
 		for(unsigned int i=0 ; i < m_mesh->mNumVertices ; i++) {
 			memcpy(&(array[3*i]),&m_mesh->mTangents[i].x,3 * sizeof(GLfloat));
@@ -226,7 +226,7 @@ void AssimpMesh::Submesh::buildVBO(QString name)
 		delete[] array;
 	}
 
-	if(m_mesh->mBitangents != NULL) {
+	if(m_mesh->mBitangents != 0) {
 		GLfloat* array = new GLfloat[3 * m_mesh->mNumVertices]();
 		for(unsigned int i=0 ; i < m_mesh->mNumVertices ; i++) {
 			memcpy(&(array[3*i]),&m_mesh->mBitangents[i].x,3 * sizeof(GLfloat));
@@ -325,7 +325,7 @@ void AssimpMesh::Submesh::draw(QGLShaderProgram* program, int flags)
 		glEnable(GL_TEXTURE_2D);
 		glEnableClientState(GL_TEXTURE_COORD_ARRAY);
 		m_texcoords.bind();
-		glTexCoordPointer(2, GL_FLOAT, 0, NULL);
+		glTexCoordPointer(2, GL_FLOAT, 0, 0);
 	}
 	else
 	{
@@ -338,7 +338,7 @@ void AssimpMesh::Submesh::draw(QGLShaderProgram* program, int flags)
 		glEnableClientState(GL_COLOR_ARRAY);
 		__ClientActiveTexture(GL_TEXTURE0);
 		m_colors.bind();
-		glColorPointer(4, GL_FLOAT, 0, NULL);
+		glColorPointer(4, GL_FLOAT, 0, 0);
 	}
 	else
 	{
@@ -352,7 +352,7 @@ void AssimpMesh::Submesh::draw(QGLShaderProgram* program, int flags)
 			glShadeModel(GL_SMOOTH);
 			glEnableClientState(GL_NORMAL_ARRAY);
 			m_normals.bind();
-			glNormalPointer(GL_FLOAT, 0, NULL);
+			glNormalPointer(GL_FLOAT, 0, 0);
 		}
 		else
 		{
@@ -365,7 +365,7 @@ void AssimpMesh::Submesh::draw(QGLShaderProgram* program, int flags)
 			glShadeModel(GL_SMOOTH);
 			glEnableClientState(GL_NORMAL_ARRAY);
 			m_skinned_normals.bind();
-			glNormalPointer(GL_FLOAT, 0, NULL);
+			glNormalPointer(GL_FLOAT, 0, 0);
 		}
 		else
 		{
@@ -373,7 +373,7 @@ void AssimpMesh::Submesh::draw(QGLShaderProgram* program, int flags)
 		}
 	}
 
-	if(program != NULL && !wireframe)
+	if(program != 0 && !wireframe)
 	{
 		int location = program->attributeLocation("tangent");
 		if(location != -1)
@@ -405,13 +405,13 @@ void AssimpMesh::Submesh::draw(QGLShaderProgram* program, int flags)
 	} else {
 		m_skinned_vertices.bind();
 	}
-	glVertexPointer(3, GL_FLOAT, 0, NULL);
+	glVertexPointer(3, GL_FLOAT, 0, 0);
 
 	glEnableClientState(GL_INDEX_ARRAY);
 	m_indices.bind();
-	glIndexPointer(GL_SHORT, 0, NULL);
+	glIndexPointer(GL_SHORT, 0, 0);
 
-	glDrawElements(GL_TRIANGLES, 3*m_nbFaces, GL_UNSIGNED_SHORT, NULL);
+	glDrawElements(GL_TRIANGLES, 3*m_nbFaces, GL_UNSIGNED_SHORT, 0);
 
 	m_indices.release();
 	if(!skinned) {
@@ -439,7 +439,7 @@ void AssimpMesh::Submesh::skin(const QMap<QString, Matrix4f>& matrix_palette)
 
 	GLfloat* array = new GLfloat[3 * m_mesh->mNumVertices]();
 
-	if(m_mesh->mVertices != NULL) {
+	if(m_mesh->mVertices != 0) {
 		for(unsigned int i=0 ; i < m_mesh->mNumVertices ; i++) {
 			array[3*i] = 0.0;
 			array[3*i+1] = 0.0;
@@ -470,7 +470,7 @@ void AssimpMesh::Submesh::skin(const QMap<QString, Matrix4f>& matrix_palette)
 		m_skinned_vertices.write(0,array,3 * sizeof(GLfloat) * m_mesh->mNumVertices);
 	}
 
-	if(m_mesh->mNormals != NULL) {
+	if(m_mesh->mNormals != 0) {
 		for(unsigned int i=0 ; i < m_mesh->mNumVertices ; i++) {
 			array[3*i] = 0.0;
 			array[3*i+1] = 0.0;
@@ -501,7 +501,7 @@ void AssimpMesh::Submesh::skin(const QMap<QString, Matrix4f>& matrix_palette)
 		m_skinned_normals.write(0, array,3 * sizeof(GLfloat) * m_mesh->mNumVertices);
 	}
 
-	if(m_mesh->mTangents != NULL) {
+	if(m_mesh->mTangents != 0) {
 		for(unsigned int i=0 ; i < m_mesh->mNumVertices ; i++) {
 			array[3*i] = 0.0;
 			array[3*i+1] = 0.0;
@@ -532,7 +532,7 @@ void AssimpMesh::Submesh::skin(const QMap<QString, Matrix4f>& matrix_palette)
 		m_skinned_tangents.write(0, array,3 * sizeof(GLfloat) * m_mesh->mNumVertices);
 	}
 
-		if(m_mesh->mBitangents != NULL) {
+		if(m_mesh->mBitangents != 0) {
 		for(unsigned int i=0 ; i < m_mesh->mNumVertices ; i++) {
 			array[3*i] = 0.0;
 			array[3*i+1] = 0.0;
@@ -633,18 +633,18 @@ void AssimpMesh::drawPreview()
 			glShadeModel(GL_SMOOTH);
 			glEnableClientState(GL_NORMAL_ARRAY);
 			m_submeshes[i]->m_normals.bind();
-			glNormalPointer(GL_FLOAT, 0, NULL);
+			glNormalPointer(GL_FLOAT, 0, 0);
 		}
 
 		glEnableClientState(GL_VERTEX_ARRAY);
 		m_submeshes[i]->m_vertices.bind();
-		glVertexPointer(3, GL_FLOAT, 0, NULL);
+		glVertexPointer(3, GL_FLOAT, 0, 0);
 
 		glEnableClientState(GL_INDEX_ARRAY);
 		m_submeshes[i]->m_indices.bind();
-		glIndexPointer(GL_SHORT, 0, NULL);
+		glIndexPointer(GL_SHORT, 0, 0);
 
-		glDrawElements(GL_TRIANGLES, 3*m_submeshes[i]->m_nbFaces, GL_UNSIGNED_SHORT, NULL);
+		glDrawElements(GL_TRIANGLES, 3*m_submeshes[i]->m_nbFaces, GL_UNSIGNED_SHORT, 0);
 
 		m_submeshes[i]->m_indices.release();
 		m_submeshes[i]->m_vertices.release();

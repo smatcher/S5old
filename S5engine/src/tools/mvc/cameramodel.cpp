@@ -28,7 +28,7 @@ Viewpoint* CameraModel::getCamera(const QModelIndex &index) const
 			return CAMERA_MANAGER.managees().at(index.row()-1);
 	}
 
-	return NULL;
+	return 0;
 }
 
 /*
@@ -39,13 +39,13 @@ QModelIndex CameraModel::index(int row, int column, const QModelIndex& parent) c
 
 	Viewpoint *parentItem = getCamera(parent);
 
-	if(parentItem != NULL)
+	if(parentItem != 0)
 	{
 	return QModelIndex();
 }
 	else
 	{
-		Viewpoint* vp = NULL;
+		Viewpoint* vp = 0;
 
 		if(row == 0)
 		{
@@ -67,7 +67,7 @@ int CameraModel::rowCount(const QModelIndex& parent) const
 {
 	Viewpoint *parentItem = getCamera(parent);
 
-	if(parentItem != NULL)
+	if(parentItem != 0)
 		return 0;
 	else
 		return 1+CAMERA_MANAGER.managees().count();
@@ -79,12 +79,12 @@ QVariant CameraModel::data(const QModelIndex& parent, int role) const
 	{
 		Viewpoint* v = getCamera(parent);
 		Camera* c = dynamic_cast<Camera*>(v);
-		if(c != NULL){
+		if(c != 0){
 			Node* n = c->node();
 			if(n) return QVariant(c->node()->getName());
 			else return QVariant(QString("unlinked cam"));
 		}
-		else if(v != NULL) return QVariant(QString("editor cam"));
+		else if(v != 0) return QVariant(QString("editor cam"));
 	}
 	return QVariant();
 }

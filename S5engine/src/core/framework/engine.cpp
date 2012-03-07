@@ -62,14 +62,14 @@ void Engine::init(int argc, char *argv[], QString mod_dir)
 	alutInit(&argc, argv);
 	m_window.getGLW_TEMPORARY()->makeCurrent();
 
-	glewInit();
+	RENDER_MANAGER.getRenderDevice()->init();
 
 	#ifdef WITH_TOOLS
 		m_toolswindow.show();
 		m_scene.setManipulator(&m_manipulator);
 	#endif
 
-	RENDER_MANAGER.setCurrentCamera(NULL);
+	RENDER_MANAGER.setCurrentCamera(0);
 
 	QCoreApplication::processEvents();
 

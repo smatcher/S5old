@@ -6,7 +6,7 @@
 #include "core/inputs/inputmanager.h"
 #include "core/resources/managers.h"
 
-Engine* g_engine_instance = NULL;
+Engine* g_engine_instance = 0;
 
 bool bind_key(QStringList);
 bool exit_engine(QStringList);

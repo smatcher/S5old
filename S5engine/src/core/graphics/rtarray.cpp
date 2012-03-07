@@ -18,7 +18,7 @@ RenderTextureArray::RenderTextureArray(QString name, int height, int width, int 
 {
 	debugGL("before RenderTextureArray constructor");
 
-	m_hasgltex = true;
+	//m_hasgltex = true;
 	m_state = STATE_LOADED;
 	m_format = format;
 	m_type = type;
@@ -85,9 +85,9 @@ bool RenderTextureArray::unload()
 	return false;
 }
 
-GLuint RenderTextureArray::getRenderTextureId(int i)
+IRD::Texture* RenderTextureArray::getBackTexture(int i)
 {
-	return m_render_textures[i];
+	return 0;//m_render_textures[i];
 }
 
 void RenderTextureArray::swap()
@@ -101,7 +101,7 @@ void RenderTextureArray::swap()
 
 void RenderTextureArray::bind(int i)
 {
-	if(m_hasgltex)
+	//if(m_hasgltex)
 	{
 		for(int j=0 ; j< m_depth ; j++) {
 			glActiveTexture(GL_TEXTURE0 + i + j);

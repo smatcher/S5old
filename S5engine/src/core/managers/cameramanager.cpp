@@ -8,18 +8,18 @@
 
 CameraManager::CameraManager()
 {
-	m_debug_camera = NULL;
+	m_debug_camera = 0;
 
 	#ifdef WITH_TOOLS
-		m_debugView = NULL;
-		m_debugModel = NULL;
+		m_debugView = 0;
+		m_debugModel = 0;
 	#endif
 }
 
 CameraManager::~CameraManager()
 {
 	#ifdef WITH_TOOLS
-		if(m_debugView != NULL)
+		if(m_debugView != 0)
 			delete m_debugView;
 	#endif
 }
@@ -38,7 +38,7 @@ Viewpoint* CameraManager::getDebugCamera()
 
 CameraView* CameraManager::getDebugView()
 {
-	if(m_debugView == NULL)
+	if(m_debugView == 0)
 	{
 		m_debugView = new CameraView();
 	}
@@ -48,7 +48,7 @@ CameraView* CameraManager::getDebugView()
 
 CameraModel* CameraManager::getDebugModel()
 {
-	if(m_debugModel == NULL)
+	if(m_debugModel == 0)
 		m_debugModel = new CameraModel();
 
 	return m_debugModel;
@@ -56,8 +56,8 @@ CameraModel* CameraManager::getDebugModel()
 
 void CameraManager::clearDebug()
 {
-	m_debugView = NULL;
-	m_debugModel = NULL;
+	m_debugView = 0;
+	m_debugModel = 0;
 }
 
 void CameraManager::onManageeAdded(Camera *managee)

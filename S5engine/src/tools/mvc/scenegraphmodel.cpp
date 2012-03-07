@@ -18,7 +18,7 @@ Node* SceneGraphModel::getNode(const QModelIndex &index) const
 		Node *item = static_cast<Node*>(index.internalPointer());
 		if (item) return item;
 	}
-	return NULL;
+	return 0;
 }
 
 QModelIndex SceneGraphModel::index(int row, int column, const QModelIndex& parent) const
@@ -28,7 +28,7 @@ QModelIndex SceneGraphModel::index(int row, int column, const QModelIndex& paren
 
 	Node *parentItem = getNode(parent);
 
-	if(parentItem != NULL)
+	if(parentItem != 0)
 	{
 		Node *childItem = parentItem->child(row);
 		if (childItem)
@@ -66,7 +66,7 @@ int SceneGraphModel::rowCount(const QModelIndex& parent) const
 {
 	Node *parentItem = getNode(parent);
 
-	if(parentItem != NULL)
+	if(parentItem != 0)
 		return parentItem->childCount();
 	else
 		return m_item->childCount();
@@ -82,7 +82,7 @@ QVariant SceneGraphModel::data(const QModelIndex& parent, int role) const
 	if(role == Qt::DisplayRole)
 	{
 		Node* n = getNode(parent);
-		if(n != NULL) return QVariant(n->getName());
+		if(n != 0) return QVariant(n->getName());
 	}
 	return QVariant();
 }

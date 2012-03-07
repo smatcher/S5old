@@ -66,12 +66,12 @@ int main(int argc, char *argv[])
 	meshrenderer = new SkinnedMeshRenderer(bob_mesh, bob_material);
 	nActor->addProperty(meshrenderer);
 	skeleton = bob_mesh->getSkeleton();
-	if(skeleton != NULL) {
+	if(skeleton != 0) {
 		nActor->link(skeleton->buildSkeleton());
 		meshrenderer->createLinks();
 
 		Node* lamp = nActor->find("SKELETON_lamp");
-		if(lamp != NULL) {
+		if(lamp != 0) {
 			lamp->link(nLight);
 			nLight->moveTo(Vector3f(0,1,0));
 		}
@@ -90,7 +90,7 @@ int main(int argc, char *argv[])
 	meshrenderer = new SkinnedMeshRenderer(pwips_mesh, pwips_material);
 	nActor2->addProperty(meshrenderer);
 	skeleton = pwips_mesh->getSkeleton();
-	if(skeleton != NULL) {
+	if(skeleton != 0) {
 		nActor2->link(skeleton->buildSkeleton());
 		meshrenderer->createLinks();
 
@@ -111,7 +111,7 @@ int main(int argc, char *argv[])
 	meshrenderer = new SkinnedMeshRenderer(dwarf_mesh, dwarf_material);
 	nActor3->addProperty(meshrenderer);
 	skeleton = dwarf_mesh->getSkeleton();
-	if(skeleton != NULL) {
+	if(skeleton != 0) {
 		nActor3->link(skeleton->buildSkeleton());
 		meshrenderer->createLinks();
 

@@ -37,7 +37,7 @@ void SkinnedMeshRenderer::render()
 		for(unsigned int i=0 ; i<m_mesh->nbSubmeshes() ; i++) {
 
 			#ifdef WITH_TOOLS
-				if(node() != NULL && node()->isSelected()) {
+				if(node() != 0 && node()->isSelected()) {
 					glClearStencil(0);
 					glClear( GL_STENCIL_BUFFER_BIT );
 					glEnable( GL_STENCIL_TEST );
@@ -60,7 +60,7 @@ void SkinnedMeshRenderer::render()
 			}
 
 			#ifdef WITH_TOOLS
-				if(node() != NULL && node()->isSelected()) {
+				if(node() != 0 && node()->isSelected()) {
 					// Set the stencil buffer to only allow writing
 					// to the screen when the value of the
 					// stencil buffer is not 1

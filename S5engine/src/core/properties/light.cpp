@@ -53,7 +53,7 @@ const double negz[] = {
 	 0, 0, 0, 1
 };
 
-Light::Light(bool casts_shadows) : m_casts_shadows(casts_shadows), m_shadowmap(NULL), IProperty("Light")
+Light::Light(bool casts_shadows) : m_casts_shadows(casts_shadows), m_shadowmap(0), IProperty("Light")
 {
 	if(casts_shadows) {
 		int i=0;
@@ -272,7 +272,7 @@ bool Light::castsShadows()
 
 RenderTexture* Light::getRenderTexture()
 {
-	if(m_shadowmap == NULL) {
+	if(m_shadowmap == 0) {
 		m_shadowmap = new RenderTextureArray("Omni_Lightmap", OMNIDEPTH_RESOLUTION, OMNIDEPTH_RESOLUTION, 6, GL_DEPTH_COMPONENT, GL_FLOAT);
 	}
 

@@ -42,7 +42,7 @@ void Manipulator::update()
 
 void Manipulator::addSelected(Node* node)
 {
-	if(!m_selected.contains(node) && node != NULL) {
+	if(!m_selected.contains(node) && node != 0) {
 		m_selected.push_back(node);
 	}
 }
@@ -63,7 +63,7 @@ void Manipulator::select(Node* node)
 {
 	m_selected.clear();
 
-	if(node != NULL) {
+	if(node != 0) {
 		m_selected.push_back(node);
 	}
 }

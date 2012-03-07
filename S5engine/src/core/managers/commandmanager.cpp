@@ -7,12 +7,12 @@
 
 CommandManager::CommandManager()
 {
-	m_console = NULL;
+	m_console = 0;
 
 	// These commands are catched before, we only add them here for the autocompletion and the help
-	m_commands.insert("help",NULL);
+	m_commands.insert("help",0);
 	m_commands_help.insert("help","displays a help message on a given command or list all the help messages");
-	m_commands.insert("exec",NULL);
+	m_commands.insert("exec",0);
 	m_commands_help.insert("exec","run every command in a given file");
 }
 

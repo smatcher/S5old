@@ -29,14 +29,14 @@ ParentOf<Child>::~ParentOf()
 template<class Child>
 Child* ParentOf<Child>::child(const QString& childName) const
 {
-	return m_sons.value(childName,NULL);
+	return m_sons.value(childName,0);
 }
 
 template<class Child>
 Child* ParentOf<Child>::child(int nb) const
 {
 	if(m_sons.size() == 0)
-		return NULL;
+		return 0;
 
 	QList<QString> keys = m_sons.keys();
 	return child(keys[nb]);
@@ -52,10 +52,10 @@ template<class Child>
 void ParentOf<Child>::link(Child* son)
 {
 	#ifdef DEBUG
-		assert(son != NULL);
+		assert(son != 0);
 	#endif
 
-	if(son != NULL)
+	if(son != 0)
 	{
 		QString name = son->getName();
 
@@ -73,14 +73,14 @@ void ParentOf<Child>::link(Child* son)
 	}
 	else
 	{
-		logWarn("Trying to add NULL as a son");
+		logWarn("Trying to add 0 as a son");
 	}
 }
 
 template<class Child>
 Child* ParentOf<Child>::unlink(const QString& childName)
 {
-	Child* ret = NULL;
+	Child* ret = 0;
 	typename QMap<QString, Child*>::iterator i = m_sons.find(childName);
 	if(i != m_sons.end() && i.key() == childName)
 	{
@@ -114,7 +114,7 @@ ChildOf<Parent>::ChildOf(const QString& name, Parent* parent)
 	m_parent = parent;
 	m_name = name;
 
-	if(parent != NULL)
+	if(parent != 0)
 		parent->link((typename Parent::ChildPtrType)this);
 }
 
@@ -137,12 +137,12 @@ void ChildOf<Parent>::setName(const QString& name)
 	// Save parent
 	Parent* parent = m_parent;
 	// Unlink
-	if(parent != NULL)
+	if(parent != 0)
 		unlinkFromParent();
 	// Change name
 	m_name = name;
 	// Relink
-	if(parent != NULL)
+	if(parent != 0)
 		parent->link((typename Parent::ChildPtrType)this);
 }
 
@@ -163,7 +163,7 @@ int ChildOf<Parent>::childNumber()
 {
 	int ret = 0;
 
-	if(m_parent != NULL)
+	if(m_parent != 0)
 	{
 		for(int i=0 ; i<m_parent->childCount() ; i++)
 		{
@@ -181,19 +181,19 @@ int ChildOf<Parent>::childNumber()
 template<class Parent>
 void ChildOf<Parent>::unlinkFromParent(bool justForgetParent)
 {
-	if(m_parent != NULL && !justForgetParent)
+	if(m_parent != 0 && !justForgetParent)
 	{
 		m_parent->unlink(m_name);
 	}
 	Parent* oldParent = m_parent;
-	m_parent = NULL;
+	m_parent = 0;
 	onUnlinked(oldParent);
 }
 
 template<class Parent>
 void ChildOf<Parent>::setParent(Parent* parent)
 {
-	if(m_parent != NULL) {
+	if(m_parent != 0) {
 		unlinkFromParent();
 	}
 

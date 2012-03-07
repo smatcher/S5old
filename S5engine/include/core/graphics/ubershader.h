@@ -159,31 +159,31 @@ class UberShaderData : public ShaderProgramData
 public:
 
 
-    UberShaderData(const QString& name, const QString& path, IResourceFactory* factory) : ShaderProgramData(name, path, factory), m_tree(NULL), m_current(NULL) {
+    UberShaderData(const QString& name, const QString& path, IResourceFactory* factory) : ShaderProgramData(name, path, factory), m_tree(0), m_current(0) {
         m_tree = new UberShaderNode();
         for(int i=0 ; i<UberShaderDefine::NB_DEFINES ; i++) {
             m_defines[i] = false;
         }
     }
-    virtual ~UberShaderData() {if(m_tree!=NULL) {delete m_tree;}}
-    void setParamValue(UberShaderDefine::Type param, bool value) {m_defines[param] = value; m_current = NULL;}
+    virtual ~UberShaderData() {if(m_tree!=0) {delete m_tree;}}
+    void setParamValue(UberShaderDefine::Type param, bool value) {m_defines[param] = value; m_current = 0;}
     bool getParamValue(UberShaderDefine::Type param) {return m_defines[param];}
     void resetParams() {
         for(int i=0 ; i<UberShaderDefine::NB_DEFINES ; i++) {
             m_defines[i] = false;
         }
-        m_current = NULL;
+        m_current = 0;
     }
     virtual bool isUber() {return true;}
     virtual void compile() {
         UberShaderNode* node = getCurrentNode();
-        if(node->m_program == NULL) {
+        if(node->m_program == 0) {
             compileCurrentState();
         }
     }
     virtual QGLShaderProgram* program() {
         UberShaderNode* node = getCurrentNode();
-        if(node->m_program == NULL) {
+        if(node->m_program == 0) {
             compile();
         }
         return getCurrentNode()->m_program;
@@ -208,17 +208,17 @@ protected:
         int  m_texunits[UberShaderTextureType::NB_TEXTURES];
 
         UberShaderNode() :
-            m_yes_son(NULL),
-            m_no_son(NULL),
-            m_program(NULL),
-            m_fragment_shader(NULL),
-            m_vertex_shader(NULL) {}
+            m_yes_son(0),
+            m_no_son(0),
+            m_program(0),
+            m_fragment_shader(0),
+            m_vertex_shader(0) {}
         ~UberShaderNode() {
-            if(m_yes_son != NULL) delete m_yes_son;
-            if(m_no_son != NULL)  delete m_no_son;
-            if(m_program != NULL) delete m_program;
-            if(m_vertex_shader != NULL) delete m_vertex_shader;
-            if(m_fragment_shader != NULL) delete m_fragment_shader;
+            if(m_yes_son != 0) delete m_yes_son;
+            if(m_no_son != 0)  delete m_no_son;
+            if(m_program != 0) delete m_program;
+            if(m_vertex_shader != 0) delete m_vertex_shader;
+            if(m_fragment_shader != 0) delete m_fragment_shader;
         }
     };
 
@@ -254,24 +254,24 @@ protected:
         texunits[UberShaderTextureType::SPLATTING_B]     = m_defines[UberShaderDefine::SPLATTING]         ? texunit++ : -1;
     }
 
-    UberShaderNode* getCurrentNode(int param_read = 0, UberShaderNode* current_branch = NULL) {
-        if(m_current != NULL) {
+    UberShaderNode* getCurrentNode(int param_read = 0, UberShaderNode* current_branch = 0) {
+        if(m_current != 0) {
             return m_current;
         }
 
-        if(current_branch == NULL) {
+        if(current_branch == 0) {
             current_branch = m_tree;
         }
 
         UberShaderNode* ret = current_branch;
         if(param_read < UberShaderDefine::NB_DEFINES) {
             if(m_defines[param_read]) {
-                if(current_branch->m_yes_son == NULL) {
+                if(current_branch->m_yes_son == 0) {
                     current_branch->m_yes_son = new UberShaderNode();
                 }
                 ret = getCurrentNode(param_read+1, current_branch->m_yes_son);
             } else {
-                if(current_branch->m_no_son == NULL) {
+                if(current_branch->m_no_son == 0) {
                     current_branch->m_no_son = new UberShaderNode();
                 }
                 ret = getCurrentNode(param_read+1, current_branch->m_no_son);

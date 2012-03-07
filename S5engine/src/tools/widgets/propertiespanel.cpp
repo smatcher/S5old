@@ -3,7 +3,7 @@
 
 PropertiesPanel::PropertiesPanel()
 {
-	m_widget = NULL;
+	m_widget = 0;
 
 	setSizePolicy(QSizePolicy::Minimum,QSizePolicy::Minimum);
 }
@@ -22,7 +22,7 @@ void PropertiesPanel::selectionChanged(const QItemSelection& selected, const QIt
 
 	if(m_widget != widget)
 	{
-		if(m_widget != NULL)
+		if(m_widget != 0)
 		{
 			delete m_widget;
 		}
@@ -39,6 +39,6 @@ QSize PropertiesPanel::sizeHint() const
 
 void PropertiesPanel::updateData()
 {
-	if(m_widget != NULL)
+	if(m_widget != 0)
 		m_widget->updateData();
 }

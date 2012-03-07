@@ -8,15 +8,15 @@
 SceneGraph::SceneGraph()
 {
 	#ifdef WITH_TOOLS
-		m_debugView = NULL;
-		m_debugModel = NULL;
+		m_debugView = 0;
+		m_debugModel = 0;
 	#endif
 }
 
 SceneGraph::~SceneGraph()
 {
 	#ifdef WITH_TOOLS
-		if(m_debugView != NULL)
+		if(m_debugView != 0)
 			delete m_debugView;
 	#endif
 }
@@ -25,7 +25,7 @@ SceneGraph::~SceneGraph()
 
 SceneGraphView* SceneGraph::getDebugView()
 {
-	if(m_debugView == NULL)
+	if(m_debugView == 0)
 	{
 		m_debugView = new SceneGraphView(this);
 	}
@@ -35,7 +35,7 @@ SceneGraphView* SceneGraph::getDebugView()
 
 SceneGraphModel* SceneGraph::getDebugModel()
 {
-	if(m_debugModel == NULL)
+	if(m_debugModel == 0)
 		m_debugModel = new SceneGraphModel(this);
 
 	return m_debugModel;
@@ -43,8 +43,8 @@ SceneGraphModel* SceneGraph::getDebugModel()
 
 void SceneGraph::clearDebug()
 {
-	m_debugView = NULL;
-	m_debugModel = NULL;
+	m_debugView = 0;
+	m_debugModel = 0;
 }
 
 void SceneGraph::setManipulator(Manipulator* manip)

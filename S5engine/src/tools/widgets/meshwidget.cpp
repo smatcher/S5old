@@ -8,7 +8,7 @@
 
 #include <QLabel>
 
-MeshWidget::MeshWidget(MeshData &resource) : ResourceWidget(resource), m_preview(NULL), m_info(NULL)
+MeshWidget::MeshWidget(MeshData &resource) : ResourceWidget(resource), m_preview(0), m_info(0)
 {
 	if(resource.m_state == ResourceData::STATE_LOADED)
 	{
@@ -28,7 +28,7 @@ MeshWidget::~MeshWidget()
 {
 }
 
-MeshWidget::MeshPreview::MeshPreview(QGLWidget *shared, MeshData* mesh) : QGLWidget(NULL,shared)
+MeshWidget::MeshPreview::MeshPreview(QGLWidget *shared, MeshData* mesh) : QGLWidget(0,shared)
 {
 	this->m_mesh = mesh;
 	m_last_pressed = false;

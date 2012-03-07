@@ -1,6 +1,8 @@
 #ifndef RENDERMANAGER_H
 #define RENDERMANAGER_H
 
+#include "core/abstraction/interface/irenderdevice.h"
+
 #include "core/managers/manager.h"
 #include "core/utils/singleton.h"
 
@@ -107,6 +109,7 @@ protected :
 
 private :
 	GLWidget* m_context;
+	IRD::iRenderDevice* m_device;
 	Camera* m_camera;
 	bool m_cameraChanged;
 
@@ -189,9 +192,9 @@ private :
 	void renderTarget(SceneGraph* sg, RenderTarget& target);
 	void drawDebug(SceneGraph* sg, RenderTarget& target);
 	void postprocessPass(RenderTexture* target_texture, QList<Texture> input_textures, bool lowres = false);
-	void postprocessPass(QList< QPair<RenderTexture*, FrameBufferObject::AttachmentPoint> > target_textures, QList<Texture> input_textures, bool lowres = false);
+	void postprocessPass(QList< QPair<RenderTexture*, IRD::FrameBuffer::Attachment> > target_textures, QList<Texture> input_textures, bool lowres = false);
 	void postprocessPassOnFBO(RenderTexture* target_texture, QList<Texture> input_textures, FrameBufferObject* fbo);
-	void postprocessPassOnFBO(QList< QPair<RenderTexture*, FrameBufferObject::AttachmentPoint> > target_textures, QList<Texture> input_textures, FrameBufferObject* fbo);
+	void postprocessPassOnFBO(QList< QPair<RenderTexture*, IRD::FrameBuffer::Attachment> > target_textures, QList<Texture> input_textures, FrameBufferObject* fbo);
 	void debugDisplayTexture(Texture texture, int x, int y, int width, int height);
 	void setupProjection(RenderTarget& target, int projection_nb);
 	void applyBackground(RenderTarget& target, int projection_nb);
@@ -245,6 +248,8 @@ public:
 	const QHash<QString, ShaderProgramData::UniformBase*>& getEngineUniforms();
 
 	RenderPassInfo* getRenderPassInfo();
+
+	IRD::iRenderDevice* getRenderDevice();
 
 	void addDebugTexture(Texture texture);
 	void clearDebugTextures();

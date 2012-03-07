@@ -27,7 +27,7 @@ bool GLSLUberShader::unload()
 	for(int i=0 ; i<UberShaderDefine::NB_DEFINES ; i++) {
 		m_defines[i] = false;
 	}
-	m_current = NULL;
+	m_current = 0;
 	return true;
 }
 
@@ -35,7 +35,7 @@ void GLSLUberShader::setUniform(const UniformBase* uniform)
 {
 	QGLShaderProgram* _program = program();
 
-	if(_program != NULL && uniform != NULL)
+	if(_program != 0 && uniform != 0)
 		uniform->sendTo(*_program);
 }
 
@@ -44,7 +44,7 @@ void GLSLUberShader::setEngineUniforms()
 	debugGL("before setEngineUniforms");
 	QGLShaderProgram* _program = program();
 
-	if(_program != NULL) {
+	if(_program != 0) {
 		int location;
 
 		const QHash<QString, UniformBase*>& engine_uniforms = RENDER_MANAGER.getEngineUniforms();
@@ -84,7 +84,7 @@ void GLSLUberShader::compileCurrentState()
 {
 	UberShaderNode* node = getCurrentNode();
 
-	if(node->m_program != NULL) {
+	if(node->m_program != 0) {
 		logWarn("UberShader state already compiled");
 	} else {
 		node->m_program = new QGLShaderProgram();
@@ -103,7 +103,7 @@ void GLSLUberShader::compileCurrentState()
 void GLSLUberShader::use()
 {
 	QGLShaderProgram* _program = program();
-	if(_program != NULL) {
+	if(_program != 0) {
 		_program->bind();
 
 		if(m_current->m_texunits[UberShaderTextureType::COLOR_MAP] >= 0)
@@ -147,7 +147,7 @@ void GLSLUberShader::use()
 void GLSLUberShader::unset()
 {
 	QGLShaderProgram* _program = program();
-	if(_program != NULL) {
+	if(_program != 0) {
 		_program->release();
 	}
 }

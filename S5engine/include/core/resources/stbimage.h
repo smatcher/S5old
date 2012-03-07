@@ -5,8 +5,6 @@
 #include "core/resources/iresourcefactory.h"
 #include "core/utils/stb_image.h"
 
-#include <QtOpenGL>
-
 class StbImageFactory;
 
 class StbImage : public TextureData
@@ -22,10 +20,10 @@ private:
 	bool m_wrap_t;
 
 public:
-	StbImage(const QString& name, const QString& path, IResourceFactory* factory, stbi_uc* data = NULL, bool mipmap = true, bool filtering=true, bool wrap_s = true, bool wrap_t = true, int comp=0);
+	StbImage(const QString& name, const QString& path, IResourceFactory* factory, stbi_uc* data = 0, bool mipmap = true, bool filtering=true, bool wrap_s = true, bool wrap_t = true, int comp=0);
 	virtual bool unload();
 
-	void buildGLTexture();
+	void buildTexture();
 
 	virtual bool isCubemap() {return false;}
 

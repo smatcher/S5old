@@ -3,8 +3,11 @@
 
 namespace IRD
 {
+	class iRenderDevice;
+
 	class Texture
 	{
+
 	public:
 
 		enum Type
@@ -20,7 +23,7 @@ namespace IRD
 			TF_DXT1,
 			TF_DXT3,
 			TF_DXT5,
-			TF_BGRA8,
+			TF_RGBA8,
 			TF_RGBA16F,
 			TF_RGBA32F,
 			TF_DEPTH,
@@ -32,9 +35,10 @@ namespace IRD
 			// Clamp wrap
 			TSS_WRAP_U = 1<<0,
 			TSS_WRAP_V = 1<<1,
-			TSS_WRAP   = TSS_WRAP_U | TSS_WRAP_V,
+			TSS_WRAP_W = 1<<2,
+			TSS_WRAP   = TSS_WRAP_U | TSS_WRAP_V | TSS_WRAP_W,
 			// Filter
-			TSS_FILTER = 1<<2
+			TSS_FILTER = 1<<3
 		};
 
 		struct Params
@@ -50,7 +54,7 @@ namespace IRD
 
 			Params():
 				m_type(TT_TEX2D),
-				m_format(TF_BGRA8),
+				m_format(TF_RGBA8),
 				m_width(256),
 				m_height(256),
 				m_nbLayers(1),
@@ -68,6 +72,8 @@ namespace IRD
 		int    getWidth() {return m_params.m_width;}
 		int    getHeight() {return m_params.m_height;}
 		int    getNbLayers() {return m_params.m_nbLayers;}
+
+		const Params& getParams() {return m_params;}
 
 	protected:
 
@@ -89,8 +95,8 @@ namespace IRD
 	class Shader
 	{
 	public:
-		virtual void bind();
-		virtual void unbind();
+		virtual void bind(){}
+		virtual void unbind(){}
 		
 	protected:
 
@@ -101,6 +107,20 @@ namespace IRD
 	{
 	public:
 
+		enum Attachment
+		{
+			COLOR_ATTACHMENT_0,
+			COLOR_ATTACHMENT_1,
+			COLOR_ATTACHMENT_2,
+			COLOR_ATTACHMENT_3,
+			COLOR_ATTACHMENT_4,
+			COLOR_ATTACHMENT_5,
+			COLOR_ATTACHMENT_6,
+			COLOR_ATTACHMENT_7,
+			DEPTH_ATTACHMENT,
+			STENCIL_ATTACHMENT
+		};
+
 		struct Params
 		{
 			Texture::Format m_format;
@@ -109,14 +129,15 @@ namespace IRD
 			int m_nbColorBuffers;
 
 			Params():
-				m_format(Texture::TF_BGRA8),
+				m_format(Texture::TF_RGBA8),
 				m_width(256),
 				m_height(256),
 				m_nbColorBuffers(1)
 			{}
 		};
 
-		virtual void bind();
+		virtual void bind(){}
+		virtual void unbind(){}
 
 	protected:
 
@@ -127,30 +148,36 @@ namespace IRD
 	class iRenderDevice
 	{
 	public:
+
+		enum Feature
+		{
+			FEATURE_CORE
+		};
+
 		//Global
 		virtual int init() = 0;
-		virtual bool isSupported();
+		virtual bool isSupported(Feature feature) {return false;}
 
 		//Textures
-		virtual Texture createTexture(Texture::Params params);
-		virtual void destroyTexture(Texture& texture);
-		virtual void sendTextureData(Texture& texture, int layer, int mipLevel, int offset, int size, const void* data);
-		virtual bool getTextureData(Texture& texture, int layer, int mipLevel, void* data);
+		virtual Texture* createTexture(Texture::Params params) {return 0;}
+		virtual void destroyTexture(Texture* texture) {}
+		virtual void sendTextureData(Texture* texture, int layer, int mipLevel, int offset, int size, const void* data) {}
+		virtual bool getTextureData(Texture* texture, int layer, int mipLevel, void* data) {return false;}
 
 		//VertexBuffers
-		virtual VertexBuffer createVertexBuffer(int size);
-		virtual void destroyVertexBuffer(VertexBuffer vbo);
-		virtual void sendVertexBufferData(VertexBuffer& vbo, int offset, int size, const void* data);
-		virtual bool getVertexBufferData(VertexBuffer& vbo, void* data);
+		virtual VertexBuffer* createVertexBuffer(int size) {return 0;}
+		virtual void destroyVertexBuffer(VertexBuffer* vbo) {}
+		virtual void sendVertexBufferData(VertexBuffer* vbo, int offset, int size, const void* data) {}
+		virtual bool getVertexBufferData(VertexBuffer* vbo, void* data) {return false;}
 
 		// Shaders
-		virtual Shader createShader(const char* vertexSrc, const char* fragmentsrc);
-		virtual void destroyShader(Shader& shader);
+		virtual Shader* createShader(const char* vertexSrc, const char* fragmentsrc) {return 0;}
+		virtual void destroyShader(Shader* shader) {}
 
 		//FrameBuffers
-		virtual FrameBuffer createFrameBuffer(FrameBuffer::Params params);
-		virtual void destroyFrameBuffer(FrameBuffer& buffer);
-
+		virtual FrameBuffer* createFrameBuffer(FrameBuffer::Params params) {return 0;}
+		virtual void destroyFrameBuffer(FrameBuffer* buffer) {}
+		virtual void attachTextureToFrameBuffer(FrameBuffer* buffer, Texture* texture, FrameBuffer::Attachment attachment){}
 	};
 }
 

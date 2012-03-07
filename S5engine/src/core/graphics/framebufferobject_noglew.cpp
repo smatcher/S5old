@@ -2,16 +2,16 @@
 
 #include <core/graphics/rendertexture.h>
 
-void FrameBufferObject::attachTexture(RenderTexture* tex, AttachmentPoint attachment, GLenum textarget)
+void FrameBufferObject::attachTexture(RenderTexture* tex, IRD::FrameBuffer::Attachment attachment)
 {
 	bool valid = false;
 
-	if(tex != NULL) {
+	if(tex != 0) {
 		valid = tex->getWidth() == m_width && tex->getHeight() == m_height;
 	}
 
 	if(!valid) {
-		if(tex == NULL) {
+		if(tex == 0) {
 			logError("Could not attach texture to FBO texture is not valid");
 		} else {
 			logError("Could not attach texture to FBO, dimensions don't match");
@@ -24,7 +24,7 @@ void FrameBufferObject::attachTexture(RenderTexture* tex, AttachmentPoint attach
 			m_textures.removeAt(i);
 		}
 	}
-	Attachment at = {tex,attachment,textarget};
+	Attachment at = {tex,attachment};
 	m_textures.push_back(at);
 }
 
@@ -36,7 +36,7 @@ void FrameBufferObject::swapTextures()
 	}
 }
 
-int FrameBufferObject::GLEW_HACK_getRTIdForPass(RenderTexture* tex, int passNb)
+IRD::Texture* FrameBufferObject::GLEW_HACK_getTextureforPass(RenderTexture* tex, int passNb)
 {
-	return tex->getRenderTextureId(passNb);
+	tex->getBackTexture(passNb);
 }

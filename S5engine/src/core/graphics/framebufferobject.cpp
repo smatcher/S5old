@@ -4,6 +4,7 @@
 #include <core/log/log.h>
 
 #include <core/graphics/framebufferobject.h>
+#include "core/managers/rendermanager.h"
 
 FrameBufferObject::FrameBufferObject(int height, int width, bool onscreen, bool add_depth_stencil_renderbuffer)
 {
@@ -11,6 +12,13 @@ FrameBufferObject::FrameBufferObject(int height, int width, bool onscreen, bool 
 	m_width = width;
 	m_on_screen = onscreen;
 
+	IRD::FrameBuffer::Params params;
+	params.m_height = height;
+	params.m_width = width;
+
+	m_framebuffer = RENDER_MANAGER.getRenderDevice()->createFrameBuffer(params);
+
+	/*
 	glGenFramebuffers(1,&m_framebuffer);
 
 	if(add_depth_stencil_renderbuffer) {
@@ -28,15 +36,22 @@ FrameBufferObject::FrameBufferObject(int height, int width, bool onscreen, bool 
 	} else {
 		m_hasrenderbuffer = false;
 	}
+	*/
 }
 
 FrameBufferObject::~FrameBufferObject()
 {
+	if(m_framebuffer != 0)
+		RENDER_MANAGER.getRenderDevice()->destroyFrameBuffer(m_framebuffer);
+
+	m_framebuffer = 0;
+	/*
 	glDeleteFramebuffers(1,&m_framebuffer);
 
 	if(m_hasrenderbuffer) {
 		glDeleteRenderbuffers(1,&m_renderbuffer);
 	}
+	*/
 }
 
 void FrameBufferObject::resize(int height, int width)
@@ -45,6 +60,7 @@ void FrameBufferObject::resize(int height, int width)
 	m_height = height;
 	m_width = width;
 
+	/*
 	if(m_hasrenderbuffer) {
 		glBindRenderbuffer(GL_RENDERBUFFER_EXT, m_renderbuffer);
 		glRenderbufferStorage(GL_RENDERBUFFER_EXT, GL_DEPTH_STENCIL, width, height);
@@ -56,16 +72,19 @@ void FrameBufferObject::resize(int height, int width)
 		glBindFramebuffer(GL_FRAMEBUFFER, 0);
 	}
 	debugGL("resizing");
+	*/
 }
 
 void FrameBufferObject::bind()
 {
-	glBindFramebuffer(GL_FRAMEBUFFER, m_framebuffer);
+	if(m_framebuffer)
+		m_framebuffer->bind();
 }
 
 void FrameBufferObject::release()
 {
-	glBindFramebuffer(GL_FRAMEBUFFER, 0);
+	if(m_framebuffer)
+		m_framebuffer->unbind();
 }
 
 void FrameBufferObject::clearAttachments()
@@ -80,11 +99,11 @@ void FrameBufferObject::commitTextures(int passNb)
 	// attach the textures to FBO depth attachment point
 	for(int i=0 ; i<m_textures.size() ; i++) {
 		RenderTexture* tex = m_textures[i].tex;
-		AttachmentPoint attachment = m_textures[i].ap;
-		if(attachment != DEPTH_ATTACHMENT && attachment != STENCIL_ATTACHMENT) {
+		IRD::FrameBuffer::Attachment attachment = m_textures[i].ap;
+		if(attachment != IRD::FrameBuffer::DEPTH_ATTACHMENT && attachment != IRD::FrameBuffer::STENCIL_ATTACHMENT) {
 			nb_color_buffers++;
 		}
-		glFramebufferTexture2D(GL_FRAMEBUFFER, attachment, m_textures[i].textarget, GLEW_HACK_getRTIdForPass(tex,passNb),0);
+		RENDER_MANAGER.getRenderDevice()->attachTextureToFrameBuffer(m_framebuffer, GLEW_HACK_getTextureforPass(tex, passNb), attachment);
 		debugGL("attaching");
 	}
 
@@ -93,8 +112,8 @@ void FrameBufferObject::commitTextures(int passNb)
 		int i=0;
 		GLenum* bufs = new GLenum[nb_color_buffers]();
 		for(int j=0 ; j<m_textures.size() ; j++) {
-			AttachmentPoint attachment = m_textures[j].ap;
-			if(attachment != DEPTH_ATTACHMENT && attachment != STENCIL_ATTACHMENT) {
+			IRD::FrameBuffer::Attachment attachment = m_textures[j].ap;
+			if(attachment != IRD::FrameBuffer::DEPTH_ATTACHMENT && attachment != IRD::FrameBuffer::STENCIL_ATTACHMENT) {
 				bufs[i] = attachment;
 				i++;
 			}
@@ -106,7 +125,7 @@ void FrameBufferObject::commitTextures(int passNb)
 		glDrawBuffer(GL_NONE);
 		glReadBuffer(GL_NONE);
 	}
-
+/*
 	GLenum status = glCheckFramebufferStatus(GL_FRAMEBUFFER_EXT);
 	if(status != GL_FRAMEBUFFER_COMPLETE_EXT) {
 		if(status == GL_FRAMEBUFFER_INCOMPLETE_ATTACHMENT) {
@@ -121,4 +140,5 @@ void FrameBufferObject::commitTextures(int passNb)
 			logError("FBO status other");
 		}
 	}
+	*/
 }

@@ -6,7 +6,7 @@
 #include "core/maths/boundingsphere.h"
 
 PrimitiveMesh::PrimitiveMesh(QString name) :
-	RawMesh(name,"",NULL)
+	RawMesh(name,"",0)
 {
 }
 

@@ -55,7 +55,7 @@ void AssimpFactory::load(ResourceData* resource)
 		const aiScene* scene = m_importer.ReadFile(resource->path().toLocal8Bit().data(), aiProcessPreset_TargetRealtime_Quality);
 		QMap<QString,aiNode*> bones;
 
-		if(scene != NULL)
+		if(scene != 0)
 		{
 			// Build submeshes
 			if(meshresource->isInsideLib())
@@ -71,7 +71,7 @@ void AssimpFactory::load(ResourceData* resource)
 					QString bone_name = aimesh->mBones[j]->mName.data;
 					if(!bones.contains(bone_name)) {
 						aiNode* bone = findBone(bone_name, scene->mRootNode);
-						if(bone != NULL) {
+						if(bone != 0) {
 							bones.insert(bone_name, findBone(bone_name, bone));
 						}
 					}
@@ -219,12 +219,12 @@ aiNode* AssimpFactory::findBone(QString name, aiNode* node)
 
 	for(unsigned int i=0 ; i < node->mNumChildren ; i++) {
 		aiNode* ret = findBone(name, node->mChildren[i]);
-		if(ret != NULL) {
+		if(ret != 0) {
 			return ret;
 		}
 	}
 
-	return NULL;
+	return 0;
 }
 
 void buildBone(Skeleton::Bone* bone, aiNode* node)
@@ -269,7 +269,7 @@ void AssimpFactory::parseMetaFile(QString meta_path, QString path, QList<Resourc
 	QString errorMsg;
 	int errorLine;
 	int errorColumn;
-	if(!doc.setContent(&file,NULL,&errorMsg,&errorLine,&errorColumn))
+	if(!doc.setContent(&file,0,&errorMsg,&errorLine,&errorColumn))
 	{
 		logWarn("AssimpFactory : Can't parse file" << meta_path << " " << errorMsg << "at line" << errorLine);
 		return;

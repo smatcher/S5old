@@ -110,7 +110,7 @@ public:
 	// Calcul du point d'intersection de 3 plans.
 	// *intersect indique si les 3 plans s'intersectent ou pas.
 	// An explanation here : http://geometryalgorithms.com/Archive/algorithm_0104/algorithm_0104B.htm
-	Vector3<T> getIntersection(const Plane<T>& p2, const Plane<T>& p3, bool* intersect=NULL)
+	Vector3<T> getIntersection(const Plane<T>& p2, const Plane<T>& p3, bool* intersect=0)
 	{
 		Vector3<T> result;
 
@@ -118,13 +118,13 @@ public:
 
 		if(denominator == 0.0)
 		{
-			if(intersect != NULL)
+			if(intersect != 0)
 				*intersect = false;
 			return Vector3<T>(0.0);
 		}
 		else
 		{
-			if(intersect != NULL)
+			if(intersect != 0)
 				*intersect = true;
 		}
 

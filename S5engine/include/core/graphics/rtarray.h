@@ -30,7 +30,7 @@ public:
 
 	virtual bool isCubemap() {return false;}
 
-	virtual GLuint getRenderTextureId(int i= 0);
+	virtual IRD::Texture* getBackTexture(int i= 0);
 	virtual void swap();
 
 	virtual void bind(int i=0);

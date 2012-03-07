@@ -9,15 +9,15 @@
 PhysicObject::PhysicObject(PhysicObject::Properties properties, const QString& name) : IProperty(name), Managee<PhysicsManager>()
 {
 	m_properties = properties;
-	m_cached_shape = NULL;
-	m_shape = NULL;
+	m_cached_shape = 0;
+	m_shape = 0;
 }
 
 PhysicObject::~PhysicObject()
 {
-	if(m_cached_shape != NULL)
+	if(m_cached_shape != 0)
 		delete m_cached_shape;
-	if(m_shape != NULL)
+	if(m_shape != 0)
 		delete m_shape;
 }
 
@@ -30,7 +30,7 @@ void PhysicObject::drawDebug(const GLWidget*, const RenderManager::DebugGizmosFi
 {
 	if(filter.draw_colliders)
 	{
-		if(m_cached_shape != NULL) {
+		if(m_cached_shape != 0) {
 			const unsigned int* indices = m_cached_shape->getIndexPointer();
 			const btVector3* vertices = m_cached_shape->getVertexPointer();
 			unsigned int num_indices = m_cached_shape->numIndices();
@@ -78,7 +78,7 @@ void PhysicObject::onLinked(PropertySet*)
 			break;
 		case MESH:
 			shape = dynamic_cast<btConvexShape*>(PHYSICS_MANAGER.getCollider(m_properties.mesh_name));
-			if(shape != NULL) {
+			if(shape != 0) {
 				m_cached_shape = new btShapeHull(shape);
 				m_cached_shape->buildHull(shape->getMargin());
 	//			cmpd_shape = new btCompoundShape();

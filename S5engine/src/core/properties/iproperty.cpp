@@ -4,7 +4,7 @@
 IProperty::IProperty(const QString& propName) : ChildOf<PropertySet>(propName)
 {
 	#ifdef WITH_TOOLS
-		m_widget = NULL;
+		m_widget = 0;
 	#endif
 }
 
@@ -16,19 +16,19 @@ IProperty::~IProperty()
 Node* IProperty::node()
 {
 	PropertySet* _parent = parent();
-	if(_parent != NULL)
+	if(_parent != 0)
 		return parent()->node();
 	else
-		return NULL;
+		return 0;
 }
 
 const Node* IProperty::node() const
 {
 	const PropertySet* _parent = parent();
-	if(_parent != NULL)
+	if(_parent != 0)
 		return parent()->node();
 	else
-		return NULL;
+		return 0;
 }
 
 void IProperty::drawDebug(const GLWidget* widget, const RenderManager::DebugGizmosFilter& filter) const
@@ -39,7 +39,7 @@ void IProperty::drawDebug(const GLWidget* widget, const RenderManager::DebugGizm
 
 PropertyWidget* IProperty::getWidget()
 {
-	if(m_widget == NULL)
+	if(m_widget == 0)
 	{
 		m_widget = new PropertyWidget(this);
 	}
@@ -49,7 +49,7 @@ PropertyWidget* IProperty::getWidget()
 
 void IProperty::widgetDestroyed()
 {
-	m_widget = NULL;
+	m_widget = 0;
 }
 
 #endif

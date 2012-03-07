@@ -3,6 +3,8 @@
 
 #include "core/log/log.h"
 
+#include "core/managers/rendermanager.h"
+
 #ifdef _WIN32
 	#define GL_GENERATE_MIPMAP 0x8191
 #endif
@@ -22,9 +24,9 @@ StbImage::StbImage(const QString& name, const QString& path, IResourceFactory* f
 	m_wrap_s(wrap_s),
 	m_wrap_t(wrap_t)
 {
-	if(m_data != NULL)
+	if(m_data != 0)
 	{
-		buildGLTexture();
+		buildTexture();
 		m_state = STATE_LOADED;
 	}
 	else
@@ -35,22 +37,24 @@ StbImage::StbImage(const QString& name, const QString& path, IResourceFactory* f
 
 bool StbImage::unload()
 {
-	if(m_data != NULL)
+	if(m_data != 0)
 		stbi_image_free(m_data);
 
-	if(m_hasgltex)
-		glDeleteTextures(1,&m_gltexture);
+	if(m_irdtexture != 0)
+	{
+		RENDER_MANAGER.getRenderDevice()->destroyTexture(m_irdtexture);
+	}
 
-	m_data = NULL;
-	m_hasgltex = false;
+	m_data = 0;
+	m_irdtexture = 0;
 	m_state = STATE_UNLOADED;
 
 	return true;
 }
 
-void StbImage::buildGLTexture()
+void StbImage::buildTexture()
 {
-	if(m_data != NULL)
+	if(m_data != 0)
 	{
 		// Do a vertical flip (openGL prefers bottomtop images)
 		int i, j;
@@ -67,69 +71,26 @@ void StbImage::buildGLTexture()
 				++index2;
 			}
 		}
-		// Get GL texture
-		glEnable(GL_TEXTURE_2D);
 
-		glGenTextures(1,&m_gltexture);
+		IRD::Texture::Params params;
+		params.m_format = IRD::Texture::TF_RGBA8;
+		params.m_type = IRD::Texture::TT_TEX2D;
+		params.m_genmipmap = m_mipmap;
+		params.m_height = m_height;
+		params.m_width = m_width;
+		params.m_samplerState = (
+			(m_filtering*IRD::Texture::TSS_FILTER) |
+			(m_wrap_s*IRD::Texture::TSS_WRAP_U) |
+			(m_wrap_t*IRD::Texture::TSS_WRAP_V)
+		);
 
-		glBindTexture(GL_TEXTURE_2D, m_gltexture);
-
-		glTexEnvi(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
-
-		if(m_filtering)
-		{
-			if(m_mipmap) {
-				glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_NEAREST);
-				glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-			} else {
-				glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-				glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-			}
-		}
-		else
-		{
-			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-		}
-
-		if(m_wrap_s)
-			glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_WRAP_S, GL_REPEAT);
-		else
-			glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-
-		if(m_wrap_t)
-			glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_WRAP_T, GL_REPEAT);
-		else
-			glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-
-		GLenum mode = GL_RGBA;
-
-		switch(m_comp)
-		{
-			case 1 :
-				mode = GL_LUMINANCE;
-				break;
-			case 2 :
-				mode = GL_LUMINANCE_ALPHA;
-				break;
-			case 3 :
-				mode = GL_RGB;
-				break;
-		}
-
-		if(m_mipmap)
-			glTexParameteri(GL_TEXTURE_2D,GL_GENERATE_MIPMAP, GL_TRUE);
-		else
-			glTexParameteri(GL_TEXTURE_2D,GL_GENERATE_MIPMAP, GL_FALSE);
-
-		glTexImage2D(GL_TEXTURE_2D, 0, m_comp, m_width, m_height, 0, mode, GL_UNSIGNED_BYTE, m_data);
-
-		m_hasgltex = true;
+		m_irdtexture = RENDER_MANAGER.getRenderDevice()->createTexture(params);
+		RENDER_MANAGER.getRenderDevice()->sendTextureData(m_irdtexture,0,0,0,0,m_data);
 
 		/*TODO: supprimer l'image ou en fonction d'un flag, en attendant on la garde :D */
 		/*
 		stbi_image_free(m_data);
-		m_data = NULL;
+		m_data = 0;
 		*/
 	}
 }
@@ -155,7 +116,7 @@ void StbImageFactory::load(ResourceData *resource)
 
 	stbi_uc* data = stbi_load(stbresource->path().toLocal8Bit().data(), &x, &y, &comp, stbresource->m_comp);
 
-	if(data != NULL)
+	if(data != 0)
 	{
 		logInfo( "StbImage loaded " << resource->name() << " (" << x << "x" << y << ")");
 		stbresource->m_data = data;
@@ -167,7 +128,7 @@ void StbImageFactory::load(ResourceData *resource)
 			stbresource->m_comp = comp;
 
 		stbresource->m_state = StbImage::STATE_LOADED;
-		stbresource->buildGLTexture();
+		stbresource->buildTexture();
 	}
 	else
 	{
@@ -183,7 +144,8 @@ void StbImageFactory::parseFile(const QString &path, QList<ResourceData *> &cont
 	if(dir.exists())
 	{
 		debug( "RESOURCE PARSING" , "StbImage found " << name);
-		int comp = 3;
+		int comp = 4; // alpha by default
+		//int comp = 3;
 		bool mipmap = true;
 		bool filtering = true;
 		bool wrap_s = true;
@@ -199,7 +161,7 @@ void StbImageFactory::parseFile(const QString &path, QList<ResourceData *> &cont
 		if(rules.contains("wrap_t") && rules.find("wrap_t").value() == "false")
 			wrap_t = false;
 
-		StbImage* image = new StbImage(name,path,this,NULL,mipmap,filtering,wrap_s,wrap_t,comp);
+		StbImage* image = new StbImage(name,path,this,0,mipmap,filtering,wrap_s,wrap_t,comp);
 		content.push_back(image);
 	}
 	else

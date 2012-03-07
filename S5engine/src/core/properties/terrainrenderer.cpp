@@ -60,8 +60,8 @@ void TerrainPatch::render() {
 	int increment = 1<<m_lod;
 	glEnableClientState(GL_INDEX_ARRAY);
 	m_indices.bind();
-	glIndexPointer(GL_INT, 0, NULL);
-	glDrawElements(GL_TRIANGLES, 6*((m_dim/increment)*(m_dim/increment)), GL_UNSIGNED_INT, NULL);
+	glIndexPointer(GL_INT, 0, 0);
+	glDrawElements(GL_TRIANGLES, 6*((m_dim/increment)*(m_dim/increment)), GL_UNSIGNED_INT, 0);
 	m_indices.release();
 }
 
@@ -77,7 +77,7 @@ TerrainRenderer::TerrainRenderer(Texture& hm, Material& mat, float yscale, float
 
 	logInfo( "Creating terrain from " << hm->name() );
 
-	/* Pas terrible, vue que la Texture n'est pas FORCEMENT une StbImage, �  améliorer donc... */
+	/* Pas terrible, vue que la Texture n'est pas FORCEMENT une StbImage,   améliorer donc... */
 	stbi_uc* image = ((StbImage*)*hm)->getData();
 
 	GLfloat* vertices;
@@ -159,7 +159,7 @@ TerrainRenderer::TerrainRenderer(Texture& hm, Material& mat, float yscale, float
 						   vertices[(x+(z-1)*m_height)*3 + 2] - vertices[(x+z*m_height)*3 + 2]);
 			}
 
-			normal *= -1.0f; /* Ouais j'ai calculé les normales �  l'envers, a corriger quand j'aurais pas la fleme */
+			normal *= -1.0f; /* Ouais j'ai calculé les normales   l'envers, a corriger quand j'aurais pas la fleme */
 			normal.normalize();
 
 			normals[index*3] = normal.x;
@@ -241,13 +241,13 @@ void TerrainRenderer::render() {
 		glEnableClientState(GL_TEXTURE_COORD_ARRAY);
 		__ClientActiveTexture(GL_TEXTURE0);
 		m_texcoords.bind();
-		glTexCoordPointer(2, GL_FLOAT, 0, NULL);
+		glTexCoordPointer(2, GL_FLOAT, 0, 0);
 
 		glEnable(GL_TEXTURE_2D);
 		glEnableClientState(GL_TEXTURE_COORD_ARRAY);
 		__ClientActiveTexture(GL_TEXTURE1);
 		m_stexcoords.bind();
-		glTexCoordPointer(2, GL_FLOAT, 0, NULL);
+		glTexCoordPointer(2, GL_FLOAT, 0, 0);
 	}
 	else
 	{
@@ -259,7 +259,7 @@ void TerrainRenderer::render() {
 		glEnable(GL_COLOR_MATERIAL);
 		glEnableClientState(GL_COLOR_ARRAY);
 		m_colors.bind();
-		glColorPointer(4, GL_FLOAT, 0, NULL);
+		glColorPointer(4, GL_FLOAT, 0, 0);
 	}
 	else
 	{
@@ -272,7 +272,7 @@ void TerrainRenderer::render() {
 		glShadeModel(GL_SMOOTH);
 		glEnableClientState(GL_NORMAL_ARRAY);
 		m_normals.bind();
-		glNormalPointer(GL_FLOAT, 0, NULL);
+		glNormalPointer(GL_FLOAT, 0, 0);
 	}
 	else
 	{
@@ -281,7 +281,7 @@ void TerrainRenderer::render() {
 
 	glEnableClientState(GL_VERTEX_ARRAY);
 	m_vertices.bind();
-	glVertexPointer(3, GL_FLOAT, 0, NULL);
+	glVertexPointer(3, GL_FLOAT, 0, 0);
 
 	if(m_wireframe) {
 		glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
@@ -369,7 +369,7 @@ void TerrainRenderer::renderQuadTree(TerrainNode* node, Node* position) {
 
 PropertyWidget* TerrainRenderer::getWidget()
 {
-	if(m_widget == NULL)
+	if(m_widget == 0)
 		m_widget = new TerrainWidget(this);
 
 	return m_widget;

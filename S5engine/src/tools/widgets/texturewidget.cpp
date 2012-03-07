@@ -6,7 +6,7 @@
 
 #include <QLabel>
 
-TextureWidget::TextureWidget(TextureData &resource) : ResourceWidget(resource), m_preview(NULL), m_resolution_info(NULL), m_openglId_info(NULL)
+TextureWidget::TextureWidget(TextureData &resource) : ResourceWidget(resource), m_preview(0), m_resolution_info(0), m_openglId_info(0)
 {
 	if(resource.m_state == ResourceData::STATE_LOADED)
 	{
@@ -16,9 +16,9 @@ TextureWidget::TextureWidget(TextureData &resource) : ResourceWidget(resource), 
 		m_layout->addWidget(m_debug);
 		m_resolution_info = new QLabel("Resolution : "+QString().setNum(resource.m_width)+"x"+QString().setNum(resource.m_height));
 		m_layout->addWidget(m_resolution_info);
-		m_openglId_info = new QLabel("OpenGL ID : "+QString().setNum(texture->getGLId()));
+		m_openglId_info = new QLabel("OpenGL ID : "+QString().setNum(0/*texture->getGLId()*/));
 		m_layout->addWidget(m_openglId_info);
-		m_preview = new TexturePreview((QGLWidget*)RENDER_MANAGER.getContext(),texture->getGLId());
+		m_preview = new TexturePreview((QGLWidget*)RENDER_MANAGER.getContext(),0);//texture->getGLId());
 		m_layout->addWidget(m_preview);
 
 		m_layout->addStretch(1);
@@ -31,7 +31,7 @@ TextureWidget::~TextureWidget()
 {
 }
 
-TextureWidget::TexturePreview::TexturePreview(QGLWidget *shared, GLint glId) : QGLWidget(NULL,shared)
+TextureWidget::TexturePreview::TexturePreview(QGLWidget *shared, GLint glId) : QGLWidget(0,shared)
 {
 	this->glId = glId;
 	setMinimumHeight(200);
@@ -78,15 +78,15 @@ void TextureWidget::updateData()
 		}
 
 		if(m_openglId_info) {
-			m_openglId_info->setText("OpenGL ID : "+QString().setNum(texture->getGLId()));
+			m_openglId_info->setText("OpenGL ID : "+QString().setNum(0/*texture->getGLId()*/));
 		} else {
-			m_openglId_info = new QLabel("OpenGL ID : "+QString().setNum(texture->getGLId()));
+			m_openglId_info = new QLabel("OpenGL ID : "+QString().setNum(0/*texture->getGLId()*/));
 			m_layout->addWidget(m_openglId_info);
 		}
 		if(m_preview) {
-			m_preview->setGLId(texture->getGLId());
+			m_preview->setGLId(0/*texture->getGLId()*/);
 		} else {
-			m_preview = new TexturePreview((QGLWidget*)RENDER_MANAGER.getContext(),texture->getGLId());
+			m_preview = new TexturePreview((QGLWidget*)RENDER_MANAGER.getContext(),0/*texture->getGLId()*/);
 			m_layout->addWidget(m_preview);
 			m_layout->addStretch(1);
 		}

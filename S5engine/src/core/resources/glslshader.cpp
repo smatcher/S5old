@@ -10,22 +10,22 @@
 
 GLSLShaderProgram::GLSLShaderProgram(const QString &name, const QString &path, IResourceFactory *factory) :
 	ShaderProgramData(name, path, factory),
-	m_program(NULL)
+	m_program(0)
 {
 }
 
 GLSLShaderProgram::~GLSLShaderProgram()
 {
-	if(m_program != NULL)
+	if(m_program != 0)
 		delete m_program;
 }
 
 bool GLSLShaderProgram::unload()
 {
-	if(m_program != NULL)
+	if(m_program != 0)
 	{
 		delete m_program;
-		m_program = NULL;
+		m_program = 0;
 	}
 
 	return true;
@@ -33,19 +33,19 @@ bool GLSLShaderProgram::unload()
 
 void GLSLShaderProgram::use()
 {
-	if(m_program != NULL)
+	if(m_program != 0)
 		m_program->bind();
 }
 
 void GLSLShaderProgram::unset()
 {
-	if(m_program != NULL)
+	if(m_program != 0)
 		m_program->release();
 }
 
 void GLSLShaderProgram::setUniform(const UniformBase* uniform)
 {
-	if(m_program != NULL && uniform != NULL)
+	if(m_program != 0 && uniform != 0)
 		uniform->sendTo(*m_program);
 }
 
@@ -53,7 +53,7 @@ void GLSLShaderProgram::setEngineUniforms()
 {
 	debugGL("before setEngineUniforms");
 
-	if(m_program != NULL) {
+	if(m_program != 0) {
 		int location;
 
 		const QHash<QString, UniformBase*>& engine_uniforms = RENDER_MANAGER.getEngineUniforms();
@@ -249,7 +249,7 @@ bool GLSLShader::unload()
 	if(m_shader)
 	{
 		delete m_shader;
-		m_shader = NULL;
+		m_shader = 0;
 	}
 
 	return true;
@@ -282,7 +282,7 @@ void GLSLShaderFactory::load(ResourceData *resource)
 	{
 		logError("GLSLShader failed loading" << shader->name() << "\n" << shader->m_shader->log());
 		delete shader->m_shader;
-		shader->m_shader = NULL;
+		shader->m_shader = 0;
 	}
 
 	debugGL("while loading shader" << shader->m_path);

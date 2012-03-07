@@ -11,10 +11,10 @@
 	#include "tools/widgets/nodewidget.h"
 #endif
 
-Node::Node(const QString& name) : ChildOf<ParentOfNode>(name), Transform<float>(), m_scene(NULL), m_properties(this)
+Node::Node(const QString& name) : ChildOf<ParentOfNode>(name), Transform<float>(), m_scene(0), m_properties(this)
 {
 	#ifdef WITH_TOOLS
-		m_widget = NULL;
+		m_widget = 0;
 		m_selected = false;
 	#endif
 }
@@ -37,7 +37,7 @@ Matrix4f Node::getGlobalTransform(bool with_scale) const
 		self_mat = Matrix4f(rotation,position);
 	}
 
-	if(parent() != NULL)
+	if(parent() != 0)
 	{
 		if(parent()->type() == ParentOfNode::NODE)
 		{
@@ -58,7 +58,7 @@ Matrix4f Node::getGlobalTransform(bool with_scale) const
 
 void Node::setGlobalTransform(Transformf transform)
 {
-	if(parent() != NULL && parent()->type() == ParentOfNode::NODE)
+	if(parent() != 0 && parent()->type() == ParentOfNode::NODE)
 	{
 		Node* parentNode = static_cast<Node*>(parent());
 		Transformf parent_trans(parentNode->getGlobalTransform(false));
@@ -122,10 +122,10 @@ Node* Node::find(QString name)
 {
 	Node* ret = child(name);
 
-	if(ret == NULL) {
+	if(ret == 0) {
 		for(int i=0 ; i< childCount() ; i++) {
 			ret = child(i)->find(name);
-			if(ret != NULL)
+			if(ret != 0)
 				break;
 		}
 	}
@@ -167,7 +167,7 @@ void Node::onLinked(ParentOfNode * to)
 	changedScenegraph(scene);
 
 	#ifdef WITH_TOOLS
-		if(m_scene != NULL) {
+		if(m_scene != 0) {
 			QCoreApplication::postEvent(m_scene->getDebugModel(),new UPDATED_EVENT());
 		}
 	#endif
@@ -176,12 +176,12 @@ void Node::onLinked(ParentOfNode * to)
 void Node::onUnlinked(ParentOfNode * from)
 {
 	#ifdef WITH_TOOLS
-		if(m_scene != NULL) {
+		if(m_scene != 0) {
 			QCoreApplication::postEvent(m_scene->getDebugModel(),new UPDATED_EVENT());
 		}
 	#endif
 
-	changedScenegraph(NULL);
+	changedScenegraph(0);
 }
 
 #ifdef WITH_TOOLS
@@ -198,7 +198,7 @@ void Node::onUnlinked(ParentOfNode * from)
 
 	NodeWidget* Node::getWidget()
 	{
-		if(m_widget == NULL)
+		if(m_widget == 0)
 			m_widget = new NodeWidget(*this);
 
 		return m_widget;
@@ -206,7 +206,7 @@ void Node::onUnlinked(ParentOfNode * from)
 
 	void Node::widgetDestroyed()
 	{
-		m_widget = NULL;
+		m_widget = 0;
 	}
 
 #endif

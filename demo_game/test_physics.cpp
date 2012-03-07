@@ -28,7 +28,7 @@
 //#include <AL/alu.h>
 #include <AL/alut.h>
 
-SceneGraph* g_sg = NULL;
+SceneGraph* g_sg = 0;
 
 bool spawn_duck(QStringList args)
 {

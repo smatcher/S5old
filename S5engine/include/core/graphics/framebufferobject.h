@@ -18,6 +18,8 @@
 #include <QList>
 
 //#include <core/graphics/rendertexture.h>
+#include "core/abstraction/interface/irenderdevice.h"
+
 class RenderTexture;
 
 class FrameBufferObject
@@ -34,40 +36,30 @@ public:
 	void bind();
 	void release();
 
-	enum AttachmentPoint {
-		COLOR_ATTACHMENT_0 = GL_COLOR_ATTACHMENT0,
-		COLOR_ATTACHMENT_1 = GL_COLOR_ATTACHMENT1,
-		COLOR_ATTACHMENT_2 = GL_COLOR_ATTACHMENT2,
-		COLOR_ATTACHMENT_3 = GL_COLOR_ATTACHMENT3,
-		COLOR_ATTACHMENT_4 = GL_COLOR_ATTACHMENT4,
-		COLOR_ATTACHMENT_5 = GL_COLOR_ATTACHMENT5,
-		COLOR_ATTACHMENT_6 = GL_COLOR_ATTACHMENT6,
-		COLOR_ATTACHMENT_7 = GL_COLOR_ATTACHMENT7,
-		DEPTH_ATTACHMENT = GL_DEPTH_ATTACHMENT,
-		STENCIL_ATTACHMENT = GL_STENCIL_ATTACHMENT
-	};
-
-	void attachTexture(RenderTexture* tex, AttachmentPoint attachment, GLenum textarget = GL_TEXTURE_2D);
+	void attachTexture(RenderTexture* tex, IRD::FrameBuffer::Attachment attachment);
 	void clearAttachments();
 	void commitTextures(int passNb);
 	void swapTextures();
 
 private:
+	IRD::FrameBuffer* m_framebuffer;
+	/*
 	GLuint m_framebuffer;
 	GLuint m_renderbuffer;
 	bool m_hasrenderbuffer;
+	*/
+
 	int m_width;
 	int m_height;
 	bool m_on_screen;
 
 	struct Attachment {
 		RenderTexture* tex;
-		AttachmentPoint ap;
-		GLenum textarget;
+		IRD::FrameBuffer::Attachment ap;
 	};
 	QList<Attachment> m_textures;
 
-	int GLEW_HACK_getRTIdForPass(RenderTexture* tex, int passNb);
+	IRD::Texture* GLEW_HACK_getTextureforPass(RenderTexture* tex, int passNb);
 };
 
 #endif // FRAMEBUFFEROBJECT_H

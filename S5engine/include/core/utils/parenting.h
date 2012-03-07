@@ -43,8 +43,8 @@ class ChildOf
 public :
 	typedef Parent *ParentPtrType;
 
-	/// Constructor, if parent is different from NULL, the constructor will ask the parent to make the link.
-	ChildOf(const QString& name, Parent* parent = NULL);
+	/// Constructor, if parent is different from 0, the constructor will ask the parent to make the link.
+	ChildOf(const QString& name, Parent* parent = 0);
 	/// Destructor
 	virtual ~ChildOf();
 
@@ -64,7 +64,7 @@ public :
 	void setParent(Parent* parent);
 
 private :
-	/// Reference to the parent, NULL if no parent
+	/// Reference to the parent, 0 if no parent
 	Parent* m_parent;
 	/// Name of the child, must be different from its brothers's name.
 	QString m_name;

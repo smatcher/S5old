@@ -38,7 +38,7 @@ public:
 	virtual void draw(unsigned int submesh, const QMap<QString, Matrix4f>& matrix_palette, int flags = NONE) = 0;
 	virtual unsigned int nbSubmeshes() = 0;
 
-	virtual Skeleton* getSkeleton() {return NULL;}
+	virtual Skeleton* getSkeleton() {return 0;}
 	virtual const BoundingVolume* getBoundingVolume() = 0;
 	virtual int getNbVertices() = 0;
 	virtual int getNbFaces() = 0;

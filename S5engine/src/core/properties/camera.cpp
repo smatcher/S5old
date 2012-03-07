@@ -18,7 +18,7 @@ Camera::Camera(double yfov, double znear, double zfar) : IProperty("Camera"), Ma
 	m_needComputation = true;
 	m_lastAspect = 0;
 
-	m_render_texture = NULL;
+	m_render_texture = 0;
 }
 
 Camera::~Camera()
@@ -29,9 +29,9 @@ Camera::~Camera()
 void Camera::createTarget(int height, int width)
 {
 	if(node()) {
-		m_render_texture = new RenderTexture2D("RTT_"+node()->getName(), height, width, GL_RGBA, GL_UNSIGNED_BYTE);
+		m_render_texture = new RenderTexture2D("RTT_"+node()->getName(), height, width, IRD::Texture::TF_RGBA8);
 		FrameBufferObject* fbo = new FrameBufferObject(height, width, false, true);
-		RenderTarget* target = new RenderTarget(this, fbo, m_render_texture, FrameBufferObject::COLOR_ATTACHMENT_0, false, false);
+		RenderTarget* target = new RenderTarget(this, fbo, m_render_texture, IRD::FrameBuffer::COLOR_ATTACHMENT_0, false, false);
 		RENDER_MANAGER.addRenderTarget(target);
 	} else {
 		logError("Can't create RTT from unliked camera");

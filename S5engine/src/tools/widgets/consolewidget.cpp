@@ -9,7 +9,7 @@
 #include <QList>
 #include <QAbstractListModel>
 
-ConsoleWidget* ConsoleWidget::m_instance = NULL;
+ConsoleWidget* ConsoleWidget::m_instance = 0;
 
 ConsoleWidget::ConsoleWidget()
 {
@@ -56,7 +56,7 @@ ConsoleWidget::ConsoleWidget()
 
 ConsoleWidget::~ConsoleWidget()
 {
-	m_instance = NULL;
+	m_instance = 0;
 }
 
 void ConsoleWidget::echo(QString msg)
@@ -168,7 +168,7 @@ bool ConsoleWidget::ConsoleInputField::event(QEvent * event)
 
 void ConsoleWidget::log(Log::LogItem& log)
 {
-	ConsoleItem* item = NULL;
+	ConsoleItem* item = 0;
 
 	switch(log.type)
 	{

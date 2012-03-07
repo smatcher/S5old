@@ -6,7 +6,7 @@
 class DX9RenderDevice : public iRenderDevice
 {
 public:
-		virtual bool isSupported() {return false;}
+		virtual bool isSupported(Feature feature) {return false;}
 };
 
 #endif // DX9RENDERDEVICE_H

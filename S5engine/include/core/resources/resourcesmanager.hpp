@@ -17,7 +17,7 @@ template <class Resource, class Handle>
 ResourceManager<Resource, Handle>::ResourceManager()
 {
 #ifdef WITH_TOOLS
-	m_model = NULL;
+	m_model = 0;
 #endif
 }
 
@@ -30,7 +30,7 @@ Handle ResourceManager<Resource, Handle>::get(const QString& name)
 		return Handle();
 
 	Resource* res = it.value();
-	if(res != NULL) {
+	if(res != 0) {
 		Handle ret(*res);
 		if(ret->state() == Resource::STATE_UNLOADED) {
 			ret->load();
