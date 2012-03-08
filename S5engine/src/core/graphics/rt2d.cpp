@@ -20,7 +20,9 @@ RenderTexture2D::RenderTexture2D(QString name, int height, int width, IRD::Textu
 	params.m_samplerState = IRD::Texture::TSS_FILTER;
 
 	m_irdtexture = RENDER_MANAGER.getRenderDevice()->createTexture(params);
+	RENDER_MANAGER.getRenderDevice()->sendTextureData(m_irdtexture,0,0,0,0,0);
 	m_back_texture = RENDER_MANAGER.getRenderDevice()->createTexture(params);
+	RENDER_MANAGER.getRenderDevice()->sendTextureData(m_back_texture,0,0,0,0,0);
 
 	TEXTURE_MANAGER.add(this);
 }

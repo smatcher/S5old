@@ -76,6 +76,7 @@ void StbImage::buildTexture()
 		params.m_format = IRD::Texture::TF_RGBA8;
 		params.m_type = IRD::Texture::TT_TEX2D;
 		params.m_genmipmap = m_mipmap;
+		params.m_mipmapLevels = m_mipmap?7:0;
 		params.m_height = m_height;
 		params.m_width = m_width;
 		params.m_samplerState = (

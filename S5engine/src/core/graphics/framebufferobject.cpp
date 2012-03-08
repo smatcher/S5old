@@ -114,7 +114,7 @@ void FrameBufferObject::commitTextures(int passNb)
 		for(int j=0 ; j<m_textures.size() ; j++) {
 			IRD::FrameBuffer::Attachment attachment = m_textures[j].ap;
 			if(attachment != IRD::FrameBuffer::DEPTH_ATTACHMENT && attachment != IRD::FrameBuffer::STENCIL_ATTACHMENT) {
-				bufs[i] = attachment;
+				bufs[i] = attachment + GL_COLOR_ATTACHMENT0;
 				i++;
 			}
 		}

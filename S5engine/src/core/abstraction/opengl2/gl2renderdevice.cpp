@@ -91,12 +91,13 @@ namespace IRD
 	Texture* GL2RenderDevice::createTexture(Texture::Params params)
 	{
 		GLuint texture_id;
+		glEnable(textureTypes[params.m_type]);
 		glGenTextures(1,&texture_id);
 		Texture* texture = new GL2Texture(params, texture_id);
 
 		texture->bind(0);
 
-		glTexEnvi(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
+		//glTexEnvi(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);//Useless
 
 		if(params.m_samplerState & Texture::TSS_FILTER)
 		{
@@ -124,17 +125,20 @@ namespace IRD
 		else
 			glTexParameteri(textureTypes[params.m_type],GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
 
-		if(params.m_samplerState & Texture::TSS_WRAP_W)
-			glTexParameteri(textureTypes[params.m_type],GL_TEXTURE_WRAP_R, GL_REPEAT);
-		else
-			glTexParameteri(textureTypes[params.m_type],GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);
-
+		if(params.m_type == Texture::TT_TEX3D)
+		{
+			if(params.m_samplerState & Texture::TSS_WRAP_W)
+				glTexParameteri(textureTypes[params.m_type],GL_TEXTURE_WRAP_R, GL_REPEAT);
+			else
+				glTexParameteri(textureTypes[params.m_type],GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);
+		}
 
 		if(params.m_genmipmap)
 			glTexParameteri(textureTypes[params.m_type],GL_GENERATE_MIPMAP, GL_TRUE);
 		else
 			glTexParameteri(textureTypes[params.m_type],GL_GENERATE_MIPMAP, GL_FALSE);
 
+/*
 		glTexImage2D(
 					textureTypes[params.m_type],
 					0,
@@ -147,7 +151,8 @@ namespace IRD
 					0
 				);
 
-		debugGL("creating texture");
+*/
+		//debugGL("creating texture");
 
 		return texture;
 	}
@@ -161,9 +166,20 @@ namespace IRD
 	void GL2RenderDevice::sendTextureData(Texture* texture, int layer, int mipLevel, int offset, int size, const void* data)
 	{
 		const Texture::Params& params = texture->getParams();
-		glTexSubImage2D(textureTypes[params.m_type], mipLevel, 0, 0, params.m_width, params.m_height, textureFormats[params.m_format], textureInputTypes[params.m_format], data);
+		//glTexSubImage2D(textureTypes[params.m_type], mipLevel, 0, 0, params.m_width, params.m_height, textureFormats[params.m_format], textureInputTypes[params.m_format], data);
+		glTexImage2D(
+					textureTypes[params.m_type],
+					0,
+					textureInternalFormats[params.m_format],
+					params.m_width,
+					params.m_height,
+					0,
+					textureFormats[params.m_format],
+					textureInputTypes[params.m_format],
+					data
+				);
 
-		debugGL("sending texture data");
+		//debugGL("sending texture data");
 	}
 
 	bool GL2RenderDevice::getTextureData(Texture* texture, int layer, int mipLevel, void* data){}

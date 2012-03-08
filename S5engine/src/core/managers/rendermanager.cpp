@@ -338,6 +338,7 @@ void RenderManager::renderDeferred(SceneGraph* sg, Viewpoint* viewpoint)
 	mrts.push_back(QPair<RenderTexture*, IRD::FrameBuffer::Attachment>(m_diffusemap, IRD::FrameBuffer::COLOR_ATTACHMENT_1));
 	mrts.push_back(QPair<RenderTexture*, IRD::FrameBuffer::Attachment>(m_specularmap, IRD::FrameBuffer::COLOR_ATTACHMENT_2));
 	mrts.push_back(QPair<RenderTexture*, IRD::FrameBuffer::Attachment>(m_depthmap, IRD::FrameBuffer::DEPTH_ATTACHMENT));
+	mrts.push_back(QPair<RenderTexture*, IRD::FrameBuffer::Attachment>(m_depthmap, IRD::FrameBuffer::STENCIL_ATTACHMENT));
 	RenderTarget srt(viewpoint, m_postprocessfbo, mrts , false, true);
 	debug("PASS_INFO","geom pass");
 	m_passinfo.ubershader_used = m_deferred_geometry;
@@ -533,6 +534,7 @@ void RenderManager::renderForward(SceneGraph* sg, Viewpoint* viewpoint)
 	QList< QPair<RenderTexture*, IRD::FrameBuffer::Attachment> > mrts;
 	mrts.push_back(QPair<RenderTexture*, IRD::FrameBuffer::Attachment>(m_colormap, IRD::FrameBuffer::COLOR_ATTACHMENT_0));
 	mrts.push_back(QPair<RenderTexture*, IRD::FrameBuffer::Attachment>(m_depthmap, IRD::FrameBuffer::DEPTH_ATTACHMENT));
+	mrts.push_back(QPair<RenderTexture*, IRD::FrameBuffer::Attachment>(m_depthmap, IRD::FrameBuffer::STENCIL_ATTACHMENT));
 	RenderTarget srt(viewpoint, m_postprocessfbo, mrts , false, true);
 	m_passinfo.ubershader_used = m_forward;
 	m_passinfo.ubershader_used->resetParams();
