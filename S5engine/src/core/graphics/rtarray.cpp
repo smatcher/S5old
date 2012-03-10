@@ -8,49 +8,36 @@
 
 #include <core/graphics/rtarray.h>
 #include "core/resources/managers.h"
+#include "core/managers/rendermanager.h"
 
 #ifdef _WIN32
 	#define GL_GENERATE_MIPMAP 0x8191
 #endif
 
-RenderTextureArray::RenderTextureArray(QString name, int height, int width, int depth, GLenum format, GLenum type)
-	: RenderTexture(name, height, width), m_depth(depth)
+RenderTextureArray::RenderTextureArray(QString name, int height, int width, int nbLayers, IRD::Texture::Format format)
+	: RenderTexture(name, height, width), m_nbLayers(nbLayers)
 {
 	debugGL("before RenderTextureArray constructor");
 
+	IRD::iRenderDevice* rd = RENDER_MANAGER.getRenderDevice();
+
 	//m_hasgltex = true;
 	m_state = STATE_LOADED;
-	m_format = format;
-	m_type = type;
 
-	m_gltextures = new GLuint[m_depth]();
-	m_render_textures = new GLuint[m_depth]();
-	glGenTextures(m_depth, m_gltextures);
-	glGenTextures(m_depth, m_render_textures);
-
-	for(int i=0 ; i<m_depth ; i++) {
-		glBindTexture(GL_TEXTURE_2D, m_gltextures[i]);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-		glTexParameteri(GL_TEXTURE_2D, GL_GENERATE_MIPMAP, GL_FALSE);
-		glTexImage2D(GL_TEXTURE_2D, 0, format, width, height, 0, format, type, 0);
-		debugGL("RenderTextureArray constructor spec");
+	m_front_textures = new IRD::Texture*[m_nbLayers]();
+	m_back_textures = new IRD::Texture*[m_nbLayers]();
+	IRD::Texture::Params params;
+	params.m_format = format;
+	params.m_genmipmap = false;
+	params.m_nbLayers = 0;
+	params.m_mipmapLevels = 0;
+	params.m_height = m_height;
+	params.m_width = m_width;
+	params.m_samplerState = IRD::Texture::TSS_FILTER;
+	for(int i=0 ; i< m_nbLayers ; i++) {
+		m_front_textures[i] = rd->createTexture(params);
+		m_back_textures[i] = rd->createTexture(params);
 	}
-
-	for(int i=0 ; i<m_depth ; i++) {
-		glBindTexture(GL_TEXTURE_2D, m_render_textures[i]);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-		glTexParameteri(GL_TEXTURE_2D, GL_GENERATE_MIPMAP, GL_FALSE);
-		glTexImage2D(GL_TEXTURE_2D, 0, format, width, height, 0, format, type, 0);
-		debugGL("RenderTextureArray constructor spec");
-	}
-
-	glBindTexture(GL_TEXTURE_2D, 0);
 
 	TEXTURE_MANAGER.add(this);
 
@@ -59,25 +46,35 @@ RenderTextureArray::RenderTextureArray(QString name, int height, int width, int 
 
 RenderTextureArray::~RenderTextureArray()
 {
-	glDeleteTextures(m_depth, m_gltextures);
-	glDeleteTextures(m_depth, m_render_textures);
+	IRD::iRenderDevice* rd = RENDER_MANAGER.getRenderDevice();
+	for(int i = 0 ; i< m_nbLayers ; i++)
+	{
+		rd->destroyTexture(m_front_textures[i]);
+		rd->destroyTexture(m_back_textures[i]);
+	}
+
+	delete[] m_front_textures;
+	delete[] m_back_textures;
+
 	TEXTURE_MANAGER.remove(this);
 }
 
 void RenderTextureArray::resize(int height, int width)
 {
+/*
 	m_height = height;
 	m_width = width;
 
-	for(int i=0 ; i<m_depth ; i++) {
+	for(int i=0 ; i<m_nbLayers ; i++) {
 		glBindTexture(GL_TEXTURE_2D, m_gltextures[i]);
 		glTexImage2D(GL_TEXTURE_2D, 0, m_format, width, height, 0, m_format, m_type, 0);
 	}
 
-	for(int i=0 ; i<m_depth ; i++) {
+	for(int i=0 ; i<m_nbLayers ; i++) {
 		glBindTexture(GL_TEXTURE_2D, m_render_textures[i]);
 		glTexImage2D(GL_TEXTURE_2D, 0, m_format, width, height, 0, m_format, m_type, 0);
 	}
+*/
 }
 
 bool RenderTextureArray::unload()
@@ -87,42 +84,49 @@ bool RenderTextureArray::unload()
 
 IRD::Texture* RenderTextureArray::getBackTexture(int i)
 {
-	return 0;//m_render_textures[i];
+	if(i>= 0 && i< m_nbLayers)
+		return m_back_textures[i];
+	else
+		return 0;
 }
 
 void RenderTextureArray::swap()
 {
-	for(int i=0 ; i< m_depth ; i++) {
-		GLuint tmp = m_gltextures[i];
-		m_gltextures[i] = m_render_textures[i];
-		m_render_textures[i] = tmp;
+	for(int i=0 ; i< m_nbLayers ; i++) {
+		IRD::Texture* tmp = m_front_textures[i];
+		m_front_textures[i] = m_back_textures[i];
+		m_back_textures[i] = tmp;
 	}
 }
 
 void RenderTextureArray::bind(int i)
 {
-	//if(m_hasgltex)
-	{
-		for(int j=0 ; j< m_depth ; j++) {
-			glActiveTexture(GL_TEXTURE0 + i + j);
-			if(m_texture_matrices.size() > j) {
-				glMatrixMode(GL_TEXTURE);
-				m_texture_matrices[j].glLoadd();
-				glMatrixMode(GL_MODELVIEW);
-			}
-			glBindTexture(GL_TEXTURE_2D, m_gltextures[j]);
+	for(int j=0 ; j< m_nbLayers ; j++) {
+/*
+		glActiveTexture(GL_TEXTURE0 + i + j);
+		if(m_texture_matrices.size() > j) {
+			glMatrixMode(GL_TEXTURE);
+			m_texture_matrices[j].glLoadd();
+			glMatrixMode(GL_MODELVIEW);
 		}
+		glBindTexture(GL_TEXTURE_2D, m_gltextures[j]);
+*/
+		// TODO : texture matrices
+		m_front_textures[j]->bind(i + j);
 	}
 }
 
 void RenderTextureArray::release(int i)
 {
-	for(int j=0 ; j< m_depth ; j++) {
+	for(int j=0 ; j< m_nbLayers ; j++) {
+		/*
 		glActiveTexture(GL_TEXTURE0 + i + j);
 		glMatrixMode(GL_TEXTURE);
 		glLoadIdentity();
 		glMatrixMode(GL_MODELVIEW);
 		glBindTexture(GL_TEXTURE_2D, 0);
+		*/
+		m_front_textures[j]->unbind(i + j);
 	}
 }
 

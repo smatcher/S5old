@@ -58,7 +58,7 @@ Light::Light(bool casts_shadows) : m_casts_shadows(casts_shadows), m_shadowmap(0
 	if(casts_shadows) {
 		int i=0;
 		while(TEXTURE_MANAGER.get("Omni_Lightmap"+QString().setNum(i)).isValid()) i++;
-		m_shadowmap = new RenderTextureArray("Omni_Lightmap"+QString().setNum(i), OMNIDEPTH_RESOLUTION, OMNIDEPTH_RESOLUTION, 6, GL_DEPTH_COMPONENT, GL_FLOAT);
+		m_shadowmap = new RenderTextureArray("Omni_Lightmap"+QString().setNum(i), OMNIDEPTH_RESOLUTION, OMNIDEPTH_RESOLUTION, 6, IRD::Texture::TF_DEPTH);
 	}
 
 	m_constant_attenuation = 1.0f;
@@ -273,7 +273,7 @@ bool Light::castsShadows()
 RenderTexture* Light::getRenderTexture()
 {
 	if(m_shadowmap == 0) {
-		m_shadowmap = new RenderTextureArray("Omni_Lightmap", OMNIDEPTH_RESOLUTION, OMNIDEPTH_RESOLUTION, 6, GL_DEPTH_COMPONENT, GL_FLOAT);
+		m_shadowmap = new RenderTextureArray("Omni_Lightmap", OMNIDEPTH_RESOLUTION, OMNIDEPTH_RESOLUTION, 6, IRD::Texture::TF_DEPTH);
 	}
 
 	return m_shadowmap;

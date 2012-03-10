@@ -21,7 +21,7 @@
 class RenderTextureArray : public RenderTexture
 {
 public:
-	RenderTextureArray(QString name, int height, int width, int depth, GLenum format, GLenum type);
+	RenderTextureArray(QString name, int height, int width, int nbLayers, IRD::Texture::Format format);
 	~RenderTextureArray();
 
 	virtual void resize(int height, int width);
@@ -39,12 +39,10 @@ public:
 	virtual void setTextureMatrix(const Matrix4d& texture_matrix, int i = 0);
 
 private:
-	GLuint* m_render_textures;
-	GLuint* m_gltextures;
+	IRD::Texture** m_back_textures;
+	IRD::Texture** m_front_textures;
 	QList<Matrix4d> m_texture_matrices;
-	int m_depth;
-	GLenum m_format;
-	GLenum m_type;
+	int m_nbLayers;
 };
 
 #endif // RTARRAY_H
