@@ -23,10 +23,24 @@
 	uniform sampler2D specularmap;
 #endif
 
+#ifdef LIGHT_SCATTERING
+	uniform vec3 sky_color;
+#endif
+
 varying vec3 normal;
 
 void main()
 {
+	#ifdef LIGHT_SCATTERING
+		#ifdef LIGHT_SCATTERING_SUN
+			gl_FragData[0] = vec4(0.0,0.0,0.0,0.0);
+			gl_FragData[1] = vec4(0.0,0.0,0.0,0.0);
+			gl_FragData[2] = vec4(0.0,0.0,0.0,0.0);
+			gl_FragData[3] = vec4(1.0,1.0,1.0,1.0);
+			return;
+		#endif
+	#endif
+
 	#ifdef NORMAL_MAP
 		vec3 eyespacenormal = vec3(1.0,1.0,1.0);
 		vec3 tanspacenormal = texture2D(normalmap, gl_TexCoord[0].st).rgb * 2.0 - 1.0;
@@ -68,8 +82,16 @@ void main()
 	#endif
 	#ifdef SKY
 		gl_FragData[1].a = 0.0;
+		#ifdef LIGHT_SCATTERING
+			gl_FragData[3] = gl_FragData[1];
+			//gl_FragData[3] = vec4(sky_color,1.0);
+			//gl_FragData[3] = vec4(0.7,0.65,0.5,1.0);
+		#endif
 	#else
 		gl_FragData[1].a = 1.0;
+		#ifdef LIGHT_SCATTERING
+			gl_FragData[3] = vec4(0.0,0.0,0.0,1.0);
+		#endif
 	#endif
 	gl_FragData[2] = gl_FrontMaterial.specular;
 	gl_FragData[2].a = gl_FrontMaterial.shininess/128.0;

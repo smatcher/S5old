@@ -46,6 +46,8 @@ RenderManager::RenderManager() :
 	m_projection(0),
 	m_screen_size(0),
 	m_scene_ambient(0),
+	m_sky_color(0),
+	m_sun_pos(0),
 	m_rendering(false),
 	m_normalmap(0),
 	m_diffusemap(0),
@@ -54,6 +56,8 @@ RenderManager::RenderManager() :
 	m_bloommap(0),
 	m_shadowmap(0),
 	m_colormap(0),
+	m_lightscatteringmap_high(0),
+	m_lightscatteringmap_low(0),
 	m_postprocessfbo(0),
 	m_lowres_postprocessfbo(0)
 {
@@ -126,6 +130,10 @@ void RenderManager::createResources()
 
 	// Setting up bloom map
 	m_bloommap = new RenderTexture2D("Bloommap", halfsize.height(), halfsize.width(), IRD::Texture::TF_RGBA8);
+
+	// Setting up lightscattering map
+	m_lightscatteringmap_low = new RenderTexture2D("LightScatteringL", size.height(), size.width(), IRD::Texture::TF_RGBA8);
+	m_lightscatteringmap_high = new RenderTexture2D("LightScatteringH", size.height(), size.width(), IRD::Texture::TF_RGBA8);
 
 	// Setting up postprocessing FBO
 	m_postprocessfbo = new FrameBufferObject(size.height(), size.width(), false, false);
@@ -201,6 +209,16 @@ void RenderManager::createResources()
 			logError("The DEF_bloom_pass shader is not an ubershader");
 		}
 	}
+	shader = SHADER_PROGRAM_MANAGER.get("light_scattering");
+	if(shader.isValid() && shader->isUber()) {
+		m_lightscattering = UberShader(*(static_cast<UberShaderData*>(*shader)));
+	} else {
+		if(!shader.isValid()) {
+			logError("Could not find the light_scattering ubershader");
+		} else if(!shader->isUber()) {
+			logError("The light_scattering shader is not an ubershader");
+		}
+	}
 	shader = SHADER_PROGRAM_MANAGER.get("depth_only");
 	if(shader.isValid() && shader->isUber()) {
 		m_depth = UberShader(*(static_cast<UberShaderData*>(*shader)));
@@ -264,6 +282,8 @@ void RenderManager::updateResources(int new_height, int new_width)
 	m_diffusemap->resize(new_height, new_width);
 	m_specularmap->resize(new_height, new_width);
 	m_depthmap->resize(new_height, new_width);
+	m_lightscatteringmap_high->resize(new_height, new_width);
+	m_lightscatteringmap_low->resize(new_height/2, new_width/2);
 }
 
 void RenderManager::init(GLWidget* context)
@@ -315,6 +335,18 @@ void RenderManager::init(GLWidget* context)
 		new ShaderProgramData::Uniform<QVector2D>("screen_size",m_screen_size, 1, 1)
 	);
 
+	if(!m_sky_color)	m_sky_color = new QVector3D(0.5,0.5,1.0);
+	m_engine_uniforms.insert(
+		"sky_color",
+		new ShaderProgramData::Uniform<QVector3D>("sky_color",m_sky_color, 1, 1)
+	);
+
+	if(!m_sun_pos)	m_sun_pos = new QVector2D(0.5,0.5);
+	m_engine_uniforms.insert(
+		"sun_pos",
+		new ShaderProgramData::Uniform<QVector2D>("sun_pos",m_sun_pos, 1, 1)
+	);
+
 	if(!m_scene_ambient)	m_scene_ambient = new QVector3D(0.1,0.1,0.1);
 	m_engine_uniforms.insert(
 		"scene_ambient",
@@ -331,18 +363,27 @@ void RenderManager::renderDeferred(SceneGraph* sg, Viewpoint* viewpoint)
 	/// Cleans
 	clearTexture(m_bloommap);
 	clearTexture(m_colormap);
+	if(m_options.m_lightscattering_enabled)
+	{
+		clearTexture(m_lightscatteringmap_low);
+	}
 
 	/// First pass - Render gbuffer
 	QList< QPair<RenderTexture*, IRD::FrameBuffer::Attachment> > mrts;
 	mrts.push_back(QPair<RenderTexture*, IRD::FrameBuffer::Attachment>(m_normalmap, IRD::FrameBuffer::COLOR_ATTACHMENT_0));
 	mrts.push_back(QPair<RenderTexture*, IRD::FrameBuffer::Attachment>(m_diffusemap, IRD::FrameBuffer::COLOR_ATTACHMENT_1));
 	mrts.push_back(QPair<RenderTexture*, IRD::FrameBuffer::Attachment>(m_specularmap, IRD::FrameBuffer::COLOR_ATTACHMENT_2));
+	if(m_options.m_lightscattering_enabled)
+	{
+		mrts.push_back(QPair<RenderTexture*, IRD::FrameBuffer::Attachment>(m_lightscatteringmap_high, IRD::FrameBuffer::COLOR_ATTACHMENT_3));
+	}
 	mrts.push_back(QPair<RenderTexture*, IRD::FrameBuffer::Attachment>(m_depthmap, IRD::FrameBuffer::DEPTH_ATTACHMENT));
 	mrts.push_back(QPair<RenderTexture*, IRD::FrameBuffer::Attachment>(m_depthmap, IRD::FrameBuffer::STENCIL_ATTACHMENT));
 	RenderTarget srt(viewpoint, m_postprocessfbo, mrts , false, true);
 	debug("PASS_INFO","geom pass");
 	m_passinfo.ubershader_used = m_deferred_geometry;
 	m_passinfo.ubershader_used->resetParams();
+	m_passinfo.ubershader_used->setParamValue(UberShaderDefine::Type(UberShaderDefine::LIGHT_SCATTERING),m_options.m_lightscattering_enabled);
 	m_passinfo.lighting_enabled = false;
 	m_passinfo.type = RenderPassInfo::DEF_GEOMETRY_PASS;
 	glBlendFunc(GL_ONE, GL_ZERO);
@@ -496,6 +537,20 @@ void RenderManager::renderDeferred(SceneGraph* sg, Viewpoint* viewpoint)
 	m_postprocessfbo->clearAttachments();
 
 	QList<Texture> input_textures;
+	if(m_options.m_lightscattering_enabled)
+	{
+		input_textures.push_back(*m_lightscatteringmap_high);
+		//input_textures.push_back(*m_colormap);
+		m_passinfo.ubershader_used = m_lightscattering;
+		postprocessPass(m_lightscatteringmap_low,input_textures,true);
+		input_textures.clear();
+		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+		m_passinfo.ubershader_used = m_bloom;
+		input_textures.push_back(*m_colormap);
+		input_textures.push_back(*m_lightscatteringmap_low);
+		postprocessPass(m_colormap,input_textures);
+	}
+
 	if(m_options.m_bloom_enabled)
 	{
 		glBlendFunc(GL_ONE, GL_ZERO);
@@ -726,6 +781,7 @@ void RenderManager::renderTarget(SceneGraph* sg, RenderTarget& target)
 		mat = Matrix4d(camera_transform);
 		mat.invertAndTranspose();
 		*m_inverse_projection = QMatrix4x4(mat.values);
+
 		// set screensize
 		if(target.isOnScreen()) {
 			QRect geom = m_context->geometry();
@@ -951,7 +1007,7 @@ void RenderManager::clearTexture(RenderTexture* texture)
 
 	FrameBufferObject* fbo = m_postprocessfbo;
 
-	if(texture == m_bloommap)
+	if(texture == m_bloommap || texture == m_lightscatteringmap_low)
 	{
 		fbo = m_lowres_postprocessfbo;
 	}
@@ -1185,6 +1241,7 @@ void RenderManager::applyBackground(RenderTarget& target, int projection_nb)
 			m_passinfo.ubershader_used->setParamValue(UberShaderDefine::SKY, true);
 			m_passinfo.ubershader_used->setParamValue(UberShaderDefine::COLORMAPPED, false);
 			m_passinfo.ubershader_used->use();
+			m_passinfo.ubershader_used->setAllUniforms();
 			glMatrixMode(GL_PROJECTION);
 			glPushMatrix();
 				glLoadIdentity();
@@ -1214,6 +1271,7 @@ void RenderManager::applyBackground(RenderTarget& target, int projection_nb)
 			m_passinfo.ubershader_used->setParamValue(UberShaderDefine::SKY, true);
 			m_passinfo.ubershader_used->setParamValue(UberShaderDefine::COLORMAPPED, true);
 			m_passinfo.ubershader_used->use();
+			m_passinfo.ubershader_used->setAllUniforms();
 
 			glMatrixMode(GL_PROJECTION);
 			glPushMatrix();
@@ -1240,6 +1298,7 @@ void RenderManager::applyBackground(RenderTarget& target, int projection_nb)
 			m_passinfo.ubershader_used->setParamValue(UberShaderDefine::SKY, true);
 			m_passinfo.ubershader_used->setParamValue(UberShaderDefine::COLORMAPPED, true);
 			m_passinfo.ubershader_used->use();
+			m_passinfo.ubershader_used->setAllUniforms();
 
 			glPushMatrix();
 				viewpoint->applyOnlyRotation(projection_nb);
@@ -1304,6 +1363,47 @@ void RenderManager::applyBackground(RenderTarget& target, int projection_nb)
 
 				glDisable(GL_TEXTURE_2D);
 				glEnable(GL_LIGHTING);
+
+				glEnable(GL_BLEND);
+				glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+				Transformf trans;
+				trans.lookAt(m_defaultBackground.sunDirection);
+				trans.glMultf();
+				if(m_options.m_lightscattering_enabled)
+				{
+					m_defaultBackground.textures[5]->release();
+					m_passinfo.ubershader_used->setParamValue(UberShaderDefine::LIGHT_SCATTERING_SUN, true);
+					m_passinfo.ubershader_used->use();
+					m_passinfo.ubershader_used->setAllUniforms();
+					glBegin(GL_TRIANGLES);
+						for(int i=0 ; i<36 ; i++)
+						{
+							glVertex3f( 9, 0, 0 );
+							glVertex3f( 9, fastSin(i*10), fastCos(i*10));
+							glVertex3f( 9, fastSin((i+1)*10), fastCos((i+1)*10));
+						}
+					glEnd();
+					m_passinfo.ubershader_used->setParamValue(UberShaderDefine::LIGHT_SCATTERING_SUN, false);
+
+					double mvmat[16];
+					double projmat[16];
+					glGetDoublev(GL_MODELVIEW_MATRIX, mvmat);
+					glGetDoublev(GL_PROJECTION_MATRIX, projmat);
+					Matrix4f mvmatbis(mvmat);
+					Matrix4f projmatbis(projmat);
+					Vector4f relativeSun(9,0,0,1);
+
+					relativeSun = mvmatbis*relativeSun;
+					logInfo(" - " <<  relativeSun.x << " " << relativeSun.y << " " << relativeSun.z << " " << relativeSun.w);
+					relativeSun = projmatbis*relativeSun;
+
+					float pX = (1.0+relativeSun.x/relativeSun.w)/2;
+					float pY = (1.0+relativeSun.y/relativeSun.w)/2;
+					*m_sun_pos = QVector2D(pX, pY);
+					logInfo("sun pos" <<  relativeSun.x << " " << relativeSun.y << " " << relativeSun.z << " " << relativeSun.w << " : " << *m_sun_pos);
+				}
+
+
 			glPopMatrix();
 			break;
 		}
@@ -1485,6 +1585,23 @@ void RenderManager::setSpecularMappingEnabled(bool enabled)
 		if(m_widget)
 		{
 			m_widget->setSpecularMappingEnabled(enabled);
+		}
+	#endif
+}
+
+bool RenderManager::getLightScatteringEnabled()
+{
+	return m_options.m_lightscattering_enabled;
+}
+
+void RenderManager::setLightScatteringEnabled(bool enabled)
+{
+	m_options.m_lightscattering_enabled = enabled;
+
+	#ifdef WITH_TOOLS
+		if(m_widget)
+		{
+			m_widget->setLightScatteringEnabled(enabled);
 		}
 	#endif
 }

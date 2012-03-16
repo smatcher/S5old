@@ -7,6 +7,7 @@
 #define VECTOR_4_H
 
 #include <iostream>
+#include <core/log/log.h>
 
 template <class T>
 class Vector4

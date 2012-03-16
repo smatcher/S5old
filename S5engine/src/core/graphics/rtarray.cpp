@@ -61,20 +61,16 @@ RenderTextureArray::~RenderTextureArray()
 
 void RenderTextureArray::resize(int height, int width)
 {
-/*
 	m_height = height;
 	m_width = width;
 
 	for(int i=0 ; i<m_nbLayers ; i++) {
-		glBindTexture(GL_TEXTURE_2D, m_gltextures[i]);
-		glTexImage2D(GL_TEXTURE_2D, 0, m_format, width, height, 0, m_format, m_type, 0);
-	}
+		m_front_textures[i]->bind(0);
+		m_front_textures[i]->resize(width, height);
 
-	for(int i=0 ; i<m_nbLayers ; i++) {
-		glBindTexture(GL_TEXTURE_2D, m_render_textures[i]);
-		glTexImage2D(GL_TEXTURE_2D, 0, m_format, width, height, 0, m_format, m_type, 0);
+		m_back_textures[i]->bind(0);
+		m_back_textures[i]->resize(width, height);
 	}
-*/
 }
 
 bool RenderTextureArray::unload()

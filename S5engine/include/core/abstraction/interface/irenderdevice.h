@@ -73,6 +73,8 @@ namespace IRD
 		int    getHeight() {return m_params.m_height;}
 		int    getNbLayers() {return m_params.m_nbLayers;}
 
+		virtual void resize(int width, int height){}
+
 		const Params& getParams() {return m_params;}
 
 	protected:
@@ -89,7 +91,7 @@ namespace IRD
 	protected:
 
 		VertexBuffer(int size):m_size(size){}
-		int m_size;	
+		int m_size;
 	};
 
 	class Shader
@@ -97,7 +99,7 @@ namespace IRD
 	public:
 		virtual void bind(){}
 		virtual void unbind(){}
-		
+
 	protected:
 
 		Shader(){}
@@ -139,6 +141,8 @@ namespace IRD
 		virtual void bind(){}
 		virtual void unbind(){}
 
+		const Params& getParams() {return m_params;}
+
 	protected:
 
 		FrameBuffer(Params params):m_params(params){}
@@ -161,7 +165,7 @@ namespace IRD
 		//Textures
 		virtual Texture* createTexture(Texture::Params params) {return 0;}
 		virtual void destroyTexture(Texture* texture) {}
-		virtual void sendTextureData(Texture* texture, int layer, int mipLevel, int offset, int size, const void* data) {}
+		virtual void sendTextureData(Texture* texture, int layer, int mipLevel, const void* data) {}
 		virtual bool getTextureData(Texture* texture, int layer, int mipLevel, void* data) {return false;}
 
 		//VertexBuffers
@@ -178,6 +182,8 @@ namespace IRD
 		virtual FrameBuffer* createFrameBuffer(FrameBuffer::Params params) {return 0;}
 		virtual void destroyFrameBuffer(FrameBuffer* buffer) {}
 		virtual void attachTextureToFrameBuffer(FrameBuffer* buffer, Texture* texture, FrameBuffer::Attachment attachment){}
+		virtual void checkFrameBuffer(){}
+		virtual void resizeFrameBuffer(FrameBuffer* buffer, int width, int height){}
 	};
 }
 

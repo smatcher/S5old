@@ -125,20 +125,6 @@ void FrameBufferObject::commitTextures(int passNb)
 		glDrawBuffer(GL_NONE);
 		glReadBuffer(GL_NONE);
 	}
-/*
-	GLenum status = glCheckFramebufferStatus(GL_FRAMEBUFFER_EXT);
-	if(status != GL_FRAMEBUFFER_COMPLETE_EXT) {
-		if(status == GL_FRAMEBUFFER_INCOMPLETE_ATTACHMENT) {
-			logError("FBO status incomplete");
-		//} else if(status == GL_FRAMEBUFFER_INCOMPLETE_DIMENSIONS) {
-		//	logError("FBO status incomplete dimensions");
-		} else if(status == GL_FRAMEBUFFER_INCOMPLETE_MISSING_ATTACHMENT) {
-			logError("FBO status incomplete missing attachement");
-		} else if(status == GL_FRAMEBUFFER_UNSUPPORTED) {
-			logError("FBO status unsupported");
-		} else {
-			logError("FBO status other");
-		}
-	}
-	*/
+
+	RENDER_MANAGER.getRenderDevice()->checkFrameBuffer();
 }

@@ -52,6 +52,7 @@ public :
 		Background::Type type;
 		Texture textures[6];
 		Vector3f color;
+		Vector3f sunDirection;
 	};
 
 	enum RenderPipeline
@@ -126,6 +127,8 @@ private :
 	QMatrix4x4* m_inverse_projection;
 	QMatrix4x4* m_projection;
 	QVector2D* m_screen_size;
+	QVector3D* m_sky_color;
+	QVector2D* m_sun_pos;
 	QVector3D* m_scene_ambient;
 
 	// render pass info
@@ -138,6 +141,8 @@ private :
 	RenderTexture* m_diffusemap;
 	RenderTexture* m_specularmap;
 	RenderTexture* m_depthmap;
+	RenderTexture* m_lightscatteringmap_high;
+	RenderTexture* m_lightscatteringmap_low;
 
 	UberShader m_deferred_geometry;
 	UberShader m_deferred_ambient;
@@ -147,6 +152,7 @@ private :
 	UberShader m_vertical_blur;
 	UberShader m_horizontal_blur;
 	UberShader m_bloom;
+	UberShader m_lightscattering;
 	UberShader m_depth;
 
 	RenderTexture* m_bloommap;
@@ -170,6 +176,7 @@ private :
 		bool           m_shadows_enabled;
 		bool           m_bloom_enabled;
 		bool           m_sss_enabled;
+		bool           m_lightscattering_enabled;
 		bool           m_normalmapping_enabled;
 		bool           m_specularmapping_enabled;
 
@@ -178,6 +185,7 @@ private :
 			m_shadows_enabled(true),
 			m_bloom_enabled(false),
 			m_sss_enabled(false),
+			m_lightscattering_enabled(true),
 			m_normalmapping_enabled(true),
 			m_specularmapping_enabled(true)
 		{}
@@ -228,6 +236,9 @@ public:
 
 	void setSpecularMappingEnabled(bool enabled);
 	bool getSpecularMappingEnabled();
+
+	void setLightScatteringEnabled(bool enabled);
+	bool getLightScatteringEnabled();
 
 	void setRenderPipeline(RenderPipeline pipeline);
 	RenderPipeline getRenderPipeline();

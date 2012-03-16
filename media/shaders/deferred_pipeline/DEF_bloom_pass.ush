@@ -3,5 +3,5 @@
 	<shader source="DEF_bloom_pass.frag"/>
 	<uniform name="colormap" value="0" type="int"/>
 	<uniform name="bloommap" value="1" type="int"/>
-	<uniform name="bloom_factor" value="0.5" type="float"/>
+	<uniform name="bloom_factor" value="0.2" type="float"/>
 </ubershader>

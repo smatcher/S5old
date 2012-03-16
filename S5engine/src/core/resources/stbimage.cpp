@@ -86,7 +86,7 @@ void StbImage::buildTexture()
 		);
 
 		m_irdtexture = RENDER_MANAGER.getRenderDevice()->createTexture(params);
-		RENDER_MANAGER.getRenderDevice()->sendTextureData(m_irdtexture,0,0,0,0,m_data);
+		RENDER_MANAGER.getRenderDevice()->sendTextureData(m_irdtexture,0,0,m_data);
 
 		/*TODO: supprimer l'image ou en fonction d'un flag, en attendant on la garde :D */
 		/*

@@ -26,6 +26,7 @@ public :
 	void setSSSEnabled(bool enabled);
 	void setNormalMappingEnabled(bool enabled);
 	void setSpecularMappingEnabled(bool enabled);
+	void setLightScatteringEnabled(bool enabled);
 	void setRenderPipeline(RenderManager::RenderPipeline pipeline);
 
 public slots :
@@ -38,6 +39,7 @@ public slots :
 	void optionSSSChanged();
 	void optionNormalMappingChanged();
 	void optionSpecularMappingChanged();
+	void optionLightScatteringChanged();
 	void optionPipelineToForward();
 	void optionPipelineToDeferred();
 	void showOptionsMenu();
@@ -60,6 +62,7 @@ private:
 	QAction* m_options_shadows;
 	QAction* m_options_bloom;
 	QAction* m_options_sss;
+	QAction* m_options_lightscattering;
 	QAction* m_options_normalmapping;
 	QAction* m_options_specularmapping;
 };

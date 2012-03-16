@@ -17,6 +17,7 @@ namespace IRD
 
 		virtual bool bind(int texunit);
 		virtual void unbind(int texunit);
+		virtual void resize(int width, int height);
 
 	protected:
 
@@ -75,7 +76,7 @@ namespace IRD
 		//Textures
 		virtual Texture* createTexture(Texture::Params params);
 		virtual void destroyTexture(Texture* texture);
-		virtual void sendTextureData(Texture* texture, int layer, int mipLevel, int offset, int size, const void* data);
+		virtual void sendTextureData(Texture* texture, int layer, int mipLevel, const void* data);
 		virtual bool getTextureData(Texture* texture, int layer, int mipLevel, void* data);
 
 		//VertexBuffers
@@ -92,6 +93,8 @@ namespace IRD
 		virtual FrameBuffer* createFrameBuffer(FrameBuffer::Params params);
 		virtual void destroyFrameBuffer(FrameBuffer* buffer);
 		virtual void attachTextureToFrameBuffer(FrameBuffer* buffer, Texture* texture, FrameBuffer::Attachment attachment);
+		virtual void checkFrameBuffer();
+		virtual void resizeFrameBuffer(FrameBuffer* buffer, int width, int height);
 	};
 }
 

@@ -86,6 +86,23 @@ namespace IRD
 		glBindTexture(textureTypes[m_params.m_type], 0);
 	}
 
+	void GL2Texture::resize(int width, int height)
+	{
+		m_params.m_width = width;
+		m_params.m_height = height;
+		glTexImage2D(
+					textureTypes[m_params.m_type],
+					0,
+					textureInternalFormats[m_params.m_format],
+					m_params.m_width,
+					m_params.m_height,
+					0,
+					textureFormats[m_params.m_format],
+					textureInputTypes[m_params.m_format],
+					0
+				);
+	}
+
 	GL2Texture::GL2Texture(Params params, GLuint texture_id): Texture(params), m_texture_id(texture_id){}
 
 	Texture* GL2RenderDevice::createTexture(Texture::Params params)
@@ -138,20 +155,6 @@ namespace IRD
 		else
 			glTexParameteri(textureTypes[params.m_type],GL_GENERATE_MIPMAP, GL_FALSE);
 
-/*
-		glTexImage2D(
-					textureTypes[params.m_type],
-					0,
-					textureInternalFormats[params.m_format],
-					params.m_width,
-					params.m_height,
-					0,
-					textureFormats[params.m_format],
-					textureInputTypes[params.m_format],
-					0
-				);
-
-*/
 		//debugGL("creating texture");
 
 		return texture;
@@ -163,13 +166,13 @@ namespace IRD
 		glDeleteTextures(1,&gl2tex->m_texture_id);
 	}
 
-	void GL2RenderDevice::sendTextureData(Texture* texture, int layer, int mipLevel, int offset, int size, const void* data)
+	void GL2RenderDevice::sendTextureData(Texture* texture, int layer, int mipLevel, const void* data)
 	{
 		const Texture::Params& params = texture->getParams();
 		//glTexSubImage2D(textureTypes[params.m_type], mipLevel, 0, 0, params.m_width, params.m_height, textureFormats[params.m_format], textureInputTypes[params.m_format], data);
 		glTexImage2D(
 					textureTypes[params.m_type],
-					0,
+					mipLevel,
 					textureInternalFormats[params.m_format],
 					params.m_width,
 					params.m_height,
@@ -235,4 +238,28 @@ namespace IRD
 		buffer->bind();
 		glFramebufferTexture2D(GL_FRAMEBUFFER, framebufferAttachment[attachment], textureTypes[texture->getType()], gl2texture->m_texture_id,0);
 	}
+
+	void GL2RenderDevice::checkFrameBuffer()
+	{
+		GLenum status = glCheckFramebufferStatus(GL_FRAMEBUFFER_EXT);
+		if(status != GL_FRAMEBUFFER_COMPLETE_EXT) {
+			if(status == GL_FRAMEBUFFER_INCOMPLETE_ATTACHMENT) {
+				logError("FBO status incomplete");
+			//} else if(status == GL_FRAMEBUFFER_INCOMPLETE_DIMENSIONS) {
+			//	logError("FBO status incomplete dimensions");
+			} else if(status == GL_FRAMEBUFFER_INCOMPLETE_MISSING_ATTACHMENT) {
+				logError("FBO status incomplete missing attachement");
+			} else if(status == GL_FRAMEBUFFER_UNSUPPORTED) {
+				logError("FBO status unsupported");
+			} else {
+				logError("FBO status other");
+			}
+		}
+	}
+
+	void GL2RenderDevice::resizeFrameBuffer(FrameBuffer* buffer, int width, int height)
+	{
+		//FrameBuffer::Params& params = buffer->
+	}
+
 }

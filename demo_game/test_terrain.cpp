@@ -63,7 +63,7 @@ int main(int argc, char *argv[])
 	Node* nRot = new Node("Rotating node");
 	Node* nLight = new Node("Light");
 	Node* nPlane = new Node("Plane");
-    Node* nCentre = new Node("Centre");
+	Node* nCentre = new Node("Centre");
 	Node* nCamFollow = new Node("Camera Follow");
 
 	Texture heightmap;
@@ -89,34 +89,35 @@ int main(int argc, char *argv[])
 	//prop.angDamping = 0.3;
 	prop.shape = PhysicObject::MESH;
 	prop.mesh_name = "duckplane";
-    sg->link(nCentre);
-    nCentre->link(nPlane);
-    nCentre->move(Vector3f(512.0,50.0,512.0));
+	sg->link(nCentre);
+	nCentre->link(nPlane);
+	nCentre->move(Vector3f(512.0,50.0,512.0));
 	nPlane->addProperty(new MeshRenderer(mesh,duckmat));
-    nPlane->rotate(Vector3f(0.0,0.0,1.0), 20.0);
-    nPlane->move(Vector3f(256.0,20.0,0.0));
-    nCentre->addProperty(new DummyUpdatable(0.1));
+	nPlane->rotate(Vector3f(0.0,0.0,1.0), 20.0);
+	nPlane->move(Vector3f(256.0,20.0,0.0));
+	nCentre->addProperty(new DummyUpdatable(0.1));
 
-    Camera* cam = new Camera(90,1,1024);
+	Camera* cam = new Camera(90,1,1024);
 	nCamFollow->addProperty(cam);
 	nCamFollow->move(Vector3f(0,2,5));
 	nCamFollow->rotate(Vector3f(-1,0,0),15);
 	nPlane->link(nCamFollow);
 
-    nTerrain->addProperty(new TerrainRenderer(heightmap, terrain, 70.0f, 2.f,20.f));
+	nTerrain->addProperty(new TerrainRenderer(heightmap, terrain, 70.0f, 2.f,20.f));
 
 	Light* light = new Light();
 	light->setAttenuation(0,1.f/100.f,0);
+	light->setType(Light::SUN);
 	nLight->addProperty(light);
 	nLight->addProperty(new MeshRenderer(sphere,mat));
-    nLight->move(Vector3d(0.0, 60.0, 0.0));
+	nLight->move(Vector3d(0.0, 60.0, 0.0));
 
 
 	nBase->rotate(Vector3f(1,0,0),90);
 	nBase->rotate(Vector3f(0,1,0),-45);
 
 	sg->link(nTerrain);
-    nCentre->link(nLight);
+	nCentre->link(nLight);
 	nBase->link(nRot);
 	sg->link(nBase);
 

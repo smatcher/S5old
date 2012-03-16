@@ -45,6 +45,9 @@ RenderWidget::RenderWidget()
 	m_options_sss = m_options_menu->addAction("SSS");
 	m_options_sss->setCheckable(true);
 	m_options_sss->setChecked(RENDER_MANAGER.getSSSEnabled());
+	m_options_lightscattering = m_options_menu->addAction("LightScattering");
+	m_options_lightscattering->setCheckable(true);
+	m_options_lightscattering->setChecked(RENDER_MANAGER.getLightScatteringEnabled());
 	m_options_normalmapping = m_options_menu->addAction("Normal mapping");
 	m_options_normalmapping->setCheckable(true);
 	m_options_normalmapping->setChecked(RENDER_MANAGER.getNormalMappingEnabled());
@@ -88,6 +91,7 @@ RenderWidget::RenderWidget()
 	connect(m_options_shadows, SIGNAL(triggered()), this, SLOT(optionShadowsChanged()));
 	connect(m_options_bloom, SIGNAL(triggered()), this, SLOT(optionBloomChanged()));
 	connect(m_options_sss, SIGNAL(triggered()), this, SLOT(optionSSSChanged()));
+	connect(m_options_lightscattering, SIGNAL(triggered()), this, SLOT(optionLightScatteringChanged()));
 	connect(m_options_normalmapping, SIGNAL(triggered()), this, SLOT(optionNormalMappingChanged()));
 	connect(m_options_specularmapping, SIGNAL(triggered()), this, SLOT(optionSpecularMappingChanged()));
 	connect(m_options_forward_pipeline, SIGNAL(triggered()), this, SLOT(optionPipelineToForward()));
@@ -168,6 +172,11 @@ void RenderWidget::optionSSSChanged()
 	RENDER_MANAGER.setSSSEnabled(m_options_sss->isChecked());
 }
 
+void RenderWidget::optionLightScatteringChanged()
+{
+	RENDER_MANAGER.setLightScatteringEnabled(m_options_lightscattering->isChecked());
+}
+
 void RenderWidget::optionNormalMappingChanged()
 {
 	RENDER_MANAGER.setNormalMappingEnabled(m_options_normalmapping->isChecked());
@@ -208,6 +217,11 @@ void RenderWidget::setBloomEnabled(bool enabled)
 void RenderWidget::setSSSEnabled(bool enabled)
 {
 	m_options_sss->setChecked(enabled);
+}
+
+void RenderWidget::setLightScatteringEnabled(bool enabled)
+{
+	m_options_lightscattering->setChecked(enabled);
 }
 
 void RenderWidget::setNormalMappingEnabled(bool enabled)

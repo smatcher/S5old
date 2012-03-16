@@ -20,9 +20,9 @@ RenderTexture2D::RenderTexture2D(QString name, int height, int width, IRD::Textu
 	params.m_samplerState = IRD::Texture::TSS_FILTER;
 
 	m_irdtexture = RENDER_MANAGER.getRenderDevice()->createTexture(params);
-	RENDER_MANAGER.getRenderDevice()->sendTextureData(m_irdtexture,0,0,0,0,0);
+	RENDER_MANAGER.getRenderDevice()->sendTextureData(m_irdtexture,0,0,0);
 	m_back_texture = RENDER_MANAGER.getRenderDevice()->createTexture(params);
-	RENDER_MANAGER.getRenderDevice()->sendTextureData(m_back_texture,0,0,0,0,0);
+	RENDER_MANAGER.getRenderDevice()->sendTextureData(m_back_texture,0,0,0);
 
 	TEXTURE_MANAGER.add(this);
 }
@@ -38,16 +38,23 @@ RenderTexture2D::~RenderTexture2D()
 
 void RenderTexture2D::resize(int height, int width)
 {
-	/*
 	m_height = height;
 	m_width = width;
 
+	m_back_texture->bind(0);
+	m_back_texture->resize(width, height);
+
+	m_irdtexture->bind(0);
+	m_irdtexture->resize(width, height);
+
+/*
 	glBindTexture(GL_TEXTURE_2D, m_gltexture);
 	glTexImage2D(GL_TEXTURE_2D, 0, m_format, width, height, 0, m_format, m_type, 0);
 
 	glBindTexture(GL_TEXTURE_2D, m_render_texture);
 	glTexImage2D(GL_TEXTURE_2D, 0, m_format, width, height, 0, m_format, m_type, 0);
 */
+
 #ifdef WITH_TOOLS
 	if(m_widget)
 	{
