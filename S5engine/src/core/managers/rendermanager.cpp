@@ -1378,9 +1378,9 @@ void RenderManager::applyBackground(RenderTarget& target, int projection_nb)
 					glBegin(GL_TRIANGLES);
 						for(int i=0 ; i<36 ; i++)
 						{
-							glVertex3f( 9, 0, 0 );
-							glVertex3f( 9, fastSin(i*10), fastCos(i*10));
-							glVertex3f( 9, fastSin((i+1)*10), fastCos((i+1)*10));
+							glVertex3f( 0, 0, -9 );
+							glVertex3f( fastSin(i*10), fastCos(i*10), -9);
+							glVertex3f( fastSin((i+1)*10), fastCos((i+1)*10), -9);
 						}
 					glEnd();
 					m_passinfo.ubershader_used->setParamValue(UberShaderDefine::LIGHT_SCATTERING_SUN, false);
@@ -1391,16 +1391,14 @@ void RenderManager::applyBackground(RenderTarget& target, int projection_nb)
 					glGetDoublev(GL_PROJECTION_MATRIX, projmat);
 					Matrix4f mvmatbis(mvmat);
 					Matrix4f projmatbis(projmat);
-					Vector4f relativeSun(9,0,0,1);
+					Vector4f relativeSun(0,0,-1,1);
 
 					relativeSun = mvmatbis*relativeSun;
-					logInfo(" - " <<  relativeSun.x << " " << relativeSun.y << " " << relativeSun.z << " " << relativeSun.w);
 					relativeSun = projmatbis*relativeSun;
 
 					float pX = (1.0+relativeSun.x/relativeSun.w)/2;
 					float pY = (1.0+relativeSun.y/relativeSun.w)/2;
 					*m_sun_pos = QVector2D(pX, pY);
-					logInfo("sun pos" <<  relativeSun.x << " " << relativeSun.y << " " << relativeSun.z << " " << relativeSun.w << " : " << *m_sun_pos);
 				}
 
 

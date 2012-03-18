@@ -3,5 +3,5 @@
 	<shader source="light_scattering.frag"/>
 	<uniform name="firstPass" value="0" type="int"/>
 	<uniform name="decay" value="0.97" type="float"/>
-	<uniform name="exposure" value="0.1" type="float"/>
+	<uniform name="exposure" value="0.06" type="float"/>
 </ubershader>

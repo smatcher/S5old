@@ -124,7 +124,7 @@ int main(int argc, char *argv[])
 	RenderManager::Background background;
 	background.type = RenderManager::Background::COLOR;
 	background.color = Vector3f(0,0,0);
-
+	background.sunDirection = Vector3f(4.3,13,10);
 	background.textures[0] = TEXTURE_MANAGER.get("interstellar_lf.tga");
 	background.textures[1] = TEXTURE_MANAGER.get("interstellar_ft.tga");
 	background.textures[2] = TEXTURE_MANAGER.get("interstellar_rt.tga");

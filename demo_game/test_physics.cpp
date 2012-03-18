@@ -272,7 +272,7 @@ int main(int argc, char *argv[])
 	RenderManager::Background background;
 	background.type = RenderManager::Background::SKYBOX;
 	background.color = Vector3f(1,1,0);
-	background.sunDirection = Vector3f(1,10,-1);
+	background.sunDirection = Vector3f(10,5,10);
 	background.textures[0] = TEXTURE_MANAGER.get("stormy_front.tga");
 	background.textures[1] = TEXTURE_MANAGER.get("stormy_left.tga");
 	background.textures[2] = TEXTURE_MANAGER.get("stormy_back.tga");
