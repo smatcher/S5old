@@ -83,9 +83,8 @@ void main()
 	#ifdef SKY
 		gl_FragData[1].a = 0.0;
 		#ifdef LIGHT_SCATTERING
-			gl_FragData[3] = gl_FragData[1];
-			//gl_FragData[3] = vec4(sky_color,1.0);
-			//gl_FragData[3] = vec4(0.7,0.65,0.5,1.0);
+			//gl_FragData[3] = gl_FragData[1];
+			gl_FragData[3] = vec4(sky_color,1.0);
 		#endif
 	#else
 		gl_FragData[1].a = 1.0;

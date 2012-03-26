@@ -42,6 +42,7 @@ RenderManager::RenderManager() :
 	m_drawDebug(false),
 	m_inverse_modelview(0),
 	m_modelview(0),
+	m_texture_matrices(0),
 	m_inverse_projection(0),
 	m_projection(0),
 	m_screen_size(0),
@@ -245,8 +246,8 @@ void RenderManager::createResources()
 	m_normalmap = new RenderTexture2D("DEF_Normalmap", size.height(), size.width(), IRD::Texture::TF_RGBA8);
 	m_diffusemap = new RenderTexture2D("DEF_Diffusemap", size.height(), size.width(), IRD::Texture::TF_RGBA8);
 	m_specularmap = new RenderTexture2D("DEF_Specularmap", size.height(), size.width(), IRD::Texture::TF_RGBA8);
-	//m_depthmap = new RenderTexture2D("DEF_Depthmap", size.height(), size.width(), IRD::Texture::TF_DEPTH);
-	m_depthmap = new RenderTexture2D("DEF_Depthmap", size.height(), size.width(), IRD::Texture::TF_DEPTH_STENCIL);
+	m_depthmap = new RenderTexture2D("DEF_Depthmap", size.height(), size.width(), IRD::Texture::TF_DEPTH);
+	//m_depthmap = new RenderTexture2D("DEF_Depthmap", size.height(), size.width(), IRD::Texture::TF_DEPTH_STENCIL);
 
 	// SSS resources
 	m_sssbuffer[0] = new RenderTexture2D("SSS1", 512, 512, IRD::Texture::TF_RGBA8);
@@ -326,8 +327,17 @@ void RenderManager::init(GLWidget* context)
 	if(!m_projection) m_projection = new QMatrix4x4();
 	m_engine_uniforms.insert(
 		"projection",
-		new ShaderProgramData::Uniform<QMatrix4x4>("modelview",m_projection, 1, 1)
+		new ShaderProgramData::Uniform<QMatrix4x4>("projection",m_projection, 1, 1)
 	);
+
+	if(!m_texture_matrices) m_texture_matrices = new QMatrix4x4[6];
+	for(int i=0 ; i<6; i++) {
+		QString name = "texture_matrix"+QString().setNum(i);
+		m_engine_uniforms.insert(
+			name,
+			new ShaderProgramData::Uniform<QMatrix4x4>(name,&(m_texture_matrices[i]), 1, 1)
+		);
+	}
 
 	if(!m_screen_size) m_screen_size = new QVector2D();
 	m_engine_uniforms.insert(
@@ -335,7 +345,7 @@ void RenderManager::init(GLWidget* context)
 		new ShaderProgramData::Uniform<QVector2D>("screen_size",m_screen_size, 1, 1)
 	);
 
-	if(!m_sky_color)	m_sky_color = new QVector3D(0.5,0.5,1.0);
+	if(!m_sky_color)	m_sky_color = new QVector3D(0.5,0.5,0.5);
 	m_engine_uniforms.insert(
 		"sky_color",
 		new ShaderProgramData::Uniform<QVector3D>("sky_color",m_sky_color, 1, 1)
@@ -378,7 +388,7 @@ void RenderManager::renderDeferred(SceneGraph* sg, Viewpoint* viewpoint)
 		mrts.push_back(QPair<RenderTexture*, IRD::FrameBuffer::Attachment>(m_lightscatteringmap_high, IRD::FrameBuffer::COLOR_ATTACHMENT_3));
 	}
 	mrts.push_back(QPair<RenderTexture*, IRD::FrameBuffer::Attachment>(m_depthmap, IRD::FrameBuffer::DEPTH_ATTACHMENT));
-	mrts.push_back(QPair<RenderTexture*, IRD::FrameBuffer::Attachment>(m_depthmap, IRD::FrameBuffer::STENCIL_ATTACHMENT));
+	//mrts.push_back(QPair<RenderTexture*, IRD::FrameBuffer::Attachment>(m_depthmap, IRD::FrameBuffer::STENCIL_ATTACHMENT));
 	RenderTarget srt(viewpoint, m_postprocessfbo, mrts , false, true);
 	debug("PASS_INFO","geom pass");
 	m_passinfo.ubershader_used = m_deferred_geometry;
@@ -477,6 +487,9 @@ void RenderManager::renderDeferred(SceneGraph* sg, Viewpoint* viewpoint)
 			m_postprocessfbo->commitTextures(0);
 			m_passinfo.ubershader_used->unset();
 			m_passinfo.ubershader_used = m_generate_shadowmap;
+			m_passinfo.ubershader_used->setParamValue(UberShaderDefine::Type(UberShaderDefine::LIGHT_OMNI),light->getType() == Light::OMNI);
+			m_passinfo.ubershader_used->setParamValue(UberShaderDefine::Type(UberShaderDefine::LIGHT_SPOT),light->getType() == Light::SPOT);
+			m_passinfo.ubershader_used->setParamValue(UberShaderDefine::Type(UberShaderDefine::LIGHT_SUN),light->getType() == Light::SUN);
 			m_passinfo.ubershader_used->use();
 			m_passinfo.ubershader_used->setAllUniforms();
 
@@ -589,7 +602,7 @@ void RenderManager::renderForward(SceneGraph* sg, Viewpoint* viewpoint)
 	QList< QPair<RenderTexture*, IRD::FrameBuffer::Attachment> > mrts;
 	mrts.push_back(QPair<RenderTexture*, IRD::FrameBuffer::Attachment>(m_colormap, IRD::FrameBuffer::COLOR_ATTACHMENT_0));
 	mrts.push_back(QPair<RenderTexture*, IRD::FrameBuffer::Attachment>(m_depthmap, IRD::FrameBuffer::DEPTH_ATTACHMENT));
-	mrts.push_back(QPair<RenderTexture*, IRD::FrameBuffer::Attachment>(m_depthmap, IRD::FrameBuffer::STENCIL_ATTACHMENT));
+	//mrts.push_back(QPair<RenderTexture*, IRD::FrameBuffer::Attachment>(m_depthmap, IRD::FrameBuffer::STENCIL_ATTACHMENT));
 	RenderTarget srt(viewpoint, m_postprocessfbo, mrts , false, true);
 	m_passinfo.ubershader_used = m_forward;
 	m_passinfo.ubershader_used->resetParams();
@@ -1132,6 +1145,14 @@ void RenderManager::debugDisplayTexture(Texture texture, int x, int y, int width
 {
 	if(texture.isValid())
 	{
+		if(dynamic_cast<RenderTextureArray*>(*texture))
+		{
+			// Texture is a RenderTextureArray, use a special shader to render it unfolded
+			ShaderProgram program = SHADER_PROGRAM_MANAGER.get("unfold_proxycubemap");
+			program->use();
+			program->setAllUniforms();
+		}
+
 		glClear(GL_DEPTH_BUFFER_BIT);
 
 		glDisable(GL_LIGHTING);
@@ -1156,6 +1177,12 @@ void RenderManager::debugDisplayTexture(Texture texture, int x, int y, int width
 		glEnd();
 
 		glEnable(GL_LIGHTING);
+
+		if(dynamic_cast<RenderTextureArray*>(*texture))
+		{
+			// Texture is a RenderTextureArray, use a special shader to render it unfolded
+			SHADER_PROGRAM_MANAGER.get("unfold_proxycubemap")->unset();
+		}
 	}
 }
 
@@ -1618,6 +1645,11 @@ void RenderManager::clearDebugTextures()
 IRD::iRenderDevice* RenderManager::getRenderDevice()
 {
 	return m_device;
+}
+
+void RenderManager::setTextureMatrix(QMatrix4x4 mat, int passNb)
+{
+	m_texture_matrices[passNb] = mat;
 }
 
 #ifdef WITH_TOOLS

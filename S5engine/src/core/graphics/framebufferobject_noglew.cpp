@@ -38,5 +38,5 @@ void FrameBufferObject::swapTextures()
 
 IRD::Texture* FrameBufferObject::GLEW_HACK_getTextureforPass(RenderTexture* tex, int passNb)
 {
-	tex->getBackTexture(passNb);
+	return tex->getBackTexture(passNb);
 }

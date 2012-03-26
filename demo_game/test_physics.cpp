@@ -123,7 +123,7 @@ int main(int argc, char *argv[])
 	*/
 
 	light = new Light(true);
-	light->setType(Light::SPOT);
+	//light->setType(Light::SPOT);
 	/*
 	light->setDiffuseColor(Vector4f(1.0,1.0,1.0,1.0));
 	light->setSpecularColor(Vector4f(1.0,1.0,1.0,1.0));
@@ -271,7 +271,7 @@ int main(int argc, char *argv[])
 	RENDER_MANAGER.setCurrentCamera(static_cast<Camera*>(nCamFollow->properties().child("Camera")));
 	RenderManager::Background background;
 	background.type = RenderManager::Background::SKYBOX;
-	background.color = Vector3f(1,1,0);
+	background.color = Vector3f(0.5,0.5,0.5);
 	background.sunDirection = Vector3f(10,5,10);
 	background.textures[0] = TEXTURE_MANAGER.get("stormy_front.tga");
 	background.textures[1] = TEXTURE_MANAGER.get("stormy_left.tga");

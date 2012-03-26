@@ -5,7 +5,7 @@
 #include <core/graphics/rtarray.h>
 #include <GL/glu.h>
 
-#define OMNIDEPTH_RESOLUTION 256
+#define OMNIDEPTH_RESOLUTION 512
 
 #ifdef _WIN32
 	#define GL_MULTISAMPLE 0x809D
@@ -196,6 +196,9 @@ int Light::getNbProjections()
 		break;
 	case OMNI:
 		ret = 6;
+		break;
+	case SUN:
+		ret = 1;
 		break;
 	}
 

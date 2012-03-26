@@ -170,7 +170,11 @@ void RenderTarget::setTextureMatrix(int passNb)
 	switch(m_viewpoint->getStyle()) {
 		case Viewpoint::PROXY_CUBEMAP :
 			for(int i=0 ; i<m_rendertextures.size() ; i++) {
+/*
 				m_rendertextures[i].first->setTextureMatrix(mat,passNb);
+*/
+				mat.transpose();
+				RENDER_MANAGER.setTextureMatrix(QMatrix4x4(mat.values),passNb);
 			}
 			break;
 		default:

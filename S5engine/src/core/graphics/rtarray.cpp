@@ -36,7 +36,9 @@ RenderTextureArray::RenderTextureArray(QString name, int height, int width, int 
 	params.m_samplerState = IRD::Texture::TSS_FILTER;
 	for(int i=0 ; i< m_nbLayers ; i++) {
 		m_front_textures[i] = rd->createTexture(params);
+		rd->sendTextureData(m_front_textures[i],0,0,0);
 		m_back_textures[i] = rd->createTexture(params);
+		rd->sendTextureData(m_back_textures[i],0,0,0);
 	}
 
 	TEXTURE_MANAGER.add(this);
@@ -98,15 +100,13 @@ void RenderTextureArray::swap()
 void RenderTextureArray::bind(int i)
 {
 	for(int j=0 ; j< m_nbLayers ; j++) {
-/*
 		glActiveTexture(GL_TEXTURE0 + i + j);
 		if(m_texture_matrices.size() > j) {
 			glMatrixMode(GL_TEXTURE);
 			m_texture_matrices[j].glLoadd();
 			glMatrixMode(GL_MODELVIEW);
 		}
-		glBindTexture(GL_TEXTURE_2D, m_gltextures[j]);
-*/
+		//glBindTexture(GL_TEXTURE_2D, m_gltextures[j]);
 		// TODO : texture matrices
 		m_front_textures[j]->bind(i + j);
 	}
@@ -115,13 +115,11 @@ void RenderTextureArray::bind(int i)
 void RenderTextureArray::release(int i)
 {
 	for(int j=0 ; j< m_nbLayers ; j++) {
-		/*
 		glActiveTexture(GL_TEXTURE0 + i + j);
 		glMatrixMode(GL_TEXTURE);
 		glLoadIdentity();
 		glMatrixMode(GL_MODELVIEW);
 		glBindTexture(GL_TEXTURE_2D, 0);
-		*/
 		m_front_textures[j]->unbind(i + j);
 	}
 }

@@ -33,3 +33,6 @@ shaders/light_scattering.frag
 shaders/forward.vert
 shaders/forward.ush
 shaders/forward.frag
+shaders/unfold_proxycubemap.vert
+shaders/unfold_proxycubemap.ush
+shaders/unfold_proxycubemap.frag

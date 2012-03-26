@@ -105,7 +105,7 @@ int main(int argc, char *argv[])
 
 	nTerrain->addProperty(new TerrainRenderer(heightmap, terrain, 70.0f, 2.f,20.f));
 
-	Light* light = new Light();
+	Light* light = new Light(true);
 	light->setAttenuation(0,1.f/100.f,0);
 	light->setType(Light::SUN);
 	nLight->addProperty(light);

@@ -127,4 +127,6 @@ void FrameBufferObject::commitTextures(int passNb)
 	}
 
 	RENDER_MANAGER.getRenderDevice()->checkFrameBuffer();
+
+	debugGL("after commiting textures");
 }
