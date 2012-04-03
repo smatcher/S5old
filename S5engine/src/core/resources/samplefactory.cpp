@@ -25,7 +25,7 @@ void SampleFactory::load(ResourceData* resource)
 
 			/* Load the file to "data" */
 			alutLoadWAVFile((ALbyte*)sample_data->path().toLocal8Bit().data(), &format, &data, &size, &freq, &loop);
-
+            logInfo( "Sound loading "<< resource->name() );
 			/*TODO: correct error handling?*/
 			if(alGetError() == AL_NO_ERROR)
 			{
@@ -51,13 +51,13 @@ void SampleFactory::parseFile(const QString &path, QList<ResourceData *> &conten
 		dir.cdUp();
 		if(dir.exists())
 		{
-				debug( "RESOURCE PARSING" ,"Sample found " << name );
+                logInfo(/* "RESOURCE PARSING" ,*/"Sample found " << name );
 				SampleData* sample = new SampleData(name,path,this);
 				content.push_back(sample);
 		}
 		else
 		{
-				debug( "RESOURCE PARSING" , path << " : " << dir << " does not exist");
+                logInfo(/* "RESOURCE PARSING" , */path << " : " << dir << " does not exist");
 		}
 }
 

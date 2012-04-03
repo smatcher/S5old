@@ -52,7 +52,7 @@ public:
 		m_state(STATE_UNLOADED),
 		m_ref(0)
  #ifdef WITH_TOOLS
-		, m_widget(NULL)
+        , m_widget(NULL)
  #endif
 		{}
 
