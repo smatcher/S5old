@@ -68,6 +68,14 @@ bool RenderTexture2D::unload()
 	return false;
 }
 
+void RenderTexture2D::bind(int i)
+{
+	for(int j=0 ; j< m_texture_matrices.size() ; j++) {
+		RENDER_MANAGER.setTextureMatrix(QMatrix4x4(m_texture_matrices[j].values),j);
+	}
+	m_irdtexture->bind(i);
+}
+
 IRD::Texture* RenderTexture2D::getBackTexture(int i)
 {
 	return m_back_texture;
@@ -78,4 +86,13 @@ void RenderTexture2D::swap()
 	IRD::Texture* tmp = m_irdtexture;
 	m_irdtexture = m_back_texture;
 	m_back_texture = tmp;
+}
+
+void RenderTexture2D::setTextureMatrix(const Matrix4d& texture_matrix, int i)
+{
+	while(m_texture_matrices.size() <= i) {
+		m_texture_matrices.push_back(Matrix4d());
+	}
+
+	m_texture_matrices[i] = texture_matrix;
 }

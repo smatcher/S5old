@@ -100,14 +100,9 @@ void RenderTextureArray::swap()
 void RenderTextureArray::bind(int i)
 {
 	for(int j=0 ; j< m_nbLayers ; j++) {
-		glActiveTexture(GL_TEXTURE0 + i + j);
 		if(m_texture_matrices.size() > j) {
-			glMatrixMode(GL_TEXTURE);
-			m_texture_matrices[j].glLoadd();
-			glMatrixMode(GL_MODELVIEW);
+			RENDER_MANAGER.setTextureMatrix(QMatrix4x4(m_texture_matrices[j].values),j);
 		}
-		//glBindTexture(GL_TEXTURE_2D, m_gltextures[j]);
-		// TODO : texture matrices
 		m_front_textures[j]->bind(i + j);
 	}
 }

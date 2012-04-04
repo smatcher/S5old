@@ -3,9 +3,11 @@
 #include "core/log/log.h"
 #include "core/resources/managers.h"
 #include <core/graphics/rtarray.h>
+#include <core/graphics/rt2d.h>
 #include <GL/glu.h>
 
 #define OMNIDEPTH_RESOLUTION 512
+#define SUNDEPTH_RESOLUTION 2048
 
 #ifdef _WIN32
 	#define GL_MULTISAMPLE 0x809D
@@ -55,11 +57,7 @@ const double negz[] = {
 
 Light::Light(bool casts_shadows) : m_casts_shadows(casts_shadows), m_shadowmap(0), IProperty("Light")
 {
-	if(casts_shadows) {
-		int i=0;
-		while(TEXTURE_MANAGER.get("Omni_Lightmap"+QString().setNum(i)).isValid()) i++;
-		m_shadowmap = new RenderTextureArray("Omni_Lightmap"+QString().setNum(i), OMNIDEPTH_RESOLUTION, OMNIDEPTH_RESOLUTION, 6, IRD::Texture::TF_DEPTH);
-	}
+
 
 	m_constant_attenuation = 1.0f;
 	m_linear_attenuation = 0.0f;
@@ -96,7 +94,7 @@ void Light::sendParameters(int lightid)
 	glLightfv(GL_LIGHT0 + lightid, GL_DIFFUSE, m_diffuse_color.coords);
 	glLightfv(GL_LIGHT0 + lightid, GL_SPECULAR, m_specular_color.coords);
 
-	if(m_type == SPOT) {
+	if(m_type == SPOT || m_type == SUN) {
 		GLfloat lightDirection[4] = { trans[0], trans[1], trans[2], 1.0 };
 		glLightf(GL_LIGHT0 + lightid, GL_SPOT_CUTOFF,m_cos_spot_cutoff);
 		glLightfv(GL_LIGHT0 + lightid, GL_SPOT_DIRECTION,lightDirection);
@@ -133,7 +131,7 @@ void Light::drawDebug(const GLWidget* widget, const RenderManager::DebugGizmosFi
 		glEnd();
 
 
-		if(m_type == SPOT)
+		if(m_type == SPOT || m_type == SUN)
 		{
 			glPushMatrix();
 
@@ -164,6 +162,7 @@ void Light::drawDebug(const GLWidget* widget, const RenderManager::DebugGizmosFi
 				glVertex3d(-1, 1,-1);
 				glVertex3d(-1, 1, 1);
 
+		widget->qglColor(Qt::red);
 				glVertex3d(-1,-1, 1);
 				glVertex3d( 1,-1, 1);
 
@@ -176,6 +175,7 @@ void Light::drawDebug(const GLWidget* widget, const RenderManager::DebugGizmosFi
 				glVertex3d( 1, 1, 1);
 				glVertex3d( 1,-1, 1);
 
+		widget->qglColor(Qt::yellow);
 				glVertex3d( 1, 1, 1);
 				glVertex3d( 1, 1,-1);
 			glEnd();
@@ -207,7 +207,10 @@ int Light::getNbProjections()
 
 Viewpoint::Style Light::getStyle()
 {
-	return PROXY_CUBEMAP;
+	if(m_type == OMNI)
+		return PROXY_CUBEMAP;
+	else
+		return MONO;
 }
 
 void Light::setProjection(double aspect, double scale, int projection_nb)
@@ -276,7 +279,22 @@ bool Light::castsShadows()
 RenderTexture* Light::getRenderTexture()
 {
 	if(m_shadowmap == 0) {
-		m_shadowmap = new RenderTextureArray("Omni_Lightmap", OMNIDEPTH_RESOLUTION, OMNIDEPTH_RESOLUTION, 6, IRD::Texture::TF_DEPTH);
+		int i=0;
+		if(m_type == OMNI)
+		{
+			while(TEXTURE_MANAGER.get("Omni_Shadowmap"+QString().setNum(i)).isValid()) i++;
+			m_shadowmap = new RenderTextureArray("Omni_Shadowmap"+QString().setNum(i), OMNIDEPTH_RESOLUTION, OMNIDEPTH_RESOLUTION, 6, IRD::Texture::TF_DEPTH);
+		}
+		else if(m_type == SPOT)
+		{
+			while(TEXTURE_MANAGER.get("Spot_Shadowmap"+QString().setNum(i)).isValid()) i++;
+			m_shadowmap = new RenderTexture2D("Spot_Shadowmap"+QString().setNum(i), OMNIDEPTH_RESOLUTION, OMNIDEPTH_RESOLUTION, IRD::Texture::TF_DEPTH);
+		}
+		else if(m_type == SUN)
+		{
+			while(TEXTURE_MANAGER.get("Sun_Shadowmap"+QString().setNum(i)).isValid()) i++;
+			m_shadowmap = new RenderTexture2D("Sun_Shadowmap"+QString().setNum(i), SUNDEPTH_RESOLUTION, SUNDEPTH_RESOLUTION, IRD::Texture::TF_DEPTH);
+		}
 	}
 
 	return m_shadowmap;
@@ -308,6 +326,11 @@ void Light::getAttenuation(float& constant, float& linear, float& quadratic)
 
 void Light::setType(Type type)
 {
+	if(m_type != type && m_shadowmap != 0)
+	{
+		m_shadowmap = 0; //MEMORY LEAK
+	}
+
 	m_type = type;
 }
 
@@ -324,40 +347,75 @@ void Light::setSpotCutoff(float degAngle)
 
 void Light::computeLightFrustum(Matrix4d& mat) const
 {
-	float angle = 90;
-
-	if(m_type == SPOT)
+	if(m_type == SUN)
 	{
-		angle = 2*m_spot_cutoff;
+		/*
+		const float h = 1.0f/tan(90*M_PI/360);
+		const float znear = 0.5;
+		const float zfar = 512;
+		float neg_depth = znear-zfar;
+		*/
+		const float w = 0.005;
+		const float h = 0.005;
+		const float d = 0.005;
+
+		mat[0] = 0;
+		mat[1] = 0;
+		mat[2] = -w;
+		mat[3] = 0;
+
+		mat[4] = 0;
+		mat[5] = h;
+		mat[6] = 0;
+		mat[7] = 0;
+
+		mat[8] = d;
+		mat[9] = 0;
+		mat[10] = 0;
+		mat[11] = 0;
+
+		mat[12] = 0;
+		mat[13] = 0;
+		mat[14] = -1;
+		mat[15] = 1;
 	}
-
-	const float h = 1.0f/tan(angle*M_PI/360);
-	const float znear = 0.5;
-	const float zfar = 400;
-	float neg_depth = znear-zfar;
-
-	mat[0] = h;
-	mat[1] = 0;
-	mat[2] = 0;
-	mat[3] = 0;
-
-	mat[4] = 0;
-	mat[5] = h;
-	mat[6] = 0;
-	mat[7] = 0;
-
-	mat[8] = 0;
-	mat[9] = 0;
-	mat[10] = (zfar + znear)/neg_depth;
-	mat[11] = -1;
-
-	mat[12] = 0;
-	mat[13] = 0;
-	mat[14] = 2.0f*(znear*zfar)/neg_depth;
-	mat[15] = 0;
-
-	if(m_type != OMNI)
+	else
 	{
-		mat *= Matrix4d(negz);
+		float angle = 90;
+
+		if(m_type == SPOT)
+		{
+			angle = 2*m_spot_cutoff;
+		}
+
+		const float h = 1.0f/tan(angle*M_PI/360);
+		const float znear = 0.5;
+		const float zfar = 512;
+		float neg_depth = znear-zfar;
+
+		mat[0] = h;
+		mat[1] = 0;
+		mat[2] = 0;
+		mat[3] = 0;
+
+		mat[4] = 0;
+		mat[5] = h;
+		mat[6] = 0;
+		mat[7] = 0;
+
+		mat[8] = 0;
+		mat[9] = 0;
+		mat[10] = (zfar + znear)/neg_depth;
+		mat[11] = -1;
+
+		mat[12] = 0;
+		mat[13] = 0;
+		mat[14] = 2.0f*(znear*zfar)/neg_depth;
+		mat[15] = 0;
+
+		if(m_type == SPOT)
+		{
+			mat *= Matrix4d(negz);
+		}
 	}
 }

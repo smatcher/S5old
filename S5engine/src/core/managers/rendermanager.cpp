@@ -124,7 +124,7 @@ void RenderManager::createResources()
 	halfsize.setWidth(size.width()/2);
 
 	// Setting up shadow textures
-	m_shadowmap = new RenderTexture2D("Shadowmap", size.height(), size.width(), IRD::Texture::TF_RGBA8);
+	m_shadowmap = new RenderTexture2D("DEF_Shadowmap", size.height(), size.width(), IRD::Texture::TF_RGBA8);
 
 	// Setting up color map
 	m_colormap = new RenderTexture2D("Colormap", size.height(), size.width(), IRD::Texture::TF_RGBA8);
@@ -246,8 +246,8 @@ void RenderManager::createResources()
 	m_normalmap = new RenderTexture2D("DEF_Normalmap", size.height(), size.width(), IRD::Texture::TF_RGBA8);
 	m_diffusemap = new RenderTexture2D("DEF_Diffusemap", size.height(), size.width(), IRD::Texture::TF_RGBA8);
 	m_specularmap = new RenderTexture2D("DEF_Specularmap", size.height(), size.width(), IRD::Texture::TF_RGBA8);
-	m_depthmap = new RenderTexture2D("DEF_Depthmap", size.height(), size.width(), IRD::Texture::TF_DEPTH);
-	//m_depthmap = new RenderTexture2D("DEF_Depthmap", size.height(), size.width(), IRD::Texture::TF_DEPTH_STENCIL);
+	//m_depthmap = new RenderTexture2D("DEF_Depthmap", size.height(), size.width(), IRD::Texture::TF_DEPTH);
+	m_depthmap = new RenderTexture2D("DEF_Depthmap", size.height(), size.width(), IRD::Texture::TF_DEPTH_STENCIL);
 
 	// SSS resources
 	m_sssbuffer[0] = new RenderTexture2D("SSS1", 512, 512, IRD::Texture::TF_RGBA8);
@@ -387,7 +387,7 @@ void RenderManager::renderDeferred(SceneGraph* sg, Viewpoint* viewpoint)
 	{
 		mrts.push_back(QPair<RenderTexture*, IRD::FrameBuffer::Attachment>(m_lightscatteringmap_high, IRD::FrameBuffer::COLOR_ATTACHMENT_3));
 	}
-	mrts.push_back(QPair<RenderTexture*, IRD::FrameBuffer::Attachment>(m_depthmap, IRD::FrameBuffer::DEPTH_ATTACHMENT));
+	mrts.push_back(QPair<RenderTexture*, IRD::FrameBuffer::Attachment>(m_depthmap, IRD::FrameBuffer::DEPTH_STENCIL_ATTACHMENT));
 	//mrts.push_back(QPair<RenderTexture*, IRD::FrameBuffer::Attachment>(m_depthmap, IRD::FrameBuffer::STENCIL_ATTACHMENT));
 	RenderTarget srt(viewpoint, m_postprocessfbo, mrts , false, true);
 	debug("PASS_INFO","geom pass");
@@ -491,10 +491,11 @@ void RenderManager::renderDeferred(SceneGraph* sg, Viewpoint* viewpoint)
 			m_passinfo.ubershader_used->setParamValue(UberShaderDefine::Type(UberShaderDefine::LIGHT_SPOT),light->getType() == Light::SPOT);
 			m_passinfo.ubershader_used->setParamValue(UberShaderDefine::Type(UberShaderDefine::LIGHT_SUN),light->getType() == Light::SUN);
 			m_passinfo.ubershader_used->use();
-			m_passinfo.ubershader_used->setAllUniforms();
 
 			m_depthmap->bind(0);
 			light->getRenderTexture()->bind(1);
+
+			m_passinfo.ubershader_used->setAllUniforms();
 
 			glClear(GL_COLOR_BUFFER_BIT);
 			glViewport(0,0,width,height);
@@ -601,7 +602,7 @@ void RenderManager::renderForward(SceneGraph* sg, Viewpoint* viewpoint)
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 	QList< QPair<RenderTexture*, IRD::FrameBuffer::Attachment> > mrts;
 	mrts.push_back(QPair<RenderTexture*, IRD::FrameBuffer::Attachment>(m_colormap, IRD::FrameBuffer::COLOR_ATTACHMENT_0));
-	mrts.push_back(QPair<RenderTexture*, IRD::FrameBuffer::Attachment>(m_depthmap, IRD::FrameBuffer::DEPTH_ATTACHMENT));
+	mrts.push_back(QPair<RenderTexture*, IRD::FrameBuffer::Attachment>(m_depthmap, IRD::FrameBuffer::DEPTH_STENCIL_ATTACHMENT));
 	//mrts.push_back(QPair<RenderTexture*, IRD::FrameBuffer::Attachment>(m_depthmap, IRD::FrameBuffer::STENCIL_ATTACHMENT));
 	RenderTarget srt(viewpoint, m_postprocessfbo, mrts , false, true);
 	m_passinfo.ubershader_used = m_forward;

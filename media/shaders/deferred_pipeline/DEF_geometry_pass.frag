@@ -48,9 +48,9 @@ void main()
 		eyespacenormal += tanspacenormal.y * eyebitangent;
 		eyespacenormal += tanspacenormal.z * normal;
 
-		gl_FragData[0] = vec4(normalize(eyespacenormal),1.0);
+		gl_FragData[0] = vec4((normalize(eyespacenormal)+1.0)/2.0,1.0);
 	#else
-		gl_FragData[0] = vec4(normalize(normal),1.0);
+		gl_FragData[0] = vec4((normalize(normal)+1.0)/2.0,1.0);
 	#endif
 	#ifdef COLOR_MAP
 		#ifdef SKY

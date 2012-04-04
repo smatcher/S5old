@@ -100,7 +100,7 @@ void FrameBufferObject::commitTextures(int passNb)
 	for(int i=0 ; i<m_textures.size() ; i++) {
 		RenderTexture* tex = m_textures[i].tex;
 		IRD::FrameBuffer::Attachment attachment = m_textures[i].ap;
-		if(attachment != IRD::FrameBuffer::DEPTH_ATTACHMENT && attachment != IRD::FrameBuffer::STENCIL_ATTACHMENT) {
+		if(attachment != IRD::FrameBuffer::DEPTH_ATTACHMENT && attachment != IRD::FrameBuffer::STENCIL_ATTACHMENT && attachment != IRD::FrameBuffer::DEPTH_STENCIL_ATTACHMENT) {
 			nb_color_buffers++;
 		}
 		RENDER_MANAGER.getRenderDevice()->attachTextureToFrameBuffer(m_framebuffer, GLEW_HACK_getTextureforPass(tex, passNb), attachment);
@@ -113,7 +113,7 @@ void FrameBufferObject::commitTextures(int passNb)
 		GLenum* bufs = new GLenum[nb_color_buffers]();
 		for(int j=0 ; j<m_textures.size() ; j++) {
 			IRD::FrameBuffer::Attachment attachment = m_textures[j].ap;
-			if(attachment != IRD::FrameBuffer::DEPTH_ATTACHMENT && attachment != IRD::FrameBuffer::STENCIL_ATTACHMENT) {
+			if(attachment != IRD::FrameBuffer::DEPTH_ATTACHMENT && attachment != IRD::FrameBuffer::STENCIL_ATTACHMENT && attachment != IRD::FrameBuffer::DEPTH_STENCIL_ATTACHMENT) {
 				bufs[i] = attachment + GL_COLOR_ATTACHMENT0;
 				i++;
 			}

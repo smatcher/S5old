@@ -88,7 +88,7 @@ int main(int argc, char *argv[])
 	Node* nUni = new Node("Unicorn");
 	Node* nGarg = new Node("Gargoyle");
 	Node* nDuck = new Node("Duck");
-	//Node* nDuckGrid = new Node("Grid");
+	Node* nBuddy = new Node("Buddy");
 	Node* nSand = new Node("Sand");
 
 	QVector<Node*> balls;
@@ -111,23 +111,19 @@ int main(int argc, char *argv[])
 
 	nHead->addProperty(new DummyUpdatable());
 	Light* light;
-/*
+
 	light = new Light(true);
-	light->setType(Light::SPOT);
+	light->setType(Light::SUN);
 	//light->setDiffuseColor(Vector4f(0.2,1.0,0.2,1.0));
 	//light->setSpecularColor(Vector4f(0.2,1.0,0.2,1.0));
 	light->setDiffuseColor(Vector4f(1.0,1.0,0.0,1.0));
 	light->setSpecularColor(Vector4f(1.0,1.0,1.0,1.0));
-
 	nLight2->addProperty(light);
-	*/
 
-	light = new Light(true);
-	//light->setType(Light::SPOT);
-	/*
+	light = new Light(false);
+	light->setType(Light::SPOT);
 	light->setDiffuseColor(Vector4f(1.0,1.0,1.0,1.0));
 	light->setSpecularColor(Vector4f(1.0,1.0,1.0,1.0));
-	*/
 	//light->setDiffuseColor(Vector4f(1.0,0.2,0.2,1.0));
 	//light->setSpecularColor(Vector4f(1.0,0.2,0.2,1.0));
 	nLight->addProperty(light);
@@ -137,7 +133,9 @@ int main(int argc, char *argv[])
 	Mesh cube = MESH_MANAGER.get("Cube");
 	Mesh sphere = MESH_MANAGER.get("Sphere_16_32");
 	Mesh mesh = MESH_MANAGER.get("duck");
+	Mesh buddymesh = MESH_MANAGER.get("buddy");
 
+	Material buddy = MATERIAL_MANAGER.get("buddy");
 	Material duck = MATERIAL_MANAGER.get("duck");
 	Material star = MATERIAL_MANAGER.get("star");
 	Material gargoyle = MATERIAL_MANAGER.get("gargoyle");
@@ -155,6 +153,7 @@ int main(int argc, char *argv[])
 	nStar->addProperty(new MeshRenderer(plane,star));
 	//nUni->addProperty(new MeshRenderer(cube,unicorn));
 	nGarg->addProperty(new MeshRenderer(cube,gargoyle));
+	nBuddy->addProperty(new MeshRenderer(buddymesh,buddy));
 	nSand->addProperty(new MeshRenderer(cube,sand));
 	nDuck->addProperty(new DummyControlable());
 	nDuck->addProperty(new SoundEmitter(sample));
@@ -164,10 +163,11 @@ int main(int argc, char *argv[])
 
 	nHead->link(nStar);
 	nHead->link(nLight);
-	nHead->link(nLight2);
+	nCam->link(nLight2);
 	nHead->link(nUni);
 
 	sg->link(nDuck);
+	sg->link(nBuddy);
 	sg->link(nRot);
 	sg->link(nQt);
 	sg->link(nSand);
@@ -220,8 +220,11 @@ int main(int argc, char *argv[])
 		float s3 = 0.1+(qrand() % 900)/1000.0;
 		balls[i]->setScale(Vector3f(s1,s2,s3));
 	}
-	nGarg->moveTo(Vector3f(-3,1,-3));
-	nGarg->setScale(Vector3f(1,3,1));
+	nGarg->moveTo(Vector3f(-3,3,-3));
+	nGarg->setScale(Vector3f(1,0.3,1));
+	nBuddy->moveTo(Vector3f(3,1.5,3));
+	nBuddy->rotate(Vector3f(1,0,0),-90);
+	nBuddy->rotate(Vector3f(0,1,0),180);
 	nDuck->moveTo(Vector3f(0,-0.5,-1.8));
 	nDuck->rotate(Vector3f(0,1,0),127);
 	//nDuckGrid->rotate(Vector3f(1,0,0),270);

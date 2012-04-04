@@ -18,9 +18,12 @@ public:
 	virtual IRD::Texture* getBackTexture(int i= 0);
 	virtual void swap();
 
-	virtual void setTextureMatrix(const Matrix4d& texture_matrix, int i = 0) {}
+	virtual void bind(int i=0);
+
+	virtual void setTextureMatrix(const Matrix4d& texture_matrix, int i = 0);
 private:
 	IRD::Texture* m_back_texture;
+	QList<Matrix4d> m_texture_matrices;
 };
 
 #endif // RT2D_H

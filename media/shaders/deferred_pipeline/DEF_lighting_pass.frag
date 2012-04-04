@@ -11,7 +11,7 @@ uniform mat4 inverse_modelview;
 	uniform sampler2D shadowmap;
 #endif
 
-#ifdef LIGHT_SPOT
+#if defined LIGHT_SPOT || defined LIGHT_SUN
 	varying vec3 eyespotdir;
 #endif
 
@@ -26,18 +26,26 @@ void main()
 	vec4 eyepos = inverse_projection * scpos;
 	eyepos = eyepos/eyepos.w;
 
-	vec3 lightvec = eyelightpos - eyepos.xyz;
+	#ifdef LIGHT_SUN
+		vec3 lightvec = eyespotdir;
+	#else
+		vec3 lightvec = eyelightpos - eyepos.xyz;
+	#endif
 	vec3 viewvec = normalize(eyepos.rgb);
-	vec3 normal = texture2D(gbuffer_normal, screen_pos).rgb;
+	vec3 normal = 2.0*texture2D(gbuffer_normal, screen_pos).rgb-1.0;
 	vec4 diffuse = texture2D(gbuffer_diffuse, screen_pos);	// rgb:diffuse a:sky (if 0)
 	vec4 specular = texture2D(gbuffer_specular, screen_pos); // rgb:specularity a:shininess/128.0
 
-	float dist = length(lightvec);
-	float attenuation = 1.0/ (
-			gl_LightSource[0].constantAttenuation +
-			gl_LightSource[0].linearAttenuation*dist +
-			gl_LightSource[0].quadraticAttenuation*dist*dist
-	);
+	#ifdef LIGHT_SUN
+		float attenuation = 1.0;
+	#else
+		float dist = length(lightvec);
+		float attenuation = 1.0/ (
+				gl_LightSource[0].constantAttenuation +
+				gl_LightSource[0].linearAttenuation*dist +
+				gl_LightSource[0].quadraticAttenuation*dist*dist
+		);
+	#endif
 
 	#ifdef SHADOW_MAP
 		attenuation *= texture2D(shadowmap, screen_pos).r;
@@ -49,10 +57,11 @@ void main()
 	vec3 ispec = pow(clamp(dot(halfvec,normal),0.0,1.0),128.0*specular.a) * gl_LightSource[0].specular.rgb * specular.rgb;
 
 	#ifdef LIGHT_SPOT
-	float spotAngle = dot(lightvec,eyespotdir);
-	if(spotAngle < gl_LightSource[0].spotCutoff)
-		attenuation = 0.0;
+		float spotAngle = dot(lightvec,eyespotdir);
+		if(spotAngle < gl_LightSource[0].spotCutoff)
+			attenuation = 0.0;
 	#endif
+
 
 	gl_FragColor = vec4((idiff+ispec) * attenuation * diffuse.a, 1.0);
 }
