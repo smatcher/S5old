@@ -11,22 +11,41 @@
 
 #include "core/utils/quadtree.h"
 
+#define PATCH_DIM 16
+#define PATCH_CORE_VBO_SIZE (6*(PATCH_DIM-2)*(PATCH_DIM-2))
+#define PATCH_HIRES_EDGE_VBO_SIZE (6*(PATCH_DIM-1))
+#define PATCH_LORES_EDGE_VBO_SIZE (9*((PATCH_DIM)/2) - 6)
+
 class TerrainPatch {
 public:
-	TerrainPatch(int start_x, int start_y, int dim, int lod, int theight, int twidth);
+    TerrainPatch(TerrainRenderer* terrain, int start_x, int start_y, int lodx, int lody,  int dim, int lod, int theight);
+
+    void drawNormalEdge(int edge);
+    void drawAdaptedEdge(int nx, int ny, int edge);
+
 	void render();
 
-	QGLBuffer m_indices;
+    TerrainRenderer* m_terrain;
+
+    QGLBuffer m_indices_core;
+    QGLBuffer m_indices_edges[4][2]; /* 2 niveaux d'adaptation, 4 bords par niveau */
 
 	/* Position du patch dans le terrain */
 	int m_offsetx;
 	int m_offsety;
 
-	/* Dimension du path (on considère que les patchs sont carrés, parce que fuck*/
+    /* Coordonn�es dans les tables de LOD */
+    int m_lodx;
+    int m_lody;
+
+    /* Dimension du patch (on considère que les patchs sont carrés, parce que fuck*/
 	int m_dim;
 
 	/* Niveau de détail du patch */
 	int m_lod;
+
+    /* Sett� par evalLOD si on dois dessiner ce patch */
+    bool m_drawn;
 
     /* Debug info */
     float y_min;
@@ -41,21 +60,30 @@ public:
 	typedef QuadTree<TerrainPatch> TerrainNode;
 	TerrainRenderer(Texture& hm, Material& mat, float yscale, float scale, float tscale);
 	void render();
+
+    int getMaxLod();
+    bool getLodDrawn(int lod, int x, int y);
+    void setLodDrawn(int lod, int x, int y, bool value);
+    void printLodMap();
 	bool isTransparent() {return false;}
 
+    int m_height;
+    int m_width;
 
 protected:
 
-	void buildQuadTree(int max_lod);
-	void _buildQuadTree(TerrainNode* node, int theight, int twidth);
-    void renderQuadTree(TerrainNode* node, Node* position);
+    void buildQuadTree();
+    void _buildQuadTree(TerrainNode* node, int theight, int twidth, int lodx, int lody);
+    void evalLOD(TerrainNode* node, Node* cameraPosition);
+    void renderQuadTree(TerrainNode* node);
 
 	float* m_heightmap;
-	int m_height;
-	int m_width;
+    bool** m_lod_drawn;
 	float m_yscale;
 	float m_scale;
 	float m_tscale;
+
+    int m_maxlod;
 
 	bool m_wireframe;
 
