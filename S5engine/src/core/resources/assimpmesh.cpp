@@ -324,6 +324,7 @@ void AssimpMesh::Submesh::draw(QGLShaderProgram* program, int flags)
 	{
 		glEnable(GL_TEXTURE_2D);
 		glEnableClientState(GL_TEXTURE_COORD_ARRAY);
+		__ClientActiveTexture(GL_TEXTURE0);
 		m_texcoords.bind();
 		glTexCoordPointer(2, GL_FLOAT, 0, 0);
 	}
@@ -336,7 +337,6 @@ void AssimpMesh::Submesh::draw(QGLShaderProgram* program, int flags)
 	{
 		glEnable(GL_COLOR_MATERIAL);
 		glEnableClientState(GL_COLOR_ARRAY);
-		__ClientActiveTexture(GL_TEXTURE0);
 		m_colors.bind();
 		glColorPointer(4, GL_FLOAT, 0, 0);
 	}

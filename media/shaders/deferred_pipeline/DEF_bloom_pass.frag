@@ -5,5 +5,5 @@ varying vec2 screen_pos;
 
 void main()
 {
-	gl_FragColor = texture2D(colormap, vec2(screen_pos.s, screen_pos.t)) + bloom_factor * texture2D(bloommap, vec2(screen_pos.s, screen_pos.t));
+	gl_FragColor = (1.0 - bloom_factor) * texture2D(colormap, vec2(screen_pos.s, screen_pos.t)) + bloom_factor * texture2D(bloommap, vec2(screen_pos.s, screen_pos.t));
 }

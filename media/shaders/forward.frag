@@ -107,11 +107,16 @@ void main()
 				vec3 L@ = normalize(lightDir@);
 
 				float dist@ = length(lightDir@);
-				float attenuation@ = 1.0/ (
-						gl_LightSource[@].constantAttenuation +
-						gl_LightSource[@].linearAttenuation*dist@ +
-						gl_LightSource[@].quadraticAttenuation*dist@*dist@
-				);
+
+				#ifdef LIGHT_SUN_@
+					float attenuation@ = 1.0;
+				#else
+					float attenuation@ = 1.0/ (
+							gl_LightSource[@].constantAttenuation +
+							gl_LightSource[@].linearAttenuation*dist@ +
+							gl_LightSource[@].quadraticAttenuation*dist@*dist@
+					);
+				#endif
 
 				#ifdef LIGHT_SPOT_@
 					float spotAngle@ = dot(L@,normalize(gl_LightSource[@].spotDirection));

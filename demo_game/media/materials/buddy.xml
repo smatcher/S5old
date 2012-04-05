@@ -1,0 +1,9 @@
+<material>
+	<texture type="colormap">buddy.png</texture>
+	<texture type="gradientmap">buddy_grad.png</texture>
+	<diffuse>1.0 1.0 1.0 1.0</diffuse>
+	<specular>0.1 0.1 0.1 1.0</specular>
+	<ambient>1.0 1.0 1.0 1.0</ambient>
+	<emission>0.0 0.0 0.0 1.0</emission>
+	<shininess>2</shininess>
+</material>

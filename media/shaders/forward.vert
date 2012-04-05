@@ -34,7 +34,11 @@ void main()
 
 	#for 0 7
 		#if defined LIGHT_OMNI_@ || defined LIGHT_SPOT_@ || defined LIGHT_SUN_@
-			lightDir@ = vec3(gl_LightSource[@].position.xyz - vVertex);
+			#ifdef LIGHT_SUN_@
+				lightDir@ = normalize(gl_LightSource[@].spotDirection);
+			#else
+				lightDir@ = vec3(gl_LightSource[@].position.xyz - vVertex);
+			#endif
 		#endif
 	#endfor
 

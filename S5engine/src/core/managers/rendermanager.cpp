@@ -580,7 +580,8 @@ void RenderManager::renderDeferred(SceneGraph* sg, Viewpoint* viewpoint)
 	}
 	else
 	{
-		input_textures.push_back(*m_bloommap);
+		//input_textures.push_back(*m_bloommap);
+		input_textures.push_back(*m_colormap);
 	}
 
 	glBlendFunc(GL_ONE, GL_ONE);
@@ -598,6 +599,10 @@ void RenderManager::renderForward(SceneGraph* sg, Viewpoint* viewpoint)
 	/// Cleans
 	clearTexture(m_bloommap);
 	clearTexture(m_colormap);
+	if(m_options.m_lightscattering_enabled)
+	{
+		clearTexture(m_lightscatteringmap_low);
+	}
 
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 	QList< QPair<RenderTexture*, IRD::FrameBuffer::Attachment> > mrts;
@@ -612,6 +617,19 @@ void RenderManager::renderForward(SceneGraph* sg, Viewpoint* viewpoint)
 	renderTarget(sg, srt);
 
 	QList<Texture> input_textures;
+	if(m_options.m_lightscattering_enabled)
+	{
+		//input_textures.push_back(*m_lightscatteringmap_high);
+		input_textures.push_back(*m_colormap);
+		m_passinfo.ubershader_used = m_lightscattering;
+		postprocessPass(m_lightscatteringmap_low,input_textures,true);
+		input_textures.clear();
+		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+		m_passinfo.ubershader_used = m_bloom;
+		input_textures.push_back(*m_colormap);
+		input_textures.push_back(*m_lightscatteringmap_low);
+		postprocessPass(m_colormap,input_textures);
+	}
 	if(m_options.m_bloom_enabled)
 	{
 		glBlendFunc(GL_ONE, GL_ZERO);
@@ -627,7 +645,8 @@ void RenderManager::renderForward(SceneGraph* sg, Viewpoint* viewpoint)
 	}
 	else
 	{
-		input_textures.push_back(*m_bloommap);
+		//input_textures.push_back(*m_bloommap);
+		input_textures.push_back(*m_colormap);
 	}
 
 	glBlendFunc(GL_ONE, GL_ONE);
