@@ -140,11 +140,19 @@ void RenderTarget::setTextureMatrix(int passNb)
 	static double modelView[16];
 	static double projection[16];
 	static double final[16];
+/*
 	const GLdouble biais[16] = {
 		0.5, 0.0, 0.0, 0.0,
 		0.0, 0.5, 0.0, 0.0,
 		0.0, 0.0, 0.5, 0.0,
 		0.5, 0.5, 0.5, 1.0
+	};
+*/
+	const GLdouble biais[16] = {
+		0.5, 0.0, 0.0, 0.0,
+		0.0, 0.5, 0.0, 0.0,
+		0.0, 0.0, 0.5, 0.0,
+		0.5, 0.5, 0.49, 1.0
 	};
 
 	debugGL("1");

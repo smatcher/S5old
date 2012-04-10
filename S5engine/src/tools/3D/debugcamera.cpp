@@ -32,12 +32,12 @@ void DebugCamera::updateKeyboard(Key key, bool pressed)
 	keys[key] = pressed;
 }
 
-// Mise Ã  jour de la camÃ©ra
+// Mise   jour de la camÃ©ra
 void DebugCamera::updateMouse(bool left_pressed, bool right_pressed, bool middle_pressed,
 						 int x, int y)
 {
-    zoom = right_pressed?20:1; // debugcamera.cpp:39
-	// Cas oÃ¹ l'on passe du mode NONE Ã  un autre :
+	zoom = right_pressed?20:1; // debugcamera.cpp:39
+	// Cas oÃ¹ l'on passe du mode NONE   un autre :
 	if(mode == MODE_NONE)
 	{
 		if(left_pressed)	// Passage au mode ROTATION :
@@ -53,7 +53,7 @@ void DebugCamera::updateMouse(bool left_pressed, bool right_pressed, bool middle
 	// MODE ROTATION :
 	if(mode == MODE_ROTATION)
 	{
-		// Bouton appuyÃ© => on met Ã  jour de combien on tourne
+		// Bouton appuyÃ© => on met   jour de combien on tourne
 		if(left_pressed)
 		{
 			rotation_x = original_rotation_x + COEFF_ROTATION*(y - original_mouse_y);
@@ -93,7 +93,7 @@ void DebugCamera::setProjection(double aspect, double scale, int projection_nb)
 	glScaled(scale, scale, 1);
 }
 
-// Mise Ã  jour de la matrice modelview
+// Mise   jour de la matrice modelview
 void DebugCamera::applyTransform(int projection_nb)
 {
 	// Compute elapsed time
@@ -107,17 +107,17 @@ void DebugCamera::applyTransform(int projection_nb)
 	temp.rotate(Vector3f(1,0,0),-rotation_x);
 	temp.rotate(Vector3f(0,1,0),-rotation_y);
 	if(keys[UP])
-        target = target + zoom*COEFF_TRANSLATION*elapsed*temp.apply(Vector3f(0,0,-1));
+		target = target + zoom*COEFF_TRANSLATION*elapsed*temp.apply(Vector3f(0,0,-1));
 	if(keys[DOWN])
-        target = target + zoom*COEFF_TRANSLATION*elapsed*temp.apply(Vector3f(0,0,1));
+		target = target + zoom*COEFF_TRANSLATION*elapsed*temp.apply(Vector3f(0,0,1));
 	if(keys[LEFT])
-        target = target + zoom*COEFF_TRANSLATION*elapsed*temp.apply(Vector3f(-1,0,0));
+		target = target + zoom*COEFF_TRANSLATION*elapsed*temp.apply(Vector3f(-1,0,0));
 	if(keys[RIGHT])
-        target = target + zoom*COEFF_TRANSLATION*elapsed*temp.apply(Vector3f(1,0,0));
+		target = target + zoom*COEFF_TRANSLATION*elapsed*temp.apply(Vector3f(1,0,0));
 	if(keys[RCTRL])
-        target = target + zoom*COEFF_TRANSLATION*elapsed*temp.apply(Vector3f(0,-1,0));
+		target = target + zoom*COEFF_TRANSLATION*elapsed*temp.apply(Vector3f(0,-1,0));
 	if(keys[RSHIFT])
-        target = target + zoom*COEFF_TRANSLATION*elapsed*temp.apply(Vector3f(0,1,0));
+		target = target + zoom*COEFF_TRANSLATION*elapsed*temp.apply(Vector3f(0,1,0));
 
 	// Apply matrix
 	glRotated(rotation_x, 1.0, 0.0, 0.0);
@@ -148,4 +148,14 @@ void DebugCamera::setRotation(double rot_x, double rot_y)
 {
 	original_rotation_x = rotation_x = rot_x;
 	original_rotation_y = rotation_y = rot_y;
+}
+
+Vector3f DebugCamera::getWorldPosition()
+{
+	return Vector3f(target);
+}
+
+Frustum DebugCamera::getFrustum()
+{
+	return Frustum();
 }

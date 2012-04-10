@@ -79,6 +79,8 @@ public :
 		bool texturing_enabled;
 		bool lighting_enabled;
 		UberShader ubershader_used;
+		Viewpoint* render_viewpoint;
+		Viewpoint* lod_viewpoint;
 	};
 
 	struct DebugGizmosFilter

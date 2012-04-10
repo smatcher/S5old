@@ -45,6 +45,9 @@ public:
 	virtual int getNbProjections();
 	virtual Viewpoint::Style getStyle();
 
+	virtual Vector3f getWorldPosition();
+	virtual Frustum getFrustum();
+
 	virtual void setProjection(double aspect, double scale, int projection_nb);
 
 	virtual void applyTransform(int projection_nb);

@@ -166,6 +166,23 @@ void Camera::applyOnlyRotation(int projection_nb)
 	transform.glMultd();
 }
 
+Vector3f Camera::getWorldPosition()
+{
+	if(node())
+	{
+		Matrix4f globalTrans = node()->getGlobalTransform();
+		return Vector3f(globalTrans[12], globalTrans[13], globalTrans[14]);
+	}
+
+	return Vector3f();
+}
+
+Frustum Camera::getFrustum()
+{
+	return Frustum();
+}
+
+
 #ifdef WITH_TOOLS
 
 void Camera::onLinked(PropertySet *)

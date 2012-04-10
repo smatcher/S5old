@@ -398,7 +398,7 @@ void TerrainPatch::render() {
 	glDrawElements(GL_TRIANGLES, PATCH_CORE_VBO_SIZE, GL_UNSIGNED_INT, 0);
 	m_indices_core.release();
 
-	/* Position au sein du quad de niveau supérieur (0 ou 1 pour x et y) */
+	/* Position au sein du quad de niveau suprieur (0 ou 1 pour x et y) */
 	x = m_lodx%2;
 	y = m_lody%2;
 
@@ -481,43 +481,40 @@ TerrainRenderer::TerrainRenderer(Texture& hm, Material& mat, float yscale, float
 			// OB ^ OA
 			//vertices[(x+1+z*m_height)*3]
 			if(x>0 && z<m_height-1) {
-				normal += Vector3f(vertices[(x+(z+1)*m_height)*3] - vertices[(x+z*m_height)*3],
-						   vertices[(x+(z+1)*m_height)*3 + 1] - vertices[(x+z*m_height)*3 + 1],
-						   vertices[(x+(z+1)*m_height)*3 + 2] - vertices[(x+z*m_height)*3 + 2]) ^
-					  Vector3f(vertices[(x-1+z*m_height)*3] - vertices[(x+z*m_height)*3],
-						   vertices[(x-1+z*m_height)*3 + 1] - vertices[(x+z*m_height)*3 + 1],
-						   vertices[(x-1+z*m_height)*3 + 2] - vertices[(x+z*m_height)*3 + 2]);
+				normal += Vector3f(vertices[(x+z*m_height)*3] - vertices[(x-1+z*m_height)*3],
+						   vertices[(x+z*m_height)*3 + 1] - vertices[(x-1+z*m_height)*3 + 1],
+						   vertices[(x+z*m_height)*3 + 2] - vertices[(x-1+z*m_height)*3 + 2]) ^
+						Vector3f(vertices[(x+z*m_height)*3] - vertices[(x+(z+1)*m_height)*3],
+						   vertices[(x+z*m_height)*3 + 1] - vertices[(x+(z+1)*m_height)*3 + 1],
+						   vertices[(x+z*m_height)*3 + 2] - vertices[(x+(z+1)*m_height)*3 + 2]);
 			}
-
 			// OC ^ OB
 			if(x<m_width-1 && z<m_height-1) {
-				normal += Vector3f(vertices[(x+1+z*m_height)*3] - vertices[(x+z*m_height)*3],
-						   vertices[(x+1+z*m_height)*3 + 1] - vertices[(x+z*m_height)*3 + 1],
-						   vertices[(x+1+z*m_height)*3 + 2] - vertices[(x+z*m_height)*3 + 2]) ^
-					  Vector3f(vertices[(x+(z+1)*m_height)*3] - vertices[(x+z*m_height)*3],
-						   vertices[(x+(z+1)*m_height)*3 + 1] - vertices[(x+z*m_height)*3 + 1],
-						   vertices[(x+(z+1)*m_height)*3 + 2] - vertices[(x+z*m_height)*3 + 2]);
+				normal += Vector3f(vertices[(x+z*m_height)*3] - vertices[(x+(z+1)*m_height)*3],
+						   vertices[(x+z*m_height)*3 + 1] - vertices[(x+(z+1)*m_height)*3 + 1],
+						   vertices[(x+z*m_height)*3 + 2] - vertices[(x+(z+1)*m_height)*3 + 2]) ^
+						Vector3f(vertices[(x+z*m_height)*3] - vertices[(x+1+z*m_height)*3],
+						   vertices[(x+z*m_height)*3 + 1] - vertices[(x+1+z*m_height)*3 + 1],
+						   vertices[(x+z*m_height)*3 + 2] - vertices[(x+1+z*m_height)*3 + 2]);
 			}
 			// OD ^ OC
 			if(x<m_width-1 && z>0) {
-				normal += Vector3f(vertices[(x+(z-1)*m_height)*3] - vertices[(x+z*m_height)*3],
-						   vertices[(x+(z-1)*m_height)*3 + 1] - vertices[(x+z*m_height)*3 + 1],
-						   vertices[(x+(z-1)*m_height)*3 + 2] - vertices[(x+z*m_height)*3 + 2]) ^
-					  Vector3f(vertices[(x+1+z*m_height)*3] - vertices[(x+z*m_height)*3],
-						   vertices[(x+1+z*m_height)*3 + 1] - vertices[(x+z*m_height)*3 + 1],
-						   vertices[(x+1+z*m_height)*3 + 2] - vertices[(x+z*m_height)*3 + 2]);
+				normal += Vector3f(vertices[(x+z*m_height)*3] - vertices[(x+1+z*m_height)*3],
+						   vertices[(x+z*m_height)*3 + 1] - vertices[(x+1+z*m_height)*3 + 1],
+						   vertices[(x+z*m_height)*3 + 2] - vertices[(x+1+z*m_height)*3 + 2]) ^
+						Vector3f(vertices[(x+z*m_height)*3] - vertices[(x+(z-1)*m_height)*3],
+						   vertices[(x+z*m_height)*3 + 1] - vertices[(x+(z-1)*m_height)*3 + 1],
+						   vertices[(x+z*m_height)*3 + 2] - vertices[(x+(z-1)*m_height)*3 + 2]);
 			}
 			// OA ^ OD
 			if(x>0 && z>0) {
-				normal += Vector3f(vertices[(x-1+z*m_height)*3] - vertices[(x+z*m_height)*3],
-						   vertices[(x-1+z*m_height)*3 + 1] - vertices[(x+z*m_height)*3 + 1],
-						   vertices[(x-1+z*m_height)*3 + 2] - vertices[(x+z*m_height)*3 + 2]) ^
-					  Vector3f(vertices[(x+(z-1)*m_height)*3] - vertices[(x+z*m_height)*3],
-						   vertices[(x+(z-1)*m_height)*3 + 1] - vertices[(x+z*m_height)*3 + 1],
-						   vertices[(x+(z-1)*m_height)*3 + 2] - vertices[(x+z*m_height)*3 + 2]);
+				normal += Vector3f(vertices[(x+z*m_height)*3] - vertices[(x+(z-1)*m_height)*3],
+						   vertices[(x+z*m_height)*3 + 1] - vertices[(x+(z-1)*m_height)*3 + 1],
+						   vertices[(x+z*m_height)*3 + 2] - vertices[(x+(z-1)*m_height)*3 + 2]) ^
+						Vector3f(vertices[(x+z*m_height)*3] - vertices[(x-1+z*m_height)*3],
+						   vertices[(x+z*m_height)*3 + 1] - vertices[(x-1+z*m_height)*3 + 1],
+						   vertices[(x+z*m_height)*3 + 2] - vertices[(x-1+z*m_height)*3 + 2]);
 			}
-
-			normal *= -1.0f; /* Ouais j'ai calculÃ© les normales   l'envers, a corriger quand j'aurais pas la fleme */
 			normal.normalize();
 
 			normals[index*3] = normal.x;
@@ -609,10 +606,13 @@ TerrainRenderer::TerrainRenderer(Texture& hm, Material& mat, float yscale, float
 }
 
 void TerrainRenderer::render() {
+	/*
 	static Node* cam_node = 0;
 	IProperty* cam = (IProperty*)RENDER_MANAGER.getCurrentCamera();
 	if(cam!=0)
 		cam_node = cam->node();
+	*/
+	Vector3f cam_pos = RENDER_MANAGER.getRenderPassInfo()->lod_viewpoint->getWorldPosition();
 
 	node()->getGlobalTransform().glMultf();
 
@@ -683,7 +683,7 @@ void TerrainRenderer::render() {
 	}
 
 	//m_quadtree->getValue()->render();
-	evalLOD(m_quadtree, cam_node);
+	evalLOD(m_quadtree, cam_pos);
 	//logInfo("<<<map");
 	//printLodMap();
 	renderQuadTree(m_quadtree);
@@ -757,18 +757,18 @@ void TerrainRenderer::_buildQuadTree(TerrainNode* node, int theight, int twidth,
 
 }
 
-void TerrainRenderer::evalLOD(TerrainNode* node, Node* position) {
-	Transformf cam_t(position->getGlobalTransform());
-	Transformf terrain_t(this->node()->getGlobalTransform());
+void TerrainRenderer::evalLOD(TerrainNode* node, const Vector3f& position) {
+	//Transformf cam_t(position->getGlobalTransform());
+	//Transformf terrain_t(this->node()->getGlobalTransform());
 
 	/*XXX Calcul de la distance en 2D, pabo*/
 	float patch_x=this->m_scale*(node->getValue()->m_offsetx+((float)node->getValue()->m_dim/2.0f));
 	float patch_y=this->m_scale*(node->getValue()->m_offsety+((float)node->getValue()->m_dim/2.0f));
 
-	float norme = sqrt((patch_x-cam_t.getPosition().x)*(patch_x-cam_t.getPosition().x) +
-				  (patch_y-cam_t.getPosition().z)*(patch_y-cam_t.getPosition().z));
+	float norme = sqrt((patch_x-position.x)*(patch_x-position.x) +
+				  (patch_y-position.z)*(patch_y-position.z));
 
-	/* Calcul de la limite avant le LOD suivant. Cette limite est calculé suivant une suite arithmétique Un+1 = Un*2. U0 peut être changé pour régler la qualité du terrain */
+	/* Calcul de la limite avant le LOD suivant. Cette limite est calcul suivant une suite arithmtique Un+1 = Un*2. U0 peut tre chang pour rgler la qualit du terrain */
 	float limite = 50*(1<<node->getValue()->m_lod);
 
 	if( limite > norme && node->getValue()->m_lod>0) {
@@ -798,6 +798,34 @@ void TerrainRenderer::renderQuadTree(TerrainNode* node) {
 	else {
 		node->getValue()->render();
 	}
+}
+
+bool TerrainRenderer::receivesShadows()
+{
+	bool ret = false;
+
+	if(m_material.isValid())
+	{
+		if(m_material->receivesShadows(0)) {
+			ret = true;
+		}
+	}
+
+	return ret;
+}
+
+bool TerrainRenderer::castsShadows()
+{
+	bool ret = false;
+
+	if(m_material.isValid())
+	{
+		if(m_material->castsShadows(0)) {
+			ret = true;
+		}
+	}
+
+	return ret;
 }
 
 #ifdef WITH_TOOLS

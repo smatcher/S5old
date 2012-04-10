@@ -664,6 +664,7 @@ void RenderManager::renderShadowmaps(SceneGraph* sg)
 	for(int i = 0 ; i<LIGHTING_MANAGER.managees().count() ; i++) {
 		// Render depthmap
 		Light* light = LIGHTING_MANAGER.managees().at(i);
+		m_passinfo.render_viewpoint = light;
 
 		if(light->castsShadows()) {
 			RenderTexture* depthtex = light->getRenderTexture();
@@ -713,9 +714,13 @@ void RenderManager::render(double elapsed_time, SceneGraph* sg)
 		viewpoint = m_context->getViewpoint();
 	}
 
+	m_passinfo.lod_viewpoint = viewpoint;
+
 	if(m_options.m_shadows_enabled) {
 		renderShadowmaps(sg);
 	}
+
+	m_passinfo.render_viewpoint = viewpoint;
 
 	switch(m_options.m_pipeline)
 	{

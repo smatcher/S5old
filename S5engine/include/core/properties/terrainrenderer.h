@@ -18,38 +18,38 @@
 
 class TerrainPatch {
 public:
-    TerrainPatch(TerrainRenderer* terrain, int start_x, int start_y, int lodx, int lody,  int dim, int lod, int theight);
+	TerrainPatch(TerrainRenderer* terrain, int start_x, int start_y, int lodx, int lody,  int dim, int lod, int theight);
 
-    void drawNormalEdge(int edge);
-    void drawAdaptedEdge(int nx, int ny, int edge);
+	void drawNormalEdge(int edge);
+	void drawAdaptedEdge(int nx, int ny, int edge);
 
 	void render();
 
-    TerrainRenderer* m_terrain;
+	TerrainRenderer* m_terrain;
 
-    QGLBuffer m_indices_core;
-    QGLBuffer m_indices_edges[4][2]; /* 2 niveaux d'adaptation, 4 bords par niveau */
+	QGLBuffer m_indices_core;
+	QGLBuffer m_indices_edges[4][2]; /* 2 niveaux d'adaptation, 4 bords par niveau */
 
 	/* Position du patch dans le terrain */
 	int m_offsetx;
 	int m_offsety;
 
-    /* Coordonn�es dans les tables de LOD */
-    int m_lodx;
-    int m_lody;
+	/* Coordonnes dans les tables de LOD */
+	int m_lodx;
+	int m_lody;
 
-    /* Dimension du patch (on considère que les patchs sont carrés, parce que fuck*/
+	/* Dimension du patch (on considère que les patchs sont carrés, parce que fuck*/
 	int m_dim;
 
 	/* Niveau de détail du patch */
 	int m_lod;
 
-    /* Sett� par evalLOD si on dois dessiner ce patch */
-    bool m_drawn;
+	/* Sett par evalLOD si on dois dessiner ce patch */
+	bool m_drawn;
 
-    /* Debug info */
-    float y_min;
-    float y_max;
+	/* Debug info */
+	float y_min;
+	float y_max;
 };
 
 class TerrainRenderer : public IRenderable
@@ -61,29 +61,31 @@ public:
 	TerrainRenderer(Texture& hm, Material& mat, float yscale, float scale, float tscale);
 	void render();
 
-    int getMaxLod();
-    bool getLodDrawn(int lod, int x, int y);
-    void setLodDrawn(int lod, int x, int y, bool value);
-    void printLodMap();
+	int getMaxLod();
+	bool getLodDrawn(int lod, int x, int y);
+	void setLodDrawn(int lod, int x, int y, bool value);
+	void printLodMap();
 	bool isTransparent() {return false;}
+	bool receivesShadows();
+	bool castsShadows();
 
-    int m_height;
-    int m_width;
+	int m_height;
+	int m_width;
 
 protected:
 
-    void buildQuadTree();
-    void _buildQuadTree(TerrainNode* node, int theight, int twidth, int lodx, int lody);
-    void evalLOD(TerrainNode* node, Node* cameraPosition);
-    void renderQuadTree(TerrainNode* node);
+	void buildQuadTree();
+	void _buildQuadTree(TerrainNode* node, int theight, int twidth, int lodx, int lody);
+	void evalLOD(TerrainNode* node, const Vector3f& cameraPosition);
+	void renderQuadTree(TerrainNode* node);
 
 	float* m_heightmap;
-    bool** m_lod_drawn;
+	bool** m_lod_drawn;
 	float m_yscale;
 	float m_scale;
 	float m_tscale;
 
-    int m_maxlod;
+	int m_maxlod;
 
 	bool m_wireframe;
 

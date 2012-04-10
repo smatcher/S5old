@@ -355,13 +355,13 @@ void Light::computeLightFrustum(Matrix4d& mat) const
 		const float zfar = 512;
 		float neg_depth = znear-zfar;
 		*/
-		const float w = 0.005;
-		const float h = 0.005;
-		const float d = 0.005;
+		const float w = 0.001;
+		const float h = 0.001;
+		const float d = 0.002;
 
 		mat[0] = 0;
 		mat[1] = 0;
-		mat[2] = -w;
+		mat[2] = -d;
 		mat[3] = 0;
 
 		mat[4] = 0;
@@ -369,7 +369,7 @@ void Light::computeLightFrustum(Matrix4d& mat) const
 		mat[6] = 0;
 		mat[7] = 0;
 
-		mat[8] = d;
+		mat[8] = w;
 		mat[9] = 0;
 		mat[10] = 0;
 		mat[11] = 0;
@@ -418,4 +418,21 @@ void Light::computeLightFrustum(Matrix4d& mat) const
 			mat *= Matrix4d(negz);
 		}
 	}
+}
+
+
+Vector3f Light::getWorldPosition()
+{
+	if(node())
+	{
+		Matrix4f globalTrans = node()->getGlobalTransform();
+		return Vector3f(globalTrans[12], globalTrans[13], globalTrans[14]);
+	}
+
+	return Vector3f();
+}
+
+Frustum Light::getFrustum()
+{
+	return Frustum();
 }

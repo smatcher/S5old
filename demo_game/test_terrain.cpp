@@ -96,7 +96,7 @@ int main(int argc, char *argv[])
 	nCentre->move(Vector3f(512.0,50.0,512.0));
 	nPlane->addProperty(new MeshRenderer(mesh,duckmat));
 	nPlane->rotate(Vector3f(0.0,0.0,1.0), 20.0);
-	nPlane->move(Vector3f(256.0,20.0,0.0));
+	nPlane->move(Vector3f(256.0,140.0,0.0));
 	//nPlane->setScale(Vector3f(5.0,5.0,5.0));
 	nCentre->addProperty(new DummyUpdatable(0.1));
 
@@ -120,7 +120,7 @@ int main(int argc, char *argv[])
 */
 	nLight->lookAt(Vector3f(4.3,13,10));
 	nLight->rotate(nLight->apply(Vector3f(0,1,0)),90);
-	nLight->moveTo(20*Vector3f(4.3,13,10) + Vector3f(512,50,512));
+	nLight->moveTo(25*Vector3f(4.3,13,10) + Vector3f(512,50,512));
 	//nLight->lookAt(Vector3f(512,50,512));
 	//nLight->rotate(Vector3f(0,1,0),-90);
 	cam = new Camera(90,1,1024);
@@ -130,13 +130,15 @@ int main(int argc, char *argv[])
 	nBase->rotate(Vector3f(0,1,0),-45);
 
 	nTerrain->addProperty(new TerrainRenderer(heightmap, terrain, 70.0f, 2.f,20.f));
+	nTerrain->setScale(Vector3f(1,3,1));
 
 	sg->link(nTerrain);
 	sg->link(nLight);
 	nBase->link(nRot);
 	sg->link(nBase);
-	nCentre->link(nSphere);
+	sg->link(nSphere);
 	nSphere->setScale(Vector3f(7,7,7));
+	nSphere->move(Vector3f(512.0,70.0,622.0));
 
 	RenderManager::Background background;
 	background.type = RenderManager::Background::COLOR;
