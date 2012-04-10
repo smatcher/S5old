@@ -14,6 +14,8 @@
 	#define GL_GENERATE_MIPMAP 0x8191
 #endif
 
+void __ClientActiveTexture(int texid);
+
 RenderTextureArray::RenderTextureArray(QString name, int height, int width, int nbLayers, IRD::Texture::Format format)
 	: RenderTexture(name, height, width), m_nbLayers(nbLayers)
 {
@@ -110,7 +112,7 @@ void RenderTextureArray::bind(int i)
 void RenderTextureArray::release(int i)
 {
 	for(int j=0 ; j< m_nbLayers ; j++) {
-		glActiveTexture(GL_TEXTURE0 + i + j);
+		__ClientActiveTexture(GL_TEXTURE0 + i + j);
 		glMatrixMode(GL_TEXTURE);
 		glLoadIdentity();
 		glMatrixMode(GL_MODELVIEW);
