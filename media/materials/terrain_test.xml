@@ -1,8 +1,8 @@
 <material>
-	<texture type="splatting">splatting_texture.tga</texture>
+	<texture type="splatting">splatting_island.tga</texture>
 	<texture type="splat_R">grass.tga</texture>
-	<texture type="splat_G">rock.tga</texture>
-	<texture type="splat_B">snow.jpg</texture>
+	<texture type="splat_G">sand.tga</texture>
+	<texture type="splat_B">rock.tga</texture>
 	<diffuse>1.0 1.0 1.0 1.0</diffuse>
 	<!-- <specular>0.1 0.1 0.0 1.0</specular> -->
 	<specular>0.0 0.0 0.0 1.0</specular>

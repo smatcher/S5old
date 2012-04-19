@@ -29,6 +29,17 @@
 //#include <AL/alu.h>
 #include <AL/alut.h>
 
+void addTree(ParentOfNode* parent, Vector3f pos, float angle)
+{
+	Node* node = new Node("Tree");
+	Mesh mesh = MESH_MANAGER.get("palm");
+	Material mat = MATERIAL_MANAGER.get("palm");
+	node->addProperty(new MeshRenderer(mesh,mat));
+	node->rotate(Vector3f(1,0,0),-90);
+	node->rotate(Vector3f(0,1,0),angle);
+	node->moveTo(pos);
+	parent->link(node);
+}
 
 
 int main(int argc, char *argv[])
@@ -64,7 +75,6 @@ int main(int argc, char *argv[])
 	Node* nLight = new Node("Light");
 	Node* nPlane = new Node("Plane");
 	Node* nCentre = new Node("Centre");
-	Node* nSphere = new Node("Sphere");
 	Node* nCamFollow = new Node("Camera Follow");
 
 	Texture heightmap;
@@ -72,7 +82,7 @@ int main(int argc, char *argv[])
 	if(argc>1) {
 		heightmap = TEXTURE_MANAGER.get(argv[1]);
 	 } else {
-		heightmap = TEXTURE_MANAGER.get("heightmap.tga");
+		heightmap = TEXTURE_MANAGER.get("heightmap_island.tga");
 	}
 
 
@@ -96,7 +106,7 @@ int main(int argc, char *argv[])
 	nCentre->move(Vector3f(512.0,50.0,512.0));
 	nPlane->addProperty(new MeshRenderer(mesh,duckmat));
 	nPlane->rotate(Vector3f(0.0,0.0,1.0), 20.0);
-	nPlane->move(Vector3f(256.0,140.0,0.0));
+	nPlane->move(Vector3f(286.0,20.0,0.0));
 	//nPlane->setScale(Vector3f(5.0,5.0,5.0));
 	nCentre->addProperty(new DummyUpdatable(0.1));
 
@@ -111,9 +121,6 @@ int main(int argc, char *argv[])
 	//light->setAttenuation(0.1,0,0);
 	light->setType(Light::SUN);
 	nLight->addProperty(light);
-	nSphere->addProperty(new MeshRenderer(palm,mat));
-	nSphere->rotate(Vector3f(1,0,0),-90);
-	//nSphere->addProperty(new MeshRenderer(sphere,mat));
 /*
 	nLight->move(Vector3f(512.0, 75.0, 512.0));
 	nLight->rotate(Vector3f(0.0, 0.0, 1.0),35);
@@ -136,9 +143,12 @@ int main(int argc, char *argv[])
 	sg->link(nLight);
 	nBase->link(nRot);
 	sg->link(nBase);
-	sg->link(nSphere);
-	nSphere->setScale(Vector3f(7,7,7));
-	nSphere->move(Vector3f(512.0,70.0,622.0));
+
+	addTree(sg,Vector3f(502.7,39.2,616.7),135);
+	addTree(sg,Vector3f(494.8,37.2,628.1),45);
+	addTree(sg,Vector3f(520.6,40.2,612.8),12);
+	addTree(sg,Vector3f(513.1,38.2,622.6),286);
+	addTree(sg,Vector3f(520.5,37.2,632.2),124);
 
 	RenderManager::Background background;
 	background.type = RenderManager::Background::COLOR;

@@ -476,7 +476,7 @@ void RenderManager::renderDeferred(SceneGraph* sg, Viewpoint* viewpoint)
 
 		bool shadow = light->castsShadows() && m_options.m_shadows_enabled;
 
-		m_passinfo.ubershader_used->setParamValue(UberShaderDefine::SHADOWED, shadow);
+		m_passinfo.ubershader_used->setParamValue(UberShaderDefine::SHADOW_MAP, shadow);
 		m_passinfo.ubershader_used->use();
 		m_passinfo.ubershader_used->setAllUniforms();
 

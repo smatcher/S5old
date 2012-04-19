@@ -357,7 +357,7 @@ void Light::computeLightFrustum(Matrix4d& mat) const
 		*/
 		const float w = 0.001;
 		const float h = 0.001;
-		const float d = 0.002;
+		const float d = 0.0026;
 
 		mat[0] = 0;
 		mat[1] = 0;
