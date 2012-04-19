@@ -34,8 +34,10 @@ public:
 
 		virtual void sendTo(QGLShaderProgram &program) const
 		{
-			//program.setUniformValueArray((const char*)name.toAscii(), data, width, height); // problème template, on va passer qu'une valeur
-			program.setUniformValue((const char*)name.toAscii(), *data);
+			if(width == 1)
+				program.setUniformValue((const char*)name.toAscii(), *data);
+			else
+				program.setUniformValueArray((const char*)name.toAscii(), data, width); // problème template, on va passer qu'une valeur
 		}
 
 	private:
@@ -44,7 +46,6 @@ public:
 		int width;
 		int height;
 	};
-
 
 public:
 	ShaderProgramData(const QString& name, const QString& path, IResourceFactory* factory) : ResourceData(name,path,factory) {}

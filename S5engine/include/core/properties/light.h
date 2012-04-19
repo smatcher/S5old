@@ -46,7 +46,9 @@ public:
 	virtual Viewpoint::Style getStyle();
 
 	virtual Vector3f getWorldPosition();
-	virtual Frustum getFrustum();
+	virtual Frustum getFrustum(int projection_nb);
+	virtual IRD::Viewport getViewport(int projection_nb);
+	virtual bool mustClearTMP(int projection_nb);
 
 	virtual void setProjection(double aspect, double scale, int projection_nb);
 

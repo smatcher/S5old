@@ -128,7 +128,7 @@ private :
 	QMatrix4x4* m_modelview;
 	QMatrix4x4* m_inverse_projection;
 	QMatrix4x4* m_projection;
-	QMatrix4x4* m_texture_matrices;//6
+	QMatrix4x4* m_texture_matrices;//8*6
 	QVector2D* m_screen_size;
 	QVector3D* m_sky_color;
 	QVector2D* m_sun_pos;
@@ -254,7 +254,7 @@ public:
 	void setBackground(const Background& background);
 	Vector2i getCurrentViewportSize();
 
-	void setTextureMatrix(QMatrix4x4 mat, int passNb);
+	void setTextureMatrix(QMatrix4x4 mat, int lightNb, int passNb);
 
 	const Camera* getCurrentCamera();
 	GLWidget*     getContext();

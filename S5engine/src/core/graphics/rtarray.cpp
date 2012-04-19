@@ -101,7 +101,7 @@ void RenderTextureArray::bind(int i)
 {
 	for(int j=0 ; j< m_nbLayers ; j++) {
 		if(m_texture_matrices.size() > j) {
-			RENDER_MANAGER.setTextureMatrix(QMatrix4x4(m_texture_matrices[j].values),j);
+			RENDER_MANAGER.setTextureMatrix(QMatrix4x4(m_texture_matrices[j].values),i,j);
 		}
 		m_front_textures[j]->bind(i + j);
 	}

@@ -4,6 +4,7 @@
 #include "core/maths/vector3.h"
 #include "core/maths/matrix4.h"
 #include "core/maths/frustum.h"
+#include "core/abstraction/interface/irenderdevice.h"
 
 class Viewpoint {
 public:
@@ -21,7 +22,9 @@ public:
 	virtual Style getStyle() = 0;
 
 	virtual Vector3f getWorldPosition() = 0;
-	virtual Frustum getFrustum() = 0;
+	virtual Frustum getFrustum(int projection_nb) = 0;
+	virtual IRD::Viewport getViewport(int projection_nb) = 0;
+	virtual bool mustClearTMP(int projection_nb) {return true;}
 
 	virtual void setProjection(double aspect, double scale, int projection_nb) = 0;
 

@@ -95,6 +95,9 @@ namespace IRD
 		virtual void attachTextureToFrameBuffer(FrameBuffer* buffer, Texture* texture, FrameBuffer::Attachment attachment);
 		virtual void checkFrameBuffer();
 		virtual void resizeFrameBuffer(FrameBuffer* buffer, int width, int height);
+
+		//Misc
+		virtual void setViewport(const Viewport& viewport);
 	};
 }
 

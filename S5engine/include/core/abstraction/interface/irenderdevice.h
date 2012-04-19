@@ -64,7 +64,7 @@ namespace IRD
 			{}
 		};
 
-		virtual bool bind(int texunit) {}
+		virtual bool bind(int texunit) {return false;}
 		virtual void unbind(int texunit) {}
 
 		Type   getType() {return m_params.m_type;}
@@ -150,6 +150,15 @@ namespace IRD
 		Params m_params;
 	};
 
+	struct Viewport
+	{
+		float x;
+		float y;
+		float height;
+		float width;
+		bool relative;
+	};
+
 	class iRenderDevice
 	{
 	public:
@@ -175,7 +184,7 @@ namespace IRD
 		virtual void sendVertexBufferData(VertexBuffer* vbo, int offset, int size, const void* data) {}
 		virtual bool getVertexBufferData(VertexBuffer* vbo, void* data) {return false;}
 
-		// Shaders
+		//Shaders
 		virtual Shader* createShader(const char* vertexSrc, const char* fragmentsrc) {return 0;}
 		virtual void destroyShader(Shader* shader) {}
 
@@ -185,6 +194,9 @@ namespace IRD
 		virtual void attachTextureToFrameBuffer(FrameBuffer* buffer, Texture* texture, FrameBuffer::Attachment attachment){}
 		virtual void checkFrameBuffer(){}
 		virtual void resizeFrameBuffer(FrameBuffer* buffer, int width, int height){}
+
+		//Misc
+		virtual void setViewport(const Viewport& viewport){}
 	};
 }
 

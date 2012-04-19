@@ -87,20 +87,31 @@ void RenderManager::setupProjection(RenderTarget& target, int projection_nb)
 	float aspect, scale;
 
 	if(target.isOnScreen() || target.isStretchedToScreen()) {
-/*
-		int min_side = qMin(m_viewport_size.x, m_viewport_size.y);
-		int max_side = qMax(m_viewport_size.x, m_viewport_size.y);
-		glViewport((m_viewport_size.y - max_side) / 2, (m_viewport_size.x - max_side) / 2, max_side, max_side);
-		aspect = 1;
-		scale = 1; //float(min_side)/float(max_side);
-*/
-		glViewport(0, 0, m_viewport_size.y, m_viewport_size.x);
+		/*
+		IRD::Viewport vp = viewpoint->getViewport(projection_nb);
+		if(vp.relative)
+		{
+			vp.x *= m_viewport_size.y;
+			vp.y *= m_viewport_size.x;
+			vp.width *= m_viewport_size.y;
+			vp.height *= m_viewport_size.x;
+		}
+		m_device->setViewport(vp);
+		*/
 		aspect = float(m_viewport_size.y)/float(m_viewport_size.x);
 		scale = 1;
 	} else {
-		int target_width = target.getWidth();
-		int target_height = target.getHeight();
-		glViewport(0, 0, target_width, target_height);
+		/*
+		IRD::Viewport vp = viewpoint->getViewport(projection_nb);
+		if(vp.relative)
+		{
+			vp.x *= target.getWidth();
+			vp.y *= target.getHeight();
+			vp.width *= target.getWidth();
+			vp.height *= target.getHeight();
+		}
+		m_device->setViewport(vp);
+		*/
 		aspect = 1;
 		scale = 1;
 	}
@@ -330,12 +341,12 @@ void RenderManager::init(GLWidget* context)
 		new ShaderProgramData::Uniform<QMatrix4x4>("projection",m_projection, 1, 1)
 	);
 
-	if(!m_texture_matrices) m_texture_matrices = new QMatrix4x4[6];
-	for(int i=0 ; i<6; i++) {
-		QString name = "texture_matrix"+QString().setNum(i);
+	if(!m_texture_matrices) m_texture_matrices = new QMatrix4x4[8*6];
+	for(int i=0 ; i<8; i++) {
+		QString name = "texture_matrices"+QString().setNum(i);
 		m_engine_uniforms.insert(
 			name,
-			new ShaderProgramData::Uniform<QMatrix4x4>(name,&(m_texture_matrices[i]), 1, 1)
+			new ShaderProgramData::Uniform<QMatrix4x4>(name,&(m_texture_matrices[i]), 6, 1)
 		);
 	}
 
@@ -670,7 +681,7 @@ void RenderManager::renderShadowmaps(SceneGraph* sg)
 			RenderTexture* depthtex = light->getRenderTexture();
 
 			if(depthtex != 0) {
-				FrameBufferObject fbo(depthtex->getWidth(), depthtex->getHeight(), false, false);
+				FrameBufferObject fbo(depthtex->getHeight(), depthtex->getWidth(), false, false);
 				RenderTarget srt(light, &fbo, depthtex, IRD::FrameBuffer::DEPTH_ATTACHMENT, false, false);
 				debug("PASS_INFO","cast light " + QString().setNum(i));
 				glCullFace(GL_FRONT);
@@ -1275,9 +1286,34 @@ void RenderManager::applyBackground(RenderTarget& target, int projection_nb)
 		return;
 	}
 
-	glClear(GL_DEPTH_BUFFER_BIT);
+	if(viewpoint->mustClearTMP(projection_nb))
+	{
+		glClear(GL_DEPTH_BUFFER_BIT);
+	}
 	glDepthMask(false);
 
+	if(target.isOnScreen() || target.isStretchedToScreen()) {
+		IRD::Viewport vp = viewpoint->getViewport(projection_nb);
+		if(vp.relative)
+		{
+			vp.x *= m_viewport_size.y;
+			vp.y *= m_viewport_size.x;
+			vp.width *= m_viewport_size.y;
+			vp.height *= m_viewport_size.x;
+		}
+		m_device->setViewport(vp);
+	} else {
+		IRD::Viewport vp = viewpoint->getViewport(projection_nb);
+		if(vp.relative)
+		{
+			vp.x *= target.getWidth();
+			vp.y *= target.getHeight();
+			vp.width *= target.getWidth();
+			vp.height *= target.getHeight();
+		}
+		m_device->setViewport(vp);
+	}
+	/*
 	if(target.isOnScreen() || target.isStretchedToScreen()) {
 		glViewport(0, 0, m_viewport_size.y, m_viewport_size.x);
 	} else {
@@ -1285,7 +1321,7 @@ void RenderManager::applyBackground(RenderTarget& target, int projection_nb)
 		int target_height = target.getHeight();
 		glViewport(0, 0, target_width, target_height);
 	}
-
+	*/
 	switch(m_defaultBackground.type)
 	{
 		case Background::COLOR :
@@ -1672,9 +1708,9 @@ IRD::iRenderDevice* RenderManager::getRenderDevice()
 	return m_device;
 }
 
-void RenderManager::setTextureMatrix(QMatrix4x4 mat, int passNb)
+void RenderManager::setTextureMatrix(QMatrix4x4 mat, int lightNb, int passNb)
 {
-	m_texture_matrices[passNb] = mat;
+	m_texture_matrices[lightNb*6 + passNb] = mat;
 }
 
 #ifdef WITH_TOOLS

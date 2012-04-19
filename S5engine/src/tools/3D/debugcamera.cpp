@@ -155,7 +155,18 @@ Vector3f DebugCamera::getWorldPosition()
 	return Vector3f(target);
 }
 
-Frustum DebugCamera::getFrustum()
+Frustum DebugCamera::getFrustum(int projection_nb)
 {
 	return Frustum();
+}
+
+IRD::Viewport DebugCamera::getViewport(int projection_nb)
+{
+	IRD::Viewport vp;
+	vp.x = 0;
+	vp.y = 0;
+	vp.width = 1;
+	vp.height = 1;
+	vp.relative = true;
+	return vp;
 }

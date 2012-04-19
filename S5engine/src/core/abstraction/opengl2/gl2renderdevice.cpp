@@ -263,4 +263,10 @@ namespace IRD
 		//FrameBuffer::Params& params = buffer->
 	}
 
+
+	void GL2RenderDevice::setViewport(const Viewport& viewport)
+	{
+		glViewport(viewport.x, viewport.y, viewport.width, viewport.height);
+	}
+
 }

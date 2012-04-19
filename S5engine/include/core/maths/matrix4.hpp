@@ -109,6 +109,8 @@ Matrix4<T>& Matrix4<T>::operator=(const Matrix4<T_scalar>& ref)
 {
 	for(int i=0 ; i<16 ; i++)
 		this->values[i] = ref.values[i];
+
+	return *this;
 }
 
 // Affectation-addition
@@ -118,6 +120,8 @@ Matrix4<T>& Matrix4<T>::operator+=(const Matrix4<T_scalar>& ref)
 {
 	for(int i=0 ; i<16 ; i++)
 		this->values[i] += ref.values[i];
+
+	return *this;
 }
 
 // Affectation-soustraction
@@ -127,6 +131,8 @@ Matrix4<T>& Matrix4<T>::operator-=(const Matrix4<T_scalar>& ref)
 {
 	for(int i=0 ; i<16 ; i++)
 		this->values[i] -= ref.values[i];
+
+	return *this;
 }
 
 // Affectation-multiplication
@@ -135,6 +141,8 @@ template <class T_scalar>
 Matrix4<T>& Matrix4<T>::operator*=(const Matrix4<T_scalar>& ref)
 {
 	*this = (*this) * ref;
+
+	return *this;
 }
 
 // Affectation-multiplication par un scalaire
@@ -143,6 +151,8 @@ template <class T_scalar>
 Matrix4<T>& Matrix4<T>::operator*=(T_scalar s)
 {
 	*this = (*this) * s;
+
+	return *this;
 }
 
 // Affectation-division par un scalaire
@@ -151,6 +161,8 @@ template <class T_scalar>
 Matrix4<T>& Matrix4<T>::operator /=(T_scalar s)
 {
 	*this = (*this) / s;
+
+	return *this;
 }
 
 // Addition

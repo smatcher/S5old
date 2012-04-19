@@ -23,7 +23,7 @@ void XmlMaterial::apply(unsigned int layer)
 {
 	MaterialAttributes* target;
 
-	if(m_layers.size() <= layer) {
+	if(m_layers.size() <= (int)layer) {
 		target = &m_default_attributes;
 	} else {
 		target = &m_layers[layer];
@@ -103,7 +103,7 @@ void XmlMaterial::unset(unsigned int layer)
 	MaterialAttributes* target;
 	UberShader shader = RENDER_MANAGER.getRenderPassInfo()->ubershader_used;
 
-	if(m_layers.size() <= layer) {
+	if(m_layers.size() <= (int)layer) {
 		target = &m_default_attributes;
 	} else {
 		target = &m_layers[layer];
@@ -199,7 +199,7 @@ void XmlMaterialFactory::load(ResourceData* resource)
 	QDomNodeList nodes = materials.at(0).childNodes();
 	QDomNode layersNode;
 	// Parse default attributes
-	for(int i=0 ; i < nodes.length() ; i++)
+	for(int i=0 ; i < (int)nodes.length() ; i++)
 	{
 		QDomNode node = nodes.at(i);
 		QString tag = node.nodeName();
@@ -213,7 +213,7 @@ void XmlMaterialFactory::load(ResourceData* resource)
 	// Parse layer attributes
 	if(!layersNode.isNull()) {
 		QDomNodeList layersNodes = layersNode.childNodes();
-		for(int i=0 ; i< layersNodes.length() ; i++) {
+		for(int i=0 ; i< (int)layersNodes.length() ; i++) {
 			if(layersNodes.at(i).nodeName() == "layer") {
 				QDomNodeList nodes = layersNodes.at(i).childNodes();
 				int layer = xmlresource->m_layers.size();
@@ -228,7 +228,7 @@ void XmlMaterialFactory::load(ResourceData* resource)
 						logWarn("failed to parse" << value << "as int in " << xmlresource->m_path);
 					}
 				}
-				for(int j=0 ; j < nodes.length() ; j++) {
+				for(int j=0 ; j < (int)nodes.length() ; j++) {
 					QDomNode node = nodes.at(j);
 					QString tag = node.nodeName();
 					parseTag(tag, &node, xmlresource,layer);
@@ -431,7 +431,7 @@ bool XmlMaterial::isTransparent(unsigned int layer)
 {
 	MaterialAttributes* target;
 
-	if(m_layers.size() <= layer) {
+	if(m_layers.size() <= (int)layer) {
 		target = &m_default_attributes;
 	} else {
 		target = &m_layers[layer];
@@ -443,7 +443,7 @@ bool XmlMaterial::receivesShadows(unsigned int layer)
 {
 	MaterialAttributes* target;
 
-	if(m_layers.size() <= layer) {
+	if(m_layers.size() <= (int)layer) {
 		target = &m_default_attributes;
 	} else {
 		target = &m_layers[layer];
@@ -455,7 +455,7 @@ bool XmlMaterial::castsShadows(unsigned int layer)
 {
 	MaterialAttributes* target;
 
-	if(m_layers.size() <= layer) {
+	if(m_layers.size() <= (int)layer) {
 		target = &m_default_attributes;
 	} else {
 		target = &m_layers[layer];
@@ -467,7 +467,7 @@ bool XmlMaterial::usesSSS(unsigned int layer)
 {
 	MaterialAttributes* target;
 
-	if(m_layers.size() <= layer) {
+	if(m_layers.size() <= (int)layer) {
 		target = &m_default_attributes;
 	} else {
 		target = &m_layers[layer];
@@ -479,7 +479,7 @@ bool XmlMaterial::usesColorMap(unsigned int layer)
 {
 	MaterialAttributes* target;
 
-	if(m_layers.size() <= layer) {
+	if(m_layers.size() <= (int)layer) {
 		target = &m_default_attributes;
 	} else {
 		target = &m_layers[layer];
@@ -491,7 +491,7 @@ bool XmlMaterial::usesNormalMap(unsigned int layer)
 {
 	MaterialAttributes* target;
 
-	if(m_layers.size() <= layer) {
+	if(m_layers.size() <= (int)layer) {
 		target = &m_default_attributes;
 	} else {
 		target = &m_layers[layer];
@@ -503,7 +503,7 @@ bool XmlMaterial::usesSpecularMap(unsigned int layer)
 {
 	MaterialAttributes* target;
 
-	if(m_layers.size() <= layer) {
+	if(m_layers.size() <= (int)layer) {
 		target = &m_default_attributes;
 	} else {
 		target = &m_layers[layer];
@@ -515,7 +515,7 @@ bool XmlMaterial::usesGradientMap(unsigned int layer)
 {
 	MaterialAttributes* target;
 
-	if(m_layers.size() <= layer) {
+	if(m_layers.size() <= (int)layer) {
 		target = &m_default_attributes;
 	} else {
 		target = &m_layers[layer];
@@ -527,7 +527,7 @@ bool XmlMaterial::usesSSSMap(unsigned int layer)
 {
 	MaterialAttributes* target;
 
-	if(m_layers.size() <= layer) {
+	if(m_layers.size() <= (int)layer) {
 		target = &m_default_attributes;
 	} else {
 		target = &m_layers[layer];

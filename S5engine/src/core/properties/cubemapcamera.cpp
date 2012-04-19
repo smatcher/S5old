@@ -142,3 +142,29 @@ Texture CubemapCamera::getTargetTexture()
 {
 	return Texture(*m_render_texture);
 }
+
+Vector3f CubemapCamera::getWorldPosition()
+{
+	if(node())
+	{
+		Matrix4f globalTrans = node()->getGlobalTransform();
+		return Vector3f(globalTrans[12], globalTrans[13], globalTrans[14]);
+	}
+
+	return Vector3f();
+}
+
+Frustum CubemapCamera::getFrustum(int projection_nb)
+{
+	return Frustum();
+}
+IRD::Viewport CubemapCamera::getViewport(int projection_nb)
+{
+	IRD::Viewport vp;
+	vp.x = 0;
+	vp.y = 0;
+	vp.width = 1;
+	vp.height = 1;
+	vp.relative = true;
+	return vp;
+}

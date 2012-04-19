@@ -55,10 +55,8 @@ const double negz[] = {
 	 0, 0, 0, 1
 };
 
-Light::Light(bool casts_shadows) : m_casts_shadows(casts_shadows), m_shadowmap(0), IProperty("Light")
+Light::Light(bool casts_shadows) : IProperty("Light"), m_casts_shadows(casts_shadows), m_shadowmap(0)
 {
-
-
 	m_constant_attenuation = 1.0f;
 	m_linear_attenuation = 0.0f;
 	m_quadratic_attenuation = 0.25f;
@@ -283,7 +281,8 @@ RenderTexture* Light::getRenderTexture()
 		if(m_type == OMNI)
 		{
 			while(TEXTURE_MANAGER.get("Omni_Shadowmap"+QString().setNum(i)).isValid()) i++;
-			m_shadowmap = new RenderTextureArray("Omni_Shadowmap"+QString().setNum(i), OMNIDEPTH_RESOLUTION, OMNIDEPTH_RESOLUTION, 6, IRD::Texture::TF_DEPTH);
+			m_shadowmap = new RenderTexture2D("Omni_Shadowmap"+QString().setNum(i), 2*OMNIDEPTH_RESOLUTION, 3*OMNIDEPTH_RESOLUTION, IRD::Texture::TF_DEPTH);
+			//m_shadowmap = new RenderTextureArray("Omni_Shadowmap"+QString().setNum(i), OMNIDEPTH_RESOLUTION, OMNIDEPTH_RESOLUTION, 6, IRD::Texture::TF_DEPTH);
 		}
 		else if(m_type == SPOT)
 		{
@@ -432,7 +431,38 @@ Vector3f Light::getWorldPosition()
 	return Vector3f();
 }
 
-Frustum Light::getFrustum()
+Frustum Light::getFrustum(int projection_nb)
 {
 	return Frustum();
+}
+
+IRD::Viewport Light::getViewport(int projection_nb)
+{
+	IRD::Viewport vp;
+
+	if(m_type == OMNI)
+	{
+		int row = projection_nb/3;
+		int col = projection_nb%3;
+		vp.x = (float)col/3.0f;
+		vp.y = (float)row/2.0f;
+		vp.width = 1.0f/3.0f;
+		vp.height = 1.0/2.0f;
+		vp.relative = true;
+	}
+	else
+	{
+		vp.x = 0;
+		vp.y = 0;
+		vp.width = 1;
+		vp.height = 1;
+		vp.relative = true;
+	}
+
+	return vp;
+}
+
+bool Light::mustClearTMP(int projection_nb)
+{
+	return projection_nb == 0;
 }

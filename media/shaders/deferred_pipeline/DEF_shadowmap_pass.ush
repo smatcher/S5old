@@ -3,9 +3,4 @@
 	<shader source="DEF_shadowmap_pass.frag"/>
 	<uniform name="eye_depth" value="0" type="int"/>
 	<uniform name="light_depth0" value="1" type="int"/>
-	<uniform name="light_depth1" value="2" type="int"/>
-	<uniform name="light_depth2" value="3" type="int"/>
-	<uniform name="light_depth3" value="4" type="int"/>
-	<uniform name="light_depth4" value="5" type="int"/>
-	<uniform name="light_depth5" value="6" type="int"/>
 </ubershader>

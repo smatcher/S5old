@@ -181,7 +181,7 @@ void GLSLUberShaderFactory::load(ResourceData *resource)
 
 	QDomNodeList nodes = programs.at(0).childNodes();
 
-	for(int i=0 ; i < nodes.length() ; i++)
+	for(int i=0 ; i < (int)nodes.length() ; i++)
 	{
 		QString tag = nodes.at(i).nodeName();
 

@@ -20,7 +20,8 @@ public :
 	virtual Viewpoint::Style getStyle() {return MONO;}
 
 	virtual Vector3f getWorldPosition();
-	virtual Frustum getFrustum();
+	virtual Frustum getFrustum(int projection_nb);
+	virtual IRD::Viewport getViewport(int projection_nb);
 
 	virtual const Matrix4d& getProjection(double aspect, int projection_nb);
 	virtual void setProjection(double aspect, double scale, int projection_nb);

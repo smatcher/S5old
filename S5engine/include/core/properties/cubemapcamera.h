@@ -17,6 +17,10 @@ public :
 	virtual int getNbProjections() {return 6;}
 	virtual Viewpoint::Style getStyle() {return CUBEMAP;}
 
+	virtual Vector3f getWorldPosition();
+	virtual Frustum getFrustum(int projection_nb);
+	virtual IRD::Viewport getViewport(int projection_nb);
+
 	//virtual const Matrix4d& getProjection(double aspect, int projection_nb);
 	virtual void setProjection(double aspect, double scale, int projection_nb);
 

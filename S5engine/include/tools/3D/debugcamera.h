@@ -64,7 +64,8 @@ public:
 	void updateKeyboard(Key key, bool pressed);
 
 	virtual Vector3f getWorldPosition();
-	virtual Frustum getFrustum();
+	virtual Frustum getFrustum(int projection_nb);
+	virtual IRD::Viewport getViewport(int projection_nb);
 
 	// Mise à jour de la matrice modelview
 	virtual int getNbProjections();

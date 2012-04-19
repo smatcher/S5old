@@ -112,7 +112,7 @@ int main(int argc, char *argv[])
 	nHead->addProperty(new DummyUpdatable());
 	Light* light;
 
-	light = new Light(true);
+	light = new Light(false);
 	//light->setType(Light::SUN);
 	//light->setDiffuseColor(Vector4f(0.2,1.0,0.2,1.0));
 	//light->setSpecularColor(Vector4f(0.2,1.0,0.2,1.0));
@@ -120,8 +120,8 @@ int main(int argc, char *argv[])
 	light->setSpecularColor(Vector4f(1.0,1.0,1.0,1.0));
 	nLight2->addProperty(light);
 
-	light = new Light(false);
-	light->setType(Light::SPOT);
+	light = new Light(true);
+	light->setType(Light::OMNI);
 	light->setDiffuseColor(Vector4f(1.0,1.0,1.0,1.0));
 	light->setSpecularColor(Vector4f(1.0,1.0,1.0,1.0));
 	//light->setDiffuseColor(Vector4f(1.0,0.2,0.2,1.0));

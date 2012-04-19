@@ -35,7 +35,7 @@ void PhysicObject::drawDebug(const GLWidget*, const RenderManager::DebugGizmosFi
 			const btVector3* vertices = m_cached_shape->getVertexPointer();
 			unsigned int num_indices = m_cached_shape->numIndices();
 			glColor3f(1,1,1);
-			for(int i=0 ; i+2< num_indices ; i+=3) {
+			for(unsigned int i=0 ; i+2< num_indices ; i+=3) {
 				glBegin(GL_LINE_STRIP);
 					glVertex3fv(vertices[indices[i]]);
 					glVertex3fv(vertices[indices[i+1]]);
@@ -67,7 +67,7 @@ void PhysicObject::onLinked(PropertySet*)
 	Vector3f nodeScale = node()->getScale();
 	btVector3 size(nodeScale.x,nodeScale.y,nodeScale.z);
 	btConvexShape* shape;
-	btCompoundShape* cmpd_shape;
+	//btCompoundShape* cmpd_shape;
 	btVector3 pos(0,0,0);
 	btScalar radi = 0.5;
 

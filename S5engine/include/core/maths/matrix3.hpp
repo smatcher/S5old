@@ -83,6 +83,8 @@ Matrix3<T>& Matrix3<T>::operator=(const Matrix3<T_scalar>& ref)
 {
 	for(int i=0 ; i<9 ; i++)
 		this->values[i] = ref.values[i];
+
+	return *this;
 }
 
 // Affectation-addition
@@ -92,6 +94,8 @@ Matrix3<T>& Matrix3<T>::operator+=(const Matrix3<T_scalar>& ref)
 {
 	for(int i=0 ; i<9 ; i++)
 		this->values[i] += ref.values[i];
+
+	return *this;
 }
 
 // Affectation-soustraction
@@ -101,6 +105,8 @@ Matrix3<T>& Matrix3<T>::operator-=(const Matrix3<T_scalar>& ref)
 {
 	for(int i=0 ; i<9 ; i++)
 		this->values[i] -= ref.values[i];
+
+	return *this;
 }
 
 // Affectation-multiplication
@@ -127,6 +133,7 @@ template <class T_scalar>
 Matrix3<T>& Matrix3<T>::operator /=(T_scalar s)
 {
 	*this = (*this) / s;
+	return *this;
 }
 
 // Addition

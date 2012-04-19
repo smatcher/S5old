@@ -52,6 +52,8 @@ public:
 	{
 		this->normal = ref.normal;
 		this->d = ref.d;
+
+		return *this;
 	}
 
 	Vector3f getNormal(){return normal;}

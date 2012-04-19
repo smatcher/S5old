@@ -63,7 +63,7 @@ public:
 
 	virtual void load()   {if(m_factory)m_factory->load(this);}
 	bool isLoaded() {return m_state == STATE_LOADED;}
-	virtual bool reload() {if(m_factory)m_factory->reload(this);}
+	virtual bool reload() {if(m_factory){m_factory->reload(this); return true;} else {return false;}}
 
 protected:
 	IResourceFactory* m_factory;
