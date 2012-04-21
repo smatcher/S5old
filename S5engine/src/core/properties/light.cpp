@@ -6,8 +6,12 @@
 #include <core/graphics/rt2d.h>
 #include <GL/glu.h>
 
+/*
 #define OMNIDEPTH_RESOLUTION 512
 #define SUNDEPTH_RESOLUTION 2048
+*/
+#define OMNIDEPTH_RESOLUTION 128
+#define SUNDEPTH_RESOLUTION 512
 
 #ifdef _WIN32
 	#define GL_MULTISAMPLE 0x809D

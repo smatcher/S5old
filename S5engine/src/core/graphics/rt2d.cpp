@@ -70,9 +70,11 @@ bool RenderTexture2D::unload()
 
 void RenderTexture2D::bind(int i)
 {
+	/*
 	for(int j=0 ; j< m_texture_matrices.size() ; j++) {
 		RENDER_MANAGER.setTextureMatrix(QMatrix4x4(m_texture_matrices[j].values),i,j);
 	}
+	*/
 	m_irdtexture->bind(i);
 }
 
@@ -95,4 +97,9 @@ void RenderTexture2D::setTextureMatrix(const Matrix4d& texture_matrix, int i)
 	}
 
 	m_texture_matrices[i] = texture_matrix;
+}
+
+const Matrix4d& RenderTexture2D::getTextureMatrix(int i)
+{
+	return m_texture_matrices[i];
 }

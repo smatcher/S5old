@@ -37,10 +37,19 @@ uniform vec3 scene_ambient;
 varying vec3 normal;
 
 varying vec3 eyeVec;
+varying vec4 worldPos;
 
 #for 0 7
 	#if defined LIGHT_OMNI_@ || defined LIGHT_SPOT_@ || defined LIGHT_SUN_@
 		varying vec3 lightDir@;
+	#endif
+	#ifdef SHADOW_MAP_@
+		uniform sampler2D shadowmap_@;
+		#ifdef LIGHT_OMNI_@
+			uniform mat4 texture_matrices@[6];
+		#else
+			uniform mat4 texture_matrix@;
+		#endif
 	#endif
 #endfor
 
@@ -122,6 +131,114 @@ void main()
 					float spotAngle@ = dot(L@,normalize(gl_LightSource[@].spotDirection));
 					if(spotAngle@ < gl_LightSource[@].spotCutoff)
 						attenuation@ = 0.0;
+				#endif
+
+				#ifdef SHADOW_MAP_@
+					#ifdef LIGHT_OMNI_@
+						vec4 shadowcoord0@ = texture_matrices@[0] * worldPos;
+						shadowcoord0@.xyz = shadowcoord0@.xyz/shadowcoord0@.w;
+						shadowcoord0@.z += 0.0005;
+
+						vec4 shadowcoord1@ = texture_matrices@[1] * worldPos;
+						shadowcoord1@.xyz = shadowcoord1@.xyz/shadowcoord1@.w;
+						shadowcoord1@.z += 0.0005;
+
+						vec4 shadowcoord2@ = texture_matrices@[2] * worldPos;
+						shadowcoord2@.xyz = shadowcoord2@.xyz/shadowcoord2@.w;
+						shadowcoord2@.z += 0.0005;
+
+						vec4 shadowcoord3@ = texture_matrices@[3] * worldPos;
+						shadowcoord3@.xyz = shadowcoord3@.xyz/shadowcoord3@.w;
+						shadowcoord3@.z += 0.0005;
+
+						vec4 shadowcoord4@ = texture_matrices@[4] * worldPos;
+						shadowcoord4@.xyz = shadowcoord4@.xyz/shadowcoord4@.w;
+						shadowcoord4@.z += 0.0005;
+
+						vec4 shadowcoord5@ = texture_matrices@[5] * worldPos;
+						shadowcoord5@.xyz = shadowcoord5@.xyz/shadowcoord5@.w;
+						shadowcoord5@.z += 0.0005;
+					#else
+						vec4 shadowcoord0@ = texture_matrix@ * worldPos;
+						shadowcoord0@.xyz = shadowcoord0@.xyz/shadowcoord0@.w;
+						shadowcoord0@.z += 0.0005;
+					#endif
+
+					#ifdef LIGHT_OMNI_@
+						vec2 tile@ = vec2(1.0/3.0, 1.0/2.0);
+						float sampdtl@ = texture2D(shadowmap_@, shadowcoord0@.st*tile@).z;
+						float fragdtl@ = shadowcoord0@.z;
+						float lit@ = float(
+										shadowcoord0@.w > 0.0
+									&& shadowcoord0@.s >= 0.0
+									&& shadowcoord0@.s <=1.0
+									&& shadowcoord0@.t >= 0.0
+									&& shadowcoord0@.t <= 1.0
+									&& sampdtl@ > fragdtl@);
+
+						sampdtl@ = texture2D(shadowmap_@, (shadowcoord1@.st + vec2(1.0,0.0))*tile@).z;
+						fragdtl@ = shadowcoord1@.z;
+						lit@ += float(
+								shadowcoord1@.w > 0.0
+							&& shadowcoord1@.s >= 0.0
+							&& shadowcoord1@.s <=1.0
+							&& shadowcoord1@.t >= 0.0
+							&& shadowcoord1@.t <= 1.0
+							&& sampdtl@ > fragdtl@);
+
+						sampdtl@ = texture2D(shadowmap_@, (shadowcoord2@.st + vec2(2.0,0.0))*tile@).z;
+						fragdtl@ = shadowcoord2@.z;
+						lit@ += float(
+								shadowcoord2@.w > 0.0
+							&& shadowcoord2@.s >= 0.0
+							&& shadowcoord2@.s <=1.0
+							&& shadowcoord2@.t >= 0.0
+							&& shadowcoord2@.t <= 1.0
+							&& sampdtl@ > fragdtl@);
+
+						sampdtl@ = texture2D(shadowmap_@, (shadowcoord3@.st + vec2(0.0,1.0))*tile@).z;
+						fragdtl@ = shadowcoord3@.z;
+						lit@ += float(
+								shadowcoord3@.w > 0.0
+							&& shadowcoord3@.s >= 0.0
+							&& shadowcoord3@.s <=1.0
+							&& shadowcoord3@.t >= 0.0
+							&& shadowcoord3@.t <= 1.0
+							&& sampdtl@ > fragdtl@);
+
+						sampdtl@ = texture2D(shadowmap_@, (shadowcoord4@.st + vec2(1.0,1.0))*tile@).z;
+						fragdtl@ = shadowcoord4@.z;
+						lit@ += float(
+								shadowcoord4@.w > 0.0
+							&& shadowcoord4@.s >= 0.0
+							&& shadowcoord4@.s <=1.0
+							&& shadowcoord4@.t >= 0.0
+							&& shadowcoord4@.t <= 1.0
+							&& sampdtl@ > fragdtl@);
+
+						sampdtl@ = texture2D(shadowmap_@, (shadowcoord5@.st + vec2(2.0,1.0))*tile@).z;
+						fragdtl@ = shadowcoord5@.z;
+						lit@ += float(
+								shadowcoord5@.w > 0.0
+							&& shadowcoord5@.s >= 0.0
+							&& shadowcoord5@.s <=1.0
+							&& shadowcoord5@.t >= 0.0
+							&& shadowcoord5@.t <= 1.0
+							&& sampdtl@ > fragdtl@);
+					#else
+						float sampdtl@ = texture2D(shadowmap_@, shadowcoord0@.st).z;
+						float fragdtl@ = shadowcoord0@.z;
+						float lit@ = float(
+										shadowcoord0@.w > 0.0
+									&& shadowcoord0@.s >= 0.0
+									&& shadowcoord0@.s <=1.0
+									&& shadowcoord0@.t >= 0.0
+									&& shadowcoord0@.t <= 1.0
+									&& sampdtl@ > fragdtl@);
+					#endif
+
+					lit@ = clamp(lit@, 0.0, 1.0);
+					attenuation@ = attenuation@ * lit@;
 				#endif
 
 				vec3 idiff@ = clamp(dot(L@, N) * gl_LightSource[@].diffuse.rgb * diffuse.rgb, 0.0, 1.0);

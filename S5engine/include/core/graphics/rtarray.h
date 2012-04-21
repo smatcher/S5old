@@ -37,6 +37,7 @@ public:
 	virtual void release(int i=0);
 
 	virtual void setTextureMatrix(const Matrix4d& texture_matrix, int i = 0);
+	virtual const Matrix4d& getTextureMatrix(int i = 0);
 
 private:
 	IRD::Texture** m_back_textures;

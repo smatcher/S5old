@@ -102,9 +102,11 @@ void RenderTextureArray::swap()
 void RenderTextureArray::bind(int i)
 {
 	for(int j=0 ; j< m_nbLayers ; j++) {
+		/*
 		if(m_texture_matrices.size() > j) {
 			RENDER_MANAGER.setTextureMatrix(QMatrix4x4(m_texture_matrices[j].values),i,j);
 		}
+		*/
 		m_front_textures[j]->bind(i + j);
 	}
 }
@@ -130,3 +132,7 @@ void RenderTextureArray::setTextureMatrix(const Matrix4d& texture_matrix, int i)
 	m_texture_matrices[i] = texture_matrix;
 }
 
+const Matrix4d& RenderTextureArray::getTextureMatrix(int i)
+{
+	return m_texture_matrices[i];
+}

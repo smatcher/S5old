@@ -96,6 +96,8 @@ void XmlMaterial::apply(unsigned int layer)
 	if(shader->getTexUnit(UberShaderTextureType::SSS3) >= 0) {
 		TEXTURE_MANAGER.get("SSS3")->bind(shader->getTexUnit(UberShaderTextureType::SSS3));
 	}
+
+	RENDER_MANAGER.bindShadowMaps(shader);
 }
 
 void XmlMaterial::unset(unsigned int layer)
@@ -158,6 +160,8 @@ void XmlMaterial::unset(unsigned int layer)
 	if(shader->getTexUnit(UberShaderTextureType::SSS3) >= 0) {
 		TEXTURE_MANAGER.get("SSS3")->release(shader->getTexUnit(UberShaderTextureType::SSS3));
 	}
+
+	RENDER_MANAGER.unsetShadowMaps(shader);
 
 	shader->unset();
 }

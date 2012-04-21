@@ -42,23 +42,24 @@ RenderManager::RenderManager() :
 	m_drawDebug(false),
 	m_inverse_modelview(0),
 	m_modelview(0),
-	m_texture_matrices(0),
 	m_inverse_projection(0),
 	m_projection(0),
+	m_texture_matrices(0),
 	m_screen_size(0),
-	m_scene_ambient(0),
 	m_sky_color(0),
 	m_sun_pos(0),
+	m_scene_ambient(0),
 	m_rendering(false),
+	m_positionmap(0),
 	m_normalmap(0),
 	m_diffusemap(0),
 	m_specularmap(0),
 	m_depthmap(0),
-	m_bloommap(0),
-	m_shadowmap(0),
-	m_colormap(0),
 	m_lightscatteringmap_high(0),
 	m_lightscatteringmap_low(0),
+	m_bloommap(0),
+	m_colormap(0),
+	m_shadowmap(0),
 	m_postprocessfbo(0),
 	m_lowres_postprocessfbo(0)
 {
@@ -346,7 +347,12 @@ void RenderManager::init(GLWidget* context)
 		QString name = "texture_matrices"+QString().setNum(i);
 		m_engine_uniforms.insert(
 			name,
-			new ShaderProgramData::Uniform<QMatrix4x4>(name,&(m_texture_matrices[i]), 6, 1)
+			new ShaderProgramData::Uniform<QMatrix4x4>(name,&(m_texture_matrices[i*6]), 6, 1)
+		);
+		name = "texture_matrix"+QString().setNum(i);
+		m_engine_uniforms.insert(
+			name,
+			new ShaderProgramData::Uniform<QMatrix4x4>(name,&(m_texture_matrices[i*6]), 1, 1)
 		);
 	}
 
@@ -504,7 +510,12 @@ void RenderManager::renderDeferred(SceneGraph* sg, Viewpoint* viewpoint)
 			m_passinfo.ubershader_used->use();
 
 			m_depthmap->bind(0);
-			light->getRenderTexture()->bind(1);
+			RenderTexture* lightRt = light->getRenderTexture();
+			lightRt->bind(1);
+
+			for(int j=0 ; j< light->getNbProjections() ; j++) {
+				setTextureMatrix(QMatrix4x4(lightRt->getTextureMatrix(j).values),0,j);
+			}
 
 			m_passinfo.ubershader_used->setAllUniforms();
 
@@ -706,7 +717,7 @@ void RenderManager::render(double elapsed_time, SceneGraph* sg)
 	m_passinfo.background_enabled = true;
 	m_passinfo.setup_texture_matrices = false;
 	m_passinfo.texturing_enabled = true;
-	m_passinfo.lighting_enabled = true;
+	m_passinfo.lighting_enabled = false;
 	m_passinfo.type = RenderPassInfo::FINAL_PASS;
 
 	testViewportResize();
@@ -747,6 +758,8 @@ void RenderManager::render(double elapsed_time, SceneGraph* sg)
 	}
 
 	// DrawDebug
+	m_passinfo.lighting_enabled = false;
+
 	RenderTarget srt(viewpoint);
 	drawDebug(sg,srt);
 
@@ -847,6 +860,22 @@ void RenderManager::renderTarget(SceneGraph* sg, RenderTarget& target)
 				{
 					// Render depthmap
 					Light* light = LIGHTING_MANAGER.managees().at(i);
+
+					if(light->castsShadows() && m_options.m_shadows_enabled)
+					{
+						RenderTexture* lightRt = light->getRenderTexture();
+
+						for(int j=0 ; j< light->getNbProjections() ; j++) {
+							setTextureMatrix(QMatrix4x4(lightRt->getTextureMatrix(j).values),0,j);
+						}
+
+						m_passinfo.ubershader_used->setParamValue(UberShaderDefine::Type(UberShaderDefine::SHADOW_MAP_0+i),true);
+					}
+					else
+					{
+						m_passinfo.ubershader_used->setParamValue(UberShaderDefine::Type(UberShaderDefine::SHADOW_MAP_0+i),false);
+					}
+
 					light->sendParameters(i);
 
 					m_passinfo.ubershader_used->setParamValue(UberShaderDefine::Type(UberShaderDefine::LIGHT_OMNI_0+i),light->getType() == Light::OMNI);
@@ -1711,6 +1740,37 @@ IRD::iRenderDevice* RenderManager::getRenderDevice()
 void RenderManager::setTextureMatrix(QMatrix4x4 mat, int lightNb, int passNb)
 {
 	m_texture_matrices[lightNb*6 + passNb] = mat;
+}
+
+
+void RenderManager::bindShadowMaps(UberShader& shader)
+{
+	for(int i = 0 ; i<MAX_LIGHTS ; i++) {
+		if(i<LIGHTING_MANAGER.managees().count())
+		{
+			int texunit = shader->getTexUnit((UberShaderTextureType::Type)(UberShaderTextureType::SHADOW_MAP_0+i));
+			if(texunit >= 0) {
+				Light* light = LIGHTING_MANAGER.managees().at(i);
+				RenderTexture* lightRt = light->getRenderTexture();
+				lightRt->bind(texunit);
+			}
+		}
+	}
+}
+
+void RenderManager::unsetShadowMaps(UberShader& shader)
+{
+	for(int i = 0 ; i<MAX_LIGHTS ; i++) {
+		if(i<LIGHTING_MANAGER.managees().count())
+		{
+			int texunit = shader->getTexUnit((UberShaderTextureType::Type)(UberShaderTextureType::SHADOW_MAP_0+i));
+			if(texunit >= 0) {
+				Light* light = LIGHTING_MANAGER.managees().at(i);
+				RenderTexture* lightRt = light->getRenderTexture();
+				lightRt->release(texunit);
+			}
+		}
+	}
 }
 
 #ifdef WITH_TOOLS

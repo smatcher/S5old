@@ -222,6 +222,9 @@ public:
 
 	void takeScreenshot(QString path="screen.png");
 
+	void bindShadowMaps(UberShader& shader);
+	void unsetShadowMaps(UberShader& shader);
+
 	void setCurrentCamera(Camera* cam);
 	void setAmbient(Vector3f ambient);
 

@@ -8,6 +8,8 @@ varying vec3 normal;
 #endif
 
 varying vec3 eyeVec;
+varying vec4 worldPos;
+uniform mat4 inverse_modelview;
 
 #for 0 7
 	#if defined LIGHT_OMNI_@ || defined LIGHT_SPOT_@ || defined LIGHT_SUN_@
@@ -29,15 +31,16 @@ void main()
 		eyebitangent = normalize(gl_NormalMatrix * bitangent);
 	#endif
 
-	vec3 vVertex = vec3(gl_ModelViewMatrix * gl_Vertex);
-	eyeVec = -vVertex;
+	vec4 vVertex = gl_ModelViewMatrix * gl_Vertex;
+	eyeVec = -vVertex.xyz;
+	worldPos = inverse_modelview * vVertex;
 
 	#for 0 7
 		#if defined LIGHT_OMNI_@ || defined LIGHT_SPOT_@ || defined LIGHT_SUN_@
 			#ifdef LIGHT_SUN_@
 				lightDir@ = normalize(gl_LightSource[@].spotDirection);
 			#else
-				lightDir@ = vec3(gl_LightSource[@].position.xyz - vVertex);
+				lightDir@ = vec3(gl_LightSource[@].position.xyz - vVertex.xyz);
 			#endif
 		#endif
 	#endfor

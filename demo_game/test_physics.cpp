@@ -121,7 +121,7 @@ int main(int argc, char *argv[])
 	nLight2->addProperty(light);
 
 	light = new Light(true);
-	light->setType(Light::OMNI);
+	light->setType(Light::SPOT);
 	light->setDiffuseColor(Vector4f(1.0,1.0,1.0,1.0));
 	light->setSpecularColor(Vector4f(1.0,1.0,1.0,1.0));
 	//light->setDiffuseColor(Vector4f(1.0,0.2,0.2,1.0));
@@ -250,9 +250,8 @@ int main(int argc, char *argv[])
 		(*it)->addProperty(new PhysicObject(prop));
 		prop.mass += 1.0;
 		(*it)->addProperty(new MeshRenderer(cube,gradientmats[nbDuckLight%4]));
-		/*
-		if(nbDuckLight < 5) {
-			light = new Light(true);
+		if(nbDuckLight < 1) {
+			light = new Light(false);
 			if(nbDuckLight % 3 == 0) {
 				light->setDiffuseColor(Vector4f(0.2,0.2,1.0,1.0));
 				light->setSpecularColor(Vector4f(0.2,0.2,1.0,1.0));
@@ -265,7 +264,6 @@ int main(int argc, char *argv[])
 			}
 			(*it)->addProperty(light);
 		}
-		*/
 		nbDuckLight++;
 	}
 

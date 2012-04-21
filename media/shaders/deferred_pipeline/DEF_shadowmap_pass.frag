@@ -3,7 +3,11 @@ uniform sampler2D eye_depth, light_depth0;
 uniform mat4 inverse_projection;
 uniform mat4 inverse_modelview;
 
-uniform mat4 texture_matrices0[6];
+#ifdef LIGHT_OMNI
+	uniform mat4 texture_matrices0[6];
+#else
+	uniform mat4 texture_matrix0;
+#endif
 /*
 #ifdef LIGHT_OMNI
 	uniform mat4 texture_matrix1;
@@ -26,11 +30,11 @@ void main()
 	vec4 eyepos = inverse_projection * scpos;
 	vec4 worldpos = inverse_modelview * eyepos;
 
+#ifdef LIGHT_OMNI
 	vec4 shadowcoord0 = texture_matrices0[0] * worldpos;
 	shadowcoord0.xyz = shadowcoord0.xyz/shadowcoord0.w;
 	shadowcoord0.z += 0.0005;
 
-#ifdef LIGHT_OMNI
 	vec4 shadowcoord1 = texture_matrices0[1] * worldpos;
 	shadowcoord1.xyz = shadowcoord1.xyz/shadowcoord1.w;
 	shadowcoord1.z += 0.0005;
@@ -50,6 +54,10 @@ void main()
 	vec4 shadowcoord5 = texture_matrices0[5] * worldpos;
 	shadowcoord5.xyz = shadowcoord5.xyz/shadowcoord5.w;
 	shadowcoord5.z += 0.0005;
+#else
+	vec4 shadowcoord0 = texture_matrix0 * worldpos;
+	shadowcoord0.xyz = shadowcoord0.xyz/shadowcoord0.w;
+	shadowcoord0.z += 0.0005;
 #endif
 
 #ifdef LIGHT_OMNI

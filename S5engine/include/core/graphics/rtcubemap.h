@@ -21,6 +21,7 @@ public:
 	virtual void swap();
 
 	virtual void setTextureMatrix(const Matrix4d& texture_matrix, int i = 0) {}
+	virtual const Matrix4d& getTextureMatrix(int i = 0) {return Matrix4d();}
 
 private:
 	GLuint m_render_cube;

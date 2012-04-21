@@ -8,6 +8,27 @@ class ShaderProgram;
 class Shader;
 template <class R, class H> class ResourceManager;
 
+namespace HACK
+{
+	template <typename T>
+	void setUniform(QGLShaderProgram &program, const char* name, T* data, int nb)
+	{
+		if(nb == 1)
+			program.setUniformValue(name, *data);
+		else
+			program.setUniformValueArray(name, data, nb);
+	}
+
+	template <> inline
+	void setUniform<GLfloat>(QGLShaderProgram &program, const char* name, GLfloat* data, int nb)
+	{
+			if(nb == 1)
+				program.setUniformValue(name, *data);
+			else
+				program.setUniformValueArray(name, data, nb, 1);
+	}
+}
+
 class ShaderProgramData : public ResourceData
 {
 	friend class ResourceHandle<ShaderProgramData>;
@@ -34,10 +55,14 @@ public:
 
 		virtual void sendTo(QGLShaderProgram &program) const
 		{
+			/*
 			if(width == 1)
 				program.setUniformValue((const char*)name.toAscii(), *data);
 			else
 				program.setUniformValueArray((const char*)name.toAscii(), data, width); // problème template, on va passer qu'une valeur
+			*/
+
+			HACK::setUniform<T>(program, (const char*)name.toAscii(), data, width);
 		}
 
 	private:

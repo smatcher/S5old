@@ -279,15 +279,23 @@ protected:
 		texunits[UberShaderTextureType::NORMAL_MAP]      = m_defines[UberShaderDefine::NORMALMAPPED]      ? texunit++ : -1;
 		texunits[UberShaderTextureType::SPECULAR_MAP]    = m_defines[UberShaderDefine::SPECULARMAPPED]    ? texunit++ : -1;
 		texunits[UberShaderTextureType::GRADIENT_MAP]    = m_defines[UberShaderDefine::GRADIENTMAPPED]    ? texunit++ : -1;
-		texunits[UberShaderTextureType::SSS1]            = m_defines[UberShaderDefine::SSS_FINAL]         ? texunit++ : -1;
-		texunits[UberShaderTextureType::SSS2]            = m_defines[UberShaderDefine::SSS_FINAL]         ? texunit++ : -1;
-		texunits[UberShaderTextureType::SSS3]            = m_defines[UberShaderDefine::SSS_FINAL]         ? texunit++ : -1;
-		texunits[UberShaderTextureType::SSS_MAP]         = m_defines[UberShaderDefine::SSS_MAP]           ? texunit++ : -1;
 		texunits[UberShaderTextureType::ENVIRONMENT_MAP] = m_defines[UberShaderDefine::ENVIRONMENTMAPPED] ? texunit++ : -1;
+		texunits[UberShaderTextureType::SHADOW_MAP_0]    = m_defines[UberShaderDefine::SHADOW_MAP_0]      ? texunit++ : -1;
+		texunits[UberShaderTextureType::SHADOW_MAP_1]    = m_defines[UberShaderDefine::SHADOW_MAP_1]      ? texunit++ : -1;
+		texunits[UberShaderTextureType::SHADOW_MAP_2]    = m_defines[UberShaderDefine::SHADOW_MAP_2]      ? texunit++ : -1;
+		texunits[UberShaderTextureType::SHADOW_MAP_3]    = m_defines[UberShaderDefine::SHADOW_MAP_3]      ? texunit++ : -1;
+		texunits[UberShaderTextureType::SHADOW_MAP_4]    = m_defines[UberShaderDefine::SHADOW_MAP_4]      ? texunit++ : -1;
+		texunits[UberShaderTextureType::SHADOW_MAP_5]    = m_defines[UberShaderDefine::SHADOW_MAP_5]      ? texunit++ : -1;
+		texunits[UberShaderTextureType::SHADOW_MAP_6]    = m_defines[UberShaderDefine::SHADOW_MAP_6]      ? texunit++ : -1;
+		texunits[UberShaderTextureType::SHADOW_MAP_7]    = m_defines[UberShaderDefine::SHADOW_MAP_7]      ? texunit++ : -1;
 		texunits[UberShaderTextureType::SPLATTING]       = m_defines[UberShaderDefine::SPLATTING]         ? texunit++ : -1;
 		texunits[UberShaderTextureType::SPLATTING_R]     = m_defines[UberShaderDefine::SPLATTING]         ? texunit++ : -1;
 		texunits[UberShaderTextureType::SPLATTING_G]     = m_defines[UberShaderDefine::SPLATTING]         ? texunit++ : -1;
 		texunits[UberShaderTextureType::SPLATTING_B]     = m_defines[UberShaderDefine::SPLATTING]         ? texunit++ : -1;
+		texunits[UberShaderTextureType::SSS1]            = m_defines[UberShaderDefine::SSS_FINAL]         ? texunit++ : -1;
+		texunits[UberShaderTextureType::SSS2]            = m_defines[UberShaderDefine::SSS_FINAL]         ? texunit++ : -1;
+		texunits[UberShaderTextureType::SSS3]            = m_defines[UberShaderDefine::SSS_FINAL]         ? texunit++ : -1;
+		texunits[UberShaderTextureType::SSS_MAP]         = m_defines[UberShaderDefine::SSS_MAP]           ? texunit++ : -1;
 	}
 
 	UberShaderNode* getCurrentNode(int param_read = 0, UberShaderNode* current_branch = 0) {
