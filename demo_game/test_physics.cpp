@@ -250,7 +250,7 @@ int main(int argc, char *argv[])
 		(*it)->addProperty(new PhysicObject(prop));
 		prop.mass += 1.0;
 		(*it)->addProperty(new MeshRenderer(cube,gradientmats[nbDuckLight%4]));
-		if(nbDuckLight < 1) {
+		if(nbDuckLight < 0) {
 			light = new Light(false);
 			if(nbDuckLight % 3 == 0) {
 				light->setDiffuseColor(Vector4f(0.2,0.2,1.0,1.0));

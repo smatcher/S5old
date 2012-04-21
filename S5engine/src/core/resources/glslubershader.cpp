@@ -148,14 +148,12 @@ void GLSLUberShader::use()
 		if(m_current->m_texunits[UberShaderTextureType::SPLATTING_G] >= 0)
 			_program->setUniformValue("splat_g",m_current->m_texunits[UberShaderTextureType::SPLATTING_G]);
 
-		debugGL("before setting SM");
 		for(int i=0 ; i<8 ; i++)
 		{
 			int type = UberShaderTextureType::SHADOW_MAP_0 + i;
 			if(m_current->m_texunits[type] >= 0)
 				_program->setUniformValue((const char*)("shadowmap_"+QString().setNum(i)).toAscii(),m_current->m_texunits[type]);
 		}
-		debugGL("after setting SM");
 	}
 }
 

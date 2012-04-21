@@ -887,6 +887,7 @@ void RenderManager::renderTarget(SceneGraph* sg, RenderTarget& target)
 					m_passinfo.ubershader_used->setParamValue(UberShaderDefine::Type(UberShaderDefine::LIGHT_OMNI_0+i),false);
 					m_passinfo.ubershader_used->setParamValue(UberShaderDefine::Type(UberShaderDefine::LIGHT_SPOT_0+i),false);
 					m_passinfo.ubershader_used->setParamValue(UberShaderDefine::Type(UberShaderDefine::LIGHT_SUN_0+i),false);
+					m_passinfo.ubershader_used->setParamValue(UberShaderDefine::Type(UberShaderDefine::SHADOW_MAP_0+i),false);
 				}
 			}
 		}
@@ -1240,6 +1241,27 @@ void RenderManager::debugDisplayTexture(Texture texture, int x, int y, int width
 			glTexCoord2f(0.0f,1.0f);
 			glVertex3d(-1,1,0.0f);
 		glEnd();
+
+		// debug swap
+		/*
+		if(dynamic_cast<RenderTexture2D*>(*texture))
+		{
+			dynamic_cast<RenderTexture2D*>(*texture)->swap();
+			glViewport(x,y+height,width,height);
+			texture->bind();
+			glBegin(GL_QUADS);
+				glTexCoord2f(0.0f,0.0f);
+				glVertex3d(-1,-1,0.0f);
+				glTexCoord2f(1.0f,0.0f);
+				glVertex3d(1,-1,0.0f);
+				glTexCoord2f(1.0f,1.0f);
+				glVertex3d(1,1,0.0f);
+				glTexCoord2f(0.0f,1.0f);
+				glVertex3d(-1,1,0.0f);
+			glEnd();
+			dynamic_cast<RenderTexture2D*>(*texture)->swap();
+		}
+		*/
 
 		glEnable(GL_LIGHTING);
 
