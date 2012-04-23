@@ -866,7 +866,7 @@ void RenderManager::renderTarget(SceneGraph* sg, RenderTarget& target)
 						RenderTexture* lightRt = light->getRenderTexture();
 
 						for(int j=0 ; j< light->getNbProjections() ; j++) {
-							setTextureMatrix(QMatrix4x4(lightRt->getTextureMatrix(j).values),0,j);
+							setTextureMatrix(QMatrix4x4(lightRt->getTextureMatrix(j).values),i,j);
 						}
 
 						m_passinfo.ubershader_used->setParamValue(UberShaderDefine::Type(UberShaderDefine::SHADOW_MAP_0+i),true);
@@ -1231,6 +1231,7 @@ void RenderManager::debugDisplayTexture(Texture texture, int x, int y, int width
 
 		glViewport(x,y,width,height);
 		texture->bind();
+		glEnable(GL_TEXTURE_2D);
 		glBegin(GL_QUADS);
 			glTexCoord2f(0.0f,0.0f);
 			glVertex3d(-1,-1,0.0f);

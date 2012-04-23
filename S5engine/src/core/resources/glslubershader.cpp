@@ -131,7 +131,7 @@ void GLSLUberShader::use()
 			_program->setUniformValue("sssmap",m_current->m_texunits[UberShaderTextureType::SSS_MAP]);
 
 		if(m_current->m_texunits[UberShaderTextureType::SPLATTING] >= 0)
-			_program->setUniformValue("spatting",m_current->m_texunits[UberShaderTextureType::SPLATTING]);
+			_program->setUniformValue("splatting",m_current->m_texunits[UberShaderTextureType::SPLATTING]);
 
 		if(m_current->m_texunits[UberShaderTextureType::SPLATTING_R] >= 0)
 			_program->setUniformValue("splat_r",m_current->m_texunits[UberShaderTextureType::SPLATTING_R]);

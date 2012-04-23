@@ -121,7 +121,7 @@ int main(int argc, char *argv[])
 	nLight2->addProperty(light);
 
 	light = new Light(true);
-	light->setType(Light::SPOT);
+	//light->setType(Light::SPOT);
 	light->setDiffuseColor(Vector4f(1.0,1.0,1.0,1.0));
 	light->setSpecularColor(Vector4f(1.0,1.0,1.0,1.0));
 	//light->setDiffuseColor(Vector4f(1.0,0.2,0.2,1.0));

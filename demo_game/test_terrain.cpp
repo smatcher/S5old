@@ -22,6 +22,8 @@
 #include "core/resources/managers.h"
 #include "core/properties/meshrenderer.h"
 
+#include "core/managers/commandmanager.h"
+
 #include "core/inputs/inputmanager.h"
 
 #include <AL/al.h>
@@ -165,6 +167,8 @@ int main(int argc, char *argv[])
 	RENDER_MANAGER.setBackground(background);
 	RENDER_MANAGER.setCurrentCamera(cam);
 	RENDER_MANAGER.setAmbient(Vector3f(0.1,0.2,0.15));
+
+	COMMAND_MANAGER.readFile("config.cfg");
 
 	int ret = engine.start();
 
