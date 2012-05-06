@@ -9,7 +9,7 @@ varying vec3 normal;
 
 varying vec3 eyeVec;
 varying vec4 worldPos;
-uniform mat4 inverse_modelview;
+uniform mat4 inverse_view;
 
 #for 0 7
 	#if defined LIGHT_OMNI_@ || defined LIGHT_SPOT_@ || defined LIGHT_SUN_@
@@ -33,7 +33,7 @@ void main()
 
 	vec4 vVertex = gl_ModelViewMatrix * gl_Vertex;
 	eyeVec = -vVertex.xyz;
-	worldPos = inverse_modelview * vVertex;
+	worldPos = inverse_view * vVertex;
 
 	#for 0 7
 		#if defined LIGHT_OMNI_@ || defined LIGHT_SPOT_@ || defined LIGHT_SUN_@

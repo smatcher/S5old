@@ -5,7 +5,7 @@ uniform sampler2D gbuffer_depth;
 varying vec2 screen_pos;
 varying vec3 eyelightpos;
 uniform mat4 inverse_projection;
-uniform mat4 inverse_modelview;
+uniform mat4 inverse_view;
 
 #ifdef SHADOW_MAP
 	uniform sampler2D shadowmap;

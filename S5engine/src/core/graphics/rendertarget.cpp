@@ -140,20 +140,22 @@ void RenderTarget::setTextureMatrix(int passNb)
 	static double modelView[16];
 	static double projection[16];
 	static double final[16];
-/*
+
 	const GLdouble biais[16] = {
 		0.5, 0.0, 0.0, 0.0,
 		0.0, 0.5, 0.0, 0.0,
 		0.0, 0.0, 0.5, 0.0,
 		0.5, 0.5, 0.5, 1.0
 	};
-*/
+
+	/*
 	const GLdouble biais[16] = {
 		0.5, 0.0, 0.0, 0.0,
 		0.0, 0.5, 0.0, 0.0,
 		0.0, 0.0, 0.5, 0.0,
 		0.5, 0.5, 0.495, 1.0
 	};
+	*/
 
 	debugGL("1");
 	glGetDoublev(GL_PROJECTION_MATRIX, projection);

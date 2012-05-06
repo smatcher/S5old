@@ -43,6 +43,20 @@ Texture Camera::getTargetTexture()
 	return Texture(*m_render_texture);
 }
 
+Matrix4d Camera::getViewProjection(double aspect, int projection_nb)
+{
+	if(m_lastAspect != aspect || m_needComputation)
+	{
+		m_lastAspect = aspect;
+		computeProjection();
+	}
+
+	Matrix4d view = node()->getGlobalTransform().getInverse();
+	debug("MATRIX_STACK", "get viewprojection : view" << QMatrix4x4(view.values));
+	debug("MATRIX_STACK", "get viewprojection : viewprojection" << QMatrix4x4((m_projection*view).values));
+	return m_projection*view;
+}
+
 const Matrix4d& Camera::getProjection(double aspect, int projection_nb)
 {
 	if(m_lastAspect != aspect || m_needComputation)

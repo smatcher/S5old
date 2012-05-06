@@ -40,8 +40,8 @@ RenderManager::RenderManager() :
 	m_camera(0),
 	m_cameraChanged(true),
 	m_drawDebug(false),
-	m_inverse_modelview(0),
-	m_modelview(0),
+	m_inverse_view(0),
+	m_view(0),
 	m_inverse_projection(0),
 	m_projection(0),
 	m_texture_matrices(0),
@@ -318,16 +318,16 @@ void RenderManager::init(GLWidget* context)
 	glEnable(GL_BLEND);
 
 	// setting up engine uniforms hash
-	if(!m_inverse_modelview) m_inverse_modelview = new QMatrix4x4();
+	if(!m_inverse_view) m_inverse_view = new QMatrix4x4();
 	m_engine_uniforms.insert(
-		"inverse_modelview",
-		new ShaderProgramData::Uniform<QMatrix4x4>("inverse_modelview",m_inverse_modelview, 1, 1)
+		"inverse_view",
+		new ShaderProgramData::Uniform<QMatrix4x4>("inverse_view",m_inverse_view, 1, 1)
 	);
 
-	if(!m_modelview) m_modelview = new QMatrix4x4();
+	if(!m_view) m_view = new QMatrix4x4();
 	m_engine_uniforms.insert(
-		"modelview",
-		new ShaderProgramData::Uniform<QMatrix4x4>("modelview",m_modelview, 1, 1)
+		"view",
+		new ShaderProgramData::Uniform<QMatrix4x4>("view",m_view, 1, 1)
 	);
 
 	if(!m_inverse_projection) m_inverse_projection = new QMatrix4x4();
@@ -683,6 +683,7 @@ void RenderManager::renderForward(SceneGraph* sg, Viewpoint* viewpoint)
 
 void RenderManager::renderShadowmaps(SceneGraph* sg)
 {
+	glCullFace(GL_FRONT);
 	for(int i = 0 ; i<LIGHTING_MANAGER.managees().count() ; i++) {
 		// Render depthmap
 		Light* light = LIGHTING_MANAGER.managees().at(i);
@@ -695,16 +696,15 @@ void RenderManager::renderShadowmaps(SceneGraph* sg)
 				FrameBufferObject fbo(depthtex->getHeight(), depthtex->getWidth(), false, false);
 				RenderTarget srt(light, &fbo, depthtex, IRD::FrameBuffer::DEPTH_ATTACHMENT, false, false);
 				debug("PASS_INFO","cast light " + QString().setNum(i));
-				glCullFace(GL_FRONT);
 				m_passinfo.setup_texture_matrices = true;
 				m_passinfo.ubershader_used = m_depth;
 				m_passinfo.type = RenderPassInfo::CAST_SHADOW_PASS;
 				renderTarget(sg, srt);
 				m_passinfo.setup_texture_matrices = false;
-				glCullFace(GL_BACK);
 			}
 		}
 	}
+	glCullFace(GL_BACK);
 }
 
 void RenderManager::render(double elapsed_time, SceneGraph* sg)
@@ -834,15 +834,19 @@ void RenderManager::renderTarget(SceneGraph* sg, RenderTarget& target)
 		// Transpose because Qt does not have the same major than OpenGL
 		double camera_transform[16];
 		glGetDoublev(GL_MODELVIEW_MATRIX, camera_transform);
-		*m_modelview = QMatrix4x4(camera_transform).transposed();
+		*m_view = QMatrix4x4(camera_transform).transposed();
 		Matrix4d mat(camera_transform);
 		mat.invertAndTranspose();
-		*m_inverse_modelview = QMatrix4x4(mat.values);
+		*m_inverse_view = QMatrix4x4(mat.values);
 		glGetDoublev(GL_PROJECTION_MATRIX, camera_transform);
 		*m_projection = QMatrix4x4(camera_transform).transposed();
 		mat = Matrix4d(camera_transform);
 		mat.invertAndTranspose();
 		*m_inverse_projection = QMatrix4x4(mat.values);
+
+		debug("MATRIX_STACK","View is" << *m_view);
+		debug("MATRIX_STACK","Projection is" << *m_projection);
+		debug("MATRIX_STACK","View Projection is" << (*m_projection) * (*m_view));
 
 		// set screensize
 		if(target.isOnScreen()) {

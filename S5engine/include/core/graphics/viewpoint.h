@@ -26,6 +26,8 @@ public:
 	virtual IRD::Viewport getViewport(int projection_nb) = 0;
 	virtual bool mustClearTMP(int projection_nb) {return true;}
 
+	virtual Matrix4d getViewProjection(double aspect, int projection_nb) = 0;
+	virtual const Matrix4d& getProjection(double aspect, int projection_nb) = 0;
 	virtual void setProjection(double aspect, double scale, int projection_nb) = 0;
 
 	virtual void applyTransform(int projection_nb) = 0;

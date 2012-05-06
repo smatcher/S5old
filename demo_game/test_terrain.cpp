@@ -132,8 +132,10 @@ int main(int argc, char *argv[])
 	nLight->moveTo(25*Vector3f(4.3,13,10) + Vector3f(512,50,512));
 	//nLight->lookAt(Vector3f(512,50,512));
 	//nLight->rotate(Vector3f(0,1,0),-90);
+	/*
 	cam = new Camera(90,1,1024);
 	nLight->addProperty(cam);
+	*/
 
 	nBase->rotate(Vector3f(1,0,0),90);
 	nBase->rotate(Vector3f(0,1,0),-45);
@@ -165,7 +167,7 @@ int main(int argc, char *argv[])
 	background.type = RenderManager::Background::SKYBOX;
 
 	RENDER_MANAGER.setBackground(background);
-	RENDER_MANAGER.setCurrentCamera(cam);
+	//RENDER_MANAGER.setCurrentCamera(cam);
 	RENDER_MANAGER.setAmbient(Vector3f(0.1,0.2,0.15));
 
 	COMMAND_MANAGER.readFile("config.cfg");

@@ -23,6 +23,7 @@ public :
 	virtual Frustum getFrustum(int projection_nb);
 	virtual IRD::Viewport getViewport(int projection_nb);
 
+	virtual Matrix4d getViewProjection(double aspect, int projection_nb);
 	virtual const Matrix4d& getProjection(double aspect, int projection_nb);
 	virtual void setProjection(double aspect, double scale, int projection_nb);
 

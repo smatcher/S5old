@@ -37,6 +37,7 @@ private:
 	Type m_type;
 
 	void computeLightFrustum(Matrix4d& mat) const;
+	void computePSSM(Matrix4d& mat, int split_nb) const;
 
 public:
 	Light(bool casts_shadows = false);
@@ -50,6 +51,8 @@ public:
 	virtual IRD::Viewport getViewport(int projection_nb);
 	virtual bool mustClearTMP(int projection_nb);
 
+	virtual Matrix4d getViewProjection(double aspect, int projection_nb);
+	virtual const Matrix4d& getProjection(double aspect, int projection_nb);
 	virtual void setProjection(double aspect, double scale, int projection_nb);
 
 	virtual void applyTransform(int projection_nb);

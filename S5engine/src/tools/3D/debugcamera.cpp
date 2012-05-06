@@ -2,6 +2,7 @@
 #include "core/maths/transform.h"
 #include "core/log/log.h"
 #include <GL/glu.h>
+#include <QMatrix4x4>
 
 #include <QDateTime>
 
@@ -80,16 +81,59 @@ Viewpoint::Style DebugCamera::getStyle()
 	return MONO;
 }
 
+Matrix4d DebugCamera::getViewProjection(double aspect, int projection_nb)
+{
+	Matrix4d projection = getProjection(aspect, projection_nb);
+	Transformd viewTrans;
+	viewTrans.move(Vector3d(-target.x, -target.y, -target.z));
+	viewTrans.rotate(Vector3d(0.0,1.0,0.0),rotation_y);
+	viewTrans.rotate(Vector3d(1.0,0.0,0.0),rotation_x);
+	Matrix4d view(viewTrans);
+	debug("MATRIX_STACK", "get viewprojection : view" << QMatrix4x4(view.values));
+	debug("MATRIX_STACK", "get viewprojection : viewprojection" << QMatrix4x4((projection*view).values));
+	return projection * view;
+}
+
 const Matrix4d& DebugCamera::getProjection(double aspect, int projection_nb)
 {
-	logWarn("Not implemented");
 	Matrix4d mat;
+
+	const float yfov = 70;
+	const float znear = 0.01;
+	const float zfar = 1000;
+	const float h = 1.0f/tan(yfov*M_PI/360);
+	float neg_depth = znear-zfar;
+
+	mat[0] = h / aspect;
+	mat[1] = 0;
+	mat[2] = 0;
+	mat[3] = 0;
+
+	mat[4] = 0;
+	mat[5] = h;
+	mat[6] = 0;
+	mat[7] = 0;
+
+	mat[8] = 0;
+	mat[9] = 0;
+	mat[10] = (zfar + znear)/neg_depth;
+	mat[11] = -1;
+
+	mat[12] = 0;
+	mat[13] = 0;
+	mat[14] = 2.0f*(znear*zfar)/neg_depth;
+	mat[15] = 0;
+
 	return mat;
 }
 
 void DebugCamera::setProjection(double aspect, double scale, int projection_nb)
 {
+	Matrix4d mat = getProjection(aspect, projection_nb);
+	glLoadMatrixd(mat);
+	/*
 	gluPerspective(70,aspect,0.01,1000);
+	*/
 	glScaled(scale, scale, 1);
 }
 

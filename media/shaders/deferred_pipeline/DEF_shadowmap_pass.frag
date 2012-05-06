@@ -1,7 +1,7 @@
 uniform sampler2D eye_depth, light_depth0;
 
 uniform mat4 inverse_projection;
-uniform mat4 inverse_modelview;
+uniform mat4 inverse_view;
 
 #ifdef LIGHT_OMNI
 	uniform mat4 texture_matrices0[6];
@@ -28,7 +28,7 @@ void main()
 						depthsample.z * 255.0/16777216.0;
 	vec4 scpos = vec4(screen_pos, depth, 1.0) * 2.0 - 1.0;
 	vec4 eyepos = inverse_projection * scpos;
-	vec4 worldpos = inverse_modelview * eyepos;
+	vec4 worldpos = inverse_view * eyepos;
 
 #ifdef LIGHT_OMNI
 	vec4 shadowcoord0 = texture_matrices0[0] * worldpos;

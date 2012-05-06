@@ -124,8 +124,8 @@ private :
 
 	QHash<QString, ShaderProgramData::UniformBase*> m_engine_uniforms;
 	// engine uniforms data
-	QMatrix4x4* m_inverse_modelview;
-	QMatrix4x4* m_modelview;
+	QMatrix4x4* m_inverse_view;
+	QMatrix4x4* m_view;
 	QMatrix4x4* m_inverse_projection;
 	QMatrix4x4* m_projection;
 	QMatrix4x4* m_texture_matrices;//8*6

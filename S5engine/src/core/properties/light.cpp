@@ -17,6 +17,8 @@
 	#define GL_MULTISAMPLE 0x809D
 #endif
 
+//#define MERGEFORSUN
+
 const double posx[] = {
 	 1, 0, 0, 0,
 	 0,-1, 0, 0,
@@ -137,8 +139,24 @@ void Light::drawDebug(const GLWidget* widget, const RenderManager::DebugGizmosFi
 		{
 			glPushMatrix();
 
+			if(m_type == SUN)
+			{
+				glLoadIdentity();
+				#ifndef MERGEFORSUN
+					Viewpoint* targetVp = RENDER_MANAGER.getRenderPassInfo()->lod_viewpoint;
+					targetVp->applyTransform(0);
+				#endif
+			}
+
 			Matrix4d mat;
-			computeLightFrustum(mat);
+			if(m_type == SUN)
+			{
+				computePSSM(mat, 0);
+			}
+			else
+			{
+				computeLightFrustum(mat);
+			}
 			mat.invert();
 			glMultMatrixd(mat.values);
 
@@ -217,33 +235,59 @@ Viewpoint::Style Light::getStyle()
 
 void Light::setProjection(double aspect, double scale, int projection_nb)
 {
-	Matrix4d mat;
-	computeLightFrustum(mat);
+	Matrix4d mat = getProjection(aspect, projection_nb);
+	glLoadMatrixd(mat);
+}
 
-	if(m_type == OMNI)
+Matrix4d Light::getViewProjection(double aspect, int projection_nb)
+{
+	Matrix4d projection = getProjection(aspect, projection_nb);
+	Matrix4d view = node()->getGlobalTransform().getInverse();
+	debug("MATRIX_STACK", "get viewprojection : view" << QMatrix4x4(view.values));
+	debug("MATRIX_STACK", "get viewprojection : viewprojection" << QMatrix4x4((projection*view).values));
+	return projection*view;
+}
+
+const Matrix4d& Light::getProjection(double aspect, int projection_nb)
+{
+	Matrix4d mat;
+
+	if(m_type == SUN)
 	{
-		switch(projection_nb) {
-			case 0:
-				mat *= Matrix4d(negx);
-				break;
-			case 1:
-				mat *= Matrix4d(posx);
-				break;
-			case 2:
-				mat *= Matrix4d(negy);
-				break;
-			case 3:
-				mat *= Matrix4d(posy);
-				break;
-			case 4:
-				mat *= Matrix4d(negz);
-				break;
-			case 5:
-				mat *= Matrix4d(posz);
-				break;
+		computePSSM(mat, projection_nb);
+	}
+	else
+	{
+		computeLightFrustum(mat);
+
+		if(m_type == OMNI)
+		{
+			switch(projection_nb) {
+				case 0:
+					mat *= Matrix4d(negx);
+					break;
+				case 1:
+					mat *= Matrix4d(posx);
+					break;
+				case 2:
+					mat *= Matrix4d(negy);
+					break;
+				case 3:
+					mat *= Matrix4d(posy);
+					break;
+				case 4:
+					mat *= Matrix4d(negz);
+					break;
+				case 5:
+					mat *= Matrix4d(posz);
+					break;
+			}
 		}
 	}
-	glLoadMatrixd(mat);
+
+	debug("MATRIX_STACK", "get projection" << QMatrix4x4(mat.values));
+
+	return mat;
 }
 
 void Light::applyTransform(int projection_nb)
@@ -256,9 +300,17 @@ void Light::applyTransform(int projection_nb)
 		float transz = -trans.getPosition().z;
 		glTranslatef(transx, transy, transz);
 	}
-	else
+	else if(m_type == SPOT)
 	{
 		node()->getGlobalTransform().getInverse().glMultd();
+	}
+	else if(m_type == SUN)
+	{
+#ifdef MERGEFORSUN
+		return;
+#endif
+		Viewpoint* targetVp = RENDER_MANAGER.getRenderPassInfo()->lod_viewpoint;
+		targetVp->applyTransform(projection_nb);
 	}
 }
 
@@ -266,6 +318,15 @@ void Light::applyOnlyRotation(int projection_nb)
 {
 	if(m_type == OMNI)
 		return;
+	if(m_type == SUN)
+	{
+#ifdef MERGEFORSUN
+		return;
+#endif
+		Viewpoint* targetVp = RENDER_MANAGER.getRenderPassInfo()->lod_viewpoint;
+		targetVp->applyOnlyRotation(projection_nb);
+		return;
+	}
 
 	Transformf trans(node()->getGlobalTransform());
 	Matrix3d rotation = trans.getRotation();
@@ -348,81 +409,86 @@ void Light::setSpotCutoff(float degAngle)
 	m_spot_cutoff = degAngle;
 }
 
-void Light::computeLightFrustum(Matrix4d& mat) const
+void Light::computePSSM(Matrix4d& mat, int split_nb) const
 {
-	if(m_type == SUN)
-	{
-		/*
-		const float h = 1.0f/tan(90*M_PI/360);
-		const float znear = 0.5;
-		const float zfar = 512;
-		float neg_depth = znear-zfar;
-		*/
-		const float w = 0.001;
-		const float h = 0.001;
-		const float d = 0.0026;
+	// Get viewprojection matrix
+	Viewpoint* targetVp = RENDER_MANAGER.getRenderPassInfo()->lod_viewpoint;
+#ifdef MERGEFORSUN
+	Matrix4d VpMat = targetVp->getViewProjection(1,0);
+	debug("MATRIX_STACK", "compute PSSM" << QMatrix4x4(VpMat.values));
+#else
+	Matrix4d VpMat = targetVp->getProjection(1,0);
+#endif
+	// Compute subfrustum
+	mat = VpMat;
+	// Compute matrix targetting subfrustum
 
-		mat[0] = 0;
-		mat[1] = 0;
-		mat[2] = -d;
-		mat[3] = 0;
+	/*
+	const float w = 0.001;
+	const float h = 0.001;
+	const float d = 0.0026;
 
-		mat[4] = 0;
-		mat[5] = h;
-		mat[6] = 0;
-		mat[7] = 0;
+	mat[0] = 0;
+	mat[1] = 0;
+	mat[2] = -d;
+	mat[3] = 0;
 
-		mat[8] = w;
-		mat[9] = 0;
-		mat[10] = 0;
-		mat[11] = 0;
+	mat[4] = 0;
+	mat[5] = h;
+	mat[6] = 0;
+	mat[7] = 0;
 
-		mat[12] = 0;
-		mat[13] = 0;
-		mat[14] = -1;
-		mat[15] = 1;
-	}
-	else
-	{
-		float angle = 90;
+	mat[8] = w;
+	mat[9] = 0;
+	mat[10] = 0;
+	mat[11] = 0;
 
-		if(m_type == SPOT)
-		{
-			angle = 2*m_spot_cutoff;
-		}
-
-		const float h = 1.0f/tan(angle*M_PI/360);
-		const float znear = 0.5;
-		const float zfar = 512;
-		float neg_depth = znear-zfar;
-
-		mat[0] = h;
-		mat[1] = 0;
-		mat[2] = 0;
-		mat[3] = 0;
-
-		mat[4] = 0;
-		mat[5] = h;
-		mat[6] = 0;
-		mat[7] = 0;
-
-		mat[8] = 0;
-		mat[9] = 0;
-		mat[10] = (zfar + znear)/neg_depth;
-		mat[11] = -1;
-
-		mat[12] = 0;
-		mat[13] = 0;
-		mat[14] = 2.0f*(znear*zfar)/neg_depth;
-		mat[15] = 0;
-
-		if(m_type == SPOT)
-		{
-			mat *= Matrix4d(negz);
-		}
-	}
+	mat[12] = 0;
+	mat[13] = 0;
+	mat[14] = -1;
+	mat[15] = 1;
+	*/
 }
 
+void Light::computeLightFrustum(Matrix4d& mat) const
+{
+	float angle = 90;
+
+	if(m_type == SPOT)
+	{
+		angle = 2*m_spot_cutoff;
+	}
+
+	const float h = 1.0f/tan(angle*M_PI/360);
+	const float znear = 0.5;
+	const float zfar = 512;
+	float neg_depth = znear-zfar;
+
+	mat[0] = h;
+	mat[1] = 0;
+	mat[2] = 0;
+	mat[3] = 0;
+
+	mat[4] = 0;
+	mat[5] = h;
+	mat[6] = 0;
+	mat[7] = 0;
+
+	mat[8] = 0;
+	mat[9] = 0;
+	mat[10] = (zfar + znear)/neg_depth;
+	mat[11] = -1;
+
+	mat[12] = 0;
+	mat[13] = 0;
+	mat[14] = 2.0f*(znear*zfar)/neg_depth;
+	mat[15] = 0;
+
+	if(m_type == SPOT)
+	{
+		mat *= Matrix4d(negz);
+	}
+}
 
 Vector3f Light::getWorldPosition()
 {
