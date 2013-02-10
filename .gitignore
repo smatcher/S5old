@@ -7,4 +7,5 @@ bin
 .sconsign.dblite
 scons_common.pyc
 screen.png
+*.creator.user
 
