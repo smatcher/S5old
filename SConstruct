@@ -82,8 +82,8 @@ else:
 # assimp
 if env['PLATFORM'] == 'win32':
 	env.Append(LIBPATH=['dep/assimp/lib-win32'])
-else:
-	env.Append(LIBPATH=['dep/assimp/lib'])
+#else:
+#	env.Append(LIBPATH=['dep/assimp/lib'])
 env.Append(CPPPATH = ['dep/assimp/include'])
 env.Append(LIBS=['-lassimp'])
 # bullet
@@ -99,4 +99,6 @@ else:
 	env.ParseConfig('pkg-config bullet --cflags --libs')
 
 SConscript('SConscript_S5engine','env')
-SConscript('SConscript_demo_game','env')
+SConscript('SConscript_S5qt','env')
+SConscript('SConscript_S5editor','env')
+#SConscript('SConscript_demo_game','env')

@@ -7,6 +7,7 @@ Log::Policy Log::warnPolicy = Log::POLICY_SHOW;
 Log::Policy Log::errorPolicy = Log::POLICY_SHOW;
 Log::Policy Log::defaultDebugPolicy = Log::POLICY_SHOW;
 QHash<QString, Log::Policy> Log::topicPolicy;
+int Log::next_id = 0;
 
 QString typeToString(Log::LogType type)
 {
@@ -49,17 +50,19 @@ bool typeFromString(QString string, Log::LogType& type)
 	return ret;
 }
 
-Log::LogItem::LogItem(LogType type)
+Log::LogItem::LogItem(LogType type, int id)
 {
 	this->type = type;
+    this->id = id;
 
 	has_file = false;
 	has_topic = false;
 }
 
-Log::LogItem::LogItem(LogType type, const char *file, int line, const char *function)
+Log::LogItem::LogItem(LogType type, int id, const char *file, int line, const char *function)
 {
 	this->type = type;
+    this->id = id;
 	this->file = QDir(file);
 	this->line = line;
 	this->function = QString(function);
@@ -68,9 +71,10 @@ Log::LogItem::LogItem(LogType type, const char *file, int line, const char *func
 	has_topic = false;
 }
 
-Log::LogItem::LogItem(LogType type, const char *file, int line, const char *function, const char *topic)
+Log::LogItem::LogItem(LogType type, int id, const char *file, int line, const char *function, const char *topic)
 {
 	this->type = type;
+    this->id = id;
 	this->file = QDir(file);
 	this->line = line;
 	this->function = QString(function);
@@ -124,6 +128,11 @@ Log::LogItem::~LogItem()
 QDebug Log::LogItem::debugStream()
 {
 	return QDebug(&message);
+}
+
+int Log::getLogId()
+{
+    return next_id++;
 }
 
 bool Log::displaysTopic(const char* topic)

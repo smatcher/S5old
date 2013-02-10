@@ -1,0 +1,33 @@
+# SConscript_project
+
+from scons_common import *
+
+Import('env')
+
+LIB_NAME = 'S5qt'
+
+PROJECT_DIR = 'S5qt'
+BUILD_DIR = 'bin/S5qt/' + getObjectFilesDir()
+
+S5QtEnv = env.Clone()
+S5QtEnv.Append(CPPPATH = [PROJECT_DIR+'/include'])
+
+VariantDir(BUILD_DIR,PROJECT_DIR, duplicate=0)
+
+# Read all sources
+src_list	= map(lambda x: BUILD_DIR + '/' + x, getSourcesListFromFile(PROJECT_DIR+'/S5qt.files'))
+# Read all headers
+h_list	= getHeadersListFromFile(PROJECT_DIR+'/S5qt.files')
+
+# Moc the files
+S5QtEnv['QT4_AUTOSCAN'] = 0 # We scan manually
+moc_list = []
+for h in h_list:
+	if isMocable(PROJECT_DIR + '/' + h):
+		moc_list = moc_list + S5QtEnv.XMoc4(BUILD_DIR + '/' + h)
+
+# Create the object files
+obj_list = S5QtEnv.Object(src_list + moc_list)
+
+lib = S5QtEnv.StaticLibrary(BUILD_DIR + '/' + LIB_NAME,obj_list)
+

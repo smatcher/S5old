@@ -1,0 +1,9 @@
+/usr/include/QtGui
+/usr/include/QtCore
+/usr/include/QtOpenGL
+/usr/include/QtXml
+/usr/include/qt4/QtGui
+/usr/include/qt4/QtCore
+/usr/include/qt4/QtOpenGL
+/usr/include/qt4/QtXml
+./include

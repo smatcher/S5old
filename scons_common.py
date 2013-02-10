@@ -26,7 +26,7 @@ def createEnvironment(generate_help=False):
 	if int(ARGUMENTS.get('tools', 0)):
 		env.Append(CPPDEFINES=['WITH_TOOLS'])
 
-	env.Append(CCFLAGS=['-m32'])
+#	env.Append(CCFLAGS=['-m32'])
 
 	if generate_help:
 		Help(vars.GenerateHelpText(env))

@@ -1,0 +1,61 @@
+# SConscript_project
+
+from scons_common import *
+
+Import('env')
+
+EXE_NAME = 'editor'
+
+PROJECT_DIR = 'S5editor'
+BUILD_DIR = 'bin/S5editor/' + getObjectFilesDir()
+ENGINE_DIR = 'S5engine'
+ENGINE_BUILD_DIR = 'bin/S5engine/' + getObjectFilesDir()
+UI_DIR = 'S5qt'
+UI_BUILD_DIR = 'bin/S5qt/' + getObjectFilesDir()
+
+MAIN_CPP  = BUILD_DIR + '/src/main.cpp'
+
+S5EditorEnv = env.Clone()
+S5EditorEnv.Append(CPPPATH = [PROJECT_DIR+'/include'])
+
+# engine env
+S5EditorEnv.Append(CPPPATH = [ENGINE_DIR+'/include'])
+S5EditorEnv.Append(LIBPATH=[ENGINE_BUILD_DIR])
+S5EditorEnv.Prepend(LIBS=['S5engine'])
+
+# ui env
+S5EditorEnv.Append(CPPPATH = [UI_DIR+'/include'])
+S5EditorEnv.Append(LIBPATH=[UI_BUILD_DIR])
+S5EditorEnv.Prepend(LIBS=['S5qt'])
+
+VariantDir(BUILD_DIR,PROJECT_DIR, duplicate=0)
+
+# Read all sources
+src_list	= map(lambda x: BUILD_DIR + '/' + x, getSourcesListFromFile(PROJECT_DIR+'/S5editor.files'))
+
+# Separate the sources:
+main_src_list   = []	# - main.cpp for the game
+others_src_list = []	# - all other sources
+
+for s in src_list:
+	if s == MAIN_CPP:
+		main_src_list.append(s)
+	else:
+		others_src_list.append(s)
+
+# Read all headers
+h_list	= getHeadersListFromFile(PROJECT_DIR+'/S5editor.files')
+
+# Moc the files
+S5EditorEnv['QT4_AUTOSCAN'] = 0 # We scan manually
+moc_list = []
+for h in h_list:
+	if isMocable(PROJECT_DIR + '/' + h):
+		moc_list = moc_list + S5EditorEnv.XMoc4(BUILD_DIR + '/' + h)
+
+# Create the object files
+main_obj_list   = S5EditorEnv.Object(main_src_list)
+others_obj_list = S5EditorEnv.Object(others_src_list + moc_list)
+
+S5EditorEnv.Program(BUILD_DIR + '/' + EXE_NAME,main_obj_list + others_obj_list)
+

@@ -1,4 +1,3 @@
-src/main.cpp
 src/core/scenegraph/node.cpp
 src/core/properties/propertyset.cpp
 src/core/scenegraph/scenegraph.cpp

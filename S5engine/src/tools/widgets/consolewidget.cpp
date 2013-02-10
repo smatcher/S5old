@@ -200,7 +200,7 @@ void ConsoleWidget::log(Log::LogItem& log)
 	if(log.has_topic)
 		item->setTopic(log.topic);
 
-	if(m_content_model)
+    if(m_content_model)
 		m_content_model->insertItem(*item);
 
 	delete item;

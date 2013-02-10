@@ -14,6 +14,9 @@ ConsoleItemModel::~ConsoleItemModel()
 
 void ConsoleItemModel::insertItem(ConsoleItem &item)
 {
+    if(m_items.count() > 50)
+        return;
+
 	beginInsertRows(QModelIndex(), m_items.count(), m_items.count());
 	m_items.push_back(item);
 	endInsertRows();
